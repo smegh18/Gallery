@@ -1,0 +1,12 @@
+# Analysis workspace
+.analysis/
+
+# Built binaries & caches
+*.apk
+*.aab
+build/
+.gradle/
+.idea/
+*.iml
+local.properties
+.DS_Store
