@@ -1,0 +1,9 @@
+{
+  "project_name": "GalleryAppReconstruction",
+  "version": "1.0.0",
+  "reference_package": "albums.gallery.photo.folder.picasa.app.web.gallery",
+  "reference_version": "2.6.7",
+  "target_sdk": 36,
+  "min_sdk": 24,
+  "architecture": "MVVM_Compose_Room"
+}
