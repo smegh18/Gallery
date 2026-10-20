@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand & Accent Colors -->
+    <color name="colorPrimary">#3478f6</color>
+    <color name="colorPrimaryDark">#0052cc</color>
+    <color name="colorAccent">#0066ff</color>
+    <color name="mainAppColor">#0066ff</color>
+    <color name="ic_launcher_gallery_background">#1e62e1</color>
+
+    <!-- Backgrounds -->
+    <color name="backgroundColor">#ffffff</color>
+    <color name="backgroundColorDark">#121212</color>
+    <color name="surfaceColor">#f8f9fa</color>
+    <color name="surfaceColorDark">#1e1e1e</color>
+    <color name="video_player_background">#0c0c0c</color>
+
+    <!-- Feature Tint Card Colors -->
+    <color name="recycleBackgroundColor">#fff3f3</color>
+    <color name="recycleAccentColor">#ff4d4f</color>
+    <color name="placeBackgroundColor">#def9e9</color>
+    <color name="placeAccentColor">#00b074</color>
+    <color name="duplicateBackgroundColor">#e8f2ff</color>
+    <color name="duplicateAccentColor">#2f80ed</color>
+    <color name="vaultAccentColor">#ffaa00</color>
+
+    <!-- Text & Icon Colors -->
+    <color name="textColorPrimary">#1e3354</color>
+    <color name="textColorSecondary">#707c93</color>
+    <color name="textColorTertiary">#a1a1a1</color>
+    <color name="textColorPrimaryDark">#ffffff</color>
+    <color name="textColorSecondaryDark">#a0aab8</color>
+
+    <!-- Dividers & Borders -->
+    <color name="dividerColor">#e4e6e9</color>
+    <color name="dividerColorDark">#2a2a2a</color>
+    <color name="rippleColor">#1f0066ff</color>
+</resources>

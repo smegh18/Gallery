@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="FavoriteActivity"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_fav"
+        android:shortcutShortLabel="@string/favorites">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="albums.gallery.photo.folder.picasa.app.web.gallery"
+            android:targetClass="albums.gallery.photo.folder.picasa.app.web.gallery.MainActivity">
+            <extra android:name="route" android:value="favorites" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="RecycleActivity"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_delete"
+        android:shortcutShortLabel="@string/recycle_bin">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="albums.gallery.photo.folder.picasa.app.web.gallery"
+            android:targetClass="albums.gallery.photo.folder.picasa.app.web.gallery.MainActivity">
+            <extra android:name="route" android:value="recycle" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="VaultLockActivity"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_hide"
+        android:shortcutShortLabel="@string/private_vault">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="albums.gallery.photo.folder.picasa.app.web.gallery"
+            android:targetClass="albums.gallery.photo.folder.picasa.app.web.gallery.MainActivity">
+            <extra android:name="route" android:value="vault" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="DuplicatePhotoActivity"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_duplicate"
+        android:shortcutShortLabel="@string/duplicate_finder">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="albums.gallery.photo.folder.picasa.app.web.gallery"
+            android:targetClass="albums.gallery.photo.folder.picasa.app.web.gallery.MainActivity">
+            <extra android:name="route" android:value="duplicates" />
+        </intent>
+    </shortcut>
+</shortcuts>

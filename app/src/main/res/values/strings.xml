@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gallery</string>
+    <string name="app_name_local">Gallery</string>
+
+    <!-- Navigation Tabs -->
+    <string name="tab_photos">Photos</string>
+    <string name="tab_albums">Albums</string>
+    <string name="tab_explore">Explore</string>
+
+    <!-- Navigation Drawer -->
+    <string name="favorites">Favorites</string>
+    <string name="create_album">Create Album</string>
+    <string name="recycle_bin">Recycle Bin</string>
+    <string name="duplicate_finder">Duplicate Finder</string>
+    <string name="private_vault">Private Vault</string>
+    <string name="tool_bar_system_cleaner">System Cleaner</string>
+    <string name="ai_photo_editor_drawer">Photo Editor</string>
+    <string name="change_app_language">Language</string>
+    <string name="theme_mode">Theme</string>
+    <string name="settings">Settings</string>
+    <string name="about_us">About Us</string>
+    <string name="follow_us_on">Follow Us</string>
+
+    <!-- Common Actions & Dialogs -->
+    <string name="delete">Delete</string>
+    <string name="share">Share</string>
+    <string name="edit">Edit</string>
+    <string name="hide">Hide</string>
+    <string name="unhide">Unhide</string>
+    <string name="restore">Restore</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="save">Save</string>
+    <string name="search">Search</string>
+    <string name="select_all">Select All</string>
+    <string name="properties">Properties</string>
+    <string name="rename">Rename</string>
+    <string name="set_as_wallpaper">Set as Wallpaper</string>
+    <string name="auto_delete_trash_30_days">Auto delete items after 30 days</string>
+
+    <!-- Vault Strings -->
+    <string name="enter_pin">Enter 4-Digit PIN</string>
+    <string name="confirm_pin">Confirm PIN</string>
+    <string name="draw_pattern">Draw Unlock Pattern</string>
+    <string name="switch_to_pattern">Use Pattern</string>
+    <string name="switch_to_pin">Use PIN</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="security_question">Security Question</string>
+    <string name="vault_empty_title">No hidden photos or videos</string>
+    <string name="vault_empty_desc">Photos and videos you hide will appear here securely.</string>
+
+    <!-- Cleaner Strings -->
+    <string name="scanning">Scanning…</string>
+    <string name="clean_junk">Clean Junk</string>
+    <string name="keep_best_photo">Keep Best Photo</string>
+    <string name="space_saved">Space Saved</string>
+
+    <!-- Permissions -->
+    <string name="permission_storage_title">Access Photos &amp; Videos</string>
+    <string name="permission_storage_desc">Gallery needs permission to view, manage, and organize photos and videos stored on your device.</string>
+    <string name="btn_allow_access">Allow Access</string>
+
+    <!-- Shortcuts -->
+    <string name="ACTIVITY_FAVOURITE">FavoriteActivity</string>
+    <string name="ACTIVITY_RECYCLE">RecycleActivity</string>
+    <string name="ACTIVITY_VAULT_LOCK">VaultLockActivity</string>
+</resources>
