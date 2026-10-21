@@ -16,6 +16,15 @@ object AdConstants {
     const val TEST_REWARDED_ID = "ca-app-pub-3940256099942544/5224354917"
     const val TEST_APP_OPEN_ID = "ca-app-pub-3940256099942544/9257395921"
 
+    // Functional aliases for screen placements
+    const val BANNER_HOME = TEST_BANNER_ID
+    const val BANNER_CLEANER = TEST_BANNER_ID
+    const val BANNER_DUPLICATE_FINDER = TEST_BANNER_ID
+    const val BANNER_FULLSCREEN_MEDIA = TEST_BANNER_ID
+    const val BANNER_FAVORITES = TEST_BANNER_ID
+    const val BANNER_SETTINGS = TEST_BANNER_ID
+    const val BANNER_VAULT = TEST_BANNER_ID
+
     // Reference APK Recovered Ad Units (Extracted from strings.xml for evidence audit)
     const val REF_APP_ID = "ca-app-pub-2613001078711441~6552065013"
     const val REF_BANNER_ID = "ca-app-pub-2613001078711441/1299738331"
