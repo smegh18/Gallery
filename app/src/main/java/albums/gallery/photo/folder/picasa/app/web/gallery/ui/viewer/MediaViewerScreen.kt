@@ -132,7 +132,8 @@ fun MediaViewerScreen(
     // Formatted date and time for reference-matching toolbar
     val epochTime = remember(currentItem.dateAdded, currentItem.dateModified) {
         val epoch = if (currentItem.dateAdded > 0) currentItem.dateAdded else currentItem.dateModified
-        Date(epoch * 1000L)
+        val millis = if (epoch > 10_000_000_000L) epoch else epoch * 1000L
+        Date(millis)
     }
     val dateText = remember(epochTime) {
         SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(epochTime)
@@ -534,7 +535,8 @@ fun MediaViewerScreen(
 
                 val dateStr = remember(currentItem.dateAdded, currentItem.dateModified) {
                     val epoch = if (currentItem.dateAdded > 0) currentItem.dateAdded else currentItem.dateModified
-                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(epoch * 1000L))
+                    val millis = if (epoch > 10_000_000_000L) epoch else epoch * 1000L
+                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(millis))
                 }
                 DetailSheetRow("Taken on", dateStr)
 

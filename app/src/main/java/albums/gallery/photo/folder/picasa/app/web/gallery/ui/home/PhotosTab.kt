@@ -238,8 +238,9 @@ fun PhotoGridItem(
     }
 }
 
-fun formatGroupHeader(epochSeconds: Long): String {
-    val date = Date(epochSeconds * 1000L)
+fun formatGroupHeader(timestamp: Long): String {
+    val millis = if (timestamp > 10_000_000_000L) timestamp else timestamp * 1000L
+    val date = Date(millis)
     val now = Calendar.getInstance()
     val itemCal = Calendar.getInstance().apply { time = date }
 
