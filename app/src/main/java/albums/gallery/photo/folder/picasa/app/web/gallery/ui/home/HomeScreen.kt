@@ -79,6 +79,12 @@ fun HomeScreen(
                     onSearchClick = {
                         // Toggle or trigger search
                     },
+                    onLockClick = {
+                        onNavigate(Screen.VaultLock.route)
+                    },
+                    onProClick = {
+                        // Pro feature
+                    },
                     onSortClick = if (uiState.selectedTab == 1) { { showSortDialog = true } } else null,
                     onCameraClick = {
                         val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
@@ -149,6 +155,21 @@ fun HomeScreen(
                         albumsList = uiState.albumsList,
                         onAlbumClick = { album ->
                             onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
+                        },
+                        onFeatureClick = { featureId ->
+                            when (featureId) {
+                                "vault" -> onNavigate(Screen.VaultLock.route)
+                                "favorites" -> onNavigate(Screen.Favorites.route)
+                                "cleaner" -> onNavigate(Screen.Cleaner.route)
+                                "duplicates" -> onNavigate(Screen.Duplicates.route)
+                                "recycle" -> onNavigate(Screen.RecycleBin.route)
+                                "collage", "editor" -> onNavigate(Screen.Editor.createRoute())
+                                "videos" -> viewModel.setTab(1)
+                                "place", "moments" -> viewModel.setTab(1)
+                            }
+                        },
+                        onMediaTypeClick = { _ ->
+                            viewModel.setTab(1)
                         }
                     )
                     1 -> PhotosTab(

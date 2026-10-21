@@ -1,30 +1,28 @@
 package albums.gallery.photo.folder.picasa.app.web.gallery.ui.cleaner
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CleaningServices
-import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.FolderZip
-import androidx.compose.material.icons.outlined.Memory
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import albums.gallery.photo.folder.picasa.app.web.gallery.R
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.theme.GalleryBlue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,223 +30,241 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-data class JunkCategory(
-    val name: String,
-    val sizeBytes: Long,
-    val icon: ImageVector,
-    val description: String
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CleanerScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToDuplicates: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var isScanning by remember { mutableStateOf(true) }
+    var isScanning by remember { mutableStateOf(false) }
     var isCleaning by remember { mutableStateOf(false) }
     var isCleaned by remember { mutableStateOf(false) }
-    var junkCategories by remember { mutableStateOf<List<JunkCategory>>(emptyList()) }
     var totalJunkBytes by remember { mutableLongStateOf(0L) }
+    var cacheBytes by remember { mutableLongStateOf(0L) }
 
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            val cacheSize = getDirSize(context.cacheDir) + (context.externalCacheDir?.let { getDirSize(it) } ?: 0L)
-            val codeCacheSize = getDirSize(context.codeCacheDir)
-            val tempJunkSize = 24 * 1024 * 1024L // Simulated temporary residual files
-
-            val list = listOf(
-                JunkCategory("Application Cache", cacheSize.coerceAtLeast(1024 * 512), Icons.Outlined.Memory, "App temporary network and image cache"),
-                JunkCategory("Residual Files", tempJunkSize, Icons.Outlined.DeleteSweep, "Log files, crash reports, and temp caches"),
-                JunkCategory("System Thumbnails", codeCacheSize.coerceAtLeast(1024 * 256), Icons.Outlined.FolderZip, "Rendered thumbnail cache")
-            )
-            junkCategories = list
-            totalJunkBytes = list.sumOf { it.sizeBytes }
+    fun scanJunk() {
+        scope.launch {
+            isScanning = true
+            isCleaned = false
+            withContext(Dispatchers.IO) {
+                val appCache = getDirSize(context.cacheDir) + (context.externalCacheDir?.let { getDirSize(it) } ?: 0L)
+                val codeCache = getDirSize(context.codeCacheDir)
+                cacheBytes = appCache.coerceAtLeast(1024 * 512)
+                totalJunkBytes = cacheBytes + codeCache.coerceAtLeast(1024 * 256)
+                delay(800) // Realistic scanning feedback
+            }
             isScanning = false
         }
+    }
+
+    LaunchedEffect(Unit) {
+        scanJunk()
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("System Cleaner", fontWeight = FontWeight.Bold) },
+                title = { Text("System Cleaner", fontWeight = FontWeight.Bold, color = Color(0xFF1E3354)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color(0xFF1E3354))
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
-        },
-        bottomBar = {
-            if (!isScanning && !isCleaned && totalJunkBytes > 0) {
-                Surface(
-                    tonalElevation = 8.dp,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                isCleaning = true
-                                withContext(Dispatchers.IO) {
-                                    clearDir(context.cacheDir)
-                                    context.externalCacheDir?.let { clearDir(it) }
-                                    delay(1200) // Simulated progress
-                                }
-                                isCleaning = false
-                                isCleaned = true
-                            }
-                        },
-                        enabled = !isCleaning,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 14.dp)
-                            .height(54.dp),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue)
-                    ) {
-                        if (isCleaning) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = Color.White,
-                                strokeWidth = 2.dp
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text("Cleaning Device...")
-                        } else {
-                            Icon(Icons.Default.CleaningServices, contentDescription = null, modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Clean Now (${formatCleanerSize(totalJunkBytes)})", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                        }
-                    }
-                }
-            }
         }
     ) { paddingValues ->
+        val scrollState = rememberScrollState()
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(scrollState)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Gauge Box
+            // 1. Remove Junk Hero Card (Reference item_remove_junk in activity_system_cleaner.xml)
+            val cardShape = RoundedCornerShape(14.dp)
             Box(
                 modifier = Modifier
-                    .size(180.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isCleaned) Color(0xFFE8F5E9) else GalleryBlue.copy(alpha = 0.1f)
-                    ),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .clip(cardShape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(width = 1.dp, color = Color(0xFFF0F0F0), shape = cardShape)
+                    .padding(16.dp)
             ) {
-                if (isScanning || isCleaning) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(160.dp),
-                        strokeWidth = 6.dp,
-                        color = GalleryBlue
-                    )
-                }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    if (isCleaned) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Cleaned",
-                            tint = Color(0xFF4CAF50),
-                            modifier = Modifier.size(56.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Cleaned!",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF2E7D32)
-                        )
-                    } else if (isScanning) {
-                        Text(
-                            text = "Scanning...",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = GalleryBlue
-                        )
-                    } else {
-                        Text(
-                            text = formatCleanerSize(totalJunkBytes),
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = GalleryBlue
-                        )
-                        Text(
-                            text = "Junk Found",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Categories List
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                junkCategories.forEach { category ->
-                    Card(
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                        modifier = Modifier.fillMaxWidth()
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(44.dp)
-                                    .clip(CircleShape)
-                                    .background(GalleryBlue.copy(alpha = 0.1f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = category.icon,
-                                    contentDescription = null,
-                                    tint = GalleryBlue,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_remove_junk_list),
+                            contentDescription = "Remove Junk",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(36.dp)
+                        )
 
-                            Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(14.dp))
 
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = category.name,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = category.description,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = if (isCleaned) "0 B" else formatCleanerSize(category.sizeBytes),
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = "Remove Junk",
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = if (isCleaned) Color(0xFF4CAF50) else MaterialTheme.colorScheme.onSurface
+                                color = Color(0xFF1E3354)
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = if (isCleaned) "System cache cleaned successfully!" else "Clear up space and optimize performance.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color(0xFF7D90A3),
+                                fontSize = 12.sp,
+                                lineHeight = 16.sp
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Button(
+                            onClick = {
+                                if (!isScanning && !isCleaning) {
+                                    if (isCleaned) {
+                                        scanJunk()
+                                    } else {
+                                        scope.launch {
+                                            isCleaning = true
+                                            withContext(Dispatchers.IO) {
+                                                clearDir(context.cacheDir)
+                                                context.externalCacheDir?.let { clearDir(it) }
+                                                delay(1000)
+                                            }
+                                            isCleaning = false
+                                            isCleaned = true
+                                            totalJunkBytes = 0L
+                                        }
+                                    }
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isCleaned) GalleryBlue else Color(0xFFFF4D4F)
+                            ),
+                            shape = RoundedCornerShape(25.dp),
+                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = when {
+                                    isScanning -> "Scanning..."
+                                    isCleaning -> "Cleaning..."
+                                    isCleaned -> "Done"
+                                    else -> "Scan Now"
+                                },
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp
                             )
                         }
                     }
+
+                    if (isScanning || isCleaning) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        LinearProgressIndicator(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = Color(0xFFFF4D4F)
+                        )
+                    }
+
+                    if (totalJunkBytes > 0 && !isCleaned) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = "Found junk: ${formatSize(totalJunkBytes)}",
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFFF4D4F),
+                            fontSize = 12.sp
+                        )
+                    }
                 }
             }
+
+            // 2. Reference Categories List (systemCleanerRecycler)
+            CleanerCategoryCard(
+                iconRes = R.drawable.img_system_cleaner_duplicate,
+                title = "Duplicate Photos",
+                subtitle = "Find and delete duplicate photos",
+                onClick = onNavigateToDuplicates
+            )
+
+            CleanerCategoryCard(
+                iconRes = R.drawable.img_system_cleaner_large_video,
+                title = "Large Videos",
+                subtitle = "Find and delete large video files",
+                onClick = { /* Large video scanner */ }
+            )
+
+            CleanerCategoryCard(
+                iconRes = R.drawable.img_system_cleaner_screenshot,
+                title = "Screenshots",
+                subtitle = "Manage and clean up screenshot images",
+                onClick = { /* Screenshots manager */ }
+            )
         }
+    }
+}
+
+@Composable
+private fun CleanerCategoryCard(
+    iconRes: Int,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    val shape = RoundedCornerShape(14.dp)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(width = 1.dp, color = Color(0xFFF0F0F0), shape = shape)
+            .clickable(onClick = onClick)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = title,
+            tint = Color.Unspecified,
+            modifier = Modifier.size(36.dp)
+        )
+
+        Spacer(modifier = Modifier.width(14.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1E3354),
+                fontSize = 15.sp
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF7D90A3),
+                fontSize = 12.sp
+            )
+        }
+
+        Icon(
+            painter = painterResource(id = R.drawable.system_cleaner_banner_arrow_new),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
 
@@ -269,15 +285,14 @@ private fun clearDir(dir: File?) {
     }
 }
 
-private fun formatCleanerSize(bytes: Long): String {
-    if (bytes <= 0) return "0 B"
+private fun formatSize(bytes: Long): String {
     val kb = bytes / 1024.0
     val mb = kb / 1024.0
     val gb = mb / 1024.0
     return when {
-        gb >= 1.0 -> String.format(java.util.Locale.US, "%.1f GB", gb)
-        mb >= 1.0 -> String.format(java.util.Locale.US, "%.1f MB", mb)
-        kb >= 1.0 -> String.format(java.util.Locale.US, "%.0f KB", kb)
+        gb >= 1.0 -> String.format("%.2f GB", gb)
+        mb >= 1.0 -> String.format("%.1f MB", mb)
+        kb >= 1.0 -> String.format("%.0f KB", kb)
         else -> "$bytes B"
     }
 }

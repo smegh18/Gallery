@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector android:height="34.0dp" android:width="35.0dp" android:viewportWidth="35.0" android:viewportHeight="34.0"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="@color/albumOptionBackColor" android:pathData="M0.5,10C0.5,4.477 4.977,0 10.5,0H24.5C30.023,0 34.5,4.477 34.5,10V24C34.5,29.523 30.023,34 24.5,34H10.5C4.977,34 0.5,29.523 0.5,24V10Z" />
+    <path android:fillColor="#00000000" android:pathData="M18,22V22.38C18,24.25 17.25,25 15.37,25H9.62C7.75,25 7,24.25 7,22.38V17.63C7,15.75 7.75,15 9.62,15H10V19.37C10,21.25 10.75,22 12.62,22H18Z" android:strokeColor="@color/titleColor" android:strokeWidth="1.7" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:fillColor="#00000000" android:pathData="M22,19V19.37C22,21.25 21.25,22 19.37,22H12.62C10.75,22 10,21.25 10,19.37V14.62C10,12.75 10.75,12 12.62,12H13V16.37C13,18.25 13.75,19 15.62,19H22Z" android:strokeColor="@color/titleColor" android:strokeWidth="1.7" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:fillColor="#00000000" android:pathData="M26,11.62V16.37C26,18.25 25.25,19 23.37,19H15.62C13.75,19 13,18.25 13,16.37V11.62C13,9.75 13.75,9 15.62,9H23.37C25.25,9 26,9.75 26,11.62Z" android:strokeColor="@color/titleColor" android:strokeWidth="1.7" android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>

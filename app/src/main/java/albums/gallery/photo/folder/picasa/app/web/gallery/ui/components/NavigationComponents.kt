@@ -3,19 +3,19 @@ package albums.gallery.photo.folder.picasa.app.web.gallery.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +32,8 @@ fun GalleryTopBar(
     onSearchClick: () -> Unit = {},
     onSortClick: (() -> Unit)? = null,
     onCameraClick: (() -> Unit)? = null,
+    onProClick: (() -> Unit)? = null,
+    onLockClick: (() -> Unit)? = null,
     isSelectionMode: Boolean = false,
     selectedCount: Int = 0,
     onSelectAllClick: () -> Unit = {},
@@ -46,11 +48,27 @@ fun GalleryTopBar(
                     fontWeight = FontWeight.Bold
                 )
             } else {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable(enabled = onLockClick != null) {
+                        onLockClick?.invoke()
+                    }
+                ) {
+                    Text(
+                        text = "GALLERY",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = GalleryBlue,
+                        letterSpacing = 1.sp
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_home_lock),
+                        contentDescription = "Vault Lock",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
         },
         navigationIcon = {
@@ -60,17 +78,25 @@ fun GalleryTopBar(
                 }
             } else if (canNavigateBack) {
                 IconButton(onClick = onNavigateBack) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
+                        contentDescription = "Back"
+                    )
                 }
             } else {
                 IconButton(onClick = onOpenDrawer) {
                     Box {
-                        Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_nav_menu),
+                            contentDescription = "Menu",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
+                                .size(7.dp)
                                 .clip(CircleShape)
-                                .background(Color.Red)
+                                .background(Color(0xFFFF3B30))
                                 .align(Alignment.TopEnd)
                         )
                     }
@@ -80,21 +106,48 @@ fun GalleryTopBar(
         actions = {
             if (isSelectionMode) {
                 TextButton(onClick = onSelectAllClick) {
-                    Text(text = "Select All", fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = "Select All",
+                        fontWeight = FontWeight.SemiBold,
+                        color = GalleryBlue
+                    )
                 }
             } else {
                 if (onSortClick != null) {
                     IconButton(onClick = onSortClick) {
-                        Icon(imageVector = Icons.Outlined.Sort, contentDescription = "Sort")
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_short),
+                            contentDescription = "Sort",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                 }
                 if (onCameraClick != null) {
                     IconButton(onClick = onCameraClick) {
-                        Icon(imageVector = Icons.Outlined.CameraAlt, contentDescription = "Camera")
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_camera),
+                            contentDescription = "Camera",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                 }
                 IconButton(onClick = onSearchClick) {
-                    Icon(imageVector = Icons.Outlined.Search, contentDescription = "Search")
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_toolbar_search),
+                        contentDescription = "Search",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                IconButton(onClick = { onProClick?.invoke() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_pro_new),
+                        contentDescription = "Pro",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(26.dp)
+                    )
                 }
             }
         },
@@ -115,28 +168,30 @@ fun GalleryBottomNav(
         tonalElevation = 4.dp
     ) {
         val tabs = listOf(
-            Triple(0, "Albums", Icons.Outlined.Folder),
-            Triple(1, "Photos", Icons.Outlined.Photo),
-            Triple(2, "Explore", Icons.Outlined.Explore)
+            Triple(0, "Albums", R.drawable.ic_home_top_videos),
+            Triple(1, "Photos", R.drawable.ic_home_top_favorite),
+            Triple(2, "Explore", R.drawable.ic_organier_explore)
         )
 
-        tabs.forEach { (index, label, icon) ->
+        tabs.forEach { (index, label, iconRes) ->
             val isSelected = selectedTab == index
             NavigationBarItem(
                 selected = isSelected,
                 onClick = { onTabSelected(index) },
                 icon = {
                     Icon(
-                        imageVector = icon,
+                        painter = painterResource(id = iconRes),
                         contentDescription = label,
-                        tint = if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = if (isSelected) GalleryBlue else Color(0xFF707C93),
+                        modifier = Modifier.size(22.dp)
                     )
                 },
                 label = {
                     Text(
                         text = label,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onSurfaceVariant
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = if (isSelected) GalleryBlue else Color(0xFF707C93),
+                        fontSize = 12.sp
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
@@ -152,78 +207,193 @@ fun GalleryDrawer(
     onNavigate: (String) -> Unit,
     onCloseDrawer: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     ModalDrawerSheet(
-        modifier = Modifier.width(300.dp),
+        modifier = Modifier.width(310.dp),
         drawerShape = RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp),
         drawerContainerColor = MaterialTheme.colorScheme.background
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(vertical = 12.dp)
         ) {
-            Box(
+            // Scrollable Content
+            Column(
                 modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(GalleryBlue.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center
+                    .weight(1f)
+                    .verticalScroll(scrollState)
             ) {
-                Icon(
-                    imageVector = Icons.Default.PhotoLibrary,
-                    contentDescription = null,
-                    tint = GalleryBlue,
-                    modifier = Modifier.size(26.dp)
+                // 1. Go Pro Banner (Reference layout_settings_premium)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFFFFF7E6))
+                        .clickable {
+                            onCloseDrawer()
+                            // Go Pro action
+                        }
+                        .padding(14.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_pro_new),
+                            contentDescription = "Pro",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Go Premium",
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFD48806),
+                                fontSize = 15.sp
+                            )
+                            Text(
+                                text = "Unlock all powerful features",
+                                color = Color(0xFF8C6B23),
+                                fontSize = 12.sp
+                            )
+                        }
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
+                            contentDescription = null,
+                            tint = Color(0xFFD48806),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                // 2. Reference Drawer Items
+                val drawerItems = listOf(
+                    DrawerItemData("Favorites", R.drawable.ic_favorite, "favorites"),
+                    DrawerItemData("Create Album", R.drawable.ic_create_album, "create_album"),
+                    DrawerItemData("Recycle Bin", R.drawable.ic_delete, "recycle"),
+                    DrawerItemData("System Cleaner", R.drawable.ic_drawer_cleaner, "cleaner"),
+                    DrawerItemData("Duplicate Photos", R.drawable.ic_duplicate, "duplicates"),
+                    DrawerItemData("Private Vault", R.drawable.ic_unhide, "vault"),
+                    DrawerItemData("AI Photo Editor", R.drawable.ic_drawer_editor, "editor"),
+                    DrawerItemData("Change App Language", R.drawable.ic_app_language, "language"),
+                    DrawerItemData("Theme Mode", R.drawable.ic_theme_mode, "theme"),
+                    DrawerItemData("Settings", R.drawable.ic_settings, "settings")
+                )
+
+                drawerItems.forEach { item ->
+                    DrawerRow(
+                        item = item,
+                        onClick = {
+                            onCloseDrawer()
+                            onNavigate(item.route)
+                        }
+                    )
+                }
+
+                HorizontalDivider(
+                    color = Color(0xFFE4E6E9),
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+
+                DrawerRow(
+                    item = DrawerItemData("About Us", R.drawable.ic_about, "about"),
+                    onClick = {
+                        onCloseDrawer()
+                        onNavigate("about")
+                    }
                 )
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
+
+            // 3. Social Footer (Reference followUsLayout)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
-                    text = "Gallery",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    text = "Follow us on",
+                    fontSize = 11.sp,
+                    color = Color(0xFF8C9BAE),
+                    fontWeight = FontWeight.Medium
                 )
-                Text(
-                    text = "v2.6.7",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { /* Instagram link */ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_instagram),
+                            contentDescription = "Instagram",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(onClick = { /* YouTube link */ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_youtube),
+                            contentDescription = "YouTube",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(onClick = { /* Facebook link */ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_facebook),
+                            contentDescription = "Facebook",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             }
-        }
-
-        Divider(modifier = Modifier.padding(vertical = 12.dp))
-
-        val menuItems = listOf(
-            DrawerItem("Favorites", Icons.Outlined.Favorite, "favorites"),
-            DrawerItem("Recycle Bin", Icons.Outlined.Delete, "recycle"),
-            DrawerItem("Duplicate Finder", Icons.Outlined.Difference, "duplicates"),
-            DrawerItem("Private Vault", Icons.Outlined.Lock, "vault"),
-            DrawerItem("System Cleaner", Icons.Outlined.CleaningServices, "cleaner"),
-            DrawerItem("Photo Editor", Icons.Outlined.AutoFixHigh, "editor"),
-            DrawerItem("Language", Icons.Outlined.Language, "language"),
-            DrawerItem("Theme", Icons.Outlined.BrightnessMedium, "theme"),
-            DrawerItem("Settings", Icons.Outlined.Settings, "settings")
-        )
-
-        menuItems.forEach { item ->
-            NavigationDrawerItem(
-                icon = { Icon(item.icon, contentDescription = item.label, tint = MaterialTheme.colorScheme.onBackground) },
-                label = { Text(item.label, fontWeight = FontWeight.Medium) },
-                selected = false,
-                onClick = {
-                    onCloseDrawer()
-                    onNavigate(item.route)
-                },
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
-            )
         }
     }
 }
 
-private data class DrawerItem(
+@Composable
+private fun DrawerRow(
+    item: DrawerItemData,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 18.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = item.iconRes),
+            contentDescription = item.label,
+            tint = Color.Unspecified,
+            modifier = Modifier.size(22.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = item.label,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF1E3354),
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier.size(14.dp)
+        )
+    }
+}
+
+private data class DrawerItemData(
     val label: String,
-    val icon: ImageVector,
+    val iconRes: Int,
     val route: String
 )

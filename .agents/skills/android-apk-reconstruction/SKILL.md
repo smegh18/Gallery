@@ -1,3 +1,8 @@
+---
+name: android-apk-reconstruction
+description: Reconstruct the externally observable functionality and visual behavior of an authorized reference Android APK in a clean, maintainable native Android project using MVVM, Jetpack Compose, Room, and verified acceptance criteria.
+---
+
 # Android APK Reconstruction
 
 ## Objective

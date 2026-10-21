@@ -167,7 +167,8 @@ fun GalleryNavHost(
 
         composable(Screen.Cleaner.route) {
             CleanerScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDuplicates = { navController.navigate(Screen.Duplicates.route) }
             )
         }
 

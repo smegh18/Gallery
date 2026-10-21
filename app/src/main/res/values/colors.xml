@@ -24,6 +24,11 @@
     <color name="vaultAccentColor">#ffaa00</color>
 
     <!-- Text & Icon Colors -->
+    <color name="titleColor">#1e3354</color>
+    <color name="subtitleColor">#777777</color>
+    <color name="localization_search_icon">#1d242e</color>
+    <color name="albumOptionBackColor">#f3f7fb</color>
+    <color name="svgArrowColor">#354052</color>
     <color name="textColorPrimary">#1e3354</color>
     <color name="textColorSecondary">#707c93</color>
     <color name="textColorTertiary">#a1a1a1</color>
