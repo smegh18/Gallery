@@ -9,6 +9,8 @@ import albums.gallery.photo.folder.picasa.app.web.gallery.data.repository.MediaR
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.repository.VaultRepository
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.repository.VaultRepositoryImpl
 
+import albums.gallery.photo.folder.picasa.app.web.gallery.data.ads.AdManager
+
 class GalleryApplication : Application() {
 
     val database by lazy { GalleryDatabase.getInstance(this) }
@@ -26,6 +28,7 @@ class GalleryApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        AdManager.initialize(this)
     }
 
     companion object {

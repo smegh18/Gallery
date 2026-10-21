@@ -18,6 +18,7 @@ import albums.gallery.photo.folder.picasa.app.web.gallery.ui.home.HomeViewModel
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.onboarding.WelcomeScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.permission.PermissionScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.recycle.RecycleScreen
+import albums.gallery.photo.folder.picasa.app.web.gallery.ui.search.SearchScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings.LanguageScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings.SettingsScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings.ThemeScreen
@@ -184,6 +185,16 @@ fun GalleryNavHost(
             PhotoEditorScreen(
                 initialPath = path,
                 mediaRepository = app.mediaRepository,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Search.route) {
+            SearchScreen(
+                mediaRepository = app.mediaRepository,
+                onMediaClick = { mediaItem ->
+                    navController.navigate(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
+                },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

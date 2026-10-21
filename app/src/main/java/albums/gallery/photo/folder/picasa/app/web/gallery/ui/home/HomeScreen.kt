@@ -1,5 +1,6 @@
 package albums.gallery.photo.folder.picasa.app.web.gallery.ui.home
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -17,9 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import albums.gallery.photo.folder.picasa.app.web.gallery.data.ads.AdConstants
+import albums.gallery.photo.folder.picasa.app.web.gallery.data.ads.AdManager
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.Album
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.MediaItem
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.SortOrder
+import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.BannerAdView
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.GalleryBottomNav
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.GalleryDrawer
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.GalleryTopBar
@@ -77,7 +81,7 @@ fun HomeScreen(
                         scope.launch { drawerState.open() }
                     },
                     onSearchClick = {
-                        // Toggle or trigger search
+                        onNavigate(Screen.Search.route)
                     },
                     onLockClick = {
                         onNavigate(Screen.VaultLock.route)
@@ -138,10 +142,13 @@ fun HomeScreen(
                         }
                     }
                 } else {
-                    GalleryBottomNav(
-                        selectedTab = uiState.selectedTab,
-                        onTabSelected = { viewModel.setTab(it) }
-                    )
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        BannerAdView(adUnitId = AdConstants.TEST_BANNER_ID)
+                        GalleryBottomNav(
+                            selectedTab = uiState.selectedTab,
+                            onTabSelected = { viewModel.setTab(it) }
+                        )
+                    }
                 }
             }
         ) { paddingValues ->
@@ -154,7 +161,14 @@ fun HomeScreen(
                     0 -> AlbumsTab(
                         albumsList = uiState.albumsList,
                         onAlbumClick = { album ->
-                            onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
+                            val activity = context as? Activity
+                            if (activity != null) {
+                                AdManager.showInterstitial(activity, AdConstants.EVENT_ALBUM_CLICK) {
+                                    onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
+                                }
+                            } else {
+                                onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
+                            }
                         },
                         onFeatureClick = { featureId ->
                             when (featureId) {

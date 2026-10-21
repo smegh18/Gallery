@@ -37,6 +37,7 @@ sealed class Screen(val route: String) {
             return "editor?path=$encoded"
         }
     }
+    data object Search : Screen("search")
     data object Language : Screen("language")
     data object Theme : Screen("theme")
     data object Settings : Screen("settings")

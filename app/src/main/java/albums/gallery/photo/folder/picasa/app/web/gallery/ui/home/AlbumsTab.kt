@@ -30,6 +30,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import albums.gallery.photo.folder.picasa.app.web.gallery.R
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.Album
+import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.NativeAdCard
 import java.io.File
 
 data class TopFeatureItem(
@@ -145,6 +146,14 @@ fun AlbumsTab(
                         }
                     }
                 }
+            }
+        }
+
+        // Native Ad Banner (Reference: flAd in fragment_album.xml)
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(modifier = Modifier.padding(horizontal = 14.dp)) {
+                NativeAdCard()
             }
         }
 
