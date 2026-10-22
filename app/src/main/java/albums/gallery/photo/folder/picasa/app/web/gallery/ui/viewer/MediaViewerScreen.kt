@@ -307,7 +307,7 @@ fun MediaViewerScreen(
                         }
                     }
 
-                    // 3. Edit (Images only)
+                    // 3. Edit (Images) / Add to (Videos) - 5 standard buttons matching reference normalBottomAction
                     if (currentItem.mediaType == MediaType.IMAGE) {
                         IconButton(onClick = {
                             onNavigate(Screen.Editor.createRoute(currentItem.filePath))
@@ -323,23 +323,22 @@ fun MediaViewerScreen(
                                 Text("Edit", color = Color.White, fontSize = 11.sp)
                             }
                         }
-                    }
-
-                    // 4. Add To Album
-                    IconButton(onClick = { showAddToDialog = true }) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_add),
-                                contentDescription = "Add to",
-                                tint = Color.White,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text("Add to", color = Color.White, fontSize = 11.sp)
+                    } else {
+                        IconButton(onClick = { showAddToDialog = true }) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_add),
+                                    contentDescription = "Add to",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text("Add to", color = Color.White, fontSize = 11.sp)
+                            }
                         }
                     }
 
-                    // 5. Delete (Opens reference dialog_delete.xml prompt)
+                    // 4. Delete (Opens reference dialog_delete.xml prompt)
                     IconButton(onClick = { showDeleteDialog = true }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
@@ -353,7 +352,7 @@ fun MediaViewerScreen(
                         }
                     }
 
-                    // 6. More Options (Wallpaper, Details, Rename)
+                    // 5. More Options (Add to, Wallpaper, Rename, Details)
                     Box {
                         IconButton(onClick = { showMoreMenu = true }) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {

@@ -28,9 +28,9 @@ fun ThemeScreen(
     val themeMode by appPreferences.themeMode.collectAsState(initial = 2)
 
     val options = listOf(
-        Triple(0, "Day mode", R.drawable.theme_group_day_mode),
-        Triple(1, "Night mode", R.drawable.theme_group_night_mode),
-        Triple(2, "System default", R.drawable.theme_group_system_mode)
+        Triple(0, "Day Mode", R.drawable.theme_group_day_mode),
+        Triple(1, "Night Mode", R.drawable.theme_group_night_mode),
+        Triple(2, "System Mode", R.drawable.theme_group_system_mode)
     )
 
     Scaffold(

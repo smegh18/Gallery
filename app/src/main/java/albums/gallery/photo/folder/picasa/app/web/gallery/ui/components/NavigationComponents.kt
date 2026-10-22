@@ -179,7 +179,7 @@ fun GalleryBottomNav(
         tonalElevation = 4.dp
     ) {
         val tabs = listOf(
-            Triple(0, "Album", Pair(R.drawable.ic_albums_fill, R.drawable.ic_albums_border)),
+            Triple(0, "Albums", Pair(R.drawable.ic_albums_fill, R.drawable.ic_albums_border)),
             Triple(1, "All Media", Pair(R.drawable.ic_all_media_fill, R.drawable.ic_all_media_border)),
             Triple(2, "Explore", Pair(R.drawable.ic_explore_fill, R.drawable.ic_explore_border))
         )
@@ -248,39 +248,38 @@ fun GalleryDrawer(
                         .fillMaxWidth()
                         .padding(horizontal = 14.dp, vertical = 8.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFFFF7E6))
+                        .background(
+                            androidx.compose.ui.graphics.Brush.horizontalGradient(
+                                listOf(Color(0xFFC78E00), Color(0xFFE4A324))
+                            )
+                        )
                         .clickable {
                             onCloseDrawer()
                         }
-                        .padding(14.dp)
+                        .padding(horizontal = 14.dp, vertical = 12.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_pro_new),
-                            contentDescription = "Pro",
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(32.dp)
+                        androidx.compose.foundation.Image(
+                            painter = painterResource(id = R.drawable.premium),
+                            contentDescription = "Go Ads Free",
+                            modifier = Modifier.size(46.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Go Premium",
+                                text = "Go Ads Free!",
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFFD48806),
-                                fontSize = 15.sp
+                                color = Color(0xFF873900),
+                                fontSize = 16.sp
                             )
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Unlock all powerful features",
-                                color = Color(0xFF8C6B23),
-                                fontSize = 12.sp
+                                text = "Unlock everything & enjoy the ultimate ad-free experience.",
+                                color = Color(0xFF873900),
+                                fontSize = 11.sp,
+                                lineHeight = 14.sp
                             )
                         }
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
-                            contentDescription = null,
-                            tint = Color(0xFFD48806),
-                            modifier = Modifier.size(16.dp)
-                        )
                     }
                 }
 
@@ -288,16 +287,19 @@ fun GalleryDrawer(
 
                 // 2. Reference Drawer Items
                 val drawerItems = listOf(
-                    DrawerItemData("Favorites", R.drawable.ic_favorite, "favorites"),
-                    DrawerItemData("Create Album", R.drawable.ic_create_album, "create_album"),
-                    DrawerItemData("Recycle Bin", R.drawable.ic_delete, "recycle"),
-                    DrawerItemData("System Cleaner", R.drawable.ic_drawer_cleaner, "cleaner"),
-                    DrawerItemData("Duplicate Photos", R.drawable.ic_duplicate, "duplicates"),
-                    DrawerItemData("Private Vault", R.drawable.ic_unhide, "vault"),
-                    DrawerItemData("AI Photo Editor", R.drawable.ic_drawer_editor, "editor"),
-                    DrawerItemData("Change App Language", R.drawable.ic_app_language, "language"),
-                    DrawerItemData("Theme Mode", R.drawable.ic_theme_mode, "theme"),
-                    DrawerItemData("Settings", R.drawable.ic_settings, "settings")
+                    DrawerItemData("Favorites", R.drawable.ic_favorite, "favorites", hasArrow = true),
+                    DrawerItemData("Create Album", R.drawable.ic_create_album, "create_album", hasArrow = false),
+                    DrawerItemData("Recycle Bin", R.drawable.ic_delete, "recycle", hasArrow = true),
+                    DrawerItemData("System Cleaner", R.drawable.ic_drawer_cleaner, "cleaner", hasArrow = true, badgeText = "New"),
+                    DrawerItemData("Duplicate Finder", R.drawable.ic_duplicate, "duplicates", hasArrow = true),
+                    DrawerItemData("Private Vault", R.drawable.ic_unhide, "vault", hasArrow = true),
+                    DrawerItemData("Ai Photo Editor", R.drawable.ic_drawer_editor, "editor", hasArrow = true),
+                    DrawerItemData("Change Language", R.drawable.ic_app_language, "language", hasArrow = true),
+                    DrawerItemData("Theme Mode", R.drawable.ic_theme_mode, "theme", hasArrow = true),
+                    DrawerItemData("Settings", R.drawable.ic_settings, "settings", hasArrow = true, hasDot = true),
+                    DrawerItemData("Games", R.drawable.ic_game, "games", hasArrow = false, isAdBadge = true),
+                    DrawerItemData("More Apps", R.drawable.ic_more_apps, "more_apps", hasArrow = false, isAdBadge = true),
+                    DrawerItemData("About Us", R.drawable.ic_about, "about", hasArrow = false)
                 )
 
                 drawerItems.forEach { item ->
@@ -313,20 +315,6 @@ fun GalleryDrawer(
                         }
                     )
                 }
-
-                HorizontalDivider(
-                    color = Color(0xFFE4E6E9),
-                    thickness = 1.dp,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-
-                DrawerRow(
-                    item = DrawerItemData("About Us", R.drawable.ic_about, "about"),
-                    onClick = {
-                        onCloseDrawer()
-                        onNavigate("about")
-                    }
-                )
             }
 
             // 3. Social Footer (Reference followUsLayout)
@@ -389,12 +377,23 @@ private fun DrawerRow(
             .padding(horizontal = 18.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = item.iconRes),
-            contentDescription = item.label,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(22.dp)
-        )
+        Box {
+            Icon(
+                painter = painterResource(id = item.iconRes),
+                contentDescription = item.label,
+                tint = Color.Unspecified,
+                modifier = Modifier.size(22.dp)
+            )
+            if (item.hasDot) {
+                Box(
+                    modifier = Modifier
+                        .size(7.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFFF3B30))
+                        .align(Alignment.TopEnd)
+                )
+            }
+        }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = item.label,
@@ -403,17 +402,48 @@ private fun DrawerRow(
             color = Color(0xFF1E3354),
             modifier = Modifier.weight(1f)
         )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(14.dp)
-        )
+        if (item.badgeText != null) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(0xFFFF1414))
+                    .padding(horizontal = 8.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = item.badgeText,
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            Spacer(modifier = Modifier.width(6.dp))
+        }
+        if (item.isAdBadge) {
+            Text(
+                text = "AD",
+                color = Color(0xFF597393),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(end = 4.dp)
+            )
+        }
+        if (item.hasArrow) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.size(14.dp)
+            )
+        }
     }
 }
 
 private data class DrawerItemData(
     val label: String,
     val iconRes: Int,
-    val route: String
+    val route: String,
+    val hasArrow: Boolean = true,
+    val badgeText: String? = null,
+    val isAdBadge: Boolean = false,
+    val hasDot: Boolean = false
 )

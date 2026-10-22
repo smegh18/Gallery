@@ -86,13 +86,13 @@ fun LanguageScreen(
                     }
                 },
                 actions = {
-                    // Reference toolbarIvTick with bg_rounded_red and ic_done_bold
+                    // Reference toolbarIvTick with bg_rounded_red (backgroundTint="@color/colorPrimary") and ic_done_bold
                     Box(
                         modifier = Modifier
                             .padding(end = 12.dp)
                             .size(width = 54.dp, height = 30.dp)
                             .clip(RoundedCornerShape(15.dp))
-                            .background(Color(0xFFE11A1A))
+                            .background(GalleryBlue)
                             .clickable {
                                 scope.launch {
                                     appPreferences.setLanguage(selectedLanguage)

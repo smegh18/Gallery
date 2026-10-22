@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Folder
@@ -93,7 +94,38 @@ fun AlbumsTab(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+
+        // Stories Strip (Reference: llStoryView / storyRecycler in fragment_album.xml)
+        if (albumsList.isNotEmpty()) {
+            item {
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    val recentAlbum = albumsList.firstOrNull()
+                    val randomAlbum = albumsList.getOrNull(1) ?: recentAlbum
+
+                    item {
+                        StoryCircleItem(
+                            title = "Recent",
+                            imagePath = recentAlbum?.coverPath ?: "",
+                            onClick = { recentAlbum?.let(onAlbumClick) }
+                        )
+                    }
+                    item {
+                        StoryCircleItem(
+                            title = "Random",
+                            imagePath = randomAlbum?.coverPath ?: "",
+                            onClick = { randomAlbum?.let(onAlbumClick) }
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(6.dp))
+            }
         }
 
         // 2. Albums Grid (3 columns reconstructed in LazyColumn chunks)
@@ -304,10 +336,70 @@ fun AlbumCard(
         )
 
         Text(
-            text = "${album.itemCount} items",
+            text = "${album.itemCount}",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = Color(0xFF707C93),
             fontSize = 11.sp
+        )
+    }
+}
+
+@Composable
+private fun StoryCircleItem(
+    title: String,
+    imagePath: String,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
+    Column(
+        modifier = Modifier
+            .width(68.dp)
+            .clickable(onClick = onClick)
+            .padding(vertical = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(60.dp)
+                .clip(CircleShape)
+                .background(
+                    androidx.compose.ui.graphics.Brush.linearGradient(
+                        listOf(Color(0xFF3478F6), Color(0xFFFF5252))
+                    )
+                )
+                .padding(2.5.dp)
+                .clip(CircleShape)
+                .background(Color.White)
+                .padding(2.dp)
+                .clip(CircleShape)
+        ) {
+            if (imagePath.isNotEmpty()) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(File(imagePath))
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFE4E6E9))
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = title,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF1E3354),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
         )
     }
 }

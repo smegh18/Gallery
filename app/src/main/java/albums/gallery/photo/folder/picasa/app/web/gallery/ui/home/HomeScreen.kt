@@ -26,6 +26,8 @@ import albums.gallery.photo.folder.picasa.app.web.gallery.data.ads.AdConstants
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.ads.AdManager
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.Album
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.MediaItem
+import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.SortDirection
+import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.SortField
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.SortOrder
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.BannerAdView
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.GalleryBottomNav
@@ -65,6 +67,11 @@ fun HomeScreen(
                         "language" -> onNavigate(Screen.Language.route)
                         "theme" -> onNavigate(Screen.Theme.route)
                         "settings" -> onNavigate(Screen.Settings.route)
+                        "about" -> onNavigate(Screen.About.route)
+                        "games", "more_apps" -> {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps"))
+                            try { context.startActivity(intent) } catch (_: Exception) {}
+                        }
                     }
                 },
                 onCreateAlbumClick = {
@@ -99,12 +106,14 @@ fun HomeScreen(
                         // Pro feature
                     },
                     onSortClick = if (uiState.selectedTab == 1) { { showSortDialog = true } } else null,
-                    onCameraClick = {
-                        val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-                        if (cameraIntent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(cameraIntent)
+                    onCameraClick = if (uiState.selectedTab == 0) {
+                        {
+                            val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                            if (cameraIntent.resolveActivity(context.packageManager) != null) {
+                                context.startActivity(cameraIntent)
+                            }
                         }
-                    },
+                    } else null,
                     isSelectionMode = uiState.isSelectionMode,
                     selectedCount = uiState.selectedPaths.size,
                     onSelectAllClick = { viewModel.selectAll() },
@@ -233,36 +242,78 @@ fun HomeScreen(
     }
 
     if (showSortDialog) {
+        var tempField by remember { mutableStateOf(uiState.sortOrder.field) }
+        var tempDirection by remember { mutableStateOf(uiState.sortOrder.direction) }
+
         AlertDialog(
             onDismissRequest = { showSortDialog = false },
-            title = { Text("Sort Media By") },
+            title = {
+                Text(
+                    text = "Sort by",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E3354)
+                )
+            },
             text = {
                 Column {
-                    val options = listOf(
-                        "Date (Newest first)" to SortOrder.DATE_DESC,
-                        "Date (Oldest first)" to SortOrder.DATE_ASC,
-                        "Name (A-Z)" to SortOrder.NAME_ASC,
-                        "Name (Z-A)" to SortOrder.NAME_DESC,
-                        "Size (Largest first)" to SortOrder.SIZE_DESC,
-                        "Size (Smallest first)" to SortOrder.SIZE_ASC
+                    val fieldOptions = listOf(
+                        "Last Modified" to SortField.DATE_MODIFIED,
+                        "File Name" to SortField.NAME,
+                        "File Size" to SortField.SIZE,
+                        "Created Date" to SortField.DATE_TAKEN
                     )
-                    options.forEach { (label, order) ->
+                    fieldOptions.forEach { (label, field) ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp)
+                                .clickable { tempField = field }
+                                .padding(vertical = 2.dp)
                         ) {
                             RadioButton(
-                                selected = uiState.sortOrder == order,
-                                onClick = {
-                                    viewModel.setSortOrder(order)
-                                    showSortDialog = false
-                                }
+                                selected = tempField == field,
+                                onClick = { tempField = field },
+                                colors = RadioButtonDefaults.colors(selectedColor = GalleryBlue)
                             )
                             Text(
                                 text = label,
                                 style = MaterialTheme.typography.bodyMedium,
+                                color = if (tempField == field) GalleryBlue else Color(0xFF1E3354),
+                                fontWeight = if (tempField == field) FontWeight.SemiBold else FontWeight.Normal,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    }
+
+                    HorizontalDivider(
+                        color = Color(0xFFE4E6E9),
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(vertical = 6.dp)
+                    )
+
+                    val directionOptions = listOf(
+                        "Ascending Order" to SortDirection.ASCENDING,
+                        "Descending Order" to SortDirection.DESCENDING
+                    )
+                    directionOptions.forEach { (label, direction) ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { tempDirection = direction }
+                                .padding(vertical = 2.dp)
+                        ) {
+                            RadioButton(
+                                selected = tempDirection == direction,
+                                onClick = { tempDirection = direction },
+                                colors = RadioButtonDefaults.colors(selectedColor = GalleryBlue)
+                            )
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (tempDirection == direction) GalleryBlue else Color(0xFF1E3354),
+                                fontWeight = if (tempDirection == direction) FontWeight.SemiBold else FontWeight.Normal,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
@@ -270,10 +321,26 @@ fun HomeScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showSortDialog = false }) {
-                    Text("Close")
+                Button(
+                    onClick = {
+                        viewModel.setSortOrder(SortOrder(tempField, tempDirection))
+                        showSortDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text("Ok", color = Color.White, fontWeight = FontWeight.SemiBold)
                 }
-            }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showSortDialog = false }
+                ) {
+                    Text("Cancel", color = Color(0xFF707C93), fontWeight = FontWeight.Medium)
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 

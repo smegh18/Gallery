@@ -25,11 +25,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import albums.gallery.photo.folder.picasa.app.web.gallery.R
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.MediaItem
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.MediaType
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.theme.GalleryBlue
@@ -138,8 +140,7 @@ fun PhotoGridItem(
     Box(
         modifier = Modifier
             .aspectRatio(1f)
-            .padding(1.5.dp)
-            .clip(RoundedCornerShape(2.dp))
+            .padding(0.5.dp)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .combinedClickable(
                 onClick = onClick,
@@ -156,54 +157,51 @@ fun PhotoGridItem(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Overlay for video badge or duration
+        // Overlay for video badge or duration (Reference item_grid_gallery.xml)
         if (item.mediaType == MediaType.VIDEO) {
-            Box(
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
+                    .align(Alignment.BottomStart)
+                    .padding(start = 4.dp, bottom = 4.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_media_video),
+                    contentDescription = "Video",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = formatDuration(item.durationMs),
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    style = androidx.compose.ui.text.TextStyle(
+                        shadow = androidx.compose.ui.graphics.Shadow(
+                            color = Color.Black,
+                            offset = androidx.compose.ui.geometry.Offset(2f, 2f),
+                            blurRadius = 4f
                         )
                     )
-                    .padding(horizontal = 4.dp, vertical = 2.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.align(Alignment.BottomEnd)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Video",
-                        tint = Color.White,
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(
-                        text = formatDuration(item.durationMs),
-                        color = Color.White,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                )
             }
         }
 
-        // Favorite icon badge
+        // Favorite icon badge (Reference item_grid_gallery.xml layout_gravity="end|bottom")
         if (item.isFavorite) {
             Icon(
-                imageVector = Icons.Default.Favorite,
+                painter = painterResource(id = R.drawable.ic_common_fav),
                 contentDescription = "Favorite",
-                tint = Color(0xFFFF4D4F),
+                tint = Color.Unspecified,
                 modifier = Modifier
-                    .size(14.dp)
-                    .align(Alignment.TopStart)
+                    .size(20.dp)
+                    .align(Alignment.BottomEnd)
                     .padding(2.dp)
             )
         }
 
-        // Selection overlay and badge
+        // Selection overlay and badge (Reference item_grid_gallery.xml layout_gravity="end")
         if (isSelectionMode) {
             Box(
                 modifier = Modifier
@@ -211,29 +209,17 @@ fun PhotoGridItem(
                     .background(if (isSelected) GalleryBlue.copy(alpha = 0.35f) else Color.Transparent)
             )
 
-            Box(
+            Icon(
+                painter = painterResource(
+                    id = if (isSelected) R.drawable.ic_check else R.drawable.ic_un_check
+                ),
+                contentDescription = if (isSelected) "Selected" else "Not selected",
+                tint = Color.Unspecified,
                 modifier = Modifier
+                    .size(24.dp)
                     .align(Alignment.TopEnd)
-                    .padding(4.dp)
-            ) {
-                if (isSelected) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Selected",
-                        tint = GalleryBlue,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .background(Color.White, CircleShape)
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Outlined.Circle,
-                        contentDescription = "Not selected",
-                        tint = Color.White.copy(alpha = 0.8f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
+                    .padding(2.dp)
+            )
         }
     }
 }
@@ -251,11 +237,8 @@ fun formatGroupHeader(timestamp: Long): String {
         now.get(Calendar.YEAR) == itemCal.get(Calendar.YEAR) &&
         now.get(Calendar.DAY_OF_YEAR) - itemCal.get(Calendar.DAY_OF_YEAR) == 1 -> "Yesterday"
 
-        now.get(Calendar.YEAR) == itemCal.get(Calendar.YEAR) -> {
-            SimpleDateFormat("MMMM d", Locale.getDefault()).format(date)
-        }
         else -> {
-            SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(date)
+            SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(date)
         }
     }
 }
