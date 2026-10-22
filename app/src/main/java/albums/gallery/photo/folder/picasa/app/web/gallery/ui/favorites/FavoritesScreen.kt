@@ -1,21 +1,27 @@
 package albums.gallery.photo.folder.picasa.app.web.gallery.ui.favorites
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import albums.gallery.photo.folder.picasa.app.web.gallery.R
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.repository.MediaRepository
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.home.PhotoGridItem
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.navigation.Screen
+import albums.gallery.photo.folder.picasa.app.web.gallery.ui.theme.GalleryBlue
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,21 +30,143 @@ fun FavoritesScreen(
     onNavigate: (String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     val favorites by mediaRepository.getFavoritesFlow().collectAsState(initial = emptyList())
+    var selectedPaths by remember { mutableStateOf(setOf<String>()) }
+    val isSelectionMode = selectedPaths.isNotEmpty()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Favorites", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = if (isSelectionMode) "${selectedPaths.size} items selected" else "Favorites",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        color = Color(0xFF1E3354)
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                    IconButton(
+                        onClick = {
+                            if (isSelectionMode) {
+                                selectedPaths = emptySet()
+                            } else {
+                                onNavigateBack()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = if (isSelectionMode) R.drawable.ic_close else R.drawable.ic_back),
+                            contentDescription = if (isSelectionMode) "Close" else "Back",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                actions = {
+                    if (isSelectionMode) {
+                        TextButton(
+                            onClick = {
+                                selectedPaths = if (selectedPaths.size == favorites.size) {
+                                    emptySet()
+                                } else {
+                                    favorites.map { it.filePath }.toSet()
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = if (selectedPaths.size == favorites.size) "Deselect" else "Select All",
+                                fontWeight = FontWeight.SemiBold,
+                                color = GalleryBlue
+                            )
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        },
+        bottomBar = {
+            if (isSelectionMode) {
+                Surface(
+                    tonalElevation = 8.dp,
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 32.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Unfavorite Action
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .clickable {
+                                    scope.launch {
+                                        selectedPaths.forEach { path ->
+                                            mediaRepository.setFavorite(path, false)
+                                        }
+                                        selectedPaths = emptySet()
+                                    }
+                                }
+                                .padding(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_home_select_fav),
+                                contentDescription = "Unfavorite",
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Remove",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xFF1E3354)
+                            )
+                        }
+
+                        // Delete Action (moves to recycle bin)
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .clickable {
+                                    scope.launch {
+                                        selectedPaths.forEach { path ->
+                                            mediaRepository.moveToTrash(path)
+                                        }
+                                        selectedPaths = emptySet()
+                                    }
+                                }
+                                .padding(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_album_select_delete),
+                                contentDescription = "Delete",
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Delete",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xFF1E3354)
+                            )
+                        }
                     }
                 }
-            )
-        }
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         if (favorites.isEmpty()) {
+            // Reference emptyLayout matching activity_favorite.xml
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -47,26 +175,28 @@ fun FavoritesScreen(
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(32.dp)
+                    modifier = Modifier.padding(horizontal = 40.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.FavoriteBorder,
+                        painter = painterResource(id = R.drawable.ic_empty_img),
                         contentDescription = null,
-                        modifier = Modifier.size(72.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(100.dp)
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "No Favorites Yet",
-                        style = MaterialTheme.typography.titleMedium,
+                        text = "No Favorites",
+                        fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color(0xFF1E3354)
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Star photos or videos in the viewer to view them quickly here.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Add your favorite photos and videos here to view them quickly.",
+                        fontSize = 13.sp,
+                        color = Color(0xFF707C93),
+                        textAlign = TextAlign.Center,
+                        lineHeight = 18.sp
                     )
                 }
             }
@@ -79,14 +209,27 @@ fun FavoritesScreen(
                     .padding(paddingValues)
             ) {
                 items(favorites, key = { it.filePath }) { item ->
+                    val isSelected = item.filePath in selectedPaths
                     PhotoGridItem(
                         item = item,
-                        isSelected = false,
-                        isSelectionMode = false,
+                        isSelected = isSelected,
+                        isSelectionMode = isSelectionMode,
                         onClick = {
-                            onNavigate(Screen.MediaViewer.createRoute(item.filePath, item.folderPath))
+                            if (isSelectionMode) {
+                                selectedPaths = if (isSelected) {
+                                    selectedPaths - item.filePath
+                                } else {
+                                    selectedPaths + item.filePath
+                                }
+                            } else {
+                                onNavigate(Screen.MediaViewer.createRoute(item.filePath, item.folderPath))
+                            }
                         },
-                        onLongClick = {}
+                        onLongClick = {
+                            if (!isSelectionMode) {
+                                selectedPaths = setOf(item.filePath)
+                            }
+                        }
                     )
                 }
             }

@@ -8,35 +8,29 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import albums.gallery.photo.folder.picasa.app.web.gallery.R
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.repository.MediaRepository
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.MediaItem
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.MediaType
-import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.BannerAdView
+import albums.gallery.photo.folder.picasa.app.web.gallery.ui.home.PhotoGridItem
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.theme.GalleryBlue
-import java.io.File
 
 val SEARCH_COLORS = listOf(
     Color(0xFFF2F2F2),
@@ -51,7 +45,6 @@ val SEARCH_COLORS = listOf(
     Color(0xFF008625)
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     mediaRepository: MediaRepository,
@@ -78,11 +71,9 @@ fun SearchScreen(
                 else -> true
             }
 
-            // In reference app, color search filters items by sampled palette
             val matchesColor = if (selectedColorIndex == null) {
                 true
             } else {
-                // Deterministic color bucket hash for demonstration parity
                 (Math.abs(item.filePath.hashCode()) % SEARCH_COLORS.size) == selectedColorIndex
             }
 
@@ -92,96 +83,155 @@ fun SearchScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    TextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        placeholder = { Text("Search photos, videos, albums...") },
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        trailingIcon = {
-                            if (searchQuery.isNotEmpty()) {
-                                IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Clear")
-                                }
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                },
-                navigationIcon = {
+            // Reference layout_search_toolbar.xml
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .statusBarsPadding()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = "Back",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
-            )
+
+                    // Search Input Box (search_back background)
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color(0xFFF3F6FC))
+                            .padding(horizontal = 14.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            BasicTextField(
+                                value = searchQuery,
+                                onValueChange = { searchQuery = it },
+                                singleLine = true,
+                                textStyle = TextStyle(
+                                    fontSize = 14.sp,
+                                    color = Color(0xFF1E3354),
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                cursorBrush = SolidColor(GalleryBlue),
+                                modifier = Modifier.weight(1f),
+                                decorationBox = { innerTextField ->
+                                    if (searchQuery.isEmpty()) {
+                                        Text(
+                                            text = "Search",
+                                            fontSize = 14.sp,
+                                            color = Color(0xFF99A4B6)
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            )
+
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(
+                                    onClick = { searchQuery = "" },
+                                    modifier = Modifier.size(20.dp)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_close),
+                                        contentDescription = "Clear",
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            } else {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_search_common),
+                                    contentDescription = "Search",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
+
+                HorizontalDivider(
+                    color = Color(0xFFE4E6E9),
+                    thickness = 1.dp
+                )
+            }
         },
-        bottomBar = {
-            BannerAdView()
-        }
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
         ) {
-            // 1. Color Swatches Bar (Reference colorLay in activity_search.xml)
+            // Colors Section matching activity_search.xml
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 6.dp)
+                    .padding(top = 10.dp)
             ) {
                 Text(
                     text = "Colors",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E3354)
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1E3354),
+                    modifier = Modifier.padding(horizontal = 14.dp)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 14.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     item {
+                        // Color picker reset / wheel icon
                         Box(
                             modifier = Modifier
-                                .size(34.dp)
+                                .size(36.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFF3F7FB))
-                                .clickable { selectedColorIndex = null }
-                                .padding(4.dp),
+                                .clickable { selectedColorIndex = null },
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_search_color_picker),
                                 contentDescription = "All Colors",
-                                tint = if (selectedColorIndex == null) GalleryBlue else Color.Gray,
-                                modifier = Modifier.size(20.dp)
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(32.dp)
                             )
                         }
                     }
 
-                    items(SEARCH_COLORS.indices.toList()) { index ->
-                        val color = SEARCH_COLORS[index]
+                    itemsIndexed(SEARCH_COLORS) { index, color ->
                         val isSelected = selectedColorIndex == index
                         Box(
                             modifier = Modifier
-                                .size(34.dp)
+                                .size(32.dp)
                                 .clip(CircleShape)
                                 .background(color)
                                 .border(
                                     width = if (isSelected) 3.dp else 1.dp,
-                                    color = if (isSelected) GalleryBlue else Color(0xFFE4E6E9),
+                                    color = if (isSelected) GalleryBlue else Color(0xFFD0D7DE),
                                     shape = CircleShape
                                 )
                                 .clickable {
@@ -190,19 +240,21 @@ fun SearchScreen(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                HorizontalDivider(
+                    color = Color(0xFFE4E6E9),
+                    thickness = 0.5.dp,
+                    modifier = Modifier.padding(horizontal = 14.dp)
+                )
             }
 
-            HorizontalDivider(
-                color = Color(0xFFE4E6E9),
-                thickness = 0.5.dp,
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-            )
-
-            // 2. Filter Chips
+            // Filter Chips (All, Photos, Videos)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 4.dp),
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 listOf("All", "Photos", "Videos").forEach { chip ->
@@ -219,74 +271,57 @@ fun SearchScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // 3. Search Results Grid or Empty State
+            // Results Grid or Empty Layout
             if (filteredList.isEmpty()) {
+                // Empty Layout matching activity_search.xml emptyLayout
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(32.dp),
+                        .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        modifier = Modifier.padding(horizontal = 40.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.SearchOff,
+                            painter = painterResource(id = R.drawable.ic_empty_img),
                             contentDescription = null,
-                            tint = Color(0xFF707C93).copy(alpha = 0.5f),
-                            modifier = Modifier.size(64.dp)
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(100.dp)
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
                         Text(
                             text = "Oops!",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF1E3354)
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No matching photos or videos found.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF7D90A3)
+                            text = "No results found for your search",
+                            fontSize = 13.sp,
+                            color = Color(0xFF707C93),
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
             } else {
-                Text(
-                    text = "${filteredList.size} items found",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF7D90A3),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
-
-                val context = LocalContext.current
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     contentPadding = PaddingValues(2.dp),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
                 ) {
                     items(filteredList, key = { it.filePath }) { item ->
-                        Box(
-                            modifier = Modifier
-                                .aspectRatio(1f)
-                                .padding(1.5.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .clickable { onMediaClick(item) }
-                        ) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(File(item.filePath))
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = item.fileName,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
+                        PhotoGridItem(
+                            item = item,
+                            isSelected = false,
+                            isSelectionMode = false,
+                            onClick = { onMediaClick(item) },
+                            onLongClick = {}
+                        )
                     }
                 }
             }

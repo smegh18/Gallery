@@ -19,6 +19,7 @@ import albums.gallery.photo.folder.picasa.app.web.gallery.ui.onboarding.WelcomeS
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.permission.PermissionScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.recycle.RecycleScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.search.SearchScreen
+import albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings.AboutScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings.LanguageScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings.SettingsScreen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings.ThemeScreen
@@ -221,6 +222,12 @@ fun GalleryNavHost(
             SettingsScreen(
                 appPreferences = app.preferences,
                 onNavigate = { route -> navController.navigate(route) },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.About.route) {
+            AboutScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }

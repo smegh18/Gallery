@@ -1,19 +1,24 @@
 package albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings
 
+import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import albums.gallery.photo.folder.picasa.app.web.gallery.R
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.local.datastore.AppPreferences
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.navigation.Screen
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.theme.GalleryBlue
@@ -26,166 +31,292 @@ fun SettingsScreen(
     onNavigate: (String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
     val autoDeleteTrash by appPreferences.autoDeleteTrash.collectAsState(initial = true)
-    val colCount by appPreferences.mediaColCount.collectAsState(initial = 4)
+
+    fun shareApp() {
+        try {
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, "Check out Gallery app: https://play.google.com/store/apps/details?id=${context.packageName}")
+                type = "text/plain"
+            }
+            context.startActivity(Intent.createChooser(sendIntent, "Share Gallery"))
+        } catch (_: Exception) {
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = "Settings",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        color = Color(0xFF1E3354)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = "Back",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .verticalScroll(scrollState)
         ) {
-            Text(
-                text = "Preferences",
-                style = MaterialTheme.typography.titleSmall,
-                color = GalleryBlue,
-                fontWeight = FontWeight.Bold
-            )
-
-            // Auto-delete trash toggle
-            Card(
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            // 1. Go Premium Banner (layout_settings_premium)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFFFF7E6))
+                    .clickable { }
+                    .padding(14.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_pro_new),
+                        contentDescription = "Pro",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Auto-Delete Trash",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
+                            text = "Go Premium",
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFD48806),
+                            fontSize = 15.sp
                         )
                         Text(
-                            text = "Permanently delete items in recycle bin after 30 days",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = "Unlock all powerful features & remove ads",
+                            color = Color(0xFF8C6B23),
+                            fontSize = 12.sp
                         )
                     }
-                    Switch(
-                        checked = autoDeleteTrash,
-                        onCheckedChange = { checked ->
-                            scope.launch { appPreferences.setAutoDeleteTrash(checked) }
-                        },
-                        colors = SwitchDefaults.colors(checkedThumbColor = GalleryBlue, checkedTrackColor = GalleryBlue.copy(alpha = 0.5f))
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
+                        contentDescription = null,
+                        tint = Color(0xFFD48806),
+                        modifier = Modifier.size(16.dp)
                     )
                 }
             }
 
-            // Theme selector card
-            SettingsNavCard(
-                title = "Theme",
-                subtitle = "Choose light, dark, or system default mode",
-                icon = Icons.Outlined.BrightnessMedium,
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // 2. Settings Items matching activity_setting.xml
+            SettingNavRow(
+                iconRes = R.drawable.ic_theme_mode,
+                title = "Theme Mode",
                 onClick = { onNavigate(Screen.Theme.route) }
             )
+            SettingDivider()
 
-            // Language selector card
-            SettingsNavCard(
-                title = "Language",
-                subtitle = "Select application interface language",
-                icon = Icons.Outlined.Language,
+            SettingNavRow(
+                iconRes = R.drawable.ic_unhide,
+                title = "Private Vault",
+                onClick = { onNavigate(Screen.VaultLock.route) }
+            )
+            SettingDivider()
+
+            SettingNavRow(
+                iconRes = R.drawable.ic_app_language,
+                title = "App Languages",
                 onClick = { onNavigate(Screen.Language.route) }
             )
+            SettingDivider()
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "About",
-                style = MaterialTheme.typography.titleSmall,
-                color = GalleryBlue,
-                fontWeight = FontWeight.Bold
+            SettingNavRow(
+                iconRes = R.drawable.ic_iu_control,
+                title = "IU Monitoring",
+                showDot = true,
+                onClick = { }
             )
+            SettingDivider()
 
-            Card(
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier.fillMaxWidth()
+            SettingNavRow(
+                iconRes = R.drawable.ic_manage_subscription,
+                title = "My Subscription",
+                onClick = { }
+            )
+            SettingDivider()
+
+            SettingNavRow(
+                iconRes = R.drawable.ic_about,
+                title = "About Us",
+                onClick = { onNavigate(Screen.About.route) }
+            )
+            SettingDivider()
+
+            SettingNavRow(
+                iconRes = R.drawable.ic_revoke_consent,
+                title = "Revoke Consent",
+                onClick = { }
+            )
+            SettingDivider()
+
+            SettingNavRow(
+                iconRes = R.drawable.ic_rate,
+                title = "Rate Us with 5 Stars",
+                showArrow = false,
+                onClick = { }
+            )
+            SettingDivider()
+
+            SettingNavRow(
+                iconRes = R.drawable.ic_setting_share,
+                title = "Share",
+                showArrow = false,
+                onClick = { shareApp() }
+            )
+            SettingDivider()
+
+            SettingNavRow(
+                iconRes = R.drawable.ic_game_setting,
+                title = "Play Games",
+                showArrow = false,
+                onClick = { }
+            )
+            SettingDivider()
+
+            SettingNavRow(
+                iconRes = R.drawable.ic_quiz_setting,
+                title = "Quiz",
+                showArrow = false,
+                onClick = { }
+            )
+            SettingDivider()
+
+            // 3. Recycle Bin Section
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                text = "Recycle Bin",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF707C93),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_delete),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(14.dp))
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Gallery Photos & Videos",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
+                        text = "Auto delete after 30 days",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF1E3354)
                     )
                     Text(
-                        text = "Version 2.6.7 (146)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = "Fast, lightweight, offline photo gallery with secure vault and photo editor.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Remove items that have been in the Recycle bin for more than 30 days",
+                        fontSize = 12.sp,
+                        color = Color(0xFF707C93)
                     )
                 }
+                Switch(
+                    checked = autoDeleteTrash,
+                    onCheckedChange = { checked ->
+                        scope.launch { appPreferences.setAutoDeleteTrash(checked) }
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = GalleryBlue
+                    )
+                )
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
 
 @Composable
-fun SettingsNavCard(
+private fun SettingNavRow(
+    iconRes: Int,
     title: String,
-    subtitle: String,
-    icon: ImageVector,
+    showArrow: Boolean = true,
+    showDot: Boolean = false,
     onClick: () -> Unit
 ) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 15.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Box {
             Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = GalleryBlue,
+                painter = painterResource(id = iconRes),
+                contentDescription = title,
+                tint = Color.Unspecified,
                 modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+            if (showDot) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color(0xFFE11A1A))
+                        .align(Alignment.TopEnd)
                 )
             }
+        }
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(
+            text = title,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF1E3354),
+            modifier = Modifier.weight(1f)
+        )
+        if (showArrow) {
             Icon(
-                imageVector = Icons.Default.ChevronRight,
+                painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = Color(0xFF8C9BAE),
+                modifier = Modifier.size(14.dp)
             )
         }
     }
+}
+
+@Composable
+private fun SettingDivider() {
+    HorizontalDivider(
+        color = Color(0xFFF2F4F7),
+        thickness = 1.dp,
+        modifier = Modifier.padding(horizontal = 14.dp)
+    )
 }

@@ -41,4 +41,5 @@ sealed class Screen(val route: String) {
     data object Language : Screen("language")
     data object Theme : Screen("theme")
     data object Settings : Screen("settings")
+    data object About : Screen("about")
 }

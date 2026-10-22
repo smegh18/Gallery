@@ -2,15 +2,18 @@ package albums.gallery.photo.folder.picasa.app.web.gallery.ui.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import albums.gallery.photo.folder.picasa.app.web.gallery.R
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.local.datastore.AppPreferences
 import kotlinx.coroutines.launch
 
@@ -21,63 +24,91 @@ fun ThemeScreen(
     onNavigateBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
     val themeMode by appPreferences.themeMode.collectAsState(initial = 2)
 
     val options = listOf(
-        0 to "Light Mode",
-        1 to "Dark Mode",
-        2 to "System Default"
+        Triple(0, "Day mode", R.drawable.theme_group_day_mode),
+        Triple(1, "Night mode", R.drawable.theme_group_night_mode),
+        Triple(2, "System default", R.drawable.theme_group_system_mode)
     )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Theme", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = "Theme Mode",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        color = Color(0xFF1E3354)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = "Back",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .verticalScroll(scrollState)
         ) {
-            options.forEach { (mode, label) ->
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            Spacer(modifier = Modifier.height(8.dp))
+
+            options.forEach { (mode, label, iconRes) ->
+                val isSelected = themeMode == mode
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
                             scope.launch { appPreferences.setThemeMode(mode) }
                         }
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = themeMode == mode,
-                            onClick = {
-                                scope.launch { appPreferences.setThemeMode(mode) }
-                            }
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = label,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = label,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF010101),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        painter = painterResource(
+                            id = if (isSelected) R.drawable.ic_theme_select else R.drawable.ic_theme_unselect
+                        ),
+                        contentDescription = if (isSelected) "Selected" else "Unselected",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
+
+                HorizontalDivider(
+                    color = Color(0xFFF2F4F7),
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(horizontal = 14.dp)
+                )
             }
         }
     }

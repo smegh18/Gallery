@@ -53,4 +53,23 @@
     <color name="home_collage_new_btn">#ff4d4f</color>
     <color name="drawer_bottom_trans_text">#707c93</color>
     <color name="actionbarDividerColor">#e4e6e9</color>
+
+    <!-- Additional Reference Colors -->
+    <color name="dark_blue">#0066ff</color>
+    <color name="ic_lock_color">#0066ff</color>
+    <color name="lang_unchecked_and_checked_color">#222933</color>
+    <color name="red">#e11a1a</color>
+    <color name="ripple_color">#40000000</color>
+    <color name="sticker_search_color">#f3f6fc</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="white">#ffffff</color>
+    <color name="about_divider">#dbe2f3</color>
+    <color name="about_text">#777777</color>
+    <color name="graySubTitle">#605f60</color>
+    <color name="hintLanguageColor">#501d242e</color>
+    <color name="patternColor">#1e3354</color>
+    <color name="recycle_switch_background_color">#e8f2ff</color>
+    <color name="settings_divider">#f2f9ff</color>
+    <color name="theme_text">#010101</color>
+    <color name="vault_divider_color">#bfd4e4</color>
 </resources>
