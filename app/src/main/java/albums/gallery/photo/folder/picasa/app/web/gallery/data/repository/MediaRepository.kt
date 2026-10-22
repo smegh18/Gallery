@@ -24,6 +24,8 @@ interface MediaRepository {
     suspend fun restoreFromTrash(path: String)
     suspend fun deletePermanently(path: String)
     suspend fun deletePermanently(paths: List<String>)
+    suspend fun renameMedia(oldPath: String, newName: String): Boolean
+    suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean
 }
 
 class MediaRepositoryImpl(
@@ -53,7 +55,51 @@ class MediaRepositoryImpl(
     }
 
     override fun getMediaByFolderFlow(folderPath: String): Flow<List<MediaItem>> {
-        return dao.getMediaByFolderFlow(folderPath).map { list -> list.map { it.toDomain() } }
+        return when {
+            folderPath == "filter:videos" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter { it.mediaType == 2 }.map { it.toDomain() }
+                }
+            }
+            folderPath == "filter:portrait" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter {
+                        it.mediaType == 1 && (it.isPortrait || it.dimension.let { d ->
+                            val parts = d.split("x", "X")
+                            if (parts.size == 2) {
+                                val w = parts[0].trim().toIntOrNull() ?: 0
+                                val h = parts[1].trim().toIntOrNull() ?: 0
+                                h > w && h > 0
+                            } else false
+                        })
+                    }.map { it.toDomain() }
+                }
+            }
+            folderPath == "filter:hd" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter {
+                        it.mediaType == 1 && (it.fileSize >= 1_500_000 || it.dimension.contains("1920") || it.dimension.contains("1080") || it.dimension.contains("4K") || it.resolution.contains("1080"))
+                    }.map { it.toDomain() }
+                }
+            }
+            folderPath == "filter:animated" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter {
+                        it.animatedType == 1 || it.filePath.endsWith(".gif", ignoreCase = true)
+                    }.map { it.toDomain() }
+                }
+            }
+            folderPath == "filter:burst" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter {
+                        it.filePath.contains("BURST", ignoreCase = true) || it.fileName.contains("BURST", ignoreCase = true)
+                    }.map { it.toDomain() }
+                }
+            }
+            else -> {
+                dao.getMediaByFolderFlow(folderPath).map { list -> list.map { it.toDomain() } }
+            }
+        }
     }
 
     override fun getFavoritesFlow(): Flow<List<MediaItem>> {
@@ -101,6 +147,39 @@ class MediaRepositoryImpl(
                 val file = File(path)
                 if (file.exists()) file.delete()
             } catch (_: Exception) {}
+        }
+    }
+
+    override suspend fun renameMedia(oldPath: String, newName: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val oldFile = File(oldPath)
+            if (!oldFile.exists()) return@withContext false
+            val ext = oldFile.extension
+            val finalName = if (newName.endsWith(".$ext", ignoreCase = true)) newName else "$newName.$ext"
+            val newFile = File(oldFile.parentFile, finalName)
+            if (oldFile.renameTo(newFile)) {
+                syncMediaStore()
+                true
+            } else {
+                false
+            }
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    override suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val src = File(filePath)
+            if (!src.exists()) return@withContext false
+            val destDir = File(destFolder)
+            if (!destDir.exists()) destDir.mkdirs()
+            val destFile = File(destDir, src.name)
+            src.copyTo(destFile, overwrite = true)
+            syncMediaStore()
+            true
+        } catch (_: Exception) {
+            false
         }
     }
 }

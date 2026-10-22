@@ -6,7 +6,9 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
@@ -15,7 +17,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.ads.AdConstants
@@ -43,6 +47,8 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showSortDialog by remember { mutableStateOf(false) }
+    var showCreateAlbumDialog by remember { mutableStateOf(false) }
+    var newAlbumName by remember { mutableStateOf("") }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -60,6 +66,9 @@ fun HomeScreen(
                         "theme" -> onNavigate(Screen.Theme.route)
                         "settings" -> onNavigate(Screen.Settings.route)
                     }
+                },
+                onCreateAlbumClick = {
+                    showCreateAlbumDialog = true
                 },
                 onCloseDrawer = {
                     scope.launch { drawerState.close() }
@@ -178,12 +187,19 @@ fun HomeScreen(
                                 "duplicates" -> onNavigate(Screen.Duplicates.route)
                                 "recycle" -> onNavigate(Screen.RecycleBin.route)
                                 "collage", "editor" -> onNavigate(Screen.Editor.createRoute())
-                                "videos" -> viewModel.setTab(1)
-                                "place", "moments" -> viewModel.setTab(1)
+                                "videos" -> onNavigate(Screen.AlbumDetail.createRoute("filter:videos", "Videos"))
+                                "place" -> onNavigate(Screen.AlbumDetail.createRoute("filter:place", "Places"))
+                                "moments" -> onNavigate(Screen.AlbumDetail.createRoute("filter:moments", "Moments"))
                             }
                         },
-                        onMediaTypeClick = { _ ->
-                            viewModel.setTab(1)
+                        onMediaTypeClick = { typeId ->
+                            when (typeId) {
+                                "portrait" -> onNavigate(Screen.AlbumDetail.createRoute("filter:portrait", "Portraits"))
+                                "high_definition" -> onNavigate(Screen.AlbumDetail.createRoute("filter:hd", "High Definition"))
+                                "burst" -> onNavigate(Screen.AlbumDetail.createRoute("filter:burst", "Burst"))
+                                "animated" -> onNavigate(Screen.AlbumDetail.createRoute("filter:animated", "Animated"))
+                                else -> viewModel.setTab(1)
+                            }
                         }
                     )
                     1 -> PhotosTab(
@@ -192,7 +208,7 @@ fun HomeScreen(
                         selectedPaths = uiState.selectedPaths,
                         isSelectionMode = uiState.isSelectionMode,
                         onMediaClick = { item ->
-                            onNavigate(Screen.MediaViewer.createRoute(item.filePath, item.folderPath))
+                            onNavigate(Screen.MediaViewer.createRoute(item.filePath, ""))
                         },
                         onMediaLongClick = { item ->
                             viewModel.toggleSelection(item.filePath)
@@ -258,6 +274,74 @@ fun HomeScreen(
                     Text("Close")
                 }
             }
+        )
+    }
+
+    if (showCreateAlbumDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showCreateAlbumDialog = false
+                newAlbumName = ""
+            },
+            title = {
+                Text(
+                    text = "Create an album",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E3354)
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "Album name",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF707C93),
+                        modifier = Modifier.padding(bottom = 6.dp)
+                    )
+                    OutlinedTextField(
+                        value = newAlbumName,
+                        onValueChange = { newAlbumName = it },
+                        placeholder = { Text("Enter album name") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val trimmed = newAlbumName.trim()
+                        if (trimmed.isNotEmpty()) {
+                            try {
+                                val picturesDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_PICTURES)
+                                val newDir = File(picturesDir, trimmed)
+                                if (!newDir.exists()) {
+                                    newDir.mkdirs()
+                                }
+                                viewModel.syncMedia()
+                            } catch (_: Exception) {}
+                        }
+                        showCreateAlbumDialog = false
+                        newAlbumName = ""
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text("OK", color = Color.White, fontWeight = FontWeight.SemiBold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showCreateAlbumDialog = false
+                    newAlbumName = ""
+                }) {
+                    Text("Cancel", color = Color(0xFF707C93), fontWeight = FontWeight.Medium)
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }

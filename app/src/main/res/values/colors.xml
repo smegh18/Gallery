@@ -43,4 +43,14 @@
     <color name="bottomDialogHeaderColor">#dadada</color>
     <color name="property_text">#5c7a90</color>
     <color name="shortVideoProgress">#1e3354</color>
+
+    <!-- Navigation, Dialogs & Explore Colors -->
+    <color name="bottomNavTextColor">#1e3354</color>
+    <color name="collage_header_text_color">#000000</color>
+    <color name="dialogBack">#ffffff</color>
+    <color name="fastScrollerColor">#3478f6</color>
+    <color name="item_cleaner_sub_txt">#707c93</color>
+    <color name="home_collage_new_btn">#ff4d4f</color>
+    <color name="drawer_bottom_trans_text">#707c93</color>
+    <color name="actionbarDividerColor">#e4e6e9</color>
 </resources>

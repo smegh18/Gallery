@@ -45,7 +45,17 @@ fun GalleryTopBar(
                 Text(
                     text = "$selectedCount Selected",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E3354)
+                )
+            } else if (canNavigateBack) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1E3354),
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             } else {
                 Row(
@@ -79,8 +89,9 @@ fun GalleryTopBar(
             } else if (canNavigateBack) {
                 IconButton(onClick = onNavigateBack) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
-                        contentDescription = "Back"
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = "Back",
+                        tint = Color.Unspecified
                     )
                 }
             } else {
@@ -168,34 +179,39 @@ fun GalleryBottomNav(
         tonalElevation = 4.dp
     ) {
         val tabs = listOf(
-            Triple(0, "Albums", R.drawable.ic_home_top_videos),
-            Triple(1, "Photos", R.drawable.ic_home_top_favorite),
-            Triple(2, "Explore", R.drawable.ic_organier_explore)
+            Triple(0, "Album", Pair(R.drawable.ic_albums_fill, R.drawable.ic_albums_border)),
+            Triple(1, "All Media", Pair(R.drawable.ic_all_media_fill, R.drawable.ic_all_media_border)),
+            Triple(2, "Explore", Pair(R.drawable.ic_explore_fill, R.drawable.ic_explore_border))
         )
 
-        tabs.forEach { (index, label, iconRes) ->
+        tabs.forEach { (index, label, iconPair) ->
             val isSelected = selectedTab == index
+            val currentIcon = if (isSelected) iconPair.first else iconPair.second
             NavigationBarItem(
                 selected = isSelected,
                 onClick = { onTabSelected(index) },
                 icon = {
                     Icon(
-                        painter = painterResource(id = iconRes),
+                        painter = painterResource(id = currentIcon),
                         contentDescription = label,
-                        tint = if (isSelected) GalleryBlue else Color(0xFF707C93),
-                        modifier = Modifier.size(22.dp)
+                        tint = if (isSelected) GalleryBlue else Color(0xFF1E3354),
+                        modifier = Modifier.size(24.dp)
                     )
                 },
                 label = {
                     Text(
                         text = label,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) GalleryBlue else Color(0xFF707C93),
+                        color = if (isSelected) GalleryBlue else Color(0xFF1E3354),
                         fontSize = 12.sp
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = GalleryBlue.copy(alpha = 0.12f)
+                    indicatorColor = GalleryBlue.copy(alpha = 0.12f),
+                    selectedIconColor = GalleryBlue,
+                    selectedTextColor = GalleryBlue,
+                    unselectedIconColor = Color(0xFF1E3354),
+                    unselectedTextColor = Color(0xFF1E3354)
                 )
             )
         }
@@ -205,6 +221,7 @@ fun GalleryBottomNav(
 @Composable
 fun GalleryDrawer(
     onNavigate: (String) -> Unit,
+    onCreateAlbumClick: () -> Unit,
     onCloseDrawer: () -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -234,7 +251,6 @@ fun GalleryDrawer(
                         .background(Color(0xFFFFF7E6))
                         .clickable {
                             onCloseDrawer()
-                            // Go Pro action
                         }
                         .padding(14.dp)
                 ) {
@@ -289,7 +305,11 @@ fun GalleryDrawer(
                         item = item,
                         onClick = {
                             onCloseDrawer()
-                            onNavigate(item.route)
+                            if (item.route == "create_album") {
+                                onCreateAlbumClick()
+                            } else {
+                                onNavigate(item.route)
+                            }
                         }
                     )
                 }

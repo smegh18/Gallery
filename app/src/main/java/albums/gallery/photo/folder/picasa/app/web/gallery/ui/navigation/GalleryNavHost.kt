@@ -29,6 +29,7 @@ import albums.gallery.photo.folder.picasa.app.web.gallery.ui.viewer.MediaViewerS
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryNavHost(
     navController: NavHostController,
@@ -115,9 +116,12 @@ fun GalleryNavHost(
         ) { backStackEntry ->
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
             val filePath = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
+            val rawFolder = backStackEntry.arguments?.getString("folder") ?: ""
+            val folderPath = URLDecoder.decode(rawFolder, StandardCharsets.UTF_8.toString())
 
             MediaViewerScreen(
                 filePath = filePath,
+                folderPath = folderPath,
                 mediaRepository = app.mediaRepository,
                 vaultRepository = app.vaultRepository,
                 onNavigate = { route -> navController.navigate(route) },

@@ -12,17 +12,23 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,6 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +58,7 @@ import albums.gallery.photo.folder.picasa.app.web.gallery.R
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.ads.AdConstants
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.repository.MediaRepository
 import albums.gallery.photo.folder.picasa.app.web.gallery.data.repository.VaultRepository
+import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.Album
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.MediaItem
 import albums.gallery.photo.folder.picasa.app.web.gallery.domain.model.MediaType
 import albums.gallery.photo.folder.picasa.app.web.gallery.ui.components.BannerAdView
@@ -67,6 +75,7 @@ import java.util.*
 @Composable
 fun MediaViewerScreen(
     filePath: String,
+    folderPath: String = "",
     mediaRepository: MediaRepository,
     vaultRepository: VaultRepository,
     onNavigate: (String) -> Unit,
@@ -77,12 +86,24 @@ fun MediaViewerScreen(
     var showControls by remember { mutableStateOf(true) }
     var showInfoDialog by remember { mutableStateOf(false) }
     var showWallpaperDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var deleteMoveToBin by remember { mutableStateOf(true) }
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var renameInput by remember { mutableStateOf("") }
+    var showAddToDialog by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
     var rotationAngle by remember { mutableFloatStateOf(0f) }
 
-    // Read media item from repository flow or fallback
-    val allMedia by mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
-    val currentItem = allMedia.find { it.filePath == filePath } ?: remember(filePath) {
+    // Collect media items for this album/folder or all media
+    val mediaList by remember(folderPath) {
+        if (folderPath.isNotEmpty()) {
+            mediaRepository.getMediaByFolderFlow(folderPath)
+        } else {
+            mediaRepository.getActiveMediaFlow()
+        }
+    }.collectAsState(initial = emptyList())
+
+    val fallbackItem = remember(filePath) {
         val file = File(filePath)
         val isVideo = file.extension.lowercase() in listOf("mp4", "mkv", "mov", "avi", "3gp", "webm")
         MediaItem(
@@ -98,35 +119,24 @@ fun MediaViewerScreen(
         )
     }
 
-    // Zoom and pan state
-    var scale by remember { mutableFloatStateOf(1f) }
-    var offset by remember { mutableStateOf(Offset.Zero) }
-    val transformState = rememberTransformableState { zoomChange, offsetChange, _ ->
-        scale = (scale * zoomChange).coerceIn(1f, 5f)
-        if (scale == 1f) {
-            offset = Offset.Zero
-        } else {
-            offset += offsetChange
-        }
+    val displayList = remember(mediaList, fallbackItem) {
+        if (mediaList.isNotEmpty()) mediaList else listOf(fallbackItem)
     }
 
-    // Video player setup
-    var exoPlayer by remember { mutableStateOf<ExoPlayer?>(null) }
+    val initialIndex = remember(displayList, filePath) {
+        val idx = displayList.indexOfFirst { it.filePath == filePath }
+        if (idx >= 0) idx else 0
+    }
 
-    DisposableEffect(currentItem) {
-        if (currentItem.mediaType == MediaType.VIDEO) {
-            val player = ExoPlayer.Builder(context).build().apply {
-                val mediaItem = ExoMediaItem.fromUri(Uri.fromFile(File(currentItem.filePath)))
-                setMediaItem(mediaItem)
-                prepare()
-                playWhenReady = true
-            }
-            exoPlayer = player
-        }
-        onDispose {
-            exoPlayer?.release()
-            exoPlayer = null
-        }
+    val pagerState = rememberPagerState(initialPage = initialIndex) {
+        displayList.size
+    }
+
+    val currentItem = displayList.getOrElse(pagerState.currentPage.coerceIn(0, displayList.lastIndex)) { fallbackItem }
+
+    // Reset rotation when swiping to another item
+    LaunchedEffect(pagerState.currentPage) {
+        rotationAngle = 0f
     }
 
     // Formatted date and time for reference-matching toolbar
@@ -148,45 +158,20 @@ fun MediaViewerScreen(
             .background(Color.Black)
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = { showControls = !showControls },
-                    onDoubleTap = {
-                        scale = if (scale > 1f) 1f else 2.5f
-                        offset = Offset.Zero
-                    }
+                    onTap = { showControls = !showControls }
                 )
             }
     ) {
-        // Media Content
-        if (currentItem.mediaType == MediaType.VIDEO) {
-            exoPlayer?.let { player ->
-                AndroidView(
-                    factory = { ctx ->
-                        PlayerView(ctx).apply {
-                            this.player = player
-                            useController = true
-                        }
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        } else {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(File(currentItem.filePath))
-                    .crossfade(true)
-                    .build(),
-                contentDescription = currentItem.fileName,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer(
-                        rotationZ = rotationAngle,
-                        scaleX = scale,
-                        scaleY = scale,
-                        translationX = offset.x,
-                        translationY = offset.y
-                    )
-                    .transformable(state = transformState)
+        // Horizontal Pager for swiping between media
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            val item = displayList.getOrNull(page) ?: fallbackItem
+            PagerMediaItemView(
+                item = item,
+                rotationAngle = if (page == pagerState.currentPage) rotationAngle else 0f,
+                onToggleControls = { showControls = !showControls }
             )
         }
 
@@ -259,15 +244,16 @@ fun MediaViewerScreen(
                 // Details Button
                 IconButton(onClick = { showInfoDialog = true }) {
                     Icon(
-                        imageVector = Icons.Outlined.Info,
+                        painter = painterResource(id = R.drawable.ic_property),
                         contentDescription = "Details",
-                        tint = Color.White
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
         }
 
-        // Bottom Control Overlay (Reference item_bottom_option_layout.xml + global_ad_framelayout)
+        // Bottom Control Overlay (Reference item_bottom_option_layout.xml)
         AnimatedVisibility(
             visible = showControls,
             enter = fadeIn(),
@@ -283,14 +269,19 @@ fun MediaViewerScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // 1. Share
                     IconButton(onClick = { shareMedia(context, currentItem.filePath) }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Default.Share, contentDescription = "Share", tint = Color.White)
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_share),
+                                contentDescription = "Share",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text("Share", color = Color.White, fontSize = 11.sp)
                         }
@@ -305,7 +296,12 @@ fun MediaViewerScreen(
                         }
                     }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Default.Lock, contentDescription = "Private", tint = Color.White)
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_hide),
+                                contentDescription = "Private",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text("Private", color = Color.White, fontSize = 11.sp)
                         }
@@ -317,36 +313,55 @@ fun MediaViewerScreen(
                             onNavigate(Screen.Editor.createRoute(currentItem.filePath))
                         }) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.White)
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_main_edit),
+                                    contentDescription = "Edit",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text("Edit", color = Color.White, fontSize = 11.sp)
                             }
                         }
                     }
 
-                    // 4. Delete
-                    IconButton(onClick = {
-                        scope.launch {
-                            mediaRepository.moveToTrash(currentItem.filePath)
-                            Toast.makeText(context, "Moved to Recycle Bin", Toast.LENGTH_SHORT).show()
-                            onNavigateBack()
-                        }
-                    }) {
+                    // 4. Add To Album
+                    IconButton(onClick = { showAddToDialog = true }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color(0xFFFF4D4F))
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_add),
+                                contentDescription = "Add to",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text("Add to", color = Color.White, fontSize = 11.sp)
+                        }
+                    }
+
+                    // 5. Delete (Opens reference dialog_delete.xml prompt)
+                    IconButton(onClick = { showDeleteDialog = true }) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_delete),
+                                contentDescription = "Delete",
+                                tint = Color(0xFFFF4D4F),
+                                modifier = Modifier.size(20.dp)
+                            )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text("Delete", color = Color(0xFFFF4D4F), fontSize = 11.sp)
                         }
                     }
 
-                    // 5. More Options (Wallpaper, Details, Rotate)
+                    // 6. More Options (Wallpaper, Details, Rename)
                     Box {
                         IconButton(onClick = { showMoreMenu = true }) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_more),
                                     contentDescription = "More",
-                                    tint = Color.White
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text("More", color = Color.White, fontSize = 11.sp)
@@ -357,6 +372,27 @@ fun MediaViewerScreen(
                             expanded = showMoreMenu,
                             onDismissRequest = { showMoreMenu = false }
                         ) {
+                            DropdownMenuItem(
+                                text = { Text("Add to") },
+                                onClick = {
+                                    showMoreMenu = false
+                                    showAddToDialog = true
+                                },
+                                leadingIcon = {
+                                    Icon(painterResource(id = R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Rename") },
+                                onClick = {
+                                    showMoreMenu = false
+                                    renameInput = File(currentItem.filePath).nameWithoutExtension
+                                    showRenameDialog = true
+                                },
+                                leadingIcon = {
+                                    Icon(painterResource(id = R.drawable.ic_rename), contentDescription = null, modifier = Modifier.size(18.dp))
+                                }
+                            )
                             if (currentItem.mediaType == MediaType.IMAGE) {
                                 DropdownMenuItem(
                                     text = { Text("Set as wallpaper") },
@@ -365,20 +401,10 @@ fun MediaViewerScreen(
                                         showWallpaperDialog = true
                                     },
                                     leadingIcon = {
-                                        Icon(Icons.Default.Wallpaper, contentDescription = null)
+                                        Icon(painterResource(id = R.drawable.ic_set_as), contentDescription = null, modifier = Modifier.size(18.dp))
                                     }
                                 )
                             }
-                            DropdownMenuItem(
-                                text = { Text("Rotate clockwise") },
-                                onClick = {
-                                    showMoreMenu = false
-                                    rotationAngle = (rotationAngle + 90f) % 360f
-                                },
-                                leadingIcon = {
-                                    Icon(painterResource(id = R.drawable.ic_media_rotate), contentDescription = null)
-                                }
-                            )
                             DropdownMenuItem(
                                 text = { Text("Details") },
                                 onClick = {
@@ -386,7 +412,7 @@ fun MediaViewerScreen(
                                     showInfoDialog = true
                                 },
                                 leadingIcon = {
-                                    Icon(Icons.Outlined.Info, contentDescription = null)
+                                    Icon(painterResource(id = R.drawable.ic_property), contentDescription = null, modifier = Modifier.size(18.dp))
                                 }
                             )
                         }
@@ -399,7 +425,227 @@ fun MediaViewerScreen(
         }
     }
 
-    // Set as Wallpaper Dialog (Reference dialog_set_wallpaper.xml)
+    // 1. Delete Confirmation Dialog (Reference dialog_delete.xml)
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = {
+                Text(
+                    text = "Do you want to delete this media?",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1E3354)
+                )
+            },
+            text = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { deleteMoveToBin = !deleteMoveToBin }
+                        .padding(vertical = 4.dp)
+                ) {
+                    Checkbox(
+                        checked = deleteMoveToBin,
+                        onCheckedChange = { deleteMoveToBin = it },
+                        colors = CheckboxDefaults.colors(checkedColor = GalleryBlue)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Move to Recycle Bin",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF1E3354)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDeleteDialog = false
+                        scope.launch {
+                            if (deleteMoveToBin) {
+                                mediaRepository.moveToTrash(currentItem.filePath)
+                                Toast.makeText(context, "Moved to Recycle Bin", Toast.LENGTH_SHORT).show()
+                            } else {
+                                mediaRepository.deletePermanently(currentItem.filePath)
+                                Toast.makeText(context, "Deleted permanently", Toast.LENGTH_SHORT).show()
+                            }
+                            onNavigateBack()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text("Yes", color = Color.White, fontWeight = FontWeight.SemiBold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("No", color = Color(0xFF707C93), fontWeight = FontWeight.Medium)
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(16.dp)
+        )
+    }
+
+    // 2. Rename Dialog (Reference dialog_rename.xml)
+    if (showRenameDialog) {
+        AlertDialog(
+            onDismissRequest = { showRenameDialog = false },
+            title = {
+                Text(
+                    text = "Rename",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E3354)
+                )
+            },
+            text = {
+                OutlinedTextField(
+                    value = renameInput,
+                    onValueChange = { renameInput = it },
+                    placeholder = { Text("Enter name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp)
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val trimmed = renameInput.trim()
+                        if (trimmed.isNotEmpty()) {
+                            scope.launch {
+                                val success = mediaRepository.renameMedia(currentItem.filePath, trimmed)
+                                if (success) {
+                                    Toast.makeText(context, "Renamed successfully", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(context, "Could not rename file", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                        showRenameDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text("Save", color = Color.White, fontWeight = FontWeight.SemiBold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRenameDialog = false }) {
+                    Text("Cancel", color = Color(0xFF707C93), fontWeight = FontWeight.Medium)
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(16.dp)
+        )
+    }
+
+    // 3. Add to Album Bottom Sheet (Reference dialog_select_album.xml)
+    if (showAddToDialog) {
+        val albums by mediaRepository.getAlbumsFlow().collectAsState(initial = emptyList())
+        ModalBottomSheet(
+            onDismissRequest = { showAddToDialog = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = Color.White,
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = "Add to Album",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E3354),
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                if (albums.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No Albums Found",
+                            color = Color(0xFF707C93),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 340.dp)
+                    ) {
+                        items(albums) { album ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .clickable {
+                                        showAddToDialog = false
+                                        scope.launch {
+                                            val ok = mediaRepository.copyMediaToFolder(currentItem.filePath, album.path)
+                                            if (ok) {
+                                                Toast.makeText(context, "Added to ${album.name}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    }
+                                    .padding(4.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(80.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color(0xFFF3F7FB)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (album.coverPath.isNotEmpty()) {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(context).data(File(album.coverPath)).build(),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Folder,
+                                            contentDescription = null,
+                                            tint = GalleryBlue,
+                                            modifier = Modifier.size(36.dp)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = album.name,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color(0xFF1E3354)
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+
+    // 4. Set as Wallpaper Dialog (Reference dialog_set_wallpaper.xml)
     if (showWallpaperDialog) {
         AlertDialog(
             onDismissRequest = { showWallpaperDialog = false },
@@ -407,7 +653,8 @@ fun MediaViewerScreen(
                 Text(
                     text = "Set as wallpaper",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E3354)
                 )
             },
             text = {
@@ -428,7 +675,7 @@ fun MediaViewerScreen(
                             text = "Lock screen",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = Color(0xFF1E3354)
                         )
                     }
 
@@ -445,7 +692,7 @@ fun MediaViewerScreen(
                             text = "Home screen",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = Color(0xFF1E3354)
                         )
                     }
 
@@ -453,20 +700,16 @@ fun MediaViewerScreen(
                         onClick = {
                             showWallpaperDialog = false
                             scope.launch(Dispatchers.IO) {
-                                applyWallpaper(
-                                    context,
-                                    currentItem.filePath,
-                                    WallpaperManager.FLAG_SYSTEM or WallpaperManager.FLAG_LOCK
-                                )
+                                applyWallpaper(context, currentItem.filePath, WallpaperManager.FLAG_LOCK or WallpaperManager.FLAG_SYSTEM)
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Home and lock screens",
+                            text = "Both screen",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = Color(0xFF1E3354)
                         )
                     }
                 }
@@ -474,47 +717,44 @@ fun MediaViewerScreen(
             confirmButton = {},
             dismissButton = {
                 TextButton(onClick = { showWallpaperDialog = false }) {
-                    Text("Cancel", color = GalleryBlue)
+                    Text("Cancel", color = Color(0xFF707C93), fontWeight = FontWeight.Medium)
                 }
             },
-            shape = RoundedCornerShape(14.dp)
+            containerColor = Color.White,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 
-    // Media Details Bottom Sheet (Reference dialog_property.xml)
+    // 5. Details Bottom Sheet (Reference dialog_property.xml)
     if (showInfoDialog) {
         ModalBottomSheet(
             onDismissRequest = { showInfoDialog = false },
-            containerColor = MaterialTheme.colorScheme.surface,
-            dragHandle = {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 10.dp, bottom = 6.dp)
-                        .size(width = 40.dp, height = 4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(Color(0xFFDADADA))
-                )
-            }
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = Color.White,
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 32.dp)
+                    .padding(horizontal = 24.dp, vertical = 12.dp)
             ) {
                 Text(
                     text = "Details",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    color = Color(0xFF1E3354),
+                    modifier = Modifier.padding(bottom = 12.dp)
                 )
+
+                HorizontalDivider(color = Color(0xFFE4E6E9), thickness = 1.dp)
+
+                Spacer(modifier = Modifier.height(10.dp))
 
                 DetailSheetRow("Name", currentItem.fileName)
                 DetailSheetRow("Path", currentItem.filePath)
-                DetailSheetRow("Size", formatFileSize(currentItem.fileSize))
+                DetailSheetRow("File Size", formatFileSize(currentItem.fileSize))
 
-                val dimensionText = remember(currentItem.filePath) {
+                val dimensionText = remember(currentItem) {
                     if (currentItem.dimension.isNotEmpty()) {
                         currentItem.dimension
                     } else if (currentItem.mediaType == MediaType.IMAGE) {
@@ -552,6 +792,97 @@ fun MediaViewerScreen(
                     Text("OK", color = Color.White, fontWeight = FontWeight.SemiBold)
                 }
             }
+        }
+    }
+}
+
+@OptIn(UnstableApi::class)
+@Composable
+private fun PagerMediaItemView(
+    item: MediaItem,
+    rotationAngle: Float,
+    onToggleControls: () -> Unit
+) {
+    val context = LocalContext.current
+    var scale by remember { mutableFloatStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    val transformState = rememberTransformableState { zoomChange, offsetChange, _ ->
+        scale = (scale * zoomChange).coerceIn(1f, 5f)
+        if (scale == 1f) {
+            offset = Offset.Zero
+        } else {
+            offset += offsetChange
+        }
+    }
+
+    if (item.mediaType == MediaType.VIDEO) {
+        var exoPlayer by remember(item.filePath) { mutableStateOf<ExoPlayer?>(null) }
+        DisposableEffect(item.filePath) {
+            val player = ExoPlayer.Builder(context).build().apply {
+                val mediaItem = ExoMediaItem.fromUri(Uri.fromFile(File(item.filePath)))
+                setMediaItem(mediaItem)
+                prepare()
+                playWhenReady = true
+            }
+            exoPlayer = player
+            onDispose {
+                player.release()
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { onToggleControls() })
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            exoPlayer?.let { player ->
+                AndroidView(
+                    factory = { ctx ->
+                        PlayerView(ctx).apply {
+                            this.player = player
+                            useController = true
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = { onToggleControls() },
+                        onDoubleTap = {
+                            scale = if (scale > 1f) 1f else 2.5f
+                            offset = Offset.Zero
+                        }
+                    )
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(File(item.filePath))
+                    .crossfade(true)
+                    .build(),
+                contentDescription = item.fileName,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer(
+                        rotationZ = rotationAngle,
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offset.x,
+                        translationY = offset.y
+                    )
+                    .transformable(state = transformState)
+            )
         }
     }
 }

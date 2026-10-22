@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 data class HomeUiState(
-    val selectedTab: Int = 1, // 0 = Albums, 1 = Photos, 2 = Explore
+    val selectedTab: Int = 0, // 0 = Albums (Reference default), 1 = Photos (All Media), 2 = Explore
     val mediaList: List<MediaItem> = emptyList(),
     val albumsList: List<Album> = emptyList(),
     val columnCount: Int = 4,
