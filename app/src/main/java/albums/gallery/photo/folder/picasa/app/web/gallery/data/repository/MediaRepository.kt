@@ -39,7 +39,71 @@ class MediaRepositoryImpl(
 
     override fun getAlbumsFlow(): Flow<List<Album>> {
         return dao.getAllActiveMediaFlow().map { list ->
-            list.groupBy { it.folderPath }
+            val result = mutableListOf<Album>()
+
+            // 1. All Photos (mediaType != 2)
+            val photos = list.filter { it.mediaType != 2 }
+            result.add(
+                Album(
+                    id = "filter:all_photos",
+                    name = "All Photos",
+                    path = "filter:all_photos",
+                    coverPath = photos.firstOrNull()?.filePath ?: "",
+                    itemCount = photos.size
+                )
+            )
+
+            // 2. Videos (mediaType == 2)
+            val videos = list.filter { it.mediaType == 2 }
+            result.add(
+                Album(
+                    id = "filter:videos",
+                    name = "Videos",
+                    path = "filter:videos",
+                    coverPath = videos.firstOrNull()?.filePath ?: "",
+                    itemCount = videos.size
+                )
+            )
+
+            // 3. Camera
+            val cameraItems = list.filter {
+                it.folderPath.contains("Camera", ignoreCase = true) ||
+                it.folderName.equals("Camera", ignoreCase = true) ||
+                it.filePath.contains("/DCIM/Camera", ignoreCase = true)
+            }
+            result.add(
+                Album(
+                    id = "filter:camera",
+                    name = "Camera",
+                    path = "filter:camera",
+                    coverPath = cameraItems.firstOrNull()?.filePath ?: "",
+                    itemCount = cameraItems.size
+                )
+            )
+
+            // 4. Screenshots (Matching reference screenshot order)
+            val screenshotItems = list.filter {
+                it.folderPath.contains("screenshot", ignoreCase = true) ||
+                it.folderName.contains("screenshot", ignoreCase = true)
+            }
+            if (screenshotItems.isNotEmpty()) {
+                result.add(
+                    Album(
+                        id = "filter:screenshots",
+                        name = "Screenshots",
+                        path = "filter:screenshots",
+                        coverPath = screenshotItems.firstOrNull()?.filePath ?: "",
+                        itemCount = screenshotItems.size
+                    )
+                )
+            }
+
+            // Remaining device folders
+            val folders = list.groupBy { it.folderPath }
+                .filter { (folderPath, _) ->
+                    !folderPath.contains("screenshot", ignoreCase = true) &&
+                    !folderPath.contains("camera", ignoreCase = true)
+                }
                 .map { (folderPath, items) ->
                     val firstItem = items.first()
                     Album(
@@ -51,11 +115,36 @@ class MediaRepositoryImpl(
                     )
                 }
                 .sortedByDescending { it.itemCount }
+
+            result.addAll(folders)
+            result
         }
     }
 
     override fun getMediaByFolderFlow(folderPath: String): Flow<List<MediaItem>> {
         return when {
+            folderPath == "filter:all_photos" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter { it.mediaType != 2 }.map { it.toDomain() }
+                }
+            }
+            folderPath == "filter:camera" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter {
+                        it.folderPath.contains("Camera", ignoreCase = true) ||
+                        it.folderName.equals("Camera", ignoreCase = true) ||
+                        it.filePath.contains("/DCIM/Camera", ignoreCase = true)
+                    }.map { it.toDomain() }
+                }
+            }
+            folderPath == "filter:screenshots" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter {
+                        it.folderPath.contains("screenshot", ignoreCase = true) ||
+                        it.folderName.contains("screenshot", ignoreCase = true)
+                    }.map { it.toDomain() }
+                }
+            }
             folderPath == "filter:videos" -> {
                 dao.getAllActiveMediaFlow().map { list ->
                     list.filter { it.mediaType == 2 }.map { it.toDomain() }

@@ -46,14 +46,14 @@ fun GalleryTopBar(
                     text = "$selectedCount Selected",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             } else if (canNavigateBack) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1E3354),
+                    color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
@@ -124,15 +124,21 @@ fun GalleryTopBar(
                     )
                 }
             } else {
-                if (onSortClick != null) {
-                    IconButton(onClick = onSortClick) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_short),
-                            contentDescription = "Sort",
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
+                IconButton(onClick = { onProClick?.invoke() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_pro_new),
+                        contentDescription = "Pro",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+                IconButton(onClick = onSearchClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_toolbar_search),
+                        contentDescription = "Search",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
                 if (onCameraClick != null) {
                     IconButton(onClick = onCameraClick) {
@@ -144,21 +150,15 @@ fun GalleryTopBar(
                         )
                     }
                 }
-                IconButton(onClick = onSearchClick) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_toolbar_search),
-                        contentDescription = "Search",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                IconButton(onClick = { onProClick?.invoke() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_pro_new),
-                        contentDescription = "Pro",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(26.dp)
-                    )
+                if (onSortClick != null) {
+                    IconButton(onClick = onSortClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_short),
+                            contentDescription = "Sort",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
         },
@@ -184,6 +184,7 @@ fun GalleryBottomNav(
             Triple(2, "Explore", Pair(R.drawable.ic_explore_fill, R.drawable.ic_explore_border))
         )
 
+        val unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
         tabs.forEach { (index, label, iconPair) ->
             val isSelected = selectedTab == index
             val currentIcon = if (isSelected) iconPair.first else iconPair.second
@@ -194,7 +195,7 @@ fun GalleryBottomNav(
                     Icon(
                         painter = painterResource(id = currentIcon),
                         contentDescription = label,
-                        tint = if (isSelected) GalleryBlue else Color(0xFF1E3354),
+                        tint = if (isSelected) GalleryBlue else unselectedColor,
                         modifier = Modifier.size(24.dp)
                     )
                 },
@@ -202,7 +203,7 @@ fun GalleryBottomNav(
                     Text(
                         text = label,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) GalleryBlue else Color(0xFF1E3354),
+                        color = if (isSelected) GalleryBlue else unselectedColor,
                         fontSize = 12.sp
                     )
                 },
@@ -210,8 +211,8 @@ fun GalleryBottomNav(
                     indicatorColor = GalleryBlue.copy(alpha = 0.12f),
                     selectedIconColor = GalleryBlue,
                     selectedTextColor = GalleryBlue,
-                    unselectedIconColor = Color(0xFF1E3354),
-                    unselectedTextColor = Color(0xFF1E3354)
+                    unselectedIconColor = unselectedColor,
+                    unselectedTextColor = unselectedColor
                 )
             )
         }

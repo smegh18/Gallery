@@ -161,7 +161,9 @@ fun HomeScreen(
                     }
                 } else {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        BannerAdView(adUnitId = AdConstants.TEST_BANNER_ID)
+                        if (uiState.selectedTab == 1) {
+                            BannerAdView(adUnitId = AdConstants.TEST_BANNER_ID)
+                        }
                         GalleryBottomNav(
                             selectedTab = uiState.selectedTab,
                             onTabSelected = { viewModel.setTab(it) }

@@ -9,7 +9,7 @@ val GalleryDarkBlue = Color(0xFF0052CC)
 
 // Backgrounds
 val GalleryBackgroundLight = Color(0xFFFFFFFF)
-val GalleryBackgroundDark = Color(0xFF121212)
+val GalleryBackgroundDark = Color(0xFF0C0C0C)
 val GallerySurfaceLight = Color(0xFFF8F9FA)
 val GallerySurfaceDark = Color(0xFF1E1E1E)
 val GalleryVideoBackground = Color(0xFF0C0C0C)

@@ -82,7 +82,7 @@ private fun ExploreHeroCard(
             .fillMaxWidth()
             .clip(shape)
             .background(MaterialTheme.colorScheme.surface)
-            .border(width = 1.dp, color = Color(0xFFF0F0F0), shape = shape)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = shape)
             .clickable(onClick = onClick)
             .padding(16.dp)
     ) {
@@ -111,7 +111,7 @@ private fun ExploreHeroCard(
                         text = title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 17.sp
                     )
 
@@ -138,7 +138,7 @@ private fun ExploreHeroCard(
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF7D90A3),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp,
                     lineHeight = 18.sp
                 )
