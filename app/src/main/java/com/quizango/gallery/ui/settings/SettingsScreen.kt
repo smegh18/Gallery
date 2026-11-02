@@ -118,11 +118,16 @@ fun SettingsScreen(
                         )
                     )
                     .border(1.dp, Color(0xFF873900), RoundedCornerShape(12.dp))
-                    .clickable {
-                        openUrl("https://play.google.com/store/account/subscriptions")
-                    }
-                    .padding(horizontal = 14.dp, vertical = 12.dp)
             ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0x90FFFFFF))
+                        .clickable {
+                            openUrl("https://play.google.com/store/account/subscriptions")
+                        }
+                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = R.drawable.premium),
@@ -146,6 +151,7 @@ fun SettingsScreen(
                         )
                     }
                 }
+            }
             }
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -439,3 +445,5 @@ private fun RateUsDialog(
         }
     }
 }
+
+

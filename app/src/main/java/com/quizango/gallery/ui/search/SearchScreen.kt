@@ -147,7 +147,7 @@ fun SearchScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = "Back",
-                            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -197,7 +197,7 @@ fun SearchScreen(
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_close),
                                         contentDescription = "Clear",
-                                        tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+                                        tint = MaterialTheme.colorScheme.onBackground,
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
@@ -205,7 +205,7 @@ fun SearchScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_search_common),
                                     contentDescription = "Search",
-                                    tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -650,3 +650,4 @@ private fun SearchMediaCard(
         )
     }
 }
+

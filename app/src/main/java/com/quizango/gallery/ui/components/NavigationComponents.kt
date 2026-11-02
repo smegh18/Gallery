@@ -306,7 +306,7 @@ fun GalleryDrawer(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(if (MaterialTheme.colorScheme.isDark) Color(0x90000000) else Color(0x90FFFFFF))
+                            .background(Color(0x90FFFFFF))
                             .clickable {
                                 onCloseDrawer()
                             }
@@ -534,3 +534,4 @@ private data class DrawerItemData(
     val isAdBadge: Boolean = false,
     val hasDot: Boolean = false
 )
+

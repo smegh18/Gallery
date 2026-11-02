@@ -60,7 +60,7 @@ fun AboutScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -263,3 +263,4 @@ private fun SocialMediaItem(
         )
     }
 }
+

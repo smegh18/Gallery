@@ -26,3 +26,17 @@
   - Gradle assembleDebug: BUILD SUCCESSFUL (0 errors).
   - CodeRabbit CLI review: 0 findings (Clean ✔).
   - Physical Device (10BD7J2TAS000Z5): Verified with ARTEMIS hierarchy inspection — Top feature carousel, 3-column album grid, and Media Types list all verified live.
+
+### Hotfix: Dark mode parity across screens & Explore Tab reconstruction
+- **Status**: Completed (`passes: true`)
+- **Changes**:
+  - Reconstructed `ExploreTab.kt` to 100% parity with reference `fragment_explore.xml`: single-column scroll with 3 rounded hero cards (`item_system_cleaner`, `item_organizer`, `item_collage_maker` with "New" badge), replacing non-standard chip dashboard.
+  - Fixed vector over-tinting in `CleanerScreen.kt` and `RemoveJunkScreen.kt` where `system_cleaner_banner_arrow` had conditional `Color.White` tint in dark mode, which rendered the blue circular icon as a solid white blob.
+  - Standardized icon tints (`ic_back`, `ic_setting`, `ic_close`, `ic_search_common`) across `DuplicatePhotoScreen.kt`, `DuplicateCompleteScreen.kt`, `SearchColorScreen.kt`, `SearchScreen.kt`, `AboutScreen.kt`, and `VaultForgotPasswordScreen.kt` to use `MaterialTheme.colorScheme.onBackground`.
+  - Fixed dark mode Go Ads Free premium banner text contrast in `NavigationComponents.kt` and `SettingsScreen.kt` by preserving authentic `Color(0x90FFFFFF)` translucent white overlay over gold gradient.
+  - Fixed empty PIN line in `VaultLockScreen.kt` for dark mode (`Color(0xFF35373B)`).
+- **Quality Gates**:
+  - Gradle test: BUILD SUCCESSFUL (100% tests passing).
+  - Gradle assembleDebug: BUILD SUCCESSFUL (0 errors).
+  - CodeRabbit CLI review: 0 findings (Clean ✔).
+  - Physical Device (10BD7J2TAS000Z5): Verified with ARTEMIS hierarchy inspection and live testing — Explore Tab 3 hero cards, Cleaner Screen vector arrows, Drawer Go Ads Free banner, and Theme Mode Day/Night toggle switching.

@@ -21,6 +21,7 @@ import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -195,7 +196,7 @@ fun VaultLockScreen(
                                     .fillMaxWidth()
                                     .height(2.dp)
                                     .background(
-                                        if (hasDigit) GalleryBlue else Color(0xFFBFD4E4)
+                                        if (hasDigit) GalleryBlue else if (MaterialTheme.colorScheme.isDark) Color(0xFF35373B) else Color(0xFFBFD4E4)
                                     )
                             )
                         }
@@ -327,3 +328,5 @@ private fun VaultKeypad(
         }
     }
 }
+
+

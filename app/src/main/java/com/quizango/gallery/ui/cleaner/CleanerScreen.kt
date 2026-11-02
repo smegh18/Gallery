@@ -208,8 +208,9 @@ private fun CleanerCategoryCard(
         Icon(
             painter = painterResource(id = R.drawable.system_cleaner_banner_arrow),
             contentDescription = null,
-            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+            tint = Color.Unspecified,
             modifier = Modifier.size(20.dp)
         )
     }
 }
+

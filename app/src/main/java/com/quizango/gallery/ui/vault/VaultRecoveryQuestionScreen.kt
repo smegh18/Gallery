@@ -96,7 +96,7 @@ fun VaultRecoveryQuestionScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -198,7 +198,7 @@ fun VaultRecoveryQuestionScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_recover_arrow),
                     contentDescription = null,
-                    tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+                    tint = if (MaterialTheme.colorScheme.isDark) Color(0xFF35373B) else Color.Unspecified,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -207,7 +207,7 @@ fun VaultRecoveryQuestionScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_recover_arrow),
                     contentDescription = null,
-                    tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+                    tint = if (MaterialTheme.colorScheme.isDark) Color(0xFF35373B) else Color.Unspecified,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -328,3 +328,4 @@ private fun StepCircle(stepNumber: Int, isActive: Boolean) {
         )
     }
 }
+

@@ -525,7 +525,7 @@ fun RemoveJunkScreen(
                                     text = stringResource(R.string.no_junk),
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF7D90A3)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -757,8 +757,9 @@ private fun ReleaseOptionRow(
         Icon(
             painter = painterResource(id = R.drawable.system_cleaner_banner_arrow),
             contentDescription = null,
-            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+            tint = Color.Unspecified,
             modifier = Modifier.size(20.dp)
         )
     }
 }
+

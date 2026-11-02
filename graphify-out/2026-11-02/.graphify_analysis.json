@@ -1396,13 +1396,13 @@
       "degree": 29
     },
     {
-      "id": "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel",
-      "label": "HomeViewModel",
+      "id": "app_src_main_java_com_quizango_gallery_data_local_database_entity_entities_mediaentity",
+      "label": "MediaEntity",
       "degree": 24
     },
     {
-      "id": "app_src_main_java_com_quizango_gallery_data_local_database_entity_entities_mediaentity",
-      "label": "MediaEntity",
+      "id": "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel",
+      "label": "HomeViewModel",
       "degree": 24
     },
     {
@@ -1413,17 +1413,6 @@
   ],
   "surprises": [
     {
-      "source": "3. Discrepancy Resolution & Audit Summary",
-      "target": "DuplicatePhotoScreen()",
-      "source_files": [
-        "final-readiness-report.md",
-        "app/src/main/java/com/quizango/gallery/ui/cleaner/DuplicatePhotoScreen.kt"
-      ],
-      "confidence": "INFERRED",
-      "relation": "references",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities; peripheral node `3. Discrepancy Resolution & Audit Summary` unexpectedly reaches hub `DuplicatePhotoScreen()`"
-    },
-    {
       "source": "DISC-004: Navigation Drawer Alignment",
       "target": "GalleryDrawer()",
       "source_files": [
@@ -1432,7 +1421,7 @@
       ],
       "confidence": "INFERRED",
       "relation": "references",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities; peripheral node `DISC-004: Navigation Drawer Alignment` unexpectedly reaches hub `GalleryDrawer()`"
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories; bridges separate communities; peripheral node `DISC-004: Navigation Drawer Alignment` unexpectedly reaches hub `GalleryDrawer()`"
     },
     {
       "source": "1. Primary User Journey Screens",
@@ -1443,7 +1432,7 @@
       ],
       "confidence": "INFERRED",
       "relation": "references",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities; peripheral node `1. Primary User Journey Screens` unexpectedly reaches hub `GalleryDrawer()`"
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories; bridges separate communities; peripheral node `1. Primary User Journey Screens` unexpectedly reaches hub `GalleryDrawer()`"
     },
     {
       "source": "3. Navigation Drawer",
@@ -1454,22 +1443,66 @@
       ],
       "confidence": "INFERRED",
       "relation": "references",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities; peripheral node `3. Navigation Drawer` unexpectedly reaches hub `GalleryDrawer()`"
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories; bridges separate communities; peripheral node `3. Navigation Drawer` unexpectedly reaches hub `GalleryDrawer()`"
     },
     {
-      "source": "Suite 1: `ConvertersTest` (Data Layer Verification)",
-      "target": "ConvertersTest",
+      "source": "3. Discrepancy Resolution & Audit Summary",
+      "target": "DuplicatePhotoScreen()",
       "source_files": [
-        "test-results.md",
-        "app/src/test/java/com/quizango/gallery/ConvertersTest.kt"
+        "final-readiness-report.md",
+        "app/src/main/java/com/quizango/gallery/ui/cleaner/DuplicatePhotoScreen.kt"
       ],
       "confidence": "INFERRED",
       "relation": "references",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `Suite 1: `ConvertersTest` (Data Layer Verification)` unexpectedly reaches hub `ConvertersTest`"
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories; bridges separate communities; peripheral node `3. Discrepancy Resolution & Audit Summary` unexpectedly reaches hub `DuplicatePhotoScreen()`"
+    },
+    {
+      "source": "Technical Stack",
+      "target": "GalleryDatabase",
+      "source_files": [
+        ".planning/PROJECT.md",
+        "app/src/main/java/com/quizango/gallery/data/local/database/GalleryDatabase.kt"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories; peripheral node `Technical Stack` unexpectedly reaches hub `GalleryDatabase`"
     }
   ],
-  "tokens": {
-    "input": 58485,
-    "output": 3586
-  }
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Screen` connect `Screen` to `Dp`, `MediaViewerScreen.kt`, `ExploreTab.kt`, `AlbumsTab.kt`, `Converters`, `CleanerTest.kt`, `Test`, `DuplicateTest`, `SettingsScreen`, `StorageCleanPhase`, `Test`, `MediaViewer`, `SearchColor`, `StoryView`, `Wallpaper`, `app/build.gradle.kts`, `build.gradle.kts`, `settings.gradle.kts`, `RemoveBg`, `SearchColor`, `StoryView`, `Wallpaper`?",
+      "why": "High betweenness centrality (0.138) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `GalleryNavHost()` (e.g. with `Positive Findings` and `DISC-007: Duplicate Photo Finder Navigation`) actually correct?",
+      "why": "`GalleryNavHost()` has 2 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Screenshots`, `Search`, `Settings` to the rest of the system?",
+      "why": "78 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Dp` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.08113207547169811 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `MediaItem` connect `GalleryNavHost.kt` to `Dp`, `GalleryDao`, `GalleryNavHost.kt`, `MediaViewerScreen.kt`, `ExploreTab.kt`, `AlbumsTab.kt`, `CleanerTest.kt`, `CleanerTest.kt`, `HomeViewModel`, `Test`, `VaultRepository`, `EditorTab`, `MediaRepositoryImpl`, `DuplicateTest`, `FavoritesTest`, `BannerAdView.kt`, `FavoritesScreen`, `SettingsScreen`, `DomainModelTest`, `AboutScreen`, `MomentsScreen`, `RecycleScreen`?",
+      "why": "High betweenness centrality (0.134) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `GalleryDao` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07231638418079096 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `MediaRepository` connect `GalleryNavHost.kt` to `Dp`, `GalleryNavHost.kt`, `MediaViewerScreen.kt`, `ExploreTab.kt`, `AlbumsTab.kt`, `ImageSegmentationHelper`, `Converters`, `CleanerTest.kt`, `HomeViewModel`, `EditorTab`, `MediaRepositoryImpl`, `DuplicateTest`, `CropHandle`, `RecycleTest.kt`, `Test`, `AboutScreen`, `FavoritesScreen`, `MomentsScreen`, `RecycleScreen`, `Editor`?",
+      "why": "High betweenness centrality (0.110) - this node is a cross-community bridge."
+    }
+  ]
 }

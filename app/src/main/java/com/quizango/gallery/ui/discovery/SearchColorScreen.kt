@@ -72,7 +72,7 @@ fun SearchColorScreen(
                             Icon(
                                 painter = painterResource(id = if (isSelectionMode) R.drawable.ic_close else R.drawable.ic_back),
                                 contentDescription = if (isSelectionMode) "Close" else "Back",
-                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -318,3 +318,4 @@ fun SearchColorScreen(
         }
     }
 }
+
