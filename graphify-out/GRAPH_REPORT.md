@@ -1,17 +1,17 @@
 # Graph Report - Gallery  (2026-11-02)
 
 ## Corpus Check
-- 110 files · ~82,138 words
+- 110 files · ~82,619 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 270 file(s) not represented in the graph (top: .xml 262, .properties 2, (none) 1)
 
 ## Summary
-- 1072 nodes · 3034 edges · 90 communities (38 shown, 52 thin omitted)
+- 1072 nodes · 3034 edges · 92 communities (35 shown, 57 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.92)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2fa73f71`
+- Built from commit: `bc532e56`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,10 +21,10 @@
 - GalleryDao
 - GalleryNavHost.kt
 - MediaViewerScreen.kt
-- HomeTest.kt
+- PhotoEditorScreen
 - MediaItem
 - Screen
-- AlbumsTab.kt
+- Activity
 - ImageSegmentationHelper
 - ImageCropView.kt
 - Converters
@@ -33,10 +33,10 @@
 - Converters
 - CleanerTest.kt
 - Test
-- HomeViewModel
+- RecycleScreen
 - VaultEntity
 - VaultRepository
-- EditorTab
+- HomeViewModel
 - GalleryRulerView.kt
 - GalleryDatabase
 - HomeScreen
@@ -45,21 +45,21 @@
 - DuplicateTest
 - PhotoEditorScreen
 - CropRatio
-- FavoritesTest
+- SplashScreen.kt
 - Detailed Discrepancy Records
-- GalleryTopBar
+- BurstPhotoScreen
 - FavoritesTest
 - Test
 - Test
-- 1. Intentionally Excluded Proprietary Subsystems
+- final-readiness-report.md
 - formatGroupHeader
 - FavoritesScreen
-- formatDuration
+- RecycleTest.kt
 - CropRatio
 - StorageCleanPhase
 - NativeAdCard.kt
 - Test
-- RecycleScreen
+- OrganizerRecycleScreen
 - GalleryDrawer
 - Feature Matrix
 - VaultRecoveryQuestionScreen
@@ -70,6 +70,7 @@
 - CollageStep
 - StickerScreen
 - VaultForgotPasswordScreen
+- SearchColorScreen
 - AboutScreen
 - Screen.kt
 - VaultRecoveryQuestionScreen
@@ -100,15 +101,16 @@
 - Launcher Icon (XXHDPI)
 - Round Launcher Icon (XXHDPI)
 - Ralph Progress & Architecture Notes
+- LanguageScreen
 
 ## God Nodes (most connected - your core abstractions)
-1. `MediaItem` - 82 edges
+1. `MediaItem` - 84 edges
 2. `MediaRepository` - 64 edges
 3. `Screen` - 60 edges
 4. `GalleryNavHost()` - 48 edges
 5. `AppPreferences` - 41 edges
-6. `GalleryDao` - 29 edges
-7. `MediaType` - 29 edges
+6. `MediaType` - 30 edges
+7. `GalleryDao` - 29 edges
 8. `MediaEntity` - 25 edges
 9. `MediaRepositoryImpl` - 24 edges
 10. `HomeViewModel` - 24 edges
@@ -131,31 +133,31 @@
 ## Hyperedges (group relationships)
 - **Application Launcher Icons** — app_src_main_res_mipmap_hdpi_ic_launcher_gallery_round, app_src_main_res_mipmap_hdpi_ic_launcher_round_gallery, app_src_main_res_mipmap_mdpi_ic_launcher_gallery, app_src_main_res_mipmap_xhdpi_ic_launcher_gallery, app_src_main_res_mipmap_xhdpi_ic_launcher_gallery_round, app_src_main_res_mipmap_xhdpi_ic_launcher_round_gallery, app_src_main_res_mipmap_xxhdpi_ic_launcher_gallery, app_src_main_res_mipmap_xxhdpi_ic_launcher_gallery_round [EXTRACTED 1.00]
 
-## Communities (90 total, 52 thin omitted)
+## Communities (92 total, 57 thin omitted)
 
 ### Community 2 - "GalleryDao"
-Cohesion: 0.07
-Nodes (4): AdManager, MainActivity, applyNightMode(), GalleryTheme()
+Cohesion: 0.09
+Nodes (3): MainActivity, applyNightMode(), GalleryTheme()
 
 ### Community 3 - "GalleryNavHost.kt"
-Cohesion: 0.07
-Nodes (11): DuplicateWaitingScreen(), ScreenShortScreen(), CollageMakerScreen(), WallpaperScreen(), AnimatedMediaScreen(), BurstPhotoScreen(), OrganizerRecycleScreen(), SearchColorScreen() (+3 more)
+Cohesion: 0.09
+Nodes (9): DuplicateWaitingScreen(), ScreenShortScreen(), CollageMakerScreen(), WallpaperScreen(), AnimatedMediaScreen(), StoryViewScreen(), GalleryNavHost(), WelcomeScreen() (+1 more)
 
 ### Community 4 - "MediaViewerScreen.kt"
-Cohesion: 0.07
+Cohesion: 0.08
 Nodes (13): BottomActionButton(), captureVideoFrame(), DetailSheetRow(), formatDuration(), formatFileSize(), MediaViewerScreen(), PagerMediaItemView(), saveCapturedFrameToGallery() (+5 more)
 
+### Community 5 - "PhotoEditorScreen"
+Cohesion: 0.53
+Nodes (8): AdjustPanel(), BrushPanel(), CropPanel(), FilterPanel(), PhotoEditorScreen(), StickerPanel(), SubToolHeader(), TextPanel()
+
 ### Community 6 - "MediaItem"
-Cohesion: 0.07
-Nodes (7): MediaStoreScanner, MediaRepository, MediaRepositoryImpl, MediaItem, MomentGroup, MomentsScreen(), DomainModelTest
+Cohesion: 0.05
+Nodes (17): MediaStoreScanner, MediaRepository, MediaRepositoryImpl, Album, MediaItem, MomentGroup, MomentsScreen(), AlbumCard() (+9 more)
 
 ### Community 7 - "Screen"
 Cohesion: 0.07
 Nodes (30): About, AnimatedMedia, BurstPhotos, Cleaner, CollageMaker, Duplicates, DuplicateWaiting, Favorites (+22 more)
-
-### Community 8 - "AlbumsTab.kt"
-Cohesion: 0.19
-Nodes (10): Album, AlbumCard(), AlbumsTab(), FeatureItemView(), MediaTypeItem, StoryCircleItem(), TopFeatureItem, SearchAlbumCard() (+2 more)
 
 ### Community 9 - "ImageSegmentationHelper"
 Cohesion: 0.11
@@ -170,16 +172,16 @@ Cohesion: 0.10
 Nodes (11): Converters, ConvertersTest, Current Phase: Phase J Completed (Full Implementation, Unit Tests, and Build Verification), Project State, 1. Build Verification Summary, 2. Test Suite Execution Details, 3. AAPT Resource Compilation & Vector Verification, 4. Verification Conclusion (+3 more)
 
 ### Community 13 - "AppPreferences"
-Cohesion: 0.13
+Cohesion: 0.14
 Nodes (4): CropGeometry, drawCornerBrackets(), drawEdgeBars(), ImageCropView()
 
 ### Community 14 - "Test"
-Cohesion: 0.09
-Nodes (4): AppPreferences, Keys, WelcomeScreen(), LanguageScreen()
+Cohesion: 0.10
+Nodes (3): AppPreferences, Keys, ThemeScreen()
 
 ### Community 15 - "Converters"
-Cohesion: 0.23
-Nodes (13): AdjustPanel(), applyAllTransformations(), BrushPanel(), CropPanel(), DrawnPath, FilterPanel(), PhotoEditorScreen(), PlacedSticker (+5 more)
+Cohesion: 0.35
+Nodes (5): applyAllTransformations(), DrawnPath, PlacedSticker, PlacedText, saveEditedBitmap()
 
 ### Community 16 - "CleanerTest.kt"
 Cohesion: 0.15
@@ -189,9 +191,9 @@ Nodes (9): formatVideoDuration(), formatVideoSize(), LargeVideoScreen(), formatS
 Cohesion: 0.13
 Nodes (9): VaultRepository, VaultRepositoryImpl, MediaType, ANIMATED, BURST, IMAGE, SCREENSHOT, VIDEO (+1 more)
 
-### Community 21 - "EditorTab"
-Cohesion: 0.16
-Nodes (10): SortDirection, ASCENDING, DESCENDING, SortField, DATE_MODIFIED, DATE_TAKEN, NAME, SIZE (+2 more)
+### Community 21 - "HomeViewModel"
+Cohesion: 0.06
+Nodes (17): SortDirection, ASCENDING, DESCENDING, SortField, DATE_MODIFIED, DATE_TAKEN, NAME, SIZE (+9 more)
 
 ### Community 23 - "GalleryDatabase"
 Cohesion: 0.17
@@ -213,45 +215,33 @@ Nodes (10): CropHandle, BOTTOM, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER, LEFT, RIGHT, 
 Cohesion: 0.20
 Nodes (10): EditorFilter, COOL, CYBERPUNK, FADE, GRAYSCALE, NONE, SEPIA, VINTAGE (+2 more)
 
-### Community 30 - "FavoritesTest"
-Cohesion: 0.22
-Nodes (4): PermissionScreen(), checkStoragePermissions(), SplashScreen(), WavyProgressIndicator()
+### Community 30 - "SplashScreen.kt"
+Cohesion: 0.21
+Nodes (3): checkStoragePermissions(), SplashScreen(), WavyProgressIndicator()
 
 ### Community 31 - "Detailed Discrepancy Records"
 Cohesion: 0.22
 Nodes (9): Discrepancy Register, Detailed Discrepancy Records, DISC-001: Explore Tab Structure & Content, DISC-002: Albums Tab Top Feature Bar & Media Types, DISC-006: Reference Vector Drawables Missing, DISC-008: App Icons & Shortcuts, DISC-009: Cloud Sync & Third-Party Ad SDKs, Discrepancy Register: Forensic Audit & Reconstruction (+1 more)
-
-### Community 32 - "GalleryTopBar"
-Cohesion: 0.50
-Nodes (3): GalleryTopBar(), DISC-003: Home Toolbar & Vault Trigger, 4. Home Top App Bar
 
 ### Community 34 - "Test"
 Cohesion: 0.22
 Nodes (8): 1. Architectural Integrity & Separation of Concerns, 2. Security & Privacy Audit, 3. Lifecycle & Memory Management, 4. Static Analysis & Tooling Status, Independent Code Review & Architecture Audit, Positive Findings, Positive Findings, Positive Findings
 
 ### Community 35 - "Test"
-Cohesion: 0.25
-Nodes (7): 1. Home Dashboard: Albums Tab, 2. Home Dashboard: Explore Tab, 5. System Cleaner Screen, Design System Tokens Summary, Evaluation Methodology, Screen-by-Screen Layout Comparison, Screenshot & UI Layout Comparison Report
+Cohesion: 0.17
+Nodes (10): GalleryTopBar(), DISC-003: Home Toolbar & Vault Trigger, 1. Home Dashboard: Albums Tab, 2. Home Dashboard: Explore Tab, 4. Home Top App Bar, 5. System Cleaner Screen, Design System Tokens Summary, Evaluation Methodology (+2 more)
 
-### Community 36 - "1. Intentionally Excluded Proprietary Subsystems"
-Cohesion: 0.22
-Nodes (8): 1. Intentionally Excluded Proprietary Subsystems, 2. Inferred Behavioral Nuances, INFERRED-01: System Cache File Calculation, INFERRED-02: Duplicate Photo Detection Heuristics, UNKNOWN-01: Commercial Ad Mediation & Banners, UNKNOWN-02: Third-Party Telemetry & Analytics, UNKNOWN-03: Google Play In-App Billing, Unresolved Issues & Boundary Classifications
+### Community 36 - "final-readiness-report.md"
+Cohesion: 0.11
+Nodes (14): 1. Executive Summary, 2. Artifact & Cryptographic Baseline, 3. Discrepancy Resolution & Audit Summary, 4. Verification & Quality Gates, 5. Final Sign-off, Final Readiness & Reconstruction Sign-off Report, 1. Intentionally Excluded Proprietary Subsystems, 2. Inferred Behavioral Nuances (+6 more)
 
 ### Community 38 - "FavoritesScreen"
 Cohesion: 0.19
 Nodes (8): AlbumDetailScreen(), shareSelectedMedia(), PhotoGridItem(), PhotosTab(), Detailed Route Specifications, Navigation Graph Topology, Navigation Map & Architecture, Special Transitions & Lifecycle Behaviors
 
-### Community 39 - "formatDuration"
-Cohesion: 0.15
-Nodes (8): formatDuration(), calculateRemainingDays(), RecycleGridItem(), RecycleScreen(), shareSelectedVaultMedia(), VaultGridItem(), VaultMediaScreen(), RecycleTest
-
 ### Community 40 - "CropRatio"
 Cohesion: 0.22
 Nodes (9): CropRatio, FIVE_FOUR, FOUR_FIVE, FOUR_THREE, FREE, NINE_SIXTEEN, ONE_ONE, SIXTEEN_NINE (+1 more)
-
-### Community 44 - "RecycleScreen"
-Cohesion: 0.22
-Nodes (6): 1. Executive Summary, 2. Artifact & Cryptographic Baseline, 3. Discrepancy Resolution & Audit Summary, 4. Verification & Quality Gates, 5. Final Sign-off, Final Readiness & Reconstruction Sign-off Report
 
 ### Community 45 - "GalleryDrawer"
 Cohesion: 0.38
@@ -288,22 +278,22 @@ Nodes (3): CollageStep, EDITOR, PICKER
 ## Knowledge Gaps
 - **78 isolated node(s):** `IMAGE`, `VIDEO`, `SCREENSHOT`, `ANIMATED`, `BURST` (+73 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 352 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **52 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **57 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `MediaRepository` connect `MediaItem` to `Dp`, `Editor`, `Test`, `GalleryNavHost.kt`, `MediaViewerScreen.kt`, `FavoritesScreen`, `formatDuration`, `AlbumsTab.kt`, `ImageSegmentationHelper`, `Converters`, `CleanerTest.kt`, `FavoritesScreen`, `HomeViewModel`, `EditorTab`, `DuplicateTest`, `CropHandle`?**
+- **Why does `MediaRepository` connect `MediaItem` to `Dp`, `BurstPhotoScreen`, `Editor`, `GalleryNavHost.kt`, `MediaViewerScreen.kt`, `PhotoEditorScreen`, `FavoritesScreen`, `Test`, `ImageSegmentationHelper`, `OrganizerRecycleScreen`, `Converters`, `CleanerTest.kt`, `FavoritesScreen`, `RecycleScreen`, `HomeViewModel`, `SearchColorScreen`, `DuplicateTest`, `CropHandle`?**
   _High betweenness centrality (0.124) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `GalleryNavHost()` (e.g. with `Positive Findings` and `DISC-007: Duplicate Photo Finder Navigation`) actually correct?**
   _`GalleryNavHost()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `IMAGE`, `VIDEO`, `SCREENSHOT` to the rest of the system?**
   _78 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Dp` be split into smaller, more focused modules?**
-  _Cohesion score 0.081205429031516 - nodes in this community are weakly interconnected._
-- **Why does `Screen` connect `Screen` to `Dp`, `MediaViewerScreen.kt`, `Converters`, `CleanerTest.kt`, `DuplicateTest`, `formatGroupHeader`, `formatDuration`, `StorageCleanPhase`, `Test`, `MediaViewer`, `SearchColor`, `StoryView`, `Wallpaper`, `app/build.gradle.kts`, `build.gradle.kts`, `settings.gradle.kts`, `RemoveBg`, `SearchColor`, `StoryView`, `Wallpaper`?**
-  _High betweenness centrality (0.120) - this node is a cross-community bridge._
+  _Cohesion score 0.08066770186335404 - nodes in this community are weakly interconnected._
+- **Why does `Screen` connect `Screen` to `Dp`, `MediaViewerScreen.kt`, `Converters`, `CleanerTest.kt`, `DuplicateTest`, `SplashScreen.kt`, `formatGroupHeader`, `RecycleTest.kt`, `StorageCleanPhase`, `Test`, `MediaViewer`, `SearchColor`, `StoryView`, `Wallpaper`, `app/build.gradle.kts`, `build.gradle.kts`, `settings.gradle.kts`, `RemoveBg`, `SearchColor`, `StoryView`, `Wallpaper`?**
+  _High betweenness centrality (0.119) - this node is a cross-community bridge._
 - **Should `GalleryDao` be split into smaller, more focused modules?**
-  _Cohesion score 0.07207207207207207 - nodes in this community are weakly interconnected._
-- **Why does `MediaItem` connect `MediaItem` to `Dp`, `FavoritesTest`, `GalleryNavHost.kt`, `MediaViewerScreen.kt`, `formatGroupHeader`, `FavoritesScreen`, `formatDuration`, `AlbumsTab.kt`, `CleanerTest.kt`, `CleanerTest.kt`, `HomeViewModel`, `VaultEntity`, `VaultRepository`, `EditorTab`, `DuplicateTest`?**
-  _High betweenness centrality (0.108) - this node is a cross-community bridge._
+  _Cohesion score 0.08866995073891626 - nodes in this community are weakly interconnected._
+- **Why does `MediaItem` connect `MediaItem` to `Dp`, `FavoritesTest`, `GalleryNavHost.kt`, `MediaViewerScreen.kt`, `formatGroupHeader`, `FavoritesScreen`, `RecycleTest.kt`, `CleanerTest.kt`, `CleanerTest.kt`, `RecycleScreen`, `VaultEntity`, `VaultRepository`, `HomeViewModel`, `DuplicateTest`?**
+  _High betweenness centrality (0.112) - this node is a cross-community bridge._

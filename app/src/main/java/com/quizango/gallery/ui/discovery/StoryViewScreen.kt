@@ -1,19 +1,16 @@
 package com.quizango.gallery.ui.discovery
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.quizango.gallery.domain.model.MediaItem
-import kotlinx.coroutines.delay
 import java.io.File
 
 @Composable
@@ -41,20 +37,48 @@ fun StoryViewScreen(
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
+
     if (mediaItems.isEmpty()) {
-        LaunchedEffect(Unit) { onNavigateBack() }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color.White)
+        }
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(800)
+            if (mediaItems.isEmpty()) {
+                onNavigateBack()
+            }
+        }
         return
     }
 
     var currentIndex by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
+    var resetTrigger by remember { mutableIntStateOf(0) }
 
     val currentItem = mediaItems.getOrNull(currentIndex) ?: mediaItems.first()
+    val progressAnimatable = remember { Animatable(0f) }
 
-    // Auto advancement timer
-    LaunchedEffect(currentIndex, isPaused) {
+    // Reset progress when item changes or explicitly restarted
+    LaunchedEffect(currentIndex, resetTrigger) {
+        progressAnimatable.snapTo(0f)
+    }
+
+    // Auto advancement timer with smooth pause/resume progress
+    LaunchedEffect(currentIndex, isPaused, resetTrigger) {
         if (!isPaused) {
-            delay(3500)
+            val remaining = (1f - progressAnimatable.value).coerceIn(0f, 1f)
+            val duration = (remaining * 3500).toInt()
+            if (duration > 0) {
+                progressAnimatable.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = duration, easing = LinearEasing)
+                )
+            }
             if (currentIndex < mediaItems.size - 1) {
                 currentIndex++
             } else {
@@ -76,10 +100,17 @@ fun StoryViewScreen(
                     },
                     onTap = { offset ->
                         if (offset.x < size.width * 0.35f) {
-                            if (currentIndex > 0) currentIndex--
+                            if (currentIndex > 0) {
+                                currentIndex--
+                            } else {
+                                resetTrigger++
+                            }
                         } else {
-                            if (currentIndex < mediaItems.size - 1) currentIndex++
-                            else onNavigateBack()
+                            if (currentIndex < mediaItems.size - 1) {
+                                currentIndex++
+                            } else {
+                                onNavigateBack()
+                            }
                         }
                     }
                 )
@@ -97,6 +128,11 @@ fun StoryViewScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(
+                    androidx.compose.ui.graphics.Brush.verticalGradient(
+                        listOf(Color.Black.copy(alpha = 0.65f), Color.Black.copy(alpha = 0.25f), Color.Transparent)
+                    )
+                )
                 .statusBarsPadding()
                 .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
@@ -110,7 +146,7 @@ fun StoryViewScreen(
                 for (i in mediaItems.indices) {
                     val progress = when {
                         i < currentIndex -> 1f
-                        i == currentIndex -> if (isPaused) 0.5f else 1f
+                        i == currentIndex -> progressAnimatable.value
                         else -> 0f
                     }
 

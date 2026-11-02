@@ -203,8 +203,12 @@ fun HomeScreen(
                 when (uiState.selectedTab) {
                     0 -> AlbumsTab(
                         albumsList = uiState.albumsList,
+                        mediaList = uiState.mediaList,
                         onAlbumClick = { album ->
                             onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
+                        },
+                        onStoryClick = { path, title ->
+                            onNavigate(Screen.StoryView.createRoute(path, title))
                         },
                         onFeatureClick = { featureId ->
                             when (featureId) {

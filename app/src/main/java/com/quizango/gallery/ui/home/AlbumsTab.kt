@@ -34,6 +34,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.Album
+import com.quizango.gallery.domain.model.MediaItem
+import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.theme.albumOptionBg
 import com.quizango.gallery.ui.theme.cardBorder
 import com.quizango.gallery.ui.theme.isDark
@@ -75,7 +77,9 @@ val MEDIA_TYPES = listOf(
 @Composable
 fun AlbumsTab(
     albumsList: List<Album>,
+    mediaList: List<MediaItem> = emptyList(),
     onAlbumClick: (Album) -> Unit,
+    onStoryClick: (path: String, title: String) -> Unit = { _, _ -> },
     onFeatureClick: (String) -> Unit = {},
     onMediaTypeClick: (String) -> Unit = {}
 ) {
@@ -110,11 +114,15 @@ fun AlbumsTab(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 // Stories Strip (Reference: llStoryView / storyRecycler in fragment_album.xml)
-                val recentAlbum = albumsList.firstOrNull { it.coverPath.isNotEmpty() }
-                val randomAlbum = albumsList.filter { it.coverPath.isNotEmpty() }.let {
-                    if (it.size > 1) it[1] else recentAlbum
+                val nonVideoMedia = mediaList.filter { it.mediaType != MediaType.VIDEO }
+                val recentPhotoPath = nonVideoMedia.firstOrNull()?.filePath
+                    ?: albumsList.firstOrNull { it.coverPath.isNotEmpty() }?.coverPath ?: ""
+                val randomPhotoPath = nonVideoMedia.shuffled().firstOrNull()?.filePath
+                    ?: albumsList.drop(1).firstOrNull { it.coverPath.isNotEmpty() }?.coverPath ?: recentPhotoPath
+                val favPhotoPath = nonVideoMedia.firstOrNull { it.isFavorite }?.filePath
+                val albumsWithCover = albumsList.filter { album ->
+                    album.coverPath.isNotEmpty() && nonVideoMedia.any { it.folderPath == album.path || it.folderName == album.name }
                 }
-                val otherAlbumsWithCover = albumsList.filter { it.coverPath.isNotEmpty() && it != recentAlbum && it != randomAlbum }
 
                 LazyRow(
                     modifier = Modifier
@@ -123,32 +131,48 @@ fun AlbumsTab(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     // Story 1: Recent
-                    item {
-                        StoryCircleItem(
-                            title = "Recent",
-                            imagePath = recentAlbum?.coverPath ?: "",
-                            gradientColors = listOf(Color(0xFFFF3093), Color(0xFFFF5252), Color(0xFFFFC701)),
-                            onClick = { recentAlbum?.let(onAlbumClick) }
-                        )
+                    if (recentPhotoPath.isNotEmpty()) {
+                        item(key = "story_recent") {
+                            StoryCircleItem(
+                                title = "Recent",
+                                imagePath = recentPhotoPath,
+                                gradientColors = listOf(Color(0xFFFF3093), Color(0xFFFF5252), Color(0xFFFFC701), Color(0xFFFF3093)),
+                                onClick = { onStoryClick("recent", "Recent") }
+                            )
+                        }
                     }
 
                     // Story 2: Random
-                    item {
-                        StoryCircleItem(
-                            title = "Random",
-                            imagePath = randomAlbum?.coverPath ?: "",
-                            gradientColors = listOf(Color(0xFF0072FF), Color(0xFF00C6FF)),
-                            onClick = { randomAlbum?.let(onAlbumClick) }
-                        )
+                    if (randomPhotoPath.isNotEmpty()) {
+                        item(key = "story_random") {
+                            StoryCircleItem(
+                                title = "Random",
+                                imagePath = randomPhotoPath,
+                                gradientColors = listOf(Color(0xFF0072FF), Color(0xFF00C6FF), Color(0xFF0072FF)),
+                                onClick = { onStoryClick("random", "Random") }
+                            )
+                        }
                     }
 
-                    // Additional dynamic stories if available
-                    items(otherAlbumsWithCover) { album ->
+                    // Story 3: Favorite (if available)
+                    if (!favPhotoPath.isNullOrEmpty()) {
+                        item(key = "story_fav") {
+                            StoryCircleItem(
+                                title = "Favorite",
+                                imagePath = favPhotoPath,
+                                gradientColors = listOf(Color(0xFFFF416C), Color(0xFFFF4B2B), Color(0xFFFF416C)),
+                                onClick = { onStoryClick("favorite", "Favorites") }
+                            )
+                        }
+                    }
+
+                    // Dynamic Album Stories
+                    items(albumsWithCover, key = { "album_story_${it.id}" }) { album ->
                         StoryCircleItem(
                             title = album.name,
                             imagePath = album.coverPath,
-                            gradientColors = listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0)),
-                            onClick = { onAlbumClick(album) }
+                            gradientColors = listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2)),
+                            onClick = { onStoryClick(album.id, album.name) }
                         )
                     }
                 }
@@ -404,7 +428,7 @@ private fun StoryCircleItem(
                 .background(Brush.sweepGradient(gradientColors))
                 .padding(2.5.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.topContainerBg)
                 .padding(2.dp)
                 .clip(CircleShape),
             contentAlignment = Alignment.Center

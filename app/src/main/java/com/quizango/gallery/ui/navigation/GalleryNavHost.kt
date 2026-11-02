@@ -375,13 +375,45 @@ fun GalleryNavHost(
         ) { backStackEntry ->
             val rawTitle = backStackEntry.arguments?.getString("title") ?: "Story"
             val title = URLDecoder.decode(rawTitle, StandardCharsets.UTF_8.toString())
+            val rawPath = backStackEntry.arguments?.getString("path") ?: ""
+            val path = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
             val allMedia by app.mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
-            val photosOnly = allMedia.filter { it.mediaType != MediaType.VIDEO }.take(8)
+
+            val storyItems = androidx.compose.runtime.remember(path, title, allMedia) {
+                val photosOnly = allMedia.filter { it.mediaType != MediaType.VIDEO }
+                when {
+                    path == "recent" -> {
+                        photosOnly.sortedByDescending { it.dateModified }.take(20)
+                    }
+                    path == "random" -> {
+                        photosOnly.shuffled().take(20)
+                    }
+                    path == "favorite" -> {
+                        val favs = photosOnly.filter { it.isFavorite }
+                        if (favs.isNotEmpty()) favs.take(20) else photosOnly.take(20)
+                    }
+                    path.isNotEmpty() -> {
+                        // Check if path points to a specific cover photo (e.g. from MomentsScreen)
+                        val exactFileIdx = photosOnly.indexOfFirst { it.filePath == path }
+                        if (exactFileIdx >= 0) {
+                            val start = exactFileIdx
+                            val end = (exactFileIdx + 15).coerceAtMost(photosOnly.size)
+                            photosOnly.subList(start, end)
+                        } else {
+                            val albumPhotos = photosOnly.filter {
+                                it.folderPath == path || it.folderPath.equals(path, ignoreCase = true)
+                            }
+                            if (albumPhotos.isNotEmpty()) albumPhotos.take(20) else photosOnly.take(20)
+                        }
+                    }
+                    else -> photosOnly.take(20)
+                }
+            }
 
             StoryViewScreen(
                 storyTitle = title,
-                mediaItems = photosOnly,
-                onEditClick = { path -> navController.navigate(Screen.Editor.createRoute(path)) },
+                mediaItems = storyItems,
+                onEditClick = { editPath -> navController.navigate(Screen.Editor.createRoute(editPath)) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

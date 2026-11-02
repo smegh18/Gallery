@@ -1,14 +1,22 @@
 {
   "1": "GalleryDao",
-  "5": "HomeTest.kt",
+  "5": "PhotoEditorScreen",
   "6": "MediaItem",
+  "8": "Activity",
+  "18": "RecycleScreen",
   "19": "VaultEntity",
+  "21": "HomeViewModel",
   "23": "GalleryDatabase",
-  "32": "GalleryTopBar",
+  "30": "SplashScreen.kt",
+  "32": "BurstPhotoScreen",
+  "36": "final-readiness-report.md",
   "37": "formatGroupHeader",
-  "39": "formatDuration",
+  "39": "RecycleTest.kt",
   "40": "CropRatio",
+  "44": "OrganizerRecycleScreen",
   "45": "GalleryDrawer",
   "46": "Feature Matrix",
-  "54": "VaultForgotPasswordScreen"
+  "54": "VaultForgotPasswordScreen",
+  "55": "SearchColorScreen",
+  "91": "LanguageScreen"
 }
