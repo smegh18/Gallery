@@ -40,3 +40,14 @@
   - Gradle assembleDebug: BUILD SUCCESSFUL (0 errors).
   - CodeRabbit CLI review: 0 findings (Clean ✔).
   - Physical Device (10BD7J2TAS000Z5): Verified with ARTEMIS hierarchy inspection and live testing — Explore Tab 3 hero cards, Cleaner Screen vector arrows, Drawer Go Ads Free banner, and Theme Mode Day/Night toggle switching.
+
+### Hotfix: Welcome and Permission Screen Dark Mode Parity & Verification
+- **Status**: Completed (`passes: true`)
+- **Changes**:
+  - `WelcomeScreen.kt`: Replaced hardcoded `.background(Color.White)` with `MaterialTheme.colorScheme.background`. Dynamic title color (`ic_title`: `#FFFFFF` in dark mode, `GalleryBlue` in light mode). Standardized subtitle and terms disclaimer text to `MaterialTheme.colorScheme.onSurfaceVariant` (`#AAAAAA` in dark mode, `#373742`/`#7A8389` in light mode).
+  - `PermissionScreen.kt`: Fixed simulated system card border to match `res/drawable-night-v8/ic_permission_top_dialog.xml` (`#272727` in dark mode, `#CCE0FF` in light mode) and card background (`#000000` in dark mode, `#FFFFFF` in light mode). Fixed close icon in "About this permission" bottom sheet.
+- **Quality Gates**:
+  - Gradle test: BUILD SUCCESSFUL (100% tests passing).
+  - Gradle assembleDebug: BUILD SUCCESSFUL (0 errors).
+  - CodeRabbit CLI review: 0 findings (Clean ✔).
+  - Physical Device (10BD7J2TAS000Z5): Cleared app data, verified entire fresh first-run onboarding sequence: Splash -> Welcome (dark mode) -> Language -> Permission (dark mode + bottom sheet) -> Home.

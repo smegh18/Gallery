@@ -32,10 +32,8 @@ import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
 import kotlinx.coroutines.launch
-
-private val TextSubtitleColor = Color(0xFF373742)
-private val TextDisclaimerColor = Color(0xFF7A8389)
 
 @Composable
 fun WelcomeScreen(
@@ -44,21 +42,22 @@ fun WelcomeScreen(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val isDark = MaterialTheme.colorScheme.isDark
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Title: "Hello from Gallery!"
+        // Title: "Hello from Gallery!" (Reference: @color/ic_title -> Day: #0066FF, Night: #FFFFFF)
         Text(
             text = stringResource(id = R.string.hello_from_gallery),
-            color = GalleryBlue,
+            color = if (isDark) MaterialTheme.colorScheme.onBackground else GalleryBlue,
             fontSize = 23.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
@@ -69,10 +68,10 @@ fun WelcomeScreen(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Subtitle: "Find, lock, and share your photos easily"
+        // Subtitle: "Find, lock, and share your photos easily" (Reference: @color/op_onboarding_ac_prem_desc -> Day: #373742, Night: #AAAAAA)
         Text(
             text = stringResource(id = R.string.find_lock_and_share_your_photos_easily),
-            color = TextSubtitleColor,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
@@ -83,7 +82,7 @@ fun WelcomeScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Center Hero Graphic: ic_welcom (smartphone illustration)
+        // Center Hero Graphic: ic_welcom (smartphone illustration with auto day/night resource resolution)
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -134,7 +133,7 @@ fun WelcomeScreen(
         val annotatedString = buildAnnotatedString {
             withStyle(
                 style = SpanStyle(
-                    color = TextDisclaimerColor,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Normal
                 )

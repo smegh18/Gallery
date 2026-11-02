@@ -1,17 +1,17 @@
 # Graph Report - Gallery  (2026-11-02)
 
 ## Corpus Check
-- 110 files · ~81,921 words
+- 110 files · ~82,138 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 270 file(s) not represented in the graph (top: .xml 262, .properties 2, (none) 1)
 
 ## Summary
-- 1072 nodes · 3033 edges · 90 communities (38 shown, 52 thin omitted)
+- 1072 nodes · 3034 edges · 90 communities (38 shown, 52 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.92)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `57a6fc20`
+- Built from commit: `2fa73f71`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -294,16 +294,16 @@ Nodes (3): CollageStep, EDITOR, PICKER
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `MediaRepository` connect `MediaItem` to `Dp`, `Editor`, `Test`, `GalleryNavHost.kt`, `MediaViewerScreen.kt`, `FavoritesScreen`, `formatDuration`, `AlbumsTab.kt`, `ImageSegmentationHelper`, `Converters`, `CleanerTest.kt`, `FavoritesScreen`, `HomeViewModel`, `EditorTab`, `DuplicateTest`, `CropHandle`?**
-  _High betweenness centrality (0.121) - this node is a cross-community bridge._
+  _High betweenness centrality (0.124) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `GalleryNavHost()` (e.g. with `Positive Findings` and `DISC-007: Duplicate Photo Finder Navigation`) actually correct?**
   _`GalleryNavHost()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `IMAGE`, `VIDEO`, `SCREENSHOT` to the rest of the system?**
   _78 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Dp` be split into smaller, more focused modules?**
-  _Cohesion score 0.08112874779541446 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.081205429031516 - nodes in this community are weakly interconnected._
 - **Why does `Screen` connect `Screen` to `Dp`, `MediaViewerScreen.kt`, `Converters`, `CleanerTest.kt`, `DuplicateTest`, `formatGroupHeader`, `formatDuration`, `StorageCleanPhase`, `Test`, `MediaViewer`, `SearchColor`, `StoryView`, `Wallpaper`, `app/build.gradle.kts`, `build.gradle.kts`, `settings.gradle.kts`, `RemoveBg`, `SearchColor`, `StoryView`, `Wallpaper`?**
   _High betweenness centrality (0.120) - this node is a cross-community bridge._
 - **Should `GalleryDao` be split into smaller, more focused modules?**
   _Cohesion score 0.07207207207207207 - nodes in this community are weakly interconnected._
 - **Why does `MediaItem` connect `MediaItem` to `Dp`, `FavoritesTest`, `GalleryNavHost.kt`, `MediaViewerScreen.kt`, `formatGroupHeader`, `FavoritesScreen`, `formatDuration`, `AlbumsTab.kt`, `CleanerTest.kt`, `CleanerTest.kt`, `HomeViewModel`, `VaultEntity`, `VaultRepository`, `EditorTab`, `DuplicateTest`?**
-  _High betweenness centrality (0.110) - this node is a cross-community bridge._
+  _High betweenness centrality (0.108) - this node is a cross-community bridge._

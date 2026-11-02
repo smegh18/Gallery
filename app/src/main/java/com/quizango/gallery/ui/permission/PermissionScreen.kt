@@ -84,17 +84,18 @@ fun PermissionScreen(
         }
     }
 
-    val permissionTextColor = MaterialTheme.colorScheme.onSurface
+    val isDark = MaterialTheme.colorScheme.isDark
+    val permissionTextColor = MaterialTheme.colorScheme.onBackground
     val permissionGrayColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.screenBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.screenBackground)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             val screenHeight = maxHeight
             val guidelinePercent = 0.35f
@@ -127,10 +128,10 @@ fun PermissionScreen(
                         .clip(RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp))
                         .border(
                             width = 9.dp,
-                            color = Color(0xFFCCE0FF),
+                            color = if (isDark) Color(0xFF272727) else Color(0xFFCCE0FF),
                             shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
                         )
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(if (isDark) Color(0xFF000000) else Color.White)
                         .padding(horizontal = 10.dp, vertical = 15.dp)
                 ) {
                     Column {
@@ -316,7 +317,7 @@ fun PermissionScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_permission_close),
                                     contentDescription = "Close",
-                                    tint = Color.Unspecified,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
@@ -379,3 +380,4 @@ fun PermissionScreen(
         }
     }
 }
+
