@@ -2,11 +2,9 @@
   "communities": {
     "0": [
       "add",
-      "albumoptionbg",
       "alignment",
       "alpha",
       "animatable",
-      "animatedvisibility",
       "animatelottiecompositionasstate",
       "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_cleanerscreen",
@@ -32,8 +30,6 @@
       "app_src_main_java_com_quizango_gallery_ui_discovery_searchcolorscreen",
       "app_src_main_java_com_quizango_gallery_ui_discovery_storyviewscreen",
       "app_src_main_java_com_quizango_gallery_ui_favorites_favoritesscreen",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_mediatypeitem",
       "app_src_main_java_com_quizango_gallery_ui_home_homescreen",
       "app_src_main_java_com_quizango_gallery_ui_home_photostab",
       "app_src_main_java_com_quizango_gallery_ui_onboarding_welcomescreen",
@@ -45,6 +41,7 @@
       "app_src_main_java_com_quizango_gallery_ui_settings_languagescreen_languageoption",
       "app_src_main_java_com_quizango_gallery_ui_settings_settingsscreen",
       "app_src_main_java_com_quizango_gallery_ui_settings_themescreen",
+      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen",
       "app_src_main_java_com_quizango_gallery_ui_theme_color",
       "app_src_main_java_com_quizango_gallery_ui_theme_shape",
       "app_src_main_java_com_quizango_gallery_ui_theme_type",
@@ -85,6 +82,7 @@
       "combinedclickable",
       "contentscale",
       "context",
+      "contextcompat",
       "delay",
       "delete",
       "deleteoutline",
@@ -93,11 +91,10 @@
       "drawerfooterbg",
       "edit",
       "experimentalfoundationapi",
-      "fadein",
-      "fadeout",
       "favorite",
       "file",
       "fileprovider",
+      "first",
       "fontfamily",
       "fontweight",
       "galleryblue",
@@ -122,10 +119,13 @@
       "lottieanimation",
       "lottiecompositionspec",
       "lottieconstants",
+      "manifest",
       "modifier",
       "morevert",
       "mutableinteractionsource",
+      "packagemanager",
       "painterresource",
+      "path",
       "photolibrary",
       "playarrow",
       "r",
@@ -155,70 +155,14 @@
       "textoverflow",
       "textstyle",
       "toast",
-      "topcontainerbg",
       "tween",
       "typography",
       "uri",
       "verticalscroll",
       "wallpapermanager",
-      "withcontext",
       "withstyle"
     ],
     "1": [
-      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_albumdetailscreen",
-      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_kt_context",
-      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_shareselectedmedia",
-      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_draweritemdata",
-      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_drawerrow",
-      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_gallerybottomnav",
-      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_gallerydrawer",
-      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_gallerytopbar",
-      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_albumcard",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_albumstab",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_featureitemview",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_kt_color",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_storycircleitem",
-      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_topfeatureitem",
-      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_homescreen",
-      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_kt_context",
-      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_selectionactionitem",
-      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_shareselectedmedia",
-      "app_src_main_java_com_quizango_gallery_ui_home_photostab_formatduration",
-      "app_src_main_java_com_quizango_gallery_ui_home_photostab_formatgroupheader",
-      "app_src_main_java_com_quizango_gallery_ui_home_photostab_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_home_photostab_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_home_photostab_photogriditem",
-      "app_src_main_java_com_quizango_gallery_ui_home_photostab_photostab",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_createsamplemediaitem",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testalbumdetailgrouping",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testalbummodelattributes",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testalbumnavigationroutes",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testfavoritetogglelogic",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testselectionmodetoggle",
-      "app_src_test_java_com_quizango_gallery_albumdetailtest_kt_test",
-      "app_src_test_java_com_quizango_gallery_hometest",
-      "app_src_test_java_com_quizango_gallery_hometest_hometest",
-      "app_src_test_java_com_quizango_gallery_hometest_hometest_testformatduration",
-      "app_src_test_java_com_quizango_gallery_hometest_hometest_testformatgroupheader",
-      "app_src_test_java_com_quizango_gallery_hometest_hometest_testhometabs",
-      "app_src_test_java_com_quizango_gallery_hometest_hometest_testmediatypeslist",
-      "app_src_test_java_com_quizango_gallery_hometest_hometest_testsortorder",
-      "app_src_test_java_com_quizango_gallery_hometest_hometest_testtopfeatureslist",
-      "app_src_test_java_com_quizango_gallery_hometest_kt_test",
-      "calendar",
-      "home_top_features",
-      "media_types"
-    ],
-    "2": [
       "app_src_main_java_com_quizango_gallery_data_local_database_dao_daos",
       "app_src_main_java_com_quizango_gallery_data_local_database_dao_daos_gallerydao",
       "app_src_main_java_com_quizango_gallery_data_local_database_dao_daos_gallerydao_delete",
@@ -262,7 +206,16 @@
       "dao",
       "database",
       "entity",
+      "feature_tracker",
+      "feature_tracker_evidence_classification_key",
+      "feature_tracker_feature_matrix",
+      "feature_tracker_feature_tracker_observable_parity_implementation_evidence",
       "insert",
+      "planning_project",
+      "planning_project_complete_android_apk_reconstruction_gallery_app",
+      "planning_project_core_feature_scope",
+      "planning_project_project_overview",
+      "planning_project_technical_stack",
       "primarykey",
       "query",
       "room",
@@ -271,107 +224,7 @@
       "update",
       "volatile"
     ],
-    "3": [
-      "app_src_main_java_com_quizango_gallery_data_local_database_entity_entities_mediaentity_todomain",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_kt_context",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_kt_flow",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository_deletefromvault",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository_getvaultitemsflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository_movetovault",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository_restorefromvault",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl_deletefromvault",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl_getvaultitemsflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl_movetovault",
-      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl_restorefromvault",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_animated",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_burst",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_fromraw",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_image",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_screenshot",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_video",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_vaultitem",
-      "app_src_main_java_com_quizango_gallery_galleryapplication",
-      "app_src_main_java_com_quizango_gallery_galleryapplication_galleryapplication",
-      "app_src_main_java_com_quizango_gallery_galleryapplication_galleryapplication_newimageloader",
-      "app_src_main_java_com_quizango_gallery_galleryapplication_galleryapplication_oncreate",
-      "app_src_main_java_com_quizango_gallery_ui_theme_theme_applynightmode",
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_kt_context",
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_shareselectedvaultmedia",
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_vaultgriditem",
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_vaultmediascreen",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_tovaultitem",
-      "app_src_test_java_com_quizango_gallery_vaulttest",
-      "app_src_test_java_com_quizango_gallery_vaulttest_kt_test",
-      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest",
-      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testsecurityquestionanswermatching",
-      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testvaultitemcreation",
-      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testvaultnavigationroutes",
-      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testvaultpinvalidation",
-      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testvaultselectiontoggle",
-      "application",
-      "coroutinescope",
-      "dispatchers",
-      "gifdecoder",
-      "imagedecoderdecoder",
-      "imageloader",
-      "imageloaderfactory",
-      "uuid",
-      "videoframedecoder"
-    ],
-    "4": [
-      "androidview",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_bottomactionbutton",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_capturevideoframe",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_detailsheetrow",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_formatduration",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_formatfilesize",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_kt_bitmap",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_kt_context",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_mediaviewerscreen",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_pagermediaitemview",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_savecapturedframetogallery",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_sharemedia",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_suggestionpill",
-      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_tomediaitem",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_kt_test",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testclickedphotoinitialindexcalculation",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testdisplaylistfallbackandpagingsync",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testfallbackitemcreation",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testfallbackvideoitemcreation",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testfilesizeformatting",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testmediaviewerroutes",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testpanoffsetclamping",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testpinchtozoomscalecalculation",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testtoolbardatetimeformatting",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testvaultitemtomediaitemconversion",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testvideodurationformatting",
-      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testvideospeedoptions",
-      "exoplayer",
-      "experimentalmaterial3api",
-      "folder",
-      "graphicslayer",
-      "horizontalpager",
-      "mediametadataretriever",
-      "onsizechanged",
-      "playerview",
-      "rememberpagerstate",
-      "remembertransformablestate",
-      "simpledateformat",
-      "transformable",
-      "unstableapi"
-    ],
-    "5": [
+    "2": [
       "activity",
       "app_src_main_java_com_quizango_gallery_data_ads_admanager",
       "app_src_main_java_com_quizango_gallery_data_ads_admanager_admanager",
@@ -380,34 +233,37 @@
       "app_src_main_java_com_quizango_gallery_data_ads_admanager_admanager_showinterstitial",
       "app_src_main_java_com_quizango_gallery_data_ads_admanager_admanager_showrewarded",
       "app_src_main_java_com_quizango_gallery_data_ads_admanager_kt_context",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_exploretab",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_featurecard",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_kt_color",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_kt_modifier",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_managerow",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_sectionlabel",
-      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_tilebutton",
+      "app_src_main_java_com_quizango_gallery_galleryapplication_galleryapplication_oncreate",
+      "app_src_main_java_com_quizango_gallery_mainactivity",
+      "app_src_main_java_com_quizango_gallery_mainactivity_mainactivity",
+      "app_src_main_java_com_quizango_gallery_mainactivity_mainactivity_oncreate",
       "app_src_main_java_com_quizango_gallery_ui_theme_theme",
+      "app_src_main_java_com_quizango_gallery_ui_theme_theme_applynightmode",
       "app_src_main_java_com_quizango_gallery_ui_theme_theme_gallerytheme",
       "app_src_main_java_com_quizango_gallery_ui_theme_theme_kt_composable",
       "appcompatdelegate",
+      "bundle",
+      "collectasstate",
       "colorscheme",
+      "componentactivity",
       "contextwrapper",
       "darkcolorscheme",
-      "horizontaldivider",
-      "icon",
+      "enableedgetoedge",
+      "fillmaxsize",
+      "getvalue",
       "issystemindarktheme",
+      "launchedeffect",
       "lightcolorscheme",
       "localview",
       "materialtheme",
-      "screenbackground",
+      "remembernavcontroller",
+      "setcontent",
       "sideeffect",
+      "surface",
       "toargb",
       "windowcompat"
     ],
-    "6": [
+    "3": [
       "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatewaitingscreen_duplicatewaitingscreen",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatewaitingscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_screenshortscreen_kt_composable",
@@ -425,23 +281,123 @@
       "app_src_main_java_com_quizango_gallery_ui_discovery_burstphotoscreen_burstphotoscreen",
       "app_src_main_java_com_quizango_gallery_ui_discovery_burstphotoscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_discovery_burstphotoscreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_discovery_organizerrecyclescreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_discovery_organizerrecyclescreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_discovery_organizerrecyclescreen_organizerrecyclescreen",
       "app_src_main_java_com_quizango_gallery_ui_discovery_storyviewscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_discovery_storyviewscreen_storyviewscreen",
       "app_src_main_java_com_quizango_gallery_ui_navigation_gallerynavhost",
       "app_src_main_java_com_quizango_gallery_ui_navigation_gallerynavhost_gallerynavhost",
       "app_src_main_java_com_quizango_gallery_ui_navigation_gallerynavhost_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_navigation_gallerynavhost_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_permission_permissionscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_permission_permissionscreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_permission_permissionscreen_permissionscreen",
-      "app_src_main_java_com_quizango_gallery_ui_settings_languagescreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_settings_languagescreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_settings_languagescreen_languagescreen",
+      "app_src_main_java_com_quizango_gallery_ui_onboarding_welcomescreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_onboarding_welcomescreen_welcomescreen",
+      "app_src_main_java_com_quizango_gallery_ui_settings_themescreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_settings_themescreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_settings_themescreen_themescreen",
       "navargument",
       "navhost",
       "navhostcontroller",
       "navtype",
       "urldecoder"
+    ],
+    "4": [
+      "androidview",
+      "animatedvisibility",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_bottomactionbutton",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_capturevideoframe",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_detailsheetrow",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_formatfilesize",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_kt_bitmap",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_kt_context",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_mediaviewerscreen",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_pagermediaitemview",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_savecapturedframetogallery",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_sharemedia",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_suggestionpill",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_tomediaitem",
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_tovaultitem",
+      "exoplayer",
+      "experimentalmaterial3api",
+      "fadein",
+      "fadeout",
+      "graphicslayer",
+      "horizontalpager",
+      "mediametadataretriever",
+      "onsizechanged",
+      "playerview",
+      "rememberpagerstate",
+      "remembertransformablestate",
+      "transformable",
+      "unstableapi"
+    ],
+    "5": [
+      "app_src_main_java_com_quizango_gallery_ui_discovery_searchcolorscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_discovery_searchcolorscreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_discovery_searchcolorscreen_searchcolorscreen",
+      "app_src_main_java_com_quizango_gallery_ui_home_photostab_formatgroupheader",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_createsamplemediaitem",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testalbumdetailgrouping",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testalbummodelattributes",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testalbumnavigationroutes",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testfavoritetogglelogic",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest_albumdetailtest_testselectionmodetoggle",
+      "app_src_test_java_com_quizango_gallery_albumdetailtest_kt_test",
+      "app_src_test_java_com_quizango_gallery_hometest",
+      "app_src_test_java_com_quizango_gallery_hometest_hometest",
+      "app_src_test_java_com_quizango_gallery_hometest_hometest_testfeaturesandmediatypesresourcesvalid",
+      "app_src_test_java_com_quizango_gallery_hometest_hometest_testformatduration",
+      "app_src_test_java_com_quizango_gallery_hometest_hometest_testformatgroupheader",
+      "app_src_test_java_com_quizango_gallery_hometest_hometest_testhometabs",
+      "app_src_test_java_com_quizango_gallery_hometest_hometest_testmediatypeslist",
+      "app_src_test_java_com_quizango_gallery_hometest_hometest_testsortorder",
+      "app_src_test_java_com_quizango_gallery_hometest_hometest_testtopfeatureslist",
+      "calendar",
+      "formatduration",
+      "formatgroupheader",
+      "home_top_features",
+      "media_types",
+      "sortdirection",
+      "sortfield",
+      "sortorder",
+      "test"
+    ],
+    "6": [
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_copymediatofolder",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_deletepermanently",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getactivemediaflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getalbumsflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getanimatedmediaflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getburstphotosflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getduplicatesflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getfavoritesflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getlargevideosflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getmediabyfolderflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getrecyclebinflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getscreenshotsflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_movetotrash",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_renamemedia",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_restorefromtrash",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_searchbycolorflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_setfavorite",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_syncmediastore",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getactivemediaflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getanimatedmediaflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getburstphotosflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getfavoritesflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getlargevideosflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getmediabyfolderflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getrecyclebinflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getscreenshotsflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_searchbycolorflow",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_mediaitem",
+      "flow"
     ],
     "7": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_about",
@@ -476,34 +432,35 @@
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_welcome"
     ],
     "8": [
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_kt_flow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_copymediatofolder",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_deletepermanently",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getactivemediaflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getanimatedmediaflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getburstphotosflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getduplicatesflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getfavoritesflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getlargevideosflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getmediabyfolderflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getrecyclebinflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getscreenshotsflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_movetotrash",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_renamemedia",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_restorefromtrash",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_searchbycolorflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_setfavorite",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_syncmediastore",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getactivemediaflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getanimatedmediaflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getburstphotosflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getfavoritesflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getlargevideosflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getmediabyfolderflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getscreenshotsflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_searchbycolorflow",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_mediaitem"
+      "albumoptionbg",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_album",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_albumcard",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_albumstab",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_featureitemview",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_kt_color",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_mediatypeitem",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_storycircleitem",
+      "app_src_main_java_com_quizango_gallery_ui_home_albumstab_topfeatureitem",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_exploretab",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_featurecard",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_kt_color",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_kt_modifier",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_managerow",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_sectionlabel",
+      "app_src_main_java_com_quizango_gallery_ui_home_exploretab_tilebutton",
+      "app_src_main_java_com_quizango_gallery_ui_search_searchscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_search_searchscreen_searchalbumcard",
+      "app_src_main_java_com_quizango_gallery_ui_search_searchscreen_searchmediacard",
+      "app_src_main_java_com_quizango_gallery_ui_search_searchscreen_searchscreen",
+      "folder",
+      "horizontaldivider",
+      "icon",
+      "screenbackground",
+      "topcontainerbg"
     ],
     "9": [
       "app_src_main_java_com_quizango_gallery_ui_creative_blurbgscreen_blurbgscreen",
@@ -536,6 +493,94 @@
       "app_src_main_java_com_quizango_gallery_ui_creative_removebgscreen_transparent"
     ],
     "10": [
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam_brightness",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam_contrast",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam_saturation",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam_sharpen",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_five_four",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_four_five",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_four_three",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_free",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_nine_sixteen",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_one_one",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_sixteen_nine",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_three_four",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_adjust",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_brush",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_crop",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_filter",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_sticker",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_text",
+      "app_src_test_java_com_quizango_gallery_photoeditortest",
+      "assertfalse",
+      "assertnotnull",
+      "brush_colors",
+      "drawableres",
+      "offset",
+      "sticker_list"
+    ],
+    "11": [
+      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters",
+      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters",
+      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters_fromintlist",
+      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters_fromstringlist",
+      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters_tointlist",
+      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters_tostringlist",
+      "app_src_test_java_com_quizango_gallery_converterstest",
+      "app_src_test_java_com_quizango_gallery_converterstest_converterstest",
+      "app_src_test_java_com_quizango_gallery_converterstest_converterstest_testintlistconversion",
+      "app_src_test_java_com_quizango_gallery_converterstest_converterstest_testintlistnullandempty",
+      "app_src_test_java_com_quizango_gallery_converterstest_converterstest_teststringlistconversion",
+      "app_src_test_java_com_quizango_gallery_converterstest_converterstest_teststringlistnullandempty",
+      "app_src_test_java_com_quizango_gallery_converterstest_kt_test",
+      "assertequals",
+      "asserttrue",
+      "planning_state",
+      "planning_state_current_phase_phase_j_completed_full_implementation_unit_tests_and_build_verification",
+      "planning_state_project_state",
+      "test_results",
+      "test_results_1_build_verification_summary",
+      "test_results_2_test_suite_execution_details",
+      "test_results_3_aapt_resource_compilation_vector_verification",
+      "test_results_4_verification_conclusion",
+      "test_results_automated_test_execution_verification_report",
+      "test_results_suite_1_converterstest_data_layer_verification",
+      "test_results_suite_2_domainmodeltest_domain_business_logic_verification",
+      "typeconverter"
+    ],
+    "12": [
+      "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner",
+      "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner_kt_context",
+      "app_src_main_java_com_quizango_gallery_ui_creative_imagesegmentationhelper",
+      "build",
+      "colormatrix",
+      "colormatrixcolorfilter",
+      "contenturis",
+      "contentvalues",
+      "cursor",
+      "date",
+      "dispatchers",
+      "environment",
+      "fileoutputstream",
+      "inputimage",
+      "locale",
+      "mediascannerconnection",
+      "mediastore",
+      "paint",
+      "porterduff",
+      "porterduffxfermode",
+      "radialgradient",
+      "rectf",
+      "shader",
+      "simpledateformat",
+      "tasks",
+      "timeunit",
+      "withcontext"
+    ],
+    "13": [
       "abs",
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview",
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_cropgeometry",
@@ -550,8 +595,6 @@
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_kt_modifier",
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_kt_offset",
-      "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcropgeometryaspectcroprectcalculation",
-      "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcropgeometryhittesting",
       "boxwithconstraints",
       "drawscope",
       "intoffset",
@@ -562,33 +605,62 @@
       "min",
       "mutablestateof",
       "rect",
-      "size"
+      "size",
+      "stroke"
     ],
-    "11": [
-      "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner",
-      "app_src_main_java_com_quizango_gallery_ui_creative_imagesegmentationhelper",
-      "build",
-      "colormatrix",
-      "colormatrixcolorfilter",
-      "contenturis",
-      "cursor",
-      "date",
-      "environment",
-      "fileoutputstream",
-      "inputimage",
-      "locale",
-      "mediascannerconnection",
-      "mediastore",
-      "paint",
-      "porterduff",
-      "porterduffxfermode",
-      "radialgradient",
-      "rectf",
-      "shader",
-      "tasks",
-      "timeunit"
+    "14": [
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setautodeletetrash",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setcompletedwelcome",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setfingerprintenabled",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setfirstlaunch",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setlanguage",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setmediacolcount",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setpatternmode",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setsecurityquestion",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setthememode",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setthreesecurityquestions",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setvaultpattern",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setvaultpin",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_keys",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_kt_context",
+      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_kt_flow",
+      "app_src_main_java_com_quizango_gallery_ui_settings_languagescreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_settings_languagescreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_settings_languagescreen_languagescreen",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultforgotpasswordscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultforgotpasswordscreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultforgotpasswordscreen_vaultforgotpasswordscreen",
+      "map",
+      "preferencesdatastore"
     ],
-    "12": [
+    "15": [
+      "activityresultcontracts",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustpanel",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_applyalltransformations",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_brushpanel",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_croppanel",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_drawnpath",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_filterpanel",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_bitmap",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_color",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_context",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_offset",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_photoeditorscreen",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_placedsticker",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_placedtext",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_saveeditedbitmap",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_stickerpanel",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_subtoolheader",
+      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_textpanel",
+      "outputstream",
+      "pointmode",
+      "rememberlauncherforactivityresult"
+    ],
+    "16": [
       "app_src_main_java_com_quizango_gallery_ui_cleaner_largevideoscreen_formatvideoduration",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_largevideoscreen_formatvideosize",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_largevideoscreen_kt_composable",
@@ -612,30 +684,7 @@
       "app_src_test_java_com_quizango_gallery_cleanertest_cleanertest_testlargevideofiltering",
       "app_src_test_java_com_quizango_gallery_cleanertest_kt_test"
     ],
-    "13": [
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setautodeletetrash",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setcompletedwelcome",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setfingerprintenabled",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setfirstlaunch",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setlanguage",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setmediacolcount",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setpatternmode",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setsecurityquestion",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setthememode",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setthreesecurityquestions",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setvaultpattern",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences_setvaultpin",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_keys",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_kt_context",
-      "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_kt_flow",
-      "app_src_main_java_com_quizango_gallery_ui_onboarding_welcomescreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_onboarding_welcomescreen_welcomescreen",
-      "map",
-      "preferencesdatastore"
-    ],
-    "14": [
+    "17": [
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_cropgeometry_updatecroprect",
       "app_src_test_java_com_quizango_gallery_photoeditortest_kt_test",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest",
@@ -643,8 +692,10 @@
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testbrushcolorspalette",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcreativeroutes",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcreativerulerparameters",
+      "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcropgeometryaspectcroprectcalculation",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcropgeometrycenterdragclamping",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcropgeometryfixedratiocornerdrag",
+      "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcropgeometryhittesting",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testcropratioscompleteness",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testdrawnpathmodel",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testeditorfilterscompleteness",
@@ -654,25 +705,62 @@
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_testremovebgchoicetypes",
       "app_src_test_java_com_quizango_gallery_photoeditortest_photoeditortest_teststickerlistnonempty"
     ],
-    "15": [
-      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters",
-      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters",
-      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters_fromintlist",
-      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters_fromstringlist",
-      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters_tointlist",
-      "app_src_main_java_com_quizango_gallery_data_local_database_converter_converters_converters_tostringlist",
-      "app_src_test_java_com_quizango_gallery_converterstest",
-      "app_src_test_java_com_quizango_gallery_converterstest_converterstest",
-      "app_src_test_java_com_quizango_gallery_converterstest_converterstest_testintlistconversion",
-      "app_src_test_java_com_quizango_gallery_converterstest_converterstest_testintlistnullandempty",
-      "app_src_test_java_com_quizango_gallery_converterstest_converterstest_teststringlistconversion",
-      "app_src_test_java_com_quizango_gallery_converterstest_converterstest_teststringlistnullandempty",
-      "app_src_test_java_com_quizango_gallery_converterstest_kt_test",
-      "assertequals",
-      "asserttrue",
-      "typeconverter"
+    "18": [
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_factory",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_factory_create",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_clearselection",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_moveselectedtotrash",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_moveselectedtovault",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_selectall",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_setcolumncount",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_setsearchquery",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_setsortorder",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_settab",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_syncmedia",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_togglefavorite",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_togglefavoriteselected",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_toggleselection",
+      "stateflow",
+      "suppress",
+      "viewmodel"
     ],
-    "16": [
+    "19": [
+      "app_src_main_java_com_quizango_gallery_ui_viewer_mediaviewerscreen_formatduration",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_kt_test",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testclickedphotoinitialindexcalculation",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testdisplaylistfallbackandpagingsync",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testfallbackitemcreation",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testfallbackvideoitemcreation",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testfilesizeformatting",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testmediaviewerroutes",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testpanoffsetclamping",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testpinchtozoomscalecalculation",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testtoolbardatetimeformatting",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testvaultitemtomediaitemconversion",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testvideodurationformatting",
+      "app_src_test_java_com_quizango_gallery_mediaviewertest_mediaviewertest_testvideospeedoptions"
+    ],
+    "20": [
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_kt_context",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_kt_flow",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository_deletefromvault",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository_getvaultitemsflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository_movetovault",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepository_restorefromvault",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl_deletefromvault",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl_getvaultitemsflow",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl_movetovault",
+      "app_src_main_java_com_quizango_gallery_data_repository_vaultrepository_vaultrepositoryimpl_restorefromvault",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_vaultitem",
+      "uuid"
+    ],
+    "21": [
       "app_src_main_java_com_quizango_gallery_domain_model_models",
       "app_src_main_java_com_quizango_gallery_domain_model_models_sortdirection",
       "app_src_main_java_com_quizango_gallery_domain_model_models_sortdirection_ascending",
@@ -684,31 +772,12 @@
       "app_src_main_java_com_quizango_gallery_domain_model_models_sortfield_size",
       "app_src_main_java_com_quizango_gallery_domain_model_models_sortorder",
       "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel",
+      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeuistate",
       "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_applyfilterandsort",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_setsortorder",
-      "viewmodel",
       "viewmodelprovider",
       "viewmodelscope"
     ],
-    "17": [
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_factory",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_factory_create",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_clearselection",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_moveselectedtotrash",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_moveselectedtovault",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_selectall",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_setcolumncount",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_setsearchquery",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_settab",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_syncmedia",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_togglefavorite",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_togglefavoriteselected",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeviewmodel_toggleselection",
-      "stateflow",
-      "suppress"
-    ],
-    "18": [
+    "22": [
       "app_src_main_java_com_quizango_gallery_ui_creative_galleryrulerview",
       "app_src_main_java_com_quizango_gallery_ui_creative_galleryrulerview_galleryrulerview",
       "app_src_main_java_com_quizango_gallery_ui_creative_galleryrulerview_kt_color",
@@ -725,91 +794,57 @@
       "setvalue",
       "strokecap"
     ],
-    "19": [
-      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen",
-      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_checkstoragepermissions",
-      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_kt_color",
-      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_kt_context",
-      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_kt_modifier",
-      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_splashscreen",
-      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_wavyprogressindicator",
-      "contextcompat",
-      "first",
-      "manifest",
-      "packagemanager",
-      "path",
-      "stroke"
-    ],
-    "20": [
-      "app_src_main_java_com_quizango_gallery_mainactivity",
-      "app_src_main_java_com_quizango_gallery_mainactivity_mainactivity",
-      "app_src_main_java_com_quizango_gallery_mainactivity_mainactivity_oncreate",
-      "bundle",
-      "collectasstate",
-      "componentactivity",
-      "enableedgetoedge",
-      "fillmaxsize",
-      "getvalue",
-      "launchedeffect",
-      "remembernavcontroller",
-      "setcontent",
-      "surface"
-    ],
-    "21": [
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam_brightness",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam_contrast",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam_saturation",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustparam_sharpen",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_adjust",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_brush",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_crop",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_filter",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_sticker",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editortab_text",
-      "drawableres"
-    ],
-    "22": [
+    "23": [
       "app_src_main_java_com_quizango_gallery_data_local_database_entity_entities_mediaentity_fromdomain",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_copymediatofolder",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_deletepermanently",
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getalbumsflow",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getduplicatesflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getrecyclebinflow",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_movetotrash",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_renamemedia",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_restorefromtrash",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_setfavorite",
       "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_syncmediastore"
     ],
-    "23": [
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_drawnpath",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_color",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_offset",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_placedsticker",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_placedtext",
-      "app_src_test_java_com_quizango_gallery_photoeditortest",
-      "assertfalse",
-      "assertnotnull",
-      "brush_colors",
-      "offset",
-      "sticker_list"
-    ],
     "24": [
-      "activityresultcontracts",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_applyalltransformations",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_bitmap",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_context",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_saveeditedbitmap",
-      "contentvalues",
-      "outputstream",
-      "pointmode",
-      "rememberlauncherforactivityresult"
+      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_draweritemdata",
+      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_drawerrow",
+      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_gallerybottomnav",
+      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_gallerydrawer",
+      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_homescreen",
+      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_kt_context",
+      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_selectionactionitem",
+      "app_src_main_java_com_quizango_gallery_ui_home_homescreen_shareselectedmedia"
     ],
     "25": [
+      "app_src_main_java_com_quizango_gallery_galleryapplication",
+      "app_src_main_java_com_quizango_gallery_galleryapplication_galleryapplication",
+      "app_src_main_java_com_quizango_gallery_galleryapplication_galleryapplication_newimageloader",
+      "application",
+      "coroutinescope",
+      "gifdecoder",
+      "imagedecoderdecoder",
+      "imageloader",
+      "imageloaderfactory",
+      "videoframedecoder"
+    ],
+    "26": [
+      "app_src_main_java_com_quizango_gallery_ui_cleaner_cleanerscreen_cleanercategorycard",
+      "app_src_main_java_com_quizango_gallery_ui_cleaner_cleanerscreen_cleanerscreen",
+      "app_src_main_java_com_quizango_gallery_ui_cleaner_cleanerscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatephotoscreen_duplicatephotoscreen",
+      "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatephotoscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatephotoscreen_kt_optin",
+      "count",
+      "discrepancy_register_disc_005_system_cleaner_screen_structure",
+      "discrepancy_register_disc_007_duplicate_photo_finder_navigation",
+      "sizebytes"
+    ],
+    "27": [
       "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatephotoscreen_formatduplicatesize",
       "app_src_test_java_com_quizango_gallery_duplicatetest",
       "app_src_test_java_com_quizango_gallery_duplicatetest_duplicatetest",
@@ -821,7 +856,7 @@
       "app_src_test_java_com_quizango_gallery_duplicatetest_duplicatetest_testselectallandunselectalltoggle",
       "app_src_test_java_com_quizango_gallery_duplicatetest_kt_test"
     ],
-    "26": [
+    "28": [
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_crophandle",
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_crophandle_bottom",
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_crophandle_bottom_left",
@@ -833,7 +868,7 @@
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_crophandle_top_left",
       "app_src_main_java_com_quizango_gallery_ui_editor_crop_imagecropview_crophandle_top_right"
     ],
-    "27": [
+    "29": [
       "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editorfilter",
       "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editorfilter_cool",
       "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editorfilter_cyberpunk",
@@ -845,29 +880,42 @@
       "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editorfilter_vivid",
       "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_editorfilter_warm"
     ],
-    "28": [
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_adjustpanel",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_brushpanel",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_croppanel",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_filterpanel",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_photoeditorscreen",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_stickerpanel",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_subtoolheader",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_textpanel"
-    ],
-    "29": [
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_five_four",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_four_five",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_four_three",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_free",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_nine_sixteen",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_one_one",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_sixteen_nine",
-      "app_src_main_java_com_quizango_gallery_ui_editor_photoeditorscreen_cropratio_three_four"
-    ],
     "30": [
+      "app_src_main_java_com_quizango_gallery_ui_permission_permissionscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_permission_permissionscreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_permission_permissionscreen_permissionscreen",
+      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_checkstoragepermissions",
+      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_kt_color",
+      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_kt_context",
+      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_kt_modifier",
+      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_splashscreen",
+      "app_src_main_java_com_quizango_gallery_ui_splash_splashscreen_wavyprogressindicator"
+    ],
+    "31": [
+      "discrepancy_register",
+      "discrepancy_register_detailed_discrepancy_records",
+      "discrepancy_register_disc_001_explore_tab_structure_content",
+      "discrepancy_register_disc_002_albums_tab_top_feature_bar_media_types",
+      "discrepancy_register_disc_004_navigation_drawer_alignment",
+      "discrepancy_register_disc_006_reference_vector_drawables_missing",
+      "discrepancy_register_disc_008_app_icons_shortcuts",
+      "discrepancy_register_disc_009_cloud_sync_third_party_ad_sdks",
+      "discrepancy_register_discrepancy_register_forensic_audit_reconstruction",
+      "discrepancy_register_issue_summary"
+    ],
+    "32": [
+      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_albumdetailscreen",
+      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_kt_context",
+      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_album_albumdetailscreen_shareselectedmedia",
+      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_gallerytopbar",
+      "app_src_main_java_com_quizango_gallery_ui_components_navigationcomponents_kt_optin",
+      "discrepancy_register_disc_003_home_toolbar_vault_trigger",
+      "screenshot_comparison_report_4_home_top_app_bar"
+    ],
+    "33": [
       "app_src_test_java_com_quizango_gallery_favoritestest",
       "app_src_test_java_com_quizango_gallery_favoritestest_favoritestest",
       "app_src_test_java_com_quizango_gallery_favoritestest_favoritestest_createmediaitem",
@@ -878,17 +926,60 @@
       "app_src_test_java_com_quizango_gallery_favoritestest_favoritestest_testtogglefavoritelogic",
       "app_src_test_java_com_quizango_gallery_favoritestest_kt_test"
     ],
-    "31": [
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository_getalbumsflow",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepositoryimpl_getalbumsflow",
-      "app_src_main_java_com_quizango_gallery_domain_model_models_album",
-      "app_src_main_java_com_quizango_gallery_ui_home_homeviewmodel_homeuistate",
-      "app_src_main_java_com_quizango_gallery_ui_search_searchscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_search_searchscreen_searchalbumcard",
-      "app_src_main_java_com_quizango_gallery_ui_search_searchscreen_searchmediacard",
-      "app_src_main_java_com_quizango_gallery_ui_search_searchscreen_searchscreen"
+    "34": [
+      "code_review_summary",
+      "code_review_summary_1_architectural_integrity_separation_of_concerns",
+      "code_review_summary_2_security_privacy_audit",
+      "code_review_summary_3_lifecycle_memory_management",
+      "code_review_summary_4_static_analysis_tooling_status",
+      "code_review_summary_independent_code_review_architecture_audit",
+      "code_review_summary_positive_findings",
+      "code_review_summary_positive_findings_22",
+      "code_review_summary_positive_findings_35"
     ],
-    "32": [
+    "35": [
+      "screenshot_comparison_report",
+      "screenshot_comparison_report_1_home_dashboard_albums_tab",
+      "screenshot_comparison_report_2_home_dashboard_explore_tab",
+      "screenshot_comparison_report_3_navigation_drawer",
+      "screenshot_comparison_report_5_system_cleaner_screen",
+      "screenshot_comparison_report_design_system_tokens_summary",
+      "screenshot_comparison_report_evaluation_methodology",
+      "screenshot_comparison_report_screen_by_screen_layout_comparison",
+      "screenshot_comparison_report_screenshot_ui_layout_comparison_report"
+    ],
+    "36": [
+      "unresolved_issues",
+      "unresolved_issues_1_intentionally_excluded_proprietary_subsystems",
+      "unresolved_issues_2_inferred_behavioral_nuances",
+      "unresolved_issues_inferred_01_system_cache_file_calculation",
+      "unresolved_issues_inferred_02_duplicate_photo_detection_heuristics",
+      "unresolved_issues_unknown_01_commercial_ad_mediation_banners",
+      "unresolved_issues_unknown_02_third_party_telemetry_analytics",
+      "unresolved_issues_unknown_03_google_play_in_app_billing",
+      "unresolved_issues_unresolved_issues_boundary_classifications"
+    ],
+    "37": [
+      "app_src_main_java_com_quizango_gallery_data_local_database_entity_entities_mediaentity_todomain",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_animated",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_burst",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_fromraw",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_image",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_screenshot",
+      "app_src_main_java_com_quizango_gallery_domain_model_models_mediatype_video"
+    ],
+    "38": [
+      "app_src_main_java_com_quizango_gallery_ui_home_photostab_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_home_photostab_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_home_photostab_photogriditem",
+      "app_src_main_java_com_quizango_gallery_ui_home_photostab_photostab",
+      "navigation_map_detailed_route_specifications",
+      "navigation_map_navigation_graph_topology",
+      "navigation_map_navigation_map_architecture",
+      "navigation_map_special_transitions_lifecycle_behaviors"
+    ],
+    "39": [
       "app_src_main_java_com_quizango_gallery_ui_recycle_recyclescreen_calculateremainingdays",
       "app_src_test_java_com_quizango_gallery_recycletest",
       "app_src_test_java_com_quizango_gallery_recycletest_kt_test",
@@ -898,7 +989,7 @@
       "app_src_test_java_com_quizango_gallery_recycletest_recycletest_testrecycleselectiontoggle",
       "app_src_test_java_com_quizango_gallery_recycletest_recycletest_testrecycletargetfiltering"
     ],
-    "33": [
+    "40": [
       "app_src_test_java_com_quizango_gallery_domainmodeltest",
       "app_src_test_java_com_quizango_gallery_domainmodeltest_domainmodeltest",
       "app_src_test_java_com_quizango_gallery_domainmodeltest_domainmodeltest_testalbumgrouping",
@@ -908,7 +999,7 @@
       "app_src_test_java_com_quizango_gallery_domainmodeltest_domainmodeltest_testsortingorders",
       "app_src_test_java_com_quizango_gallery_domainmodeltest_kt_test"
     ],
-    "34": [
+    "41": [
       "app_src_test_java_com_quizango_gallery_onboardingtest",
       "app_src_test_java_com_quizango_gallery_onboardingtest_kt_test",
       "app_src_test_java_com_quizango_gallery_onboardingtest_onboardingtest",
@@ -918,7 +1009,7 @@
       "app_src_test_java_com_quizango_gallery_onboardingtest_onboardingtest_testsplashanimationparameters",
       "app_src_test_java_com_quizango_gallery_onboardingtest_onboardingtest_testsplashnavigationroutinglogic"
     ],
-    "35": [
+    "42": [
       "app_src_test_java_com_quizango_gallery_settingstest",
       "app_src_test_java_com_quizango_gallery_settingstest_kt_test",
       "app_src_test_java_com_quizango_gallery_settingstest_settingstest",
@@ -928,16 +1019,62 @@
       "app_src_test_java_com_quizango_gallery_settingstest_settingstest_testratinglabelsmapping",
       "app_src_test_java_com_quizango_gallery_settingstest_settingstest_testthememodeoptions"
     ],
-    "36": [
-      "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner_kt_context",
+    "43": [
+      "app_src_test_java_com_quizango_gallery_vaulttest",
+      "app_src_test_java_com_quizango_gallery_vaulttest_kt_test",
+      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest",
+      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testsecurityquestionanswermatching",
+      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testvaultitemcreation",
+      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testvaultnavigationroutes",
+      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testvaultpinvalidation",
+      "app_src_test_java_com_quizango_gallery_vaulttest_vaulttest_testvaultselectiontoggle"
+    ],
+    "44": [
+      "final_readiness_report",
+      "final_readiness_report_1_executive_summary",
+      "final_readiness_report_2_artifact_cryptographic_baseline",
+      "final_readiness_report_3_discrepancy_resolution_audit_summary",
+      "final_readiness_report_4_verification_quality_gates",
+      "final_readiness_report_5_final_sign_off",
+      "final_readiness_report_final_readiness_reconstruction_sign_off_report",
+      "navigation_map"
+    ],
+    "45": [
       "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner_mediastorescanner",
       "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner_mediastorescanner_getresolutionlabel",
       "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner_mediastorescanner_scanimages",
       "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner_mediastorescanner_scanmedia",
       "app_src_main_java_com_quizango_gallery_data_local_mediastore_mediastorescanner_mediastorescanner_scanvideos",
-      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository"
+      "app_src_main_java_com_quizango_gallery_data_repository_mediarepository",
+      "mediaentity"
     ],
-    "37": [
+    "46": [
+      "app_src_main_java_com_quizango_gallery_ui_home_photostab_formatduration",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_kt_composable",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_kt_context",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_kt_optin",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_shareselectedvaultmedia",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_vaultgriditem",
+      "app_src_main_java_com_quizango_gallery_ui_vault_vaultmediascreen_vaultmediascreen"
+    ],
+    "47": [
+      "app_src_main_res_drawable_app_icon_splash",
+      "screen_inventory",
+      "screen_inventory_1_primary_user_journey_screens",
+      "screen_inventory_2_reference_apk_specialized_nested_screens",
+      "screen_inventory_3_third_party_proprietary_frameworks_excluded_by_design",
+      "screen_inventory_screen_inventory_reference_apk_vs_reconstructed_implementation",
+      "screen_inventory_summary_metrics"
+    ],
+    "48": [
+      "agents_skills_android_apk_reconstruction_skill",
+      "agents_skills_android_apk_reconstruction_skill_android_apk_reconstruction",
+      "agents_skills_android_apk_reconstruction_skill_architecture",
+      "agents_skills_android_apk_reconstruction_skill_objective",
+      "agents_skills_android_apk_reconstruction_skill_rules",
+      "agents_skills_android_apk_reconstruction_skill_verification"
+    ],
+    "49": [
       "app_src_main_java_com_quizango_gallery_data_ads_adconstants",
       "app_src_main_java_com_quizango_gallery_data_ads_adconstants_adconstants",
       "app_src_main_java_com_quizango_gallery_ui_components_banneradview",
@@ -945,7 +1082,7 @@
       "app_src_main_java_com_quizango_gallery_ui_components_banneradview_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_components_banneradview_kt_modifier"
     ],
-    "38": [
+    "50": [
       "app_src_main_java_com_quizango_gallery_ui_favorites_favoritesscreen_favoritesscreen",
       "app_src_main_java_com_quizango_gallery_ui_favorites_favoritesscreen_formatfavoriteduration",
       "app_src_main_java_com_quizango_gallery_ui_favorites_favoritesscreen_kt_composable",
@@ -953,7 +1090,7 @@
       "app_src_main_java_com_quizango_gallery_ui_favorites_favoritesscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_favorites_favoritesscreen_sharefavoritemedia"
     ],
-    "39": [
+    "51": [
       "app_src_main_java_com_quizango_gallery_ui_settings_settingsscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_settings_settingsscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_settings_settingsscreen_rateusdialog",
@@ -961,242 +1098,266 @@
       "app_src_main_java_com_quizango_gallery_ui_settings_settingsscreen_settingnavrow",
       "app_src_main_java_com_quizango_gallery_ui_settings_settingsscreen_settingsscreen"
     ],
-    "40": [
-      "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatephotoscreen_duplicatephotoscreen",
-      "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatephotoscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatephotoscreen_kt_optin",
-      "count",
-      "sizebytes"
-    ],
-    "41": [
+    "52": [
       "app_src_main_java_com_quizango_gallery_ui_cleaner_removejunkscreen_storagecleanphase",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_removejunkscreen_storagecleanphase_cleaning",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_removejunkscreen_storagecleanphase_completed",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_removejunkscreen_storagecleanphase_overview",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_removejunkscreen_storagecleanphase_scanning"
     ],
-    "42": [
+    "53": [
       "app_src_main_java_com_quizango_gallery_ui_components_nativeadcard",
       "app_src_main_java_com_quizango_gallery_ui_components_nativeadcard_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_components_nativeadcard_kt_modifier",
       "app_src_main_java_com_quizango_gallery_ui_components_nativeadcard_nativeadcard"
     ],
-    "43": [
+    "54": [
       "app_src_main_java_com_quizango_gallery_ui_discovery_momentsscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_discovery_momentsscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_discovery_momentsscreen_momentgroup",
       "app_src_main_java_com_quizango_gallery_ui_discovery_momentsscreen_momentsscreen"
     ],
-    "44": [
+    "55": [
       "app_src_main_java_com_quizango_gallery_ui_recycle_recyclescreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_recycle_recyclescreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_recycle_recyclescreen_recyclegriditem",
       "app_src_main_java_com_quizango_gallery_ui_recycle_recyclescreen_recyclescreen"
     ],
-    "45": [
+    "56": [
       "app_src_main_java_com_quizango_gallery_ui_settings_aboutscreen_aboutscreen",
       "app_src_main_java_com_quizango_gallery_ui_settings_aboutscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_settings_aboutscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_settings_aboutscreen_socialmediaitem"
     ],
-    "46": [
+    "57": [
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultlockscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultlockscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultlockscreen_vaultkeypad",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultlockscreen_vaultlockscreen"
     ],
-    "47": [
+    "58": [
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultrecoveryquestionscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultrecoveryquestionscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultrecoveryquestionscreen_stepcircle",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultrecoveryquestionscreen_vaultrecoveryquestionscreen"
     ],
-    "48": [
+    "59": [
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultsettingscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultsettingscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultsettingscreen_vaultsettingrow",
       "app_src_main_java_com_quizango_gallery_ui_vault_vaultsettingscreen_vaultsettingscreen"
     ],
-    "49": [
+    "60": [
       "gradlew",
       "gradlew__entry",
       "gradlew_die",
       "gradlew_warn"
     ],
-    "50": [
-      "app_src_main_java_com_quizango_gallery_ui_cleaner_cleanerscreen_cleanercategorycard",
-      "app_src_main_java_com_quizango_gallery_ui_cleaner_cleanerscreen_cleanerscreen",
-      "app_src_main_java_com_quizango_gallery_ui_cleaner_cleanerscreen_kt_composable"
-    ],
-    "51": [
+    "61": [
       "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatecompletescreen_duplicatecompletescreen",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatecompletescreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_cleaner_duplicatecompletescreen_kt_optin"
     ],
-    "52": [
+    "62": [
       "app_src_main_java_com_quizango_gallery_ui_creative_collagemakerscreen_collagestep",
       "app_src_main_java_com_quizango_gallery_ui_creative_collagemakerscreen_collagestep_editor",
       "app_src_main_java_com_quizango_gallery_ui_creative_collagemakerscreen_collagestep_picker"
     ],
-    "53": [
+    "63": [
       "app_src_main_java_com_quizango_gallery_ui_creative_stickerscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_creative_stickerscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_creative_stickerscreen_stickerscreen"
     ],
-    "54": [
-      "app_src_main_java_com_quizango_gallery_ui_discovery_organizerrecyclescreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_discovery_organizerrecyclescreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_discovery_organizerrecyclescreen_organizerrecyclescreen"
-    ],
-    "55": [
+    "64": [
       "app_src_main_java_com_quizango_gallery_ui_discovery_quickorganizerscreen_kt_composable",
       "app_src_main_java_com_quizango_gallery_ui_discovery_quickorganizerscreen_kt_optin",
       "app_src_main_java_com_quizango_gallery_ui_discovery_quickorganizerscreen_quickorganizerscreen"
     ],
-    "56": [
-      "app_src_main_java_com_quizango_gallery_ui_discovery_searchcolorscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_discovery_searchcolorscreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_discovery_searchcolorscreen_searchcolorscreen"
-    ],
-    "57": [
+    "65": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen",
       "standardcharsets",
       "urlencoder"
     ],
-    "58": [
-      "app_src_main_java_com_quizango_gallery_ui_settings_themescreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_settings_themescreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_settings_themescreen_themescreen"
+    "66": [
+      "planning_roadmap",
+      "planning_roadmap_phase_overview",
+      "planning_roadmap_reconstruction_roadmap"
     ],
-    "59": [
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultforgotpasswordscreen_kt_composable",
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultforgotpasswordscreen_kt_optin",
-      "app_src_main_java_com_quizango_gallery_ui_vault_vaultforgotpasswordscreen_vaultforgotpasswordscreen"
-    ],
-    "60": [
+    "67": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_albumdetail",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_albumdetail_createroute"
     ],
-    "61": [
+    "68": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_blurbg",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_blurbg_createroute"
     ],
-    "62": [
+    "69": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_colorsplash",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_colorsplash_createroute"
     ],
-    "63": [
+    "70": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_duplicatecomplete",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_duplicatecomplete_createroute"
     ],
-    "64": [
+    "71": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_editor",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_editor_createroute"
     ],
-    "65": [
+    "72": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_mediaviewer",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_mediaviewer_createroute"
     ],
-    "66": [
+    "73": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_removebg",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_removebg_createroute"
     ],
-    "67": [
+    "74": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_searchcolor",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_searchcolor_createroute"
     ],
-    "68": [
+    "75": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_storyview",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_storyview_createroute"
     ],
-    "69": [
+    "76": [
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_wallpaper",
       "app_src_main_java_com_quizango_gallery_ui_navigation_screen_wallpaper_createroute"
     ],
-    "70": [
+    "77": [
       "app_build_gradle"
     ],
-    "71": [
+    "78": [
+      "app_src_main_res_drawable_about_gallery_logo"
+    ],
+    "79": [
+      "app_src_main_res_mipmap_hdpi_ic_launcher_gallery"
+    ],
+    "80": [
+      "app_src_main_res_mipmap_hdpi_ic_launcher_gallery_round"
+    ],
+    "81": [
+      "app_src_main_res_mipmap_hdpi_ic_launcher_round_gallery"
+    ],
+    "82": [
+      "app_src_main_res_mipmap_mdpi_ic_launcher_gallery"
+    ],
+    "83": [
+      "app_src_main_res_mipmap_xhdpi_ic_launcher_gallery"
+    ],
+    "84": [
+      "app_src_main_res_mipmap_xhdpi_ic_launcher_gallery_round"
+    ],
+    "85": [
+      "app_src_main_res_mipmap_xhdpi_ic_launcher_round_gallery"
+    ],
+    "86": [
+      "app_src_main_res_mipmap_xxhdpi_ic_launcher_gallery"
+    ],
+    "87": [
+      "app_src_main_res_mipmap_xxhdpi_ic_launcher_gallery_round"
+    ],
+    "88": [
       "build_gradle"
     ],
-    "72": [
+    "89": [
+      "progress"
+    ],
+    "90": [
       "settings_gradle"
     ]
   },
   "cohesion": {
-    "0": 0.08020857296219615,
-    "1": 0.06108597285067873,
-    "2": 0.09254901960784313,
-    "3": 0.06196078431372549,
-    "4": 0.08080808080808081,
-    "5": 0.09090909090909091,
-    "6": 0.0784313725490196,
+    "0": 0.08113207547169811,
+    "1": 0.07231638418079096,
+    "2": 0.07207207207207207,
+    "3": 0.0746031746031746,
+    "4": 0.10967741935483871,
+    "5": 0.0989247311827957,
+    "6": 0.135632183908046,
     "7": 0.06666666666666667,
-    "8": 0.1455026455026455,
+    "8": 0.13793103448275862,
     "9": 0.1111111111111111,
-    "10": 0.11965811965811966,
-    "11": 0.09523809523809523,
-    "12": 0.1471861471861472,
-    "13": 0.10476190476190476,
-    "14": 0.22058823529411764,
-    "15": 0.2,
-    "16": 0.16666666666666666,
-    "17": 0.15833333333333333,
-    "18": 0.1619047619047619,
-    "19": 0.2087912087912088,
-    "20": 0.1794871794871795,
-    "21": 0.15384615384615385,
-    "22": 0.21818181818181817,
-    "23": 0.23636363636363636,
-    "24": 0.28888888888888886,
-    "25": 0.37777777777777777,
-    "26": 0.2,
-    "27": 0.2,
-    "28": 0.5277777777777778,
-    "29": 0.2222222222222222,
-    "30": 0.4444444444444444,
-    "31": 0.35714285714285715,
-    "32": 0.42857142857142855,
-    "33": 0.42857142857142855,
-    "34": 0.42857142857142855,
-    "35": 0.42857142857142855,
-    "36": 0.47619047619047616,
-    "37": 0.4666666666666667,
-    "38": 0.3333333333333333,
-    "39": 0.5333333333333333,
-    "40": 0.4,
-    "41": 0.4,
-    "42": 0.8333333333333334,
-    "43": 0.5,
-    "44": 0.8333333333333334,
-    "45": 0.6666666666666666,
-    "46": 0.6666666666666666,
-    "47": 0.6666666666666666,
-    "48": 0.6666666666666666,
-    "49": 0.8333333333333334,
-    "50": 1.0,
-    "51": 0.6666666666666666,
-    "52": 0.6666666666666666,
-    "53": 0.6666666666666666,
-    "54": 0.6666666666666666,
-    "55": 0.6666666666666666,
+    "10": 0.07671957671957672,
+    "11": 0.09971509971509972,
+    "12": 0.08547008547008547,
+    "13": 0.12615384615384614,
+    "14": 0.08666666666666667,
+    "15": 0.22924901185770752,
+    "16": 0.1471861471861472,
+    "17": 0.19883040935672514,
+    "18": 0.13725490196078433,
+    "19": 0.23333333333333334,
+    "20": 0.22857142857142856,
+    "21": 0.19047619047619047,
+    "22": 0.1619047619047619,
+    "23": 0.21818181818181817,
+    "24": 0.2545454545454545,
+    "25": 0.26666666666666666,
+    "26": 0.2222222222222222,
+    "27": 0.37777777777777777,
+    "28": 0.2,
+    "29": 0.2,
+    "30": 0.2222222222222222,
+    "31": 0.2,
+    "32": 0.2222222222222222,
+    "33": 0.4444444444444444,
+    "34": 0.2222222222222222,
+    "35": 0.2222222222222222,
+    "36": 0.2222222222222222,
+    "37": 0.25,
+    "38": 0.32142857142857145,
+    "39": 0.42857142857142855,
+    "40": 0.42857142857142855,
+    "41": 0.42857142857142855,
+    "42": 0.42857142857142855,
+    "43": 0.42857142857142855,
+    "44": 0.25,
+    "45": 0.47619047619047616,
+    "46": 0.3333333333333333,
+    "47": 0.2857142857142857,
+    "48": 0.3333333333333333,
+    "49": 0.4666666666666667,
+    "50": 0.3333333333333333,
+    "51": 0.5333333333333333,
+    "52": 0.4,
+    "53": 0.8333333333333334,
+    "54": 0.5,
+    "55": 0.8333333333333334,
     "56": 0.6666666666666666,
     "57": 0.6666666666666666,
     "58": 0.6666666666666666,
     "59": 0.6666666666666666,
-    "60": 1.0,
-    "61": 1.0,
-    "62": 1.0,
-    "63": 1.0,
-    "64": 1.0,
-    "65": 1.0,
-    "66": 1.0,
+    "60": 0.8333333333333334,
+    "61": 0.6666666666666666,
+    "62": 0.6666666666666666,
+    "63": 0.6666666666666666,
+    "64": 0.6666666666666666,
+    "65": 0.6666666666666666,
+    "66": 0.6666666666666666,
     "67": 1.0,
     "68": 1.0,
     "69": 1.0,
     "70": 1.0,
     "71": 1.0,
-    "72": 1.0
+    "72": 1.0,
+    "73": 1.0,
+    "74": 1.0,
+    "75": 1.0,
+    "76": 1.0,
+    "77": 1.0,
+    "78": 1.0,
+    "79": 1.0,
+    "80": 1.0,
+    "81": 1.0,
+    "82": 1.0,
+    "83": 1.0,
+    "84": 1.0,
+    "85": 1.0,
+    "86": 1.0,
+    "87": 1.0,
+    "88": 1.0,
+    "89": 1.0,
+    "90": 1.0
   },
   "gods": [
     {
@@ -1207,7 +1368,7 @@
     {
       "id": "app_src_main_java_com_quizango_gallery_data_repository_mediarepository_mediarepository",
       "label": "MediaRepository",
-      "degree": 63
+      "degree": 64
     },
     {
       "id": "app_src_main_java_com_quizango_gallery_ui_navigation_screen_screen",
@@ -1217,7 +1378,7 @@
     {
       "id": "app_src_main_java_com_quizango_gallery_ui_navigation_gallerynavhost_gallerynavhost",
       "label": "GalleryNavHost()",
-      "degree": 46
+      "degree": 48
     },
     {
       "id": "app_src_main_java_com_quizango_gallery_data_local_datastore_apppreferences_apppreferences",
@@ -1252,96 +1413,63 @@
   ],
   "surprises": [
     {
-      "source": "SearchScreen()",
-      "target": "SolidColor",
+      "source": "3. Discrepancy Resolution & Audit Summary",
+      "target": "DuplicatePhotoScreen()",
       "source_files": [
-        "app/src/main/java/com/quizango/gallery/ui/search/SearchScreen.kt",
-        "app/src/main/java/com/quizango/gallery/ui/creative/RemoveBgScreen.kt"
+        "final-readiness-report.md",
+        "app/src/main/java/com/quizango/gallery/ui/cleaner/DuplicatePhotoScreen.kt"
       ],
       "confidence": "INFERRED",
-      "relation": "calls",
-      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities; peripheral node `3. Discrepancy Resolution & Audit Summary` unexpectedly reaches hub `DuplicatePhotoScreen()`"
     },
     {
-      "source": "HomeScreen()",
-      "target": "ExploreTab()",
+      "source": "DISC-004: Navigation Drawer Alignment",
+      "target": "GalleryDrawer()",
       "source_files": [
-        "app/src/main/java/com/quizango/gallery/ui/home/HomeScreen.kt",
-        "app/src/main/java/com/quizango/gallery/ui/home/ExploreTab.kt"
+        "discrepancy-register.md",
+        "app/src/main/java/com/quizango/gallery/ui/components/NavigationComponents.kt"
       ],
       "confidence": "INFERRED",
-      "relation": "calls",
-      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities; peripheral node `DISC-004: Navigation Drawer Alignment` unexpectedly reaches hub `GalleryDrawer()`"
     },
     {
-      "source": "ScreenShortScreen()",
-      "target": "formatVideoSize()",
+      "source": "1. Primary User Journey Screens",
+      "target": "GalleryDrawer()",
       "source_files": [
-        "app/src/main/java/com/quizango/gallery/ui/cleaner/ScreenShortScreen.kt",
-        "app/src/main/java/com/quizango/gallery/ui/cleaner/LargeVideoScreen.kt"
+        "screen-inventory.md",
+        "app/src/main/java/com/quizango/gallery/ui/components/NavigationComponents.kt"
       ],
       "confidence": "INFERRED",
-      "relation": "calls",
-      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities; peripheral node `1. Primary User Journey Screens` unexpectedly reaches hub `GalleryDrawer()`"
     },
     {
-      "source": "BlurBgScreen()",
-      "target": "GalleryRulerView()",
+      "source": "3. Navigation Drawer",
+      "target": "GalleryDrawer()",
       "source_files": [
-        "app/src/main/java/com/quizango/gallery/ui/creative/BlurBgScreen.kt",
-        "app/src/main/java/com/quizango/gallery/ui/creative/GalleryRulerView.kt"
+        "screenshot-comparison-report.md",
+        "app/src/main/java/com/quizango/gallery/ui/components/NavigationComponents.kt"
       ],
       "confidence": "INFERRED",
-      "relation": "calls",
-      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities; peripheral node `3. Navigation Drawer` unexpectedly reaches hub `GalleryDrawer()`"
     },
     {
-      "source": "ColorSplashScreen()",
-      "target": "GalleryRulerView()",
+      "source": "Suite 1: `ConvertersTest` (Data Layer Verification)",
+      "target": "ConvertersTest",
       "source_files": [
-        "app/src/main/java/com/quizango/gallery/ui/creative/ColorSplashScreen.kt",
-        "app/src/main/java/com/quizango/gallery/ui/creative/GalleryRulerView.kt"
+        "test-results.md",
+        "app/src/test/java/com/quizango/gallery/ConvertersTest.kt"
       ],
       "confidence": "INFERRED",
-      "relation": "calls",
-      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `Suite 1: `ConvertersTest` (Data Layer Verification)` unexpectedly reaches hub `ConvertersTest`"
     }
   ],
-  "questions": [
-    {
-      "type": "bridge_node",
-      "question": "Why does `Screen` connect `Screen` to `Dp`, `HomeScreen`, `MediaType`, `MediaViewerScreen.kt`, `ExploreTab.kt`, `CleanerTest.kt`, `SplashScreen.kt`, `PhotoEditorScreen.kt`, `DuplicateTest`, `RecycleTest.kt`, `Test`, `Screen.kt`, `AlbumDetail`, `BlurBg`, `ColorSplash`, `DuplicateComplete`, `Editor`, `MediaViewer`, `RemoveBg`, `SearchColor`, `StoryView`, `Wallpaper`?",
-      "why": "High betweenness centrality (0.134) - this node is a cross-community bridge."
-    },
-    {
-      "type": "isolated_nodes",
-      "question": "What connects `Screenshots`, `Search`, `Settings` to the rest of the system?",
-      "why": "66 weakly-connected nodes found - possible missing edges."
-    },
-    {
-      "type": "low_cohesion",
-      "question": "Should `Dp` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.08020857296219615 - nodes in this community are weakly interconnected."
-    },
-    {
-      "type": "bridge_node",
-      "question": "Why does `MediaItem` connect `MediaItem` to `Dp`, `HomeScreen`, `GalleryDao`, `MediaType`, `MediaViewerScreen.kt`, `GalleryNavHost.kt`, `ImageSegmentationHelper.kt`, `CleanerTest.kt`, `HomeViewModel.kt`, `HomeViewModel`, `MediaRepositoryImpl`, `DuplicateTest`, `FavoritesTest`, `Album`, `RecycleTest.kt`, `DomainModelTest.kt`, `MediaRepository.kt`, `MomentsScreen`, `RecycleScreen`?",
-      "why": "High betweenness centrality (0.130) - this node is a cross-community bridge."
-    },
-    {
-      "type": "low_cohesion",
-      "question": "Should `HomeScreen` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.06108597285067873 - nodes in this community are weakly interconnected."
-    },
-    {
-      "type": "bridge_node",
-      "question": "Why does `MediaRepository` connect `MediaItem` to `Dp`, `HomeScreen`, `MediaType`, `MediaViewerScreen.kt`, `GalleryNavHost.kt`, `ImageSegmentationHelper`, `CleanerTest.kt`, `HomeViewModel.kt`, `HomeViewModel`, `MediaRepositoryImpl`, `PhotoEditorScreen.kt`, `PhotoEditorScreen`, `Album`, `MediaRepository.kt`, `FavoritesScreen`, `DuplicatePhotoScreen`, `MomentsScreen`, `RecycleScreen`, `OrganizerRecycleScreen`, `QuickOrganizerScreen`, `SearchColorScreen`?",
-      "why": "High betweenness centrality (0.107) - this node is a cross-community bridge."
-    },
-    {
-      "type": "low_cohesion",
-      "question": "Should `GalleryDao` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.09254901960784313 - nodes in this community are weakly interconnected."
-    }
-  ]
+  "tokens": {
+    "input": 58485,
+    "output": 3586
+  }
 }
