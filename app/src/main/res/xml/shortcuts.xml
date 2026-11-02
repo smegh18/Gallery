@@ -7,8 +7,8 @@
         android:shortcutShortLabel="@string/favorites">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="albums.gallery.photo.folder.picasa.app.web.gallery"
-            android:targetClass="albums.gallery.photo.folder.picasa.app.web.gallery.MainActivity">
+            android:targetPackage="com.quizango.gallery"
+            android:targetClass="com.quizango.gallery.MainActivity">
             <extra android:name="route" android:value="favorites" />
         </intent>
     </shortcut>
@@ -19,8 +19,8 @@
         android:shortcutShortLabel="@string/recycle_bin">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="albums.gallery.photo.folder.picasa.app.web.gallery"
-            android:targetClass="albums.gallery.photo.folder.picasa.app.web.gallery.MainActivity">
+            android:targetPackage="com.quizango.gallery"
+            android:targetClass="com.quizango.gallery.MainActivity">
             <extra android:name="route" android:value="recycle" />
         </intent>
     </shortcut>
@@ -31,8 +31,8 @@
         android:shortcutShortLabel="@string/private_vault">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="albums.gallery.photo.folder.picasa.app.web.gallery"
-            android:targetClass="albums.gallery.photo.folder.picasa.app.web.gallery.MainActivity">
+            android:targetPackage="com.quizango.gallery"
+            android:targetClass="com.quizango.gallery.MainActivity">
             <extra android:name="route" android:value="vault" />
         </intent>
     </shortcut>
@@ -43,8 +43,8 @@
         android:shortcutShortLabel="@string/duplicate_finder">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="albums.gallery.photo.folder.picasa.app.web.gallery"
-            android:targetClass="albums.gallery.photo.folder.picasa.app.web.gallery.MainActivity">
+            android:targetPackage="com.quizango.gallery"
+            android:targetClass="com.quizango.gallery.MainActivity">
             <extra android:name="route" android:value="duplicates" />
         </intent>
     </shortcut>

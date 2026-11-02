@@ -22,9 +22,14 @@
     <color name="duplicateBackgroundColor">#e8f2ff</color>
     <color name="duplicateAccentColor">#2f80ed</color>
     <color name="vaultAccentColor">#ffaa00</color>
+    <color name="recoverSelectBg">#007aff</color>
+    <color name="recoverUnselectBg">#f0f9ff</color>
+    <color name="recoverUnselectBorder">#def2ff</color>
+    <color name="ic_recover_spinner_bg_color">#def2ff</color>
 
     <!-- Text & Icon Colors -->
     <color name="titleColor">#1e3354</color>
+    <color name="ic_permission_close">#1E3354</color>
     <color name="subtitleColor">#777777</color>
     <color name="localization_search_icon">#1d242e</color>
     <color name="albumOptionBackColor">#f3f7fb</color>
@@ -63,6 +68,20 @@
     <color name="sticker_search_color">#f3f6fc</color>
     <color name="transparent">#00ffffff</color>
     <color name="white">#ffffff</color>
+    <color name="black_trans_1">#20000000</color>
+    <color name="color_gray">#9e9e9e</color>
+    <color name="green_color_picker">#01a368</color>
+    <color name="yellow_green_color_picker">#c5e17a</color>
+    <color name="color_dark_gray">#424242</color>
+    <color name="color_dark_green">#0cd043</color>
+    <color name="color_dark_pink">#d50100</color>
+    <color name="color_dark_purple">#523583</color>
+    <color name="color_light_pink">#ff8a80</color>
+    <color name="color_pink">#fd5451</color>
+    <color name="sky_blue_color_picker">#76d7ea</color>
+    <color name="sticker_hint_color">#7a91ad</color>
+    <color name="yellow_color_picker">#fbe870</color>
+    <color name="view_line">#e0e0e0</color>
     <color name="about_divider">#dbe2f3</color>
     <color name="about_text">#777777</color>
     <color name="graySubTitle">#605f60</color>
@@ -72,4 +91,53 @@
     <color name="settings_divider">#f2f9ff</color>
     <color name="theme_text">#010101</color>
     <color name="vault_divider_color">#bfd4e4</color>
+    <color name="cropFillColor">#f0f9ff</color>
+    <color name="cropStrokeFillColor">#def2ff</color>
+    <!-- System Cleaner Suite Colors -->
+    <color name="cleaner_red">#e11a1a</color>
+    <color name="cleaner_orange">#ed5500</color>
+    <color name="cleaner_item_stroke">#f2f2f2</color>
+    <color name="cleaner_delete_sub_text">#616161</color>
+    <color name="cleaner_delete_cancel_btn_color">#969696</color>
+    <color name="ic_cleaner_expand_arrow_color">#071427</color>
+    <color name="btn_delete_disable">#cccccc</color>
+    <color name="junkCleanerSubTitleColor">#7d90a3</color>
+
+    <!-- Explore Tab Colors (Reference Parity) -->
+    <color name="explore_ad_body">#a1a8b0</color>
+    <color name="explore_ad_cta">#0066ff</color>
+    <color name="explore_ad_media_bg">#f2f4f6</color>
+    <color name="explore_ad_shimmer">#e4e5e7</color>
+    <color name="explore_ad_tag_bg">#ced0d6</color>
+    <color name="explore_ad_tag_text">#ffffff</color>
+    <color name="explore_ad_title">#212226</color>
+    <color name="explore_card_bg">#ffffff</color>
+    <color name="explore_card_ripple">#14000000</color>
+    <color name="explore_chip_ai_bg">#eeedfe</color>
+    <color name="explore_chip_ai_fg">#534ab7</color>
+    <color name="explore_chip_collage_bg">#fbeaf0</color>
+    <color name="explore_chip_collage_fg">#993556</color>
+    <color name="explore_chip_favorites_bg">#fcebeb</color>
+    <color name="explore_chip_favorites_fg">#a32d2d</color>
+    <color name="explore_chip_moments_bg">#faeeda</color>
+    <color name="explore_chip_moments_fg">#854f0b</color>
+    <color name="explore_chip_place_bg">#e6f1fb</color>
+    <color name="explore_chip_place_fg">#185fa5</color>
+    <color name="explore_chip_vault_bg">#e1f5ee</color>
+    <color name="explore_chip_vault_fg">#0f6e56</color>
+    <color name="explore_divider">#e7e9f0</color>
+    <color name="explore_hero_bg">#0066ff</color>
+    <color name="explore_hero_btn_bg">#ffffff</color>
+    <color name="explore_hero_btn_text">#0047b3</color>
+    <color name="explore_hero_subtext">#d9e6ff</color>
+    <color name="explore_hero_text">#ffffff</color>
+    <color name="explore_icon_color">#000000</color>
+    <color name="explore_screen_bg">#f6f7fb</color>
+    <color name="explore_subtext">#6b7080</color>
+    <color name="explore_tab_row_glyph">#1f3355</color>
+    <color name="explore_tab_tile_glyph">#ffffff</color>
+    <color name="explore_text">#14161c</color>
+    <color name="premium_explore_bg">#1ea543</color>
+    <color name="premium_explore_button">#03681f</color>
+    <color name="premium_explore_button_bg">#e3ffe4</color>
 </resources>

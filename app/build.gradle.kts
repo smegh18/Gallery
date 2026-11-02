@@ -6,20 +6,22 @@ plugins {
 }
 
 android {
-    namespace = "albums.gallery.photo.folder.picasa.app.web.gallery"
+    namespace = "com.quizango.gallery"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "albums.gallery.photo.folder.picasa.app.web.gallery"
+        applicationId = "com.quizango.gallery"
         minSdk = 24
         targetSdk = 36
-        versionCode = 146
-        versionName = "2.6.7"
+        versionCode = 150
+        versionName = "2.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -62,6 +64,7 @@ dependencies {
     // Storage & Preferences
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.security.crypto)
+    implementation("androidx.print:print:1.0.0")
 
     // Media Loading & Playback
     implementation(libs.coil.compose)
@@ -73,8 +76,12 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Google Mobile Ads
-    implementation(libs.play.services.ads)
+    // Lottie Animation
+    implementation(libs.lottie.compose)
+
+    // ML Kit Subject Segmentation
+    implementation(libs.play.services.mlkit.subject.segmentation)
+    implementation(libs.mlkit.vision.common)
 
     // Testing
     testImplementation(libs.junit)

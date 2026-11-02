@@ -65,13 +65,9 @@
                 android:resource="@xml/shortcuts" />
         </activity>
 
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="albums.gallery.photo.folder.picasa.app.web.gallery.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

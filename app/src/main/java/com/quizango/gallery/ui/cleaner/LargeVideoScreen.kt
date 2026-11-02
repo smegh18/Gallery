@@ -1,0 +1,364 @@
+package com.quizango.gallery.ui.cleaner
+
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.quizango.gallery.R
+import com.quizango.gallery.data.repository.MediaRepository
+import com.quizango.gallery.ui.theme.GalleryBlue
+import kotlinx.coroutines.launch
+import java.io.File
+
+fun formatVideoDuration(durationMs: Long): String {
+    val totalSec = durationMs / 1000
+    val min = totalSec / 60
+    val sec = totalSec % 60
+    return "%02d:%02d".format(min, sec)
+}
+
+fun formatVideoSize(bytes: Long): String {
+    val kb = bytes / 1024.0
+    val mb = kb / 1024.0
+    val gb = mb / 1024.0
+    return when {
+        gb >= 1.0 -> String.format("%.2f GB", gb)
+        mb >= 1.0 -> String.format("%.1f MB", mb)
+        kb >= 1.0 -> String.format("%.0f KB", kb)
+        else -> "$bytes B"
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LargeVideoScreen(
+    mediaRepository: MediaRepository,
+    onNavigateBack: () -> Unit
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val videoList by mediaRepository.getLargeVideosFlow().collectAsState(initial = emptyList())
+    var selectedPaths by remember { mutableStateOf(setOf<String>()) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+
+    val selectedBytes = remember(selectedPaths, videoList) {
+        videoList.filter { it.filePath in selectedPaths }.sumOf { it.fileSize }
+    }
+
+    val isAllSelected = videoList.isNotEmpty() && selectedPaths.size == videoList.size
+
+    Scaffold(
+        topBar = {
+            Column {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(R.string.tool_bar_large_video),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1E3354)
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color(0xFF1E3354)
+                            )
+                        }
+                    },
+                    actions = {
+                        if (videoList.isNotEmpty()) {
+                            TextButton(
+                                onClick = {
+                                    selectedPaths = if (isAllSelected) {
+                                        emptySet()
+                                    } else {
+                                        videoList.map { it.filePath }.toSet()
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    text = if (isAllSelected) {
+                                        stringResource(R.string.unselect_all)
+                                    } else {
+                                        stringResource(R.string.select_all)
+                                    },
+                                    color = GalleryBlue,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+                )
+                HorizontalDivider(color = Color(0x1A071427), thickness = 1.dp)
+            }
+        },
+        bottomBar = {
+            if (videoList.isNotEmpty()) {
+                Surface(
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                    ) {
+                        val isEnabled = selectedPaths.isNotEmpty()
+                        val deleteBtnText = when {
+                            selectedPaths.isEmpty() -> stringResource(R.string.delete_selected)
+                            selectedPaths.size == 1 -> "Delete (${formatVideoSize(selectedBytes)})"
+                            else -> "Delete All (${formatVideoSize(selectedBytes)})"
+                        }
+
+                        Button(
+                            onClick = {
+                                if (isEnabled) {
+                                    showDeleteConfirmDialog = true
+                                }
+                            },
+                            enabled = isEnabled,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
+                            shape = RoundedCornerShape(25.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFE11A1A),
+                                disabledContainerColor = Color(0xFFCCCCCC)
+                            )
+                        ) {
+                            Text(
+                                text = deleteBtnText,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            if (videoList.isEmpty()) {
+                // Empty state matching activity_large_video.xml / 08_large_video.png
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_empty_img),
+                        contentDescription = "Empty",
+                        modifier = Modifier.size(110.dp),
+                        tint = Color.Unspecified
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = stringResource(R.string.cleaner_video_empty_layout_text),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color(0xFF1E3354),
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 22.sp
+                    )
+                }
+            } else {
+                // Reference 3-column square grid (GridLayoutManager spanCount=3)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    items(videoList, key = { it.filePath }) { video ->
+                        val isSelected = selectedPaths.contains(video.filePath)
+
+                        Box(
+                            modifier = Modifier
+                                .aspectRatio(1f)
+                                .clickable {
+                                    selectedPaths = if (isSelected) {
+                                        selectedPaths - video.filePath
+                                    } else {
+                                        selectedPaths + video.filePath
+                                    }
+                                }
+                        ) {
+                            AsyncImage(
+                                model = File(video.filePath),
+                                contentDescription = video.fileName,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+
+                            // Top-End Checkbox
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(6.dp)
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (isSelected) GalleryBlue else Color(0x66000000)
+                                    )
+                                    .border(
+                                        width = 1.5.dp,
+                                        color = if (isSelected) Color.White else Color.White.copy(alpha = 0.8f),
+                                        shape = CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (isSelected) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = "Selected",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
+                            }
+
+                            // Bottom-Start Duration or Size Pill Badge
+                            val badgeText = if (video.durationMs > 0) {
+                                formatVideoDuration(video.durationMs)
+                            } else {
+                                formatVideoSize(video.fileSize)
+                            }
+
+                            Surface(
+                                color = Color(0xCC0066FF),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .padding(6.dp)
+                            ) {
+                                Text(
+                                    text = badgeText,
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Reference dialog_cleaner_permanently_delete.xml
+    if (showDeleteConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(18.dp),
+            title = {
+                Text(
+                    text = stringResource(R.string.permanent_delete_video_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF071427)
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.permanent_delete_video_sub_title),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF616161),
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            val pathsToDelete = selectedPaths.toList()
+                            showDeleteConfirmDialog = false
+                            selectedPaths = emptySet()
+                            scope.launch {
+                                mediaRepository.deletePermanently(pathsToDelete)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.selected_media_files_successfully_deleted),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE11A1A)),
+                        shape = RoundedCornerShape(25.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.permanently_delete),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = { showDeleteConfirmDialog = false },
+                        shape = RoundedCornerShape(25.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0E0E0))
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancel),
+                            color = Color(0xFF7D90A3),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            },
+            dismissButton = null
+        )
+    }
+}
