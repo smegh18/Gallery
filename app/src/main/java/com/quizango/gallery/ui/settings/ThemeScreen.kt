@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
+import com.quizango.gallery.ui.theme.applyNightMode
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +45,7 @@ fun ThemeScreen(
                             text = stringResource(id = R.string.theme_mode),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -51,7 +53,7 @@ fun ThemeScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -60,7 +62,7 @@ fun ThemeScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 0.5.dp, color = Color(0x1A071427))
+                HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outline)
             }
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -80,7 +82,10 @@ fun ThemeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            scope.launch { appPreferences.setThemeMode(mode) }
+                            scope.launch {
+                                appPreferences.setThemeMode(mode)
+                                applyNightMode(mode)
+                            }
                         }
                         .padding(horizontal = 14.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -89,14 +94,14 @@ fun ThemeScreen(
                         painter = painterResource(id = iconRes),
                         contentDescription = label,
                         tint = Color.Unspecified,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(width = 54.dp, height = 42.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = label,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF010101),
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.weight(1f)
                     )
                     Icon(
@@ -110,7 +115,7 @@ fun ThemeScreen(
                 }
 
                 HorizontalDivider(
-                    color = Color(0xFFF2F9FF),
+                    color = MaterialTheme.colorScheme.settingsDivider,
                     thickness = 1.dp,
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )

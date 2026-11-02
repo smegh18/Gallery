@@ -31,6 +31,8 @@ import coil.compose.AsyncImage
 import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -80,7 +82,7 @@ fun LargeVideoScreen(
                             text = stringResource(R.string.tool_bar_large_video),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -88,7 +90,7 @@ fun LargeVideoScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
-                                tint = Color(0xFF1E3354)
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     },
@@ -118,7 +120,7 @@ fun LargeVideoScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
                 )
-                HorizontalDivider(color = Color(0x1A071427), thickness = 1.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.settingsDivider, thickness = 1.dp)
             }
         },
         bottomBar = {
@@ -192,7 +194,7 @@ fun LargeVideoScreen(
                     Text(
                         text = stringResource(R.string.cleaner_video_empty_layout_text),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center,
                         lineHeight = 22.sp
@@ -288,21 +290,21 @@ fun LargeVideoScreen(
     if (showDeleteConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmDialog = false },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(18.dp),
             title = {
                 Text(
                     text = stringResource(R.string.permanent_delete_video_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF071427)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Text(
                     text = stringResource(R.string.permanent_delete_video_sub_title),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF616161),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
             },
@@ -347,11 +349,11 @@ fun LargeVideoScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(44.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0E0E0))
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.cardBorder)
                     ) {
                         Text(
                             text = stringResource(R.string.cancel),
-                            color = Color(0xFF7D90A3),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp
                         )

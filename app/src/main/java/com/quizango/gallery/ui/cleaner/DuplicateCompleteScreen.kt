@@ -26,6 +26,10 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.cardBackground
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.settingsDivider
 
 /**
  * Duplicate Complete Screen with 100% parity to reference activity_duplicate_delete_complete.xml
@@ -60,7 +64,7 @@ fun DuplicateCompleteScreen(
                             text = stringResource(id = R.string.cleanup_complete),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -68,7 +72,7 @@ fun DuplicateCompleteScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -78,7 +82,7 @@ fun DuplicateCompleteScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_setting),
                                 contentDescription = "Settings",
-                                tint = Color.Unspecified,
+                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -89,7 +93,7 @@ fun DuplicateCompleteScreen(
                 )
                 HorizontalDivider(
                     thickness = 0.5.dp,
-                    color = Color(0x1A071427)
+                    color = MaterialTheme.colorScheme.settingsDivider
                 )
             }
         },
@@ -117,7 +121,7 @@ fun DuplicateCompleteScreen(
                 text = stringResource(id = R.string.task_completed),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1E3354),
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
 
@@ -126,7 +130,7 @@ fun DuplicateCompleteScreen(
             Text(
                 text = stringResource(id = R.string.your_device_is_ready_to_use),
                 fontSize = 14.sp,
-                color = Color(0xFF707C93),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
 
@@ -139,7 +143,7 @@ fun DuplicateCompleteScreen(
                     .clip(RoundedCornerShape(15.dp)),
                 shape = RoundedCornerShape(15.dp),
                 color = MaterialTheme.colorScheme.surface,
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE4E6E9))
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.cardBorder)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp)
@@ -153,7 +157,7 @@ fun DuplicateCompleteScreen(
                     Text(
                         text = countString,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 15.sp
                     )
 
@@ -164,7 +168,7 @@ fun DuplicateCompleteScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.cardBackground)
                             .border(1.5.dp, GalleryBlue, RoundedCornerShape(8.dp))
                             .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -183,7 +187,7 @@ fun DuplicateCompleteScreen(
                                 text = stringResource(id = R.string.dup_delete_storage_freed),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(3.dp))
                             Text(

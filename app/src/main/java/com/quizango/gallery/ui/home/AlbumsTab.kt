@@ -34,6 +34,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.Album
+import com.quizango.gallery.ui.theme.albumOptionBg
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.topContainerBg
 import java.io.File
 
 data class TopFeatureItem(
@@ -68,10 +72,6 @@ val MEDIA_TYPES = listOf(
     MediaTypeItem("animated", "Animated", R.drawable.ic_image_animated)
 )
 
-private val TopContainerBg = Color(0xFFF9FBFF)
-private val TitleTextColor = Color(0xFF1E3354)
-private val SubTextColor = Color(0xFF7A8389)
-
 @Composable
 fun AlbumsTab(
     albumsList: List<Album>,
@@ -82,15 +82,15 @@ fun AlbumsTab(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
-        // 1. Top Section (Features Carousel + Stories Strip with background #F9FBFF)
+        // 1. Top Section (Features Carousel + Stories Strip with dynamic topContainerBg)
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(TopContainerBg)
+                    .background(MaterialTheme.colorScheme.topContainerBg)
                     .padding(vertical = 4.dp)
             ) {
                 // Features Carousel (Reference rvFeaturesLists)
@@ -160,7 +160,7 @@ fun AlbumsTab(
         // Divider below top container
         item {
             HorizontalDivider(
-                color = Color(0xFFE4E6E9),
+                color = MaterialTheme.colorScheme.outline,
                 thickness = 0.5.dp,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -185,14 +185,14 @@ fun AlbumsTab(
                             imageVector = Icons.Outlined.Folder,
                             contentDescription = null,
                             modifier = Modifier.size(56.dp),
-                            tint = SubTextColor
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "No Albums Found",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
-                            color = SubTextColor
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -227,7 +227,7 @@ fun AlbumsTab(
                 text = "Media Types",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = TitleTextColor,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
             )
@@ -238,8 +238,8 @@ fun AlbumsTab(
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFFAFAFA))
-                    .border(0.5.dp, Color(0xFFE4E6E9), RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.albumOptionBg)
+                    .border(0.5.dp, MaterialTheme.colorScheme.cardBorder, RoundedCornerShape(12.dp))
             ) {
                 MEDIA_TYPES.forEachIndexed { index, mediaType ->
                     Row(
@@ -260,21 +260,21 @@ fun AlbumsTab(
                             text = mediaType.title,
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold,
-                            color = TitleTextColor,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 14.sp,
                             modifier = Modifier.weight(1f)
                         )
                         Icon(
                             painter = painterResource(id = R.drawable.ic_right_arrow),
                             contentDescription = null,
-                            tint = Color.Unspecified,
+                            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF8C9BAE),
                             modifier = Modifier.size(14.dp)
                         )
                     }
 
                     if (index < MEDIA_TYPES.size - 1) {
                         HorizontalDivider(
-                            color = Color(0x0D000000),
+                            color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp,
                             modifier = Modifier.padding(horizontal = 14.dp)
                         )
@@ -312,7 +312,7 @@ private fun FeatureItemView(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
-            color = TitleTextColor
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -334,7 +334,7 @@ fun AlbumCard(
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFFF0F4F8))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             if (album.coverPath.isNotEmpty()) {
                 AsyncImage(
@@ -365,7 +365,7 @@ fun AlbumCard(
             fontSize = 13.5.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = TitleTextColor
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(2.dp))
@@ -373,7 +373,7 @@ fun AlbumCard(
         Text(
             text = "${album.itemCount}",
             style = MaterialTheme.typography.labelSmall,
-            color = SubTextColor,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium
         )
@@ -404,7 +404,7 @@ private fun StoryCircleItem(
                 .background(Brush.sweepGradient(gradientColors))
                 .padding(2.5.dp)
                 .clip(CircleShape)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(2.dp)
                 .clip(CircleShape),
             contentAlignment = Alignment.Center
@@ -430,7 +430,7 @@ private fun StoryCircleItem(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color(0xFFE8EEF5))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 )
             }
         }
@@ -441,7 +441,7 @@ private fun StoryCircleItem(
             text = title,
             fontSize = 11.5.sp,
             fontWeight = FontWeight.Medium,
-            color = TitleTextColor,
+            color = MaterialTheme.colorScheme.onBackground,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center

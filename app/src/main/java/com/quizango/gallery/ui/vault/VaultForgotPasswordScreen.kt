@@ -15,6 +15,10 @@ import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.cardBackground
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +46,7 @@ fun VaultForgotPasswordScreen(
                             text = "Forgot Password",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -50,7 +54,7 @@ fun VaultForgotPasswordScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -59,7 +63,7 @@ fun VaultForgotPasswordScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.settingsDivider)
             }
         },
         bottomBar = {
@@ -120,7 +124,7 @@ fun VaultForgotPasswordScreen(
                 text = "Reset Your PIN",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E3354)
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -128,7 +132,7 @@ fun VaultForgotPasswordScreen(
             Text(
                 text = "Answer your security question to reset your Private Vault PIN",
                 fontSize = 14.sp,
-                color = Color(0xFF707C93)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -137,7 +141,7 @@ fun VaultForgotPasswordScreen(
                 text = "Security Question",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1E3354)
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -145,14 +149,14 @@ fun VaultForgotPasswordScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFF2F4F7), RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.cardBackground, RoundedCornerShape(12.dp))
                     .padding(horizontal = 14.dp, vertical = 14.dp)
             ) {
                 Text(
                     text = displayQuestion,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -162,7 +166,7 @@ fun VaultForgotPasswordScreen(
                 text = "Your Answer",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1E3354)
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -179,8 +183,10 @@ fun VaultForgotPasswordScreen(
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = GalleryBlue,
-                    unfocusedBorderColor = Color(0xFFE4E6E9),
-                    cursorColor = GalleryBlue
+                    unfocusedBorderColor = MaterialTheme.colorScheme.cardBorder,
+                    cursorColor = GalleryBlue,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 )
             )
 

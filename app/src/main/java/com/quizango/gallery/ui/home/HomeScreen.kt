@@ -40,6 +40,7 @@ import com.quizango.gallery.ui.components.GalleryDrawer
 import com.quizango.gallery.ui.components.GalleryTopBar
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -142,7 +143,7 @@ fun HomeScreen(
                 if (uiState.isSelectionMode) {
                     Surface(
                         shadowElevation = 8.dp,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -270,7 +271,7 @@ fun HomeScreen(
                     text = "Sort by",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -297,7 +298,7 @@ fun HomeScreen(
                             Text(
                                 text = label,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = if (tempField == field) GalleryBlue else Color(0xFF1E3354),
+                                color = if (tempField == field) GalleryBlue else MaterialTheme.colorScheme.onSurface,
                                 fontWeight = if (tempField == field) FontWeight.SemiBold else FontWeight.Normal,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
@@ -305,7 +306,7 @@ fun HomeScreen(
                     }
 
                     HorizontalDivider(
-                        color = Color(0xFFE4E6E9),
+                        color = MaterialTheme.colorScheme.settingsDivider,
                         thickness = 1.dp,
                         modifier = Modifier.padding(vertical = 6.dp)
                     )
@@ -330,7 +331,7 @@ fun HomeScreen(
                             Text(
                                 text = label,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = if (tempDirection == direction) GalleryBlue else Color(0xFF1E3354),
+                                color = if (tempDirection == direction) GalleryBlue else MaterialTheme.colorScheme.onSurface,
                                 fontWeight = if (tempDirection == direction) FontWeight.SemiBold else FontWeight.Normal,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
@@ -354,10 +355,10 @@ fun HomeScreen(
                 TextButton(
                     onClick = { showSortDialog = false }
                 ) {
-                    Text("Cancel", color = Color(0xFF707C93), fontWeight = FontWeight.Medium)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                 }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(16.dp)
         )
     }
@@ -373,7 +374,7 @@ fun HomeScreen(
                     text = "Create an album",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -381,7 +382,7 @@ fun HomeScreen(
                     Text(
                         text = "Album name",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF707C93),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 6.dp)
                     )
                     OutlinedTextField(
@@ -390,7 +391,14 @@ fun HomeScreen(
                         placeholder = { Text("Enter album name") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(10.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = GalleryBlue,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.settingsDivider,
+                            cursorColor = GalleryBlue,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
                 }
             },
@@ -422,10 +430,10 @@ fun HomeScreen(
                     showCreateAlbumDialog = false
                     newAlbumName = ""
                 }) {
-                    Text("Cancel", color = Color(0xFF707C93), fontWeight = FontWeight.Medium)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                 }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(16.dp)
         )
     }
@@ -488,7 +496,7 @@ private fun SelectionActionItem(
             text = label,
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF1E3354),
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1
         )
     }

@@ -125,7 +125,7 @@ fun SplashScreen(
                 text = stringResource(id = R.string.your_photo_manager),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF1E3354),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))

@@ -22,11 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.theme.cardBackground
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.screenBackground
 
-private val ScreenBg = Color(0xFFF6F7FB)
-private val CardBorderColor = Color(0xFFE7E9F0)
-private val TextPrimary = Color(0xFF14161C)
-private val TextSecondary = Color(0xFF6B7080)
 private val ScanNowRed = Color(0xFFE11A1A)
 
 /**
@@ -56,7 +56,7 @@ fun CleanerScreen(
                         text = stringResource(R.string.tool_bar_system_cleaner),
                         fontWeight = FontWeight.Bold,
                         fontSize = 19.sp,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 },
                 navigationIcon = {
@@ -64,11 +64,11 @@ fun CleanerScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextPrimary
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         }
     ) { paddingValues ->
@@ -78,7 +78,7 @@ fun CleanerScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(ScreenBg)
+                .background(MaterialTheme.colorScheme.screenBackground)
                 .verticalScroll(scrollState)
                 .padding(horizontal = 14.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -89,8 +89,8 @@ fun CleanerScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(cardShape)
-                    .background(Color.White)
-                    .border(width = 1.dp, color = CardBorderColor, shape = cardShape)
+                    .background(MaterialTheme.colorScheme.cardBackground)
+                    .border(width = 1.dp, color = MaterialTheme.colorScheme.cardBorder, shape = cardShape)
                     .clickable(onClick = onNavigateToRemoveJunk)
                     .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -107,13 +107,13 @@ fun CleanerScreen(
                     Text(
                         text = stringResource(R.string.remove_junk),
                         fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 15.sp
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = stringResource(R.string.txt_cleaner_sub),
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         lineHeight = 15.sp,
                         maxLines = 2
@@ -175,8 +175,8 @@ private fun CleanerCategoryCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(Color.White)
-            .border(width = 1.dp, color = CardBorderColor, shape = shape)
+            .background(MaterialTheme.colorScheme.cardBackground)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.cardBorder, shape = shape)
             .clickable(onClick = onClick)
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -193,13 +193,13 @@ private fun CleanerCategoryCard(
             Text(
                 text = title,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = subtitle,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 11.sp,
                 lineHeight = 15.sp
             )
@@ -208,7 +208,7 @@ private fun CleanerCategoryCard(
         Icon(
             painter = painterResource(id = R.drawable.system_cleaner_banner_arrow),
             contentDescription = null,
-            tint = Color.Unspecified,
+            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
             modifier = Modifier.size(20.dp)
         )
     }

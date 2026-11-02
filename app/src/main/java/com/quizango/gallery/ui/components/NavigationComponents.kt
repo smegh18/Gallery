@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.drawerFooterBg
+import com.quizango.gallery.ui.theme.isDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +57,7 @@ fun GalleryTopBar(
                     text = "$selectedCount Selected",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             } else if (title == "GALLERY" || title.isEmpty() || title == "Photos" || title == "Album") {
                 // Reference home title: GALLERY in primary blue with lock icon next to it
@@ -84,7 +86,7 @@ fun GalleryTopBar(
                     text = title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp,
-                    color = Color(0xFF14161C),
+                    color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
@@ -96,7 +98,7 @@ fun GalleryTopBar(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = "Close Selection",
-                        tint = Color.Unspecified,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -105,7 +107,7 @@ fun GalleryTopBar(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_back),
                         contentDescription = "Back",
-                        tint = Color.Unspecified,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -185,7 +187,7 @@ fun GalleryTopBar(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Create Album",
-                            tint = Color(0xFF1E3354),
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.size(26.dp)
                         )
                     }
@@ -193,8 +195,8 @@ fun GalleryTopBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.White,
-            titleContentColor = Color(0xFF1E3354)
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.onBackground
         )
     )
 }
@@ -205,7 +207,7 @@ fun GalleryBottomNav(
     onTabSelected: (Int) -> Unit
 ) {
     Surface(
-        color = Color.White,
+        color = MaterialTheme.colorScheme.background,
         shadowElevation = 8.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -214,7 +216,7 @@ fun GalleryBottomNav(
                 .fillMaxWidth()
                 .navigationBarsPadding()
         ) {
-            HorizontalDivider(color = Color(0xFFE4E6E9), thickness = 0.5.dp)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 0.5.dp)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -227,7 +229,7 @@ fun GalleryBottomNav(
                     Triple(2, "Explore", Pair(R.drawable.ic_explore_fill, R.drawable.ic_explore_border))
                 )
 
-                val unselectedTextColor = Color(0xFF7A8389)
+                val unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 tabs.forEach { (index, label, iconPair) ->
                     val isSelected = selectedTab == index
                     val currentIcon = if (isSelected) iconPair.first else iconPair.second
@@ -275,7 +277,7 @@ fun GalleryDrawer(
     ModalDrawerSheet(
         modifier = Modifier.width(348.dp),
         drawerShape = RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp),
-        drawerContainerColor = Color.White
+        drawerContainerColor = MaterialTheme.colorScheme.surface
     ) {
         Column(
             modifier = Modifier
@@ -304,7 +306,7 @@ fun GalleryDrawer(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color(0x90FFFFFF))
+                            .background(if (MaterialTheme.colorScheme.isDark) Color(0x90000000) else Color(0x90FFFFFF))
                             .clickable {
                                 onCloseDrawer()
                             }
@@ -368,7 +370,7 @@ fun GalleryDrawer(
 
                 // Reference drawerDivider (@color/text_line_color: #50bfd4e4)
                 HorizontalDivider(
-                    color = Color(0x50BFD4E4),
+                    color = MaterialTheme.colorScheme.outline,
                     thickness = 1.dp,
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                 )
@@ -395,7 +397,7 @@ fun GalleryDrawer(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFE3EFF8))
+                    .background(MaterialTheme.colorScheme.drawerFooterBg)
                     .navigationBarsPadding()
                     .padding(vertical = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -403,7 +405,7 @@ fun GalleryDrawer(
                 Text(
                     text = "Follow us on",
                     fontSize = 11.5.sp,
-                    color = Color(0xFF597393),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -483,14 +485,14 @@ private fun DrawerRow(
                 text = item.label,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF1E3354),
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp
             )
             if (item.isAdBadge) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "AD",
-                    color = Color(0xFF597393),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -516,7 +518,7 @@ private fun DrawerRow(
             Icon(
                 painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF8C9BAE),
                 modifier = Modifier.size(14.dp)
             )
         }

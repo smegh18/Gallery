@@ -30,6 +30,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
 import kotlinx.coroutines.launch
 
 data class LanguageOption(
@@ -129,7 +130,7 @@ fun LanguageScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -142,7 +143,7 @@ fun LanguageScreen(
                         text = stringResource(id = R.string.select_app_language),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.weight(1f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -174,7 +175,7 @@ fun LanguageScreen(
             }
 
             // Divider
-            HorizontalDivider(thickness = 1.dp, color = Color(0xFFE5E7EB))
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
 
             // Language List
             LazyColumn(
@@ -193,7 +194,7 @@ fun LanguageScreen(
                             .clip(RoundedCornerShape(22.dp))
                             .clickable { selectedLanguage = lang.code },
                         shape = RoundedCornerShape(22.dp),
-                        color = ItemCardBg
+                        color = if (MaterialTheme.colorScheme.isDark) Color(0xFF272727) else ItemCardBg
                     ) {
                         Row(
                             modifier = Modifier
@@ -224,7 +225,7 @@ fun LanguageScreen(
                             val textAnnotated = buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
-                                        color = TextPrimary,
+                                        color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.SemiBold
                                     )
@@ -234,7 +235,7 @@ fun LanguageScreen(
                                 }
                                 withStyle(
                                     style = SpanStyle(
-                                        color = TextSecondary,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 13.5.sp,
                                         fontWeight = FontWeight.Normal
                                     )
@@ -256,7 +257,7 @@ fun LanguageScreen(
                                     id = if (isSelected) R.drawable.circle_checked else R.drawable.circle_unchecked
                                 ),
                                 contentDescription = if (isSelected) "Selected" else "Unselected",
-                                tint = if (isSelected) GalleryBlue else TextPrimary,
+                                tint = if (isSelected) GalleryBlue else if (MaterialTheme.colorScheme.isDark) Color(0xFF7A8389) else TextPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }

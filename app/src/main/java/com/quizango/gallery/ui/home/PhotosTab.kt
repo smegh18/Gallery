@@ -54,7 +54,7 @@ fun PhotosTab(
 ) {
     if (mediaList.isEmpty()) {
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.White),
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -72,14 +72,14 @@ fun PhotosTab(
                     text = stringResource(id = R.string.no_items),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(id = R.string.no_media_file),
                     fontSize = 13.5.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color(0xFF7E7E7E),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                     lineHeight = 18.sp
                 )

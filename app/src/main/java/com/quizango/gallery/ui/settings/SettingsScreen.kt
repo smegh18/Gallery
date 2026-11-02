@@ -29,6 +29,8 @@ import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +78,7 @@ fun SettingsScreen(
                             text = stringResource(id = R.string.settings),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -84,7 +86,7 @@ fun SettingsScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -93,7 +95,7 @@ fun SettingsScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 0.5.dp, color = Color(0x1A071427))
+                HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outline)
             }
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -227,7 +229,7 @@ fun SettingsScreen(
                 text = stringResource(id = R.string.recycle_bin),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF707C93),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -252,7 +254,7 @@ fun SettingsScreen(
                     text = stringResource(id = R.string.delete_photos_after_days),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1E3354),
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.weight(1f)
                 )
                 Switch(
@@ -308,14 +310,14 @@ private fun SettingNavRow(
             text = title,
             fontSize = 15.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF1E3354),
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.weight(1f)
         )
         if (showArrow) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
                 contentDescription = null,
-                tint = Color(0xFF8C9BAE),
+                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF8C9BAE),
                 modifier = Modifier.size(14.dp)
             )
         }
@@ -325,7 +327,7 @@ private fun SettingNavRow(
 @Composable
 private fun SettingDivider() {
     HorizontalDivider(
-        color = Color(0xFFF2F9FF),
+        color = MaterialTheme.colorScheme.settingsDivider,
         thickness = 1.dp,
         modifier = Modifier.padding(horizontal = 10.dp)
     )
@@ -349,7 +351,7 @@ private fun RateUsDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
@@ -365,7 +367,7 @@ private fun RateUsDialog(
                     text = stringResource(id = R.string.thanks_for_your_support),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
 
@@ -376,7 +378,7 @@ private fun RateUsDialog(
                     text = stringResource(id = R.string.we_would_be_very_grateful_if_you_can_rate_us),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF777777),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
 

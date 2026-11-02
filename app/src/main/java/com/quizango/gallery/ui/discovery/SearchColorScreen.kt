@@ -32,6 +32,8 @@ import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.home.formatGroupHeader
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.settingsDivider
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -48,14 +50,14 @@ fun SearchColorScreen(
 
     Scaffold(
         topBar = {
-            Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
+            Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
                 TopAppBar(
                     title = {
                         Text(
                             text = if (isSelectionMode) "${selectedPaths.size} Selected" else stringResource(R.string.media_color),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -70,7 +72,7 @@ fun SearchColorScreen(
                             Icon(
                                 painter = painterResource(id = if (isSelectionMode) R.drawable.ic_close else R.drawable.ic_back),
                                 contentDescription = if (isSelectionMode) "Close" else "Back",
-                                tint = Color.Unspecified,
+                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -110,12 +112,12 @@ fun SearchColorScreen(
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.background
                     )
                 )
                 HorizontalDivider(
                     thickness = 1.dp,
-                    color = Color(0xFFE4E6E9)
+                    color = MaterialTheme.colorScheme.settingsDivider
                 )
             }
         },
@@ -123,11 +125,11 @@ fun SearchColorScreen(
             if (isSelectionMode) {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.surface,
                     shadowElevation = 8.dp
                 ) {
                     Column {
-                        HorizontalDivider(thickness = 0.5.dp, color = Color(0xFFE4E6E9))
+                        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.settingsDivider)
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -146,7 +148,7 @@ fun SearchColorScreen(
                                     modifier = Modifier.size(22.dp)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Share", fontSize = 11.sp, color = Color(0xFF1E3354))
+                                Text(text = "Share", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
                             }
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -159,7 +161,7 @@ fun SearchColorScreen(
                                     modifier = Modifier.size(22.dp)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Delete", fontSize = 11.sp, color = Color(0xFF1E3354))
+                                Text(text = "Delete", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
                             }
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -172,7 +174,7 @@ fun SearchColorScreen(
                                     modifier = Modifier.size(22.dp)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "More", fontSize = 11.sp, color = Color(0xFF1E3354))
+                                Text(text = "More", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
                             }
                         }
                     }
@@ -184,7 +186,7 @@ fun SearchColorScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             if (mediaItems.isEmpty()) {
                 Box(
@@ -208,14 +210,14 @@ fun SearchColorScreen(
                             text = stringResource(id = R.string.no_items),
                             fontSize = 17.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = stringResource(id = R.string.no_media_file),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Normal,
-                            color = Color(0xFF707C93),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -238,7 +240,7 @@ fun SearchColorScreen(
                                 text = header,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF1E3354),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 12.dp, vertical = 10.dp)

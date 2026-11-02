@@ -33,6 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.theme.cardBackground
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -290,7 +294,7 @@ fun RemoveJunkScreen(
             Scaffold(
                 bottomBar = {
                     Surface(
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .fillMaxWidth()
                             .navigationBarsPadding()
@@ -327,8 +331,8 @@ fun RemoveJunkScreen(
                                     .height(48.dp),
                                 shape = RoundedCornerShape(25.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFF1E3354),
-                                    disabledContainerColor = Color(0xFFE2E4E8),
+                                    containerColor = if (MaterialTheme.colorScheme.isDark) Color(0xFF272727) else Color(0xFF1E3354),
+                                    disabledContainerColor = if (MaterialTheme.colorScheme.isDark) Color(0xFF1E1E1E) else Color(0xFFE2E4E8),
                                     disabledContentColor = Color(0xFF9EA3AE)
                                 )
                             ) {
@@ -371,7 +375,7 @@ fun RemoveJunkScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.background)
                 ) {
                     // Header with layout_progress_image_view (#F94D3C -> #EB1D08)
                     item {
@@ -480,7 +484,7 @@ fun RemoveJunkScreen(
                                 text = item.name,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF1E3354),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.weight(1f)
                             )
 
@@ -490,7 +494,7 @@ fun RemoveJunkScreen(
                                     text = formatStorageBytes(item.sizeBytes),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF14161C),
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.padding(end = 12.dp)
                                 )
 
@@ -527,7 +531,7 @@ fun RemoveJunkScreen(
                         }
 
                         HorizontalDivider(
-                            color = Color(0xFFF2F4F7),
+                            color = MaterialTheme.colorScheme.settingsDivider,
                             thickness = 1.dp,
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
@@ -591,7 +595,7 @@ fun RemoveJunkScreen(
                             Text(
                                 text = stringResource(R.string.remove_junk),
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         },
                         navigationIcon = {
@@ -599,16 +603,16 @@ fun RemoveJunkScreen(
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = "Back",
-                                    tint = Color(0xFF1E3354)
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         },
-                        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
                     )
                 },
                 bottomBar = {
                     Surface(
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .fillMaxWidth()
                             .navigationBarsPadding()
@@ -636,7 +640,7 @@ fun RemoveJunkScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -654,7 +658,7 @@ fun RemoveJunkScreen(
                         text = formatStorageBytes(totalFreedBytes),
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF14161C)
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
                     Spacer(modifier = Modifier.height(6.dp))
@@ -662,7 +666,7 @@ fun RemoveJunkScreen(
                     Text(
                         text = "Your phone is in optimal condition",
                         fontSize = 14.sp,
-                        color = Color(0xFF7D90A3)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(modifier = Modifier.height(36.dp))
@@ -671,7 +675,7 @@ fun RemoveJunkScreen(
                         text = "Release more space",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.align(Alignment.Start)
                     )
 
@@ -720,8 +724,8 @@ private fun ReleaseOptionRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(Color.White)
-            .border(width = 1.dp, color = Color(0xFFE7E9F0), shape = shape)
+            .background(MaterialTheme.colorScheme.cardBackground)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.cardBorder, shape = shape)
             .clickable(onClick = onClick)
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -739,13 +743,13 @@ private fun ReleaseOptionRow(
                 text = title,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF14161C)
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = subtitle,
                 fontSize = 11.sp,
-                color = Color(0xFF7D90A3),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1
             )
         }
@@ -753,7 +757,7 @@ private fun ReleaseOptionRow(
         Icon(
             painter = painterResource(id = R.drawable.system_cleaner_banner_arrow),
             contentDescription = null,
-            tint = Color.Unspecified,
+            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
             modifier = Modifier.size(20.dp)
         )
     }

@@ -31,6 +31,8 @@ import coil.compose.AsyncImage
 import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -61,7 +63,7 @@ fun ScreenShortScreen(
                             text = stringResource(R.string.tool_bar_screenshot),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -69,7 +71,7 @@ fun ScreenShortScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
-                                tint = Color(0xFF1E3354)
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     },
@@ -99,7 +101,7 @@ fun ScreenShortScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
                 )
-                HorizontalDivider(color = Color(0x1A071427), thickness = 1.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.settingsDivider, thickness = 1.dp)
             }
         },
         bottomBar = {
@@ -155,7 +157,7 @@ fun ScreenShortScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             if (screenshotsList.isEmpty()) {
-                // Empty state matching activity_screen_short.xml / 09_screenshots.png
+                // Empty state matching activity_screen_short.xml
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -173,16 +175,16 @@ fun ScreenShortScreen(
                     Text(
                         text = stringResource(R.string.cleaner_screenshots_empty_layout_text),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center,
                         lineHeight = 22.sp
                     )
                 }
             } else {
-                // Reference 4-column square grid (GridLayoutManager spanCount=4)
+                // Reference 3-column square grid (GridLayoutManager spanCount=3)
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(4),
+                    columns = GridCells.Fixed(3),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(2.dp),
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -209,12 +211,12 @@ fun ScreenShortScreen(
                                 contentScale = ContentScale.Crop
                             )
 
-                            // Top-End Selection Checkbox
+                            // Top-End Checkbox
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
-                                    .padding(4.dp)
-                                    .size(22.dp)
+                                    .padding(6.dp)
+                                    .size(24.dp)
                                     .clip(CircleShape)
                                     .background(
                                         if (isSelected) GalleryBlue else Color(0x66000000)
@@ -246,21 +248,21 @@ fun ScreenShortScreen(
     if (showDeleteConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmDialog = false },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(18.dp),
             title = {
                 Text(
                     text = stringResource(R.string.permanent_delete_Image_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF071427)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Text(
                     text = stringResource(R.string.permanent_delete_Image_sub_title),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF616161),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
             },
@@ -305,11 +307,11 @@ fun ScreenShortScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(44.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0E0E0))
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.cardBorder)
                     ) {
                         Text(
                             text = stringResource(R.string.cancel),
-                            color = Color(0xFF7D90A3),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp
                         )

@@ -30,6 +30,8 @@ import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -117,7 +119,7 @@ fun DuplicatePhotoScreen(
                             text = stringResource(id = R.string.duplicate_images),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -125,7 +127,7 @@ fun DuplicatePhotoScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -160,7 +162,7 @@ fun DuplicatePhotoScreen(
                 )
                 HorizontalDivider(
                     thickness = 0.5.dp,
-                    color = Color(0x1A071427)
+                    color = MaterialTheme.colorScheme.settingsDivider
                 )
             }
         },
@@ -216,7 +218,7 @@ fun DuplicatePhotoScreen(
                         text = stringResource(id = R.string.keep_best_photo),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.weight(1f)
                     )
                     Switch(
@@ -231,7 +233,7 @@ fun DuplicatePhotoScreen(
 
                 HorizontalDivider(
                     thickness = 0.5.dp,
-                    color = Color(0x1A071427)
+                    color = MaterialTheme.colorScheme.settingsDivider
                 )
             }
 
@@ -258,14 +260,14 @@ fun DuplicatePhotoScreen(
                             text = stringResource(id = R.string.cleaner_duplicate_empty_layout_text),
                             fontSize = 17.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1E3354),
+                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = stringResource(id = R.string.no_duplicate_files),
                             fontSize = 13.sp,
-                            color = Color(0xFF707C93),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -297,7 +299,7 @@ fun DuplicatePhotoScreen(
                                     text = "Group ${groupIndex + 1} (${group.size} images)",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF1E3354),
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.weight(1f)
                                 )
                                 val redundantSize = group.drop(1).sumOf { it.fileSize }
@@ -305,7 +307,7 @@ fun DuplicatePhotoScreen(
                                     Text(
                                         text = formatDuplicateSize(redundantSize),
                                         fontSize = 12.sp,
-                                        color = Color(0xFF707C93)
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
@@ -422,14 +424,14 @@ fun DuplicatePhotoScreen(
                     text = dialogTitle,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Text(
                     text = stringResource(id = R.string.permanent_delete_duplicate_sub_title),
                     fontSize = 14.sp,
-                    color = Color(0xFF707C93)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             confirmButton = {
@@ -459,7 +461,7 @@ fun DuplicatePhotoScreen(
                 TextButton(onClick = { showDeleteDialog = false }) {
                     Text(
                         text = stringResource(id = R.string.cancel),
-                        color = Color(0xFF707C93),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Medium
                     )
                 }

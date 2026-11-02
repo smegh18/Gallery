@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +40,7 @@ fun VaultSettingScreen(
                             text = "Vault Settings",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -47,7 +48,7 @@ fun VaultSettingScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -56,7 +57,7 @@ fun VaultSettingScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             }
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -172,7 +173,7 @@ private fun VaultSettingRow(
             Box(
                 modifier = Modifier
                     .size(42.dp)
-                    .background(Color(0xFFF2F4F7), RoundedCornerShape(10.dp)),
+                    .background(if (MaterialTheme.colorScheme.isDark) Color(0xFF2A2A2A) else Color(0xFFF2F4F7), RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -192,13 +193,13 @@ private fun VaultSettingRow(
                     text = title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
                     fontSize = 12.sp,
-                    color = Color(0xFF707C93)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 

@@ -40,6 +40,8 @@ import com.quizango.gallery.ui.home.PhotoGridItem
 import com.quizango.gallery.ui.home.formatGroupHeader
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.cardBackground
+import com.quizango.gallery.ui.theme.cardBorder
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -128,7 +130,7 @@ fun AlbumDetailScreen(
                                 text = "Share",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -162,7 +164,7 @@ fun AlbumDetailScreen(
                                 text = if (anyNotFav) "Favorite" else "Unfavorite",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -185,7 +187,7 @@ fun AlbumDetailScreen(
                                 text = "Add to",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -216,7 +218,7 @@ fun AlbumDetailScreen(
                                 text = "Add to Private",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -239,7 +241,7 @@ fun AlbumDetailScreen(
                                 text = "Delete",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -265,7 +267,7 @@ fun AlbumDetailScreen(
                                 text = "Create album",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -292,14 +294,14 @@ fun AlbumDetailScreen(
                     text = "No items",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1E3354),
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "No media files here.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF707C93),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
             }
@@ -361,7 +363,7 @@ fun AlbumDetailScreen(
                     text = "Are you sure you want to delete ${selectedPaths.size} item(s)?",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -380,7 +382,7 @@ fun AlbumDetailScreen(
                     Text(
                         text = "Move this file to Recycle Bin",
                         fontSize = 14.sp,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             },
@@ -524,7 +526,7 @@ fun AlbumDetailScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "No albums",
-                            color = Color(0xFF1E3354),
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.sp
                         )
@@ -557,7 +559,7 @@ fun AlbumDetailScreen(
                                 Box(
                                     modifier = Modifier
                                         .size(72.dp)
-                                        .background(Color(0xFFF2F4F7), RoundedCornerShape(12.dp)),
+                                        .background(MaterialTheme.colorScheme.cardBackground, RoundedCornerShape(12.dp)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
@@ -578,7 +580,7 @@ fun AlbumDetailScreen(
                                 Text(
                                     text = "${album.itemCount} items",
                                     fontSize = 11.sp,
-                                    color = Color(0xFF707C93)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -598,7 +600,7 @@ fun AlbumDetailScreen(
                     text = "Create an Album",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -606,7 +608,7 @@ fun AlbumDetailScreen(
                     Text(
                         text = "Album Name",
                         fontSize = 12.sp,
-                        color = Color(0xFF707C93)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     OutlinedTextField(
@@ -617,8 +619,10 @@ fun AlbumDetailScreen(
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = GalleryBlue,
-                            unfocusedBorderColor = Color(0xFFE4E6E9),
-                            cursorColor = GalleryBlue
+                            unfocusedBorderColor = MaterialTheme.colorScheme.cardBorder,
+                            cursorColor = GalleryBlue,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
                 }

@@ -45,10 +45,7 @@ import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.splash.checkStoragePermissions
-import com.quizango.gallery.ui.theme.GalleryBlue
-
-private val PermissionTextColor = Color(0xFF1E3354)
-private val PermissionGrayColor = Color(0xFF7A8389)
+import com.quizango.gallery.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,14 +84,17 @@ fun PermissionScreen(
         }
     }
 
+    val permissionTextColor = MaterialTheme.colorScheme.onSurface
+    val permissionGrayColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     Scaffold(
-        containerColor = Color.White
+        containerColor = MaterialTheme.colorScheme.screenBackground
     ) { paddingValues ->
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.screenBackground)
         ) {
             val screenHeight = maxHeight
             val guidelinePercent = 0.35f
@@ -130,7 +130,7 @@ fun PermissionScreen(
                             color = Color(0xFFCCE0FF),
                             shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
                         )
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(horizontal = 10.dp, vertical = 15.dp)
                 ) {
                     Column {
@@ -141,7 +141,7 @@ fun PermissionScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_expand_arrow),
                                 contentDescription = null,
-                                tint = PermissionTextColor,
+                                tint = permissionTextColor,
                                 modifier = Modifier
                                     .size(24.dp)
                                     .rotate(270f)
@@ -151,7 +151,7 @@ fun PermissionScreen(
                                 text = stringResource(id = R.string.all_files_access),
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = PermissionTextColor
+                                color = permissionTextColor
                             )
                         }
 
@@ -173,7 +173,7 @@ fun PermissionScreen(
                                 text = stringResource(id = R.string.app_name),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = PermissionTextColor
+                                color = permissionTextColor
                             )
                         }
 
@@ -199,7 +199,7 @@ fun PermissionScreen(
 
                     Text(
                         text = stringResource(id = R.string.allow_access_to_manage_all_files),
-                        color = PermissionTextColor,
+                        color = permissionTextColor,
                         fontSize = 14.5.sp,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
@@ -236,7 +236,7 @@ fun PermissionScreen(
                     text = stringResource(id = R.string.permission_required),
                     fontSize = 23.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = PermissionTextColor,
+                    color = permissionTextColor,
                     textAlign = TextAlign.Center
                 )
 
@@ -246,7 +246,7 @@ fun PermissionScreen(
                 Text(
                     text = stringResource(id = R.string.allow_storage_permission),
                     fontSize = 13.5.sp,
-                    color = PermissionGrayColor,
+                    color = permissionGrayColor,
                     textAlign = TextAlign.Center,
                     lineHeight = 19.sp
                 )
@@ -283,7 +283,7 @@ fun PermissionScreen(
                         .padding(vertical = 8.dp, horizontal = 16.dp),
                     style = TextStyle(
                         textDecoration = TextDecoration.Underline,
-                        color = PermissionTextColor,
+                        color = permissionTextColor,
                         fontSize = 13.5.sp,
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -297,7 +297,7 @@ fun PermissionScreen(
             if (showAboutDialog) {
                 ModalBottomSheet(
                     onDismissRequest = { showAboutDialog = false },
-                    containerColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                     dragHandle = null
                 ) {
@@ -334,7 +334,7 @@ fun PermissionScreen(
                             text = stringResource(id = R.string.about_permission_title),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = PermissionTextColor,
+                            color = permissionTextColor,
                             textAlign = TextAlign.Start,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -344,7 +344,7 @@ fun PermissionScreen(
                         Text(
                             text = stringResource(id = R.string.about_permission_description),
                             fontSize = 13.sp,
-                            color = PermissionGrayColor,
+                            color = permissionGrayColor,
                             lineHeight = 19.sp,
                             textAlign = TextAlign.Start,
                             modifier = Modifier.fillMaxWidth()

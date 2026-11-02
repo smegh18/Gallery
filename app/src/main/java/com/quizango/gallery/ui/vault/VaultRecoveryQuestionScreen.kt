@@ -23,6 +23,10 @@ import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.cardBackground
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 
 val DEFAULT_SECURITY_QUESTIONS = listOf(
@@ -78,7 +82,7 @@ fun VaultRecoveryQuestionScreen(
                             text = "Set Security Question",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -92,7 +96,7 @@ fun VaultRecoveryQuestionScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -101,7 +105,7 @@ fun VaultRecoveryQuestionScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.settingsDivider)
             }
         },
         bottomBar = {
@@ -170,7 +174,7 @@ fun VaultRecoveryQuestionScreen(
                 text = "Set Security Question!",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E3354)
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -178,7 +182,7 @@ fun VaultRecoveryQuestionScreen(
             Text(
                 text = "The security question lets you reset your password if you forgot in future",
                 fontSize = 13.sp,
-                color = Color(0xFF707C93),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
 
@@ -194,7 +198,7 @@ fun VaultRecoveryQuestionScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_recover_arrow),
                     contentDescription = null,
-                    tint = Color.Unspecified,
+                    tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -203,7 +207,7 @@ fun VaultRecoveryQuestionScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_recover_arrow),
                     contentDescription = null,
-                    tint = Color.Unspecified,
+                    tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -216,7 +220,7 @@ fun VaultRecoveryQuestionScreen(
                 text = "Answer at least 1 Question",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1E3354),
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.align(Alignment.Start)
             )
 
@@ -226,7 +230,7 @@ fun VaultRecoveryQuestionScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFF2F4F7), RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.cardBackground, RoundedCornerShape(12.dp))
                     .clickable { isDropdownExpanded = true }
                     .padding(horizontal = 14.dp, vertical = 14.dp)
             ) {
@@ -239,20 +243,21 @@ fun VaultRecoveryQuestionScreen(
                         text = currentQuestion,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f)
                     )
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "Select question",
-                        tint = Color(0xFF1E3354)
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
                 DropdownMenu(
                     expanded = isDropdownExpanded,
                     onDismissRequest = { isDropdownExpanded = false },
-                    modifier = Modifier.fillMaxWidth(0.85f)
+                    modifier = Modifier.fillMaxWidth(0.85f),
+                    containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     DEFAULT_SECURITY_QUESTIONS.forEach { question ->
                         DropdownMenuItem(
@@ -260,7 +265,7 @@ fun VaultRecoveryQuestionScreen(
                                 Text(
                                     text = question,
                                     fontSize = 14.sp,
-                                    color = if (question == currentQuestion) GalleryBlue else Color(0xFF1E3354),
+                                    color = if (question == currentQuestion) GalleryBlue else MaterialTheme.colorScheme.onSurface,
                                     fontWeight = if (question == currentQuestion) FontWeight.Bold else FontWeight.Normal
                                 )
                             },
@@ -295,8 +300,10 @@ fun VaultRecoveryQuestionScreen(
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = GalleryBlue,
-                    unfocusedBorderColor = Color(0xFFE4E6E9),
-                    cursorColor = GalleryBlue
+                    unfocusedBorderColor = MaterialTheme.colorScheme.cardBorder,
+                    cursorColor = GalleryBlue,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
@@ -305,16 +312,17 @@ fun VaultRecoveryQuestionScreen(
 
 @Composable
 private fun StepCircle(stepNumber: Int, isActive: Boolean) {
+    val inactiveBg = if (MaterialTheme.colorScheme.isDark) Color(0xFF3E3E3E) else Color(0xFFE4E6E9)
     Box(
         modifier = Modifier
             .size(36.dp)
             .clip(CircleShape)
-            .background(if (isActive) GalleryBlue else Color(0xFFE4E6E9)),
+            .background(if (isActive) GalleryBlue else inactiveBg),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = "$stepNumber",
-            color = if (isActive) Color.White else Color(0xFF707C93),
+            color = if (isActive) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold
         )

@@ -14,6 +14,10 @@ import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.data.repository.MediaRepositoryImpl
 import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.data.repository.VaultRepositoryImpl
+import com.quizango.gallery.ui.theme.applyNightMode
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class GalleryApplication : Application(), ImageLoaderFactory {
 
@@ -46,6 +50,11 @@ class GalleryApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        CoroutineScope(Dispatchers.Main.immediate).launch {
+            preferences.themeMode.collect { mode ->
+                applyNightMode(mode)
+            }
+        }
     }
 
     companion object {

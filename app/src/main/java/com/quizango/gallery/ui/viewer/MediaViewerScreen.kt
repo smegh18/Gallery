@@ -75,7 +75,7 @@ import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.domain.model.VaultItem
 import com.quizango.gallery.ui.navigation.Screen
-import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
@@ -242,7 +242,7 @@ fun MediaViewerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Main Media Horizontal Pager
         HorizontalPager(
@@ -275,7 +275,7 @@ fun MediaViewerScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.surface)
                     .statusBarsPadding()
             ) {
                 Row(
@@ -300,7 +300,7 @@ fun MediaViewerScreen(
                     ) {
                         Text(
                             text = dateText,
-                            color = Color(0xFF1E3354),
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
@@ -308,7 +308,7 @@ fun MediaViewerScreen(
                         )
                         Text(
                             text = timeText,
-                            color = Color(0xFF707C93),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             maxLines = 1
@@ -382,7 +382,7 @@ fun MediaViewerScreen(
                     }
                 }
 
-                HorizontalDivider(color = Color(0xFFE4E6E9), thickness = 1.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.settingsDivider, thickness = 1.dp)
             }
         }
 
@@ -453,7 +453,7 @@ fun MediaViewerScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.surface)
                             .padding(top = 6.dp)
                     ) {
                         // Progress / Scrubber Bar (videoSeek)
@@ -472,7 +472,7 @@ fun MediaViewerScreen(
                                 colors = SliderDefaults.colors(
                                     thumbColor = GalleryBlue,
                                     activeTrackColor = GalleryBlue,
-                                    inactiveTrackColor = Color(0xFFD9DCE0)
+                                    inactiveTrackColor = MaterialTheme.colorScheme.cardBorder
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -488,13 +488,13 @@ fun MediaViewerScreen(
                                     text = formatDuration(videoPositionMs),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF1E3354)
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = formatDuration(if (videoDurationMs > 0) videoDurationMs else currentItem.durationMs),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF707C93)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -570,7 +570,7 @@ fun MediaViewerScreen(
                                     expanded = showSpeedMenu,
                                     onDismissRequest = { showSpeedMenu = false },
                                     modifier = Modifier
-                                        .background(Color.White, RoundedCornerShape(16.dp))
+                                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                                         .padding(vertical = 4.dp)
                                         .width(130.dp)
                                 ) {
@@ -585,7 +585,7 @@ fun MediaViewerScreen(
                                                 ) {
                                                     Text(
                                                         text = "${speed}x",
-                                                        color = Color(0xFF1E3354),
+                                                        color = MaterialTheme.colorScheme.onSurface,
                                                         fontSize = 14.sp,
                                                         fontWeight = if (videoSpeed == speed) FontWeight.Bold else FontWeight.Medium
                                                     )
@@ -615,13 +615,13 @@ fun MediaViewerScreen(
                 // Bottom Action Bar (Matches item_bottom_option_layout.xml: normal, recycler, or hidden action)
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.surface,
                     shadowElevation = 8.dp
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        HorizontalDivider(color = Color(0xFFE4E6E9), thickness = 1.dp)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.settingsDivider, thickness = 1.dp)
 
                         when {
                             isRecycle -> {
@@ -754,14 +754,14 @@ fun MediaViewerScreen(
                                             expanded = showMoreMenu,
                                             onDismissRequest = { showMoreMenu = false },
                                             modifier = Modifier
-                                                .background(Color.White, RoundedCornerShape(16.dp))
+                                                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                                                 .padding(vertical = 4.dp)
                                         ) {
                                             DropdownMenuItem(
                                                 text = {
                                                     Text(
                                                         stringResource(R.string.add_to),
-                                                        color = Color(0xFF1E3354),
+                                                        color = MaterialTheme.colorScheme.onSurface,
                                                         fontSize = 14.sp,
                                                         fontWeight = FontWeight.Medium
                                                     )
@@ -774,7 +774,7 @@ fun MediaViewerScreen(
                                                     Icon(
                                                         painterResource(id = R.drawable.ic_add),
                                                         contentDescription = null,
-                                                        tint = Color(0xFF1E3354),
+                                                        tint = MaterialTheme.colorScheme.onSurface,
                                                         modifier = Modifier.size(20.dp)
                                                     )
                                                 }
@@ -783,7 +783,7 @@ fun MediaViewerScreen(
                                                 text = {
                                                     Text(
                                                         stringResource(R.string.rename),
-                                                        color = Color(0xFF1E3354),
+                                                        color = MaterialTheme.colorScheme.onSurface,
                                                         fontSize = 14.sp,
                                                         fontWeight = FontWeight.Medium
                                                     )
@@ -797,7 +797,7 @@ fun MediaViewerScreen(
                                                     Icon(
                                                         painterResource(id = R.drawable.ic_rename),
                                                         contentDescription = null,
-                                                        tint = Color(0xFF1E3354),
+                                                        tint = MaterialTheme.colorScheme.onSurface,
                                                         modifier = Modifier.size(20.dp)
                                                     )
                                                 }
@@ -806,7 +806,7 @@ fun MediaViewerScreen(
                                                 text = {
                                                     Text(
                                                         stringResource(R.string.slide_show),
-                                                        color = Color(0xFF1E3354),
+                                                        color = MaterialTheme.colorScheme.onSurface,
                                                         fontSize = 14.sp,
                                                         fontWeight = FontWeight.Medium
                                                     )
@@ -819,7 +819,7 @@ fun MediaViewerScreen(
                                                     Icon(
                                                         painterResource(id = R.drawable.ic_slideshow),
                                                         contentDescription = null,
-                                                        tint = Color(0xFF1E3354),
+                                                        tint = MaterialTheme.colorScheme.onSurface,
                                                         modifier = Modifier.size(20.dp)
                                                     )
                                                 }
@@ -829,7 +829,7 @@ fun MediaViewerScreen(
                                                     text = {
                                                         Text(
                                                             stringResource(R.string.set_as_wallpaper),
-                                                            color = Color(0xFF1E3354),
+                                                            color = MaterialTheme.colorScheme.onSurface,
                                                             fontSize = 14.sp,
                                                             fontWeight = FontWeight.Medium
                                                         )
@@ -842,7 +842,7 @@ fun MediaViewerScreen(
                                                         Icon(
                                                             painterResource(id = R.drawable.ic_set_as),
                                                             contentDescription = null,
-                                                            tint = Color(0xFF1E3354),
+                                                            tint = MaterialTheme.colorScheme.onSurface,
                                                             modifier = Modifier.size(20.dp)
                                                         )
                                                     }
@@ -851,7 +851,7 @@ fun MediaViewerScreen(
                                                     text = {
                                                         Text(
                                                             stringResource(R.string.print),
-                                                            color = Color(0xFF1E3354),
+                                                            color = MaterialTheme.colorScheme.onSurface,
                                                             fontSize = 14.sp,
                                                             fontWeight = FontWeight.Medium
                                                         )
@@ -871,7 +871,7 @@ fun MediaViewerScreen(
                                                         Icon(
                                                             painterResource(id = R.drawable.ic_print),
                                                             contentDescription = null,
-                                                            tint = Color(0xFF1E3354),
+                                                            tint = MaterialTheme.colorScheme.onSurface,
                                                             modifier = Modifier.size(20.dp)
                                                         )
                                                     }
@@ -897,7 +897,7 @@ fun MediaViewerScreen(
                     text = stringResource(R.string.delete_dialog_permission),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -920,7 +920,7 @@ fun MediaViewerScreen(
                     Text(
                         text = stringResource(R.string.delete_dialog_move),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             },
@@ -957,7 +957,7 @@ fun MediaViewerScreen(
                     Text(stringResource(R.string.no), color = GalleryBlue, fontWeight = FontWeight.SemiBold)
                 }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(20.dp)
         )
     }
@@ -971,14 +971,14 @@ fun MediaViewerScreen(
                     text = "Delete Permanently",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Text(
                     text = "Are you sure you want to permanently delete this item? This action cannot be undone.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF707C93)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             confirmButton = {
@@ -1014,7 +1014,7 @@ fun MediaViewerScreen(
                     Text(stringResource(R.string.cancel), color = GalleryBlue, fontWeight = FontWeight.SemiBold)
                 }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(20.dp)
         )
     }
@@ -1028,23 +1028,23 @@ fun MediaViewerScreen(
                     text = stringResource(R.string.rename),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 TextField(
                     value = renameInput,
                     onValueChange = { renameInput = it },
-                    placeholder = { Text(stringResource(R.string.enter_name), color = Color(0xFF9EA7B4)) },
+                    placeholder = { Text(stringResource(R.string.enter_name), color = MaterialTheme.colorScheme.textTertiary) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
                         focusedIndicatorColor = GalleryBlue,
-                        unfocusedIndicatorColor = Color(0xFFE4E6E9),
-                        focusedTextColor = Color(0xFF1E3354),
-                        unfocusedTextColor = Color(0xFF1E3354)
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.settingsDivider,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
             },
@@ -1082,7 +1082,7 @@ fun MediaViewerScreen(
                     Text(stringResource(R.string.cancel), color = GalleryBlue, fontWeight = FontWeight.SemiBold)
                 }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(20.dp)
         )
     }
@@ -1093,7 +1093,7 @@ fun MediaViewerScreen(
         ModalBottomSheet(
             onDismissRequest = { showAddToDialog = false },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
             dragHandle = {
                 Box(
@@ -1102,7 +1102,7 @@ fun MediaViewerScreen(
                         .width(40.dp)
                         .height(4.dp)
                         .clip(RoundedCornerShape(2.dp))
-                        .background(Color(0xFFD9DCE0))
+                        .background(MaterialTheme.colorScheme.cardBorder)
                 )
             }
         ) {
@@ -1115,7 +1115,7 @@ fun MediaViewerScreen(
                     text = stringResource(R.string.add_to),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E3354),
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
@@ -1128,7 +1128,7 @@ fun MediaViewerScreen(
                     ) {
                         Text(
                             text = "No Albums Found",
-                            color = Color(0xFF707C93),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -1162,7 +1162,7 @@ fun MediaViewerScreen(
                                     modifier = Modifier
                                         .size(80.dp)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(Color(0xFFF3F7FB)),
+                                        .background(MaterialTheme.colorScheme.albumOptionBg),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     if (album.coverPath.isNotEmpty()) {
@@ -1188,7 +1188,7 @@ fun MediaViewerScreen(
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF1E3354)
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -1204,7 +1204,7 @@ fun MediaViewerScreen(
         ModalBottomSheet(
             onDismissRequest = { showInfoDialog = false },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
             dragHandle = {
                 Box(
@@ -1213,7 +1213,7 @@ fun MediaViewerScreen(
                         .width(40.dp)
                         .height(4.dp)
                         .clip(RoundedCornerShape(2.dp))
-                        .background(Color(0xFFD9DCE0))
+                        .background(MaterialTheme.colorScheme.cardBorder)
                 )
             }
         ) {
@@ -1227,11 +1227,11 @@ fun MediaViewerScreen(
                     text = stringResource(R.string.details),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E3354),
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                HorizontalDivider(color = Color(0xFFE4E6E9), thickness = 1.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.settingsDivider, thickness = 1.dp)
 
                 Spacer(modifier = Modifier.height(6.dp))
 
@@ -1340,7 +1340,7 @@ private fun BottomActionButton(
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = label,
-            color = Color(0xFF1E3354),
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
             maxLines = 1
@@ -1516,14 +1516,14 @@ private fun DetailSheetRow(label: String, value: String) {
         Text(
             text = label,
             fontSize = 14.sp,
-            color = Color(0xFF707C93),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
         )
         Text(
             text = value,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF1E3354),
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(2f),
             maxLines = 3,
             overflow = TextOverflow.Ellipsis

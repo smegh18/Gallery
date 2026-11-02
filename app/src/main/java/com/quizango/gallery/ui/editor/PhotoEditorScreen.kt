@@ -54,7 +54,7 @@ import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.ui.editor.crop.CropGeometry
 import com.quizango.gallery.ui.editor.crop.ImageCropView
 import com.quizango.gallery.ui.navigation.Screen
-import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -259,11 +259,11 @@ fun PhotoEditorScreen(
     }
 
     Scaffold(
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.screenBackground,
         topBar = {
             // Authentic Top Toolbar (matches layout_toolbar.xml & activity_photo_edit.xml)
             Surface(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.surface,
                 shadowElevation = 0.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -295,7 +295,7 @@ fun PhotoEditorScreen(
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 18.sp,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             ),
                             modifier = Modifier
                                 .weight(1f)
@@ -359,14 +359,14 @@ fun PhotoEditorScreen(
                             }
                         }
                     }
-                    HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.settingsDivider)
                 }
             }
         },
         bottomBar = {
             if (originalBitmap != null) {
                 Surface(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.surface,
                     shadowElevation = 8.dp,
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -381,7 +381,7 @@ fun PhotoEditorScreen(
                     ) {
                         if (activeTab == null) {
                             // Root Bottom Tab Bar (Matches rvTab in activity_photo_edit.xml)
-                            HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+                            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.settingsDivider)
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -409,7 +409,7 @@ fun PhotoEditorScreen(
                                             text = tab.label,
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.Medium,
-                                            color = Color(0xFF1E3354)
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                     }
                                 }
@@ -438,7 +438,7 @@ fun PhotoEditorScreen(
                                         text = "Remove BG",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Medium,
-                                        color = Color(0xFF1E3354)
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
 
@@ -465,7 +465,7 @@ fun PhotoEditorScreen(
                                         text = "Blur BG",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Medium,
-                                        color = Color(0xFF1E3354)
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
 
@@ -492,7 +492,7 @@ fun PhotoEditorScreen(
                                         text = "Color BG",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Medium,
-                                        color = Color(0xFF1E3354)
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -636,7 +636,7 @@ fun PhotoEditorScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color.White),
+                .background(MaterialTheme.colorScheme.screenBackground),
             contentAlignment = Alignment.Center
         ) {
             if (originalBitmap != null) {
@@ -802,7 +802,7 @@ fun PhotoEditorScreen(
                 Text(
                     text = "Add Text Caption",
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -819,7 +819,7 @@ fun PhotoEditorScreen(
                         text = "Text Color:",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF707C93)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(
@@ -834,7 +834,7 @@ fun PhotoEditorScreen(
                                     .background(col)
                                     .border(
                                         width = if (inputTextColor == col) 2.dp else 1.dp,
-                                        color = if (inputTextColor == col) GalleryBlue else Color(0xFFE4E6E9),
+                                        color = if (inputTextColor == col) GalleryBlue else MaterialTheme.colorScheme.settingsDivider,
                                         shape = CircleShape
                                     )
                                     .clickable { inputTextColor = col }
@@ -860,10 +860,10 @@ fun PhotoEditorScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showTextDialog = false }) {
-                    Text("Cancel", color = Color(0xFF707C93))
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         )
     }
 }
@@ -886,7 +886,7 @@ private fun CropPanel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         // Sub-tool Header: Cancel, Title, Done
         SubToolHeader(
@@ -914,7 +914,7 @@ private fun CropPanel(
                 Image(
                     painter = painterResource(R.drawable.ic_vertical),
                     contentDescription = "Flip X",
-                    colorFilter = ColorFilter.tint(if (flipX) GalleryBlue else Color(0xFF1E3354)),
+                    colorFilter = ColorFilter.tint(if (flipX) GalleryBlue else MaterialTheme.colorScheme.onSurface),
                     modifier = Modifier.size(22.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -922,7 +922,7 @@ private fun CropPanel(
                     text = stringResource(R.string.flip_X),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
-                    color = if (flipX) GalleryBlue else Color(0xFF1E3354)
+                    color = if (flipX) GalleryBlue else MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -939,7 +939,7 @@ private fun CropPanel(
                 Image(
                     painter = painterResource(R.drawable.ic_horizon),
                     contentDescription = "Flip Y",
-                    colorFilter = ColorFilter.tint(if (flipY) GalleryBlue else Color(0xFF1E3354)),
+                    colorFilter = ColorFilter.tint(if (flipY) GalleryBlue else MaterialTheme.colorScheme.onSurface),
                     modifier = Modifier.size(22.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -947,7 +947,7 @@ private fun CropPanel(
                     text = stringResource(R.string.flip_Y),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
-                    color = if (flipY) GalleryBlue else Color(0xFF1E3354)
+                    color = if (flipY) GalleryBlue else MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -971,7 +971,7 @@ private fun CropPanel(
                     text = stringResource(R.string.rotate_90),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -991,7 +991,7 @@ private fun CropPanel(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(if (isSelected) Color(0xFFF0F9FF) else Color.Transparent)
+                        .background(if (isSelected) (if (MaterialTheme.colorScheme.isDark) Color(0xFF1E2D42) else Color(0xFFF0F9FF)) else Color.Transparent)
                         .border(
                             width = if (isSelected) 1.5.dp else 0.dp,
                             color = if (isSelected) GalleryBlue else Color.Transparent,
@@ -1003,7 +1003,7 @@ private fun CropPanel(
                     Image(
                         painter = painterResource(ratio.iconRes),
                         contentDescription = ratio.label,
-                        colorFilter = ColorFilter.tint(if (isSelected) GalleryBlue else Color(0xFF1E3354)),
+                        colorFilter = ColorFilter.tint(if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -1011,7 +1011,7 @@ private fun CropPanel(
                         text = ratio.label,
                         fontSize = 11.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) GalleryBlue else Color(0xFF1E3354)
+                        color = if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -1048,7 +1048,7 @@ private fun AdjustPanel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         // Sub-tool Header
         SubToolHeader(
@@ -1081,12 +1081,12 @@ private fun AdjustPanel(
             colors = SliderDefaults.colors(
                 thumbColor = GalleryBlue,
                 activeTrackColor = GalleryBlue,
-                inactiveTrackColor = Color(0xFFE4E6E9)
+                inactiveTrackColor = MaterialTheme.colorScheme.cardBorder
             ),
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 2.dp)
         )
 
-        HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+        HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.settingsDivider)
 
         // Bottom sub-navigation bar (Matches adjust_bottom_navigation)
         Row(
@@ -1108,7 +1108,7 @@ private fun AdjustPanel(
                     Image(
                         painter = painterResource(param.iconRes),
                         contentDescription = param.label,
-                        colorFilter = ColorFilter.tint(if (isSelected) GalleryBlue else Color(0xFF1E3354)),
+                        colorFilter = ColorFilter.tint(if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.height(2.dp))
@@ -1116,7 +1116,7 @@ private fun AdjustPanel(
                         text = param.label,
                         fontSize = 11.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) GalleryBlue else Color(0xFF707C93)
+                        color = if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -1138,7 +1138,7 @@ private fun FilterPanel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         // Sub-tool Header
         SubToolHeader(
@@ -1183,7 +1183,7 @@ private fun FilterPanel(
                             )
                             .border(
                                 width = if (isSelected) 2.5.dp else 1.dp,
-                                color = if (isSelected) GalleryBlue else Color(0xFFE4E6E9),
+                                color = if (isSelected) GalleryBlue else MaterialTheme.colorScheme.settingsDivider,
                                 shape = RoundedCornerShape(8.dp)
                             ),
                         contentAlignment = Alignment.Center
@@ -1192,7 +1192,7 @@ private fun FilterPanel(
                             text = filter.label.take(2).uppercase(),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E3354)
+                            color = if (filter == EditorFilter.NONE) MaterialTheme.colorScheme.onSurface else Color.White
                         )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
@@ -1200,7 +1200,7 @@ private fun FilterPanel(
                         text = filter.label,
                         fontSize = 11.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) GalleryBlue else Color(0xFF1E3354)
+                        color = if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -1228,7 +1228,7 @@ private fun BrushPanel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         // Sub-tool Header: Cancel, Undo, Title "Brush", Redo, Done
         Row(
@@ -1249,7 +1249,7 @@ private fun BrushPanel(
                 Image(
                     painter = painterResource(R.drawable.ic_undo),
                     contentDescription = "Undo",
-                    colorFilter = ColorFilter.tint(if (canUndo) Color(0xFF1E3354) else Color(0xFFB0B0B0)),
+                    colorFilter = ColorFilter.tint(if (canUndo) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.textTertiary),
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -1261,7 +1261,7 @@ private fun BrushPanel(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium,
                     fontSize = 16.sp,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             )
 
@@ -1271,7 +1271,7 @@ private fun BrushPanel(
                 Image(
                     painter = painterResource(R.drawable.ic_redo),
                     contentDescription = "Redo",
-                    colorFilter = ColorFilter.tint(if (canRedo) Color(0xFF1E3354) else Color(0xFFB0B0B0)),
+                    colorFilter = ColorFilter.tint(if (canRedo) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.textTertiary),
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -1297,8 +1297,8 @@ private fun BrushPanel(
                 modifier = Modifier
                     .size(28.dp)
                     .clip(RoundedCornerShape(3.dp))
-                    .background(Color(0xFFF0F9FF))
-                    .border(1.5.dp, Color(0xFFDEF2FF), RoundedCornerShape(3.dp)),
+                    .background(if (MaterialTheme.colorScheme.isDark) Color(0xFF1E2D42) else Color(0xFFF0F9FF))
+                    .border(1.5.dp, if (MaterialTheme.colorScheme.isDark) Color(0xFF2A3D58) else Color(0xFFDEF2FF), RoundedCornerShape(3.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -1316,7 +1316,7 @@ private fun BrushPanel(
                 colors = SliderDefaults.colors(
                     thumbColor = GalleryBlue,
                     activeTrackColor = GalleryBlue,
-                    inactiveTrackColor = Color(0xFFE4E6E9)
+                    inactiveTrackColor = MaterialTheme.colorScheme.cardBorder
                 ),
                 modifier = Modifier
                     .weight(1f)
@@ -1327,8 +1327,8 @@ private fun BrushPanel(
                 modifier = Modifier
                     .size(28.dp)
                     .clip(RoundedCornerShape(3.dp))
-                    .background(Color(0xFFF0F9FF))
-                    .border(1.5.dp, Color(0xFFDEF2FF), RoundedCornerShape(3.dp)),
+                    .background(if (MaterialTheme.colorScheme.isDark) Color(0xFF1E2D42) else Color(0xFFF0F9FF))
+                    .border(1.5.dp, if (MaterialTheme.colorScheme.isDark) Color(0xFF2A3D58) else Color(0xFFDEF2FF), RoundedCornerShape(3.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -1340,7 +1340,7 @@ private fun BrushPanel(
             }
         }
 
-        HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+        HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.settingsDivider)
 
         // Color Palette Row (Matches brushColorRv)
         Row(
@@ -1368,7 +1368,7 @@ private fun BrushPanel(
                         .background(color)
                         .border(
                             width = if (isSelected) 3.dp else 1.dp,
-                            color = if (isSelected) GalleryBlue else Color(0xFFE4E6E9),
+                            color = if (isSelected) GalleryBlue else MaterialTheme.colorScheme.settingsDivider,
                             shape = CircleShape
                         )
                         .clickable { onColorSelected(color) }
@@ -1391,7 +1391,7 @@ private fun StickerPanel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         SubToolHeader(
             title = stringResource(R.string.sticker),
@@ -1434,7 +1434,7 @@ private fun TextPanel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         SubToolHeader(
             title = stringResource(R.string.text),
@@ -1492,7 +1492,7 @@ private fun SubToolHeader(
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
-                color = Color(0xFF1E3354)
+                color = MaterialTheme.colorScheme.onSurface
             )
         )
 

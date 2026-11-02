@@ -84,7 +84,7 @@ fun FavoritesScreen(
                             text = if (isSelectionMode) "${selectedPaths.size} Selected" else stringResource(id = R.string.favorites),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -102,7 +102,7 @@ fun FavoritesScreen(
                                     id = if (isSelectionMode) R.drawable.ic_close else R.drawable.ic_back
                                 ),
                                 contentDescription = if (isSelectionMode) "Close" else "Back",
-                                tint = Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -150,7 +150,7 @@ fun FavoritesScreen(
                 )
                 HorizontalDivider(
                     thickness = 0.5.dp,
-                    color = Color(0x1A071427)
+                    color = MaterialTheme.colorScheme.outline
                 )
             }
         },
@@ -189,7 +189,7 @@ fun FavoritesScreen(
                                 text = stringResource(id = R.string.share),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -221,7 +221,7 @@ fun FavoritesScreen(
                                 text = "Remove",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -244,7 +244,7 @@ fun FavoritesScreen(
                                 text = stringResource(id = R.string.delete),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -276,13 +276,13 @@ fun FavoritesScreen(
                         text = "No Favorites",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Tap on the heart icon to save your favorite media to quickly locate them.",
                         fontSize = 13.sp,
-                        color = Color(0xFF707C93),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         lineHeight = 18.sp
                     )
@@ -411,12 +411,13 @@ fun FavoritesScreen(
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             shape = RoundedCornerShape(16.dp),
+            containerColor = MaterialTheme.colorScheme.surface,
             title = {
                 Text(
                     text = "Are you sure you want to delete ${selectedPaths.size} item(s)?",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -435,7 +436,7 @@ fun FavoritesScreen(
                     Text(
                         text = "Move this file to Recycle Bin",
                         fontSize = 14.sp,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             },

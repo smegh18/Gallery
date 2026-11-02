@@ -31,6 +31,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.MediaRepository
+import com.quizango.gallery.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -126,11 +127,11 @@ fun BlurBgScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F7FA))
+            .background(MaterialTheme.colorScheme.screenBackground)
     ) {
         // Authentic Top Toolbar (layout_toolbar.xml)
         Surface(
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             shadowElevation = 2.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -163,7 +164,7 @@ fun BlurBgScreen(
                         Image(
                             painter = painterResource(R.drawable.ic_back),
                             contentDescription = "Back",
-                            colorFilter = ColorFilter.tint(Color(0xFF1E3354)),
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -174,7 +175,7 @@ fun BlurBgScreen(
                         text = stringResource(R.string.blur_background),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -184,7 +185,7 @@ fun BlurBgScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .background(Color(0xFFE4E6E9))
+                        .background(MaterialTheme.colorScheme.settingsDivider)
                 )
             }
         }
@@ -260,7 +261,7 @@ fun BlurBgScreen(
 
         // Authentic Bottom View (blurAndGrayLay)
         Surface(
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             shadowElevation = 10.dp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -304,7 +305,7 @@ fun BlurBgScreen(
                         text = stringResource(R.string.blur_background),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Box(

@@ -67,7 +67,7 @@ fun VaultMediaScreen(
                             text = if (isSelectionMode) "${selectedPaths.size} Selected" else "Private Vault",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -83,7 +83,7 @@ fun VaultMediaScreen(
                             Icon(
                                 painter = painterResource(id = if (isSelectionMode) R.drawable.ic_close else R.drawable.ic_back),
                                 contentDescription = if (isSelectionMode) "Close" else "Back",
-                                tint = Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -111,7 +111,7 @@ fun VaultMediaScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_settings),
                                     contentDescription = "Vault Settings",
-                                    tint = Color.Unspecified,
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
@@ -121,7 +121,7 @@ fun VaultMediaScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             }
         },
         floatingActionButton = {
@@ -171,7 +171,7 @@ fun VaultMediaScreen(
                                 text = "Share",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -193,7 +193,7 @@ fun VaultMediaScreen(
                                 text = "Unhide",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -215,7 +215,7 @@ fun VaultMediaScreen(
                                 text = "Delete",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -308,19 +308,20 @@ fun VaultMediaScreen(
             AlertDialog(
                 onDismissRequest = { showUnhideConfirmDialog = false },
                 shape = RoundedCornerShape(16.dp),
+                containerColor = MaterialTheme.colorScheme.surface,
                 title = {
                     Text(
                         text = "Unhide Items",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 text = {
                     Text(
                         text = "Are you sure you want to restore these ${selectedPaths.size} item(s) back to the public gallery?",
                         fontSize = 14.sp,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 confirmButton = {
@@ -365,19 +366,20 @@ fun VaultMediaScreen(
             AlertDialog(
                 onDismissRequest = { showDeleteConfirmDialog = false },
                 shape = RoundedCornerShape(16.dp),
+                containerColor = MaterialTheme.colorScheme.surface,
                 title = {
                     Text(
                         text = "Delete from Vault",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 text = {
                     Text(
                         text = "Are you sure you want to permanently delete these ${selectedPaths.size} item(s)? This action cannot be undone.",
                         fontSize = 14.sp,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 confirmButton = {

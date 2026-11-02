@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,12 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.cardBackground
+import com.quizango.gallery.ui.theme.cardBorder
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.screenBackground
 
 // Reference App Explore Theme Colors
-private val ScreenBg = Color(0xFFF6F7FB)
-private val CardBorderColor = Color(0xFFE7E9F0)
-private val TextPrimary = Color(0xFF14161C)
-private val TextSecondary = Color(0xFF6B7080)
 private val HeroBg = Color(0xFF0066FF)
 private val HeroBtnText = Color(0xFF0047B3)
 private val HeroSubtext = Color(0xFFD9E6FF)
@@ -48,7 +49,6 @@ private val MomentsChipBg = Color(0xFFFAEEDA)
 private val MomentsChipFg = Color(0xFF854F0B)
 private val PlaceChipBg = Color(0xFFE6F1FB)
 private val PlaceChipFg = Color(0xFF185FA5)
-private val RowGlyphColor = Color(0xFF1F3355)
 private val NewBadgeRed = Color(0xFFFF4D4F)
 
 /**
@@ -68,7 +68,7 @@ fun ExploreTab(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ScreenBg)
+            .background(MaterialTheme.colorScheme.screenBackground)
             .verticalScroll(scrollState)
             .padding(horizontal = 14.dp, vertical = 10.dp)
     ) {
@@ -227,8 +227,8 @@ fun ExploreTab(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
-                .border(1.dp, CardBorderColor, RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.cardBackground)
+                .border(1.dp, MaterialTheme.colorScheme.cardBorder, RoundedCornerShape(16.dp))
         ) {
             ManageRow(
                 label = stringResource(R.string.duplicate_finder),
@@ -237,7 +237,7 @@ fun ExploreTab(
             )
 
             HorizontalDivider(
-                color = CardBorderColor,
+                color = MaterialTheme.colorScheme.cardBorder,
                 thickness = 1.dp,
                 modifier = Modifier.padding(start = 48.dp)
             )
@@ -249,7 +249,7 @@ fun ExploreTab(
             )
 
             HorizontalDivider(
-                color = CardBorderColor,
+                color = MaterialTheme.colorScheme.cardBorder,
                 thickness = 1.dp,
                 modifier = Modifier.padding(start = 48.dp)
             )
@@ -261,7 +261,7 @@ fun ExploreTab(
             )
 
             HorizontalDivider(
-                color = CardBorderColor,
+                color = MaterialTheme.colorScheme.cardBorder,
                 thickness = 1.dp,
                 modifier = Modifier.padding(start = 48.dp)
             )
@@ -283,7 +283,7 @@ private fun SectionLabel(text: String) {
         text = text,
         fontSize = 12.sp,
         fontWeight = FontWeight.Medium,
-        color = TextSecondary,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, start = 4.dp)
     )
 }
@@ -298,11 +298,15 @@ private fun FeatureCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val isDark = MaterialTheme.colorScheme.isDark
+    val finalChipBg = if (isDark) chipBg.copy(alpha = 0.25f) else chipBg
+    val finalChipFg = if (isDark) Color.White else chipFg
+
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-            .border(1.dp, CardBorderColor, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.cardBackground)
+            .border(1.dp, MaterialTheme.colorScheme.cardBorder, RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
             .padding(14.dp)
     ) {
@@ -310,13 +314,13 @@ private fun FeatureCard(
             modifier = Modifier
                 .size(38.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(chipBg),
+                .background(finalChipBg),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
-                tint = chipFg,
+                tint = finalChipFg,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -327,7 +331,7 @@ private fun FeatureCard(
             text = title,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onBackground,
             maxLines = 1
         )
 
@@ -337,7 +341,7 @@ private fun FeatureCard(
             text = subtitle,
             fontSize = 11.sp,
             fontWeight = FontWeight.Normal,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1
         )
     }
@@ -352,6 +356,10 @@ private fun TileButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val isDark = MaterialTheme.colorScheme.isDark
+    val finalChipBg = if (isDark) chipBg.copy(alpha = 0.25f) else chipBg
+    val finalChipFg = if (isDark) Color.White else chipFg
+
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
@@ -363,13 +371,13 @@ private fun TileButton(
             modifier = Modifier
                 .size(52.dp)
                 .clip(CircleShape)
-                .background(chipBg),
+                .background(finalChipBg),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = label,
-                tint = chipFg,
+                tint = finalChipFg,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -380,7 +388,7 @@ private fun TileButton(
             text = label,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             maxLines = 1
         )
@@ -407,7 +415,7 @@ private fun ManageRow(
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
-                tint = RowGlyphColor,
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -418,14 +426,14 @@ private fun ManageRow(
             text = label,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.weight(1f)
         )
 
         Icon(
             painter = painterResource(id = R.drawable.explore_tab_ic_chevron),
             contentDescription = null,
-            tint = TextSecondary,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(16.dp)
         )
     }

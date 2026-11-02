@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.settingsDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +52,7 @@ fun AboutScreen(
                             text = stringResource(id = R.string.about_us),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -58,7 +60,7 @@ fun AboutScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -67,7 +69,7 @@ fun AboutScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 0.5.dp, color = Color(0x1A071427))
+                HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.settingsDivider)
             }
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -104,7 +106,7 @@ fun AboutScreen(
             Text(
                 text = stringResource(id = R.string.current_version, "2.6.7", 146),
                 fontSize = 13.sp,
-                color = Color(0xFF707C93)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -113,7 +115,7 @@ fun AboutScreen(
             Text(
                 text = stringResource(id = R.string.about_detail),
                 fontSize = 14.sp,
-                color = Color(0xFF707C93),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp,
                 modifier = Modifier.padding(horizontal = 35.dp)
@@ -172,13 +174,13 @@ fun AboutScreen(
                 text = stringResource(id = R.string.follow_us_on),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF1E3354)
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(6.dp))
 
             HorizontalDivider(
-                color = Color(0xFFDBE2F3),
+                color = MaterialTheme.colorScheme.settingsDivider,
                 thickness = 1.dp,
                 modifier = Modifier.padding(horizontal = 60.dp)
             )
@@ -257,7 +259,7 @@ private fun SocialMediaItem(
             text = label,
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF1E3354)
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

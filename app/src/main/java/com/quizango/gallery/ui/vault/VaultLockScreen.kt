@@ -112,7 +112,7 @@ fun VaultLockScreen(
                             text = if (isSettingUp) "Set PIN" else "Private Vault",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -120,7 +120,7 @@ fun VaultLockScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -129,7 +129,7 @@ fun VaultLockScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             }
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -166,7 +166,7 @@ fun VaultLockScreen(
                     text = titleText,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1E3354)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Spacer(modifier = Modifier.height(26.dp))
@@ -186,7 +186,7 @@ fun VaultLockScreen(
                                 text = if (hasDigit) "●" else "",
                                 fontSize = 22.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1E3354),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.height(28.dp)
                             )
                             Spacer(modifier = Modifier.height(4.dp))
@@ -284,7 +284,7 @@ private fun VaultKeypad(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_backspace),
                                     contentDescription = "Backspace",
-                                    tint = Color(0xFF1E3354),
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(26.dp)
                                 )
                             }
@@ -300,7 +300,7 @@ private fun VaultKeypad(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_confirm),
                                     contentDescription = "Confirm",
-                                    tint = Color(0xFF1E3354),
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(26.dp)
                                 )
                             }
@@ -317,7 +317,7 @@ private fun VaultKeypad(
                                     text = item,
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF1E3354)
+                                    color = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }

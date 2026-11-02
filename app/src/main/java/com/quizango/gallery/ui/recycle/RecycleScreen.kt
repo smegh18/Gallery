@@ -34,6 +34,7 @@ import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.home.formatDuration
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.isDark
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
@@ -83,7 +84,7 @@ fun RecycleScreen(
                             text = if (isSelectionMode) "${selectedPaths.size} Selected" else "Recycle Bin",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     navigationIcon = {
@@ -99,7 +100,7 @@ fun RecycleScreen(
                             Icon(
                                 painter = painterResource(id = if (isSelectionMode) R.drawable.ic_close else R.drawable.ic_back),
                                 contentDescription = if (isSelectionMode) "Close" else "Back",
-                                tint = Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -127,7 +128,7 @@ fun RecycleScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_delete),
                                     contentDescription = "Empty Recycle Bin",
-                                    tint = Color.Unspecified,
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
@@ -137,7 +138,7 @@ fun RecycleScreen(
                         containerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                HorizontalDivider(thickness = 1.dp, color = Color(0xFFE4E6E9))
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             }
         },
         bottomBar = {
@@ -174,7 +175,7 @@ fun RecycleScreen(
                                 text = "Restore",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -196,7 +197,7 @@ fun RecycleScreen(
                                 text = "Delete",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF1E3354)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -216,7 +217,7 @@ fun RecycleScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 14.dp, vertical = 8.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFFE8F2FF))
+                    .background(if (MaterialTheme.colorScheme.isDark) Color(0xFF1E1E1E) else Color(0xFFE8F2FF))
                     .padding(horizontal = 14.dp, vertical = 8.dp)
             ) {
                 Row(
@@ -227,7 +228,7 @@ fun RecycleScreen(
                         text = "Recycle bin items will be removed after 30 days.",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
-                        color = Color(0xFF1E3354),
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -272,13 +273,13 @@ fun RecycleScreen(
                             text = "No items",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "No deleted files here. When you remove items from your phone, they'll appear here,",
                             fontSize = 13.sp,
-                            color = Color(0xFF707C93),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             lineHeight = 18.sp
                         )
@@ -339,13 +340,13 @@ fun RecycleScreen(
                             text = "Restore items",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "Are you sure you want to restore items?",
                             fontSize = 14.sp,
-                            color = Color(0xFF707C93),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp
                         )
                         Spacer(modifier = Modifier.height(24.dp))
@@ -361,8 +362,8 @@ fun RecycleScreen(
                                     .height(44.dp),
                                 shape = RoundedCornerShape(22.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFF2F4F7),
-                                    contentColor = Color(0xFF707C93)
+                                    containerColor = if (MaterialTheme.colorScheme.isDark) Color(0xFF2A2A2A) else Color(0xFFF2F4F7),
+                                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             ) {
                                 Text("Cancel", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
@@ -415,13 +416,13 @@ fun RecycleScreen(
                             text = "Delete items",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "All items will be permanently deleted from your device and cannot be recovered.",
                             fontSize = 14.sp,
-                            color = Color(0xFF707C93),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp
                         )
                         Spacer(modifier = Modifier.height(24.dp))
@@ -437,8 +438,8 @@ fun RecycleScreen(
                                     .height(44.dp),
                                 shape = RoundedCornerShape(22.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFF2F4F7),
-                                    contentColor = Color(0xFF707C93)
+                                    containerColor = if (MaterialTheme.colorScheme.isDark) Color(0xFF2A2A2A) else Color(0xFFF2F4F7),
+                                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             ) {
                                 Text("Cancel", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
@@ -491,13 +492,13 @@ fun RecycleScreen(
                             text = "Empty Recycle Bin",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1E3354)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "Are you sure you want to permanently delete all items in the Recycle Bin?",
                             fontSize = 14.sp,
-                            color = Color(0xFF707C93),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp
                         )
                         Spacer(modifier = Modifier.height(24.dp))
@@ -512,8 +513,8 @@ fun RecycleScreen(
                                     .height(44.dp),
                                 shape = RoundedCornerShape(22.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFF2F4F7),
-                                    contentColor = Color(0xFF707C93)
+                                    containerColor = if (MaterialTheme.colorScheme.isDark) Color(0xFF2A2A2A) else Color(0xFFF2F4F7),
+                                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             ) {
                                 Text("Cancel", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)

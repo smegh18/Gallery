@@ -34,6 +34,10 @@ import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.cardBackground
+import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.searchBarBg
+import com.quizango.gallery.ui.theme.settingsDivider
 import java.io.File
 
 val SEARCH_COLORS = listOf(
@@ -126,7 +130,7 @@ fun SearchScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
                     .statusBarsPadding()
             ) {
                 Row(
@@ -143,7 +147,7 @@ fun SearchScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = "Back",
-                            tint = Color.Unspecified,
+                            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -154,7 +158,7 @@ fun SearchScreen(
                             .weight(1f)
                             .height(40.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFFF3F6FC))
+                            .background(MaterialTheme.colorScheme.searchBarBg)
                             .padding(horizontal = 14.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
@@ -168,7 +172,7 @@ fun SearchScreen(
                                 singleLine = true,
                                 textStyle = TextStyle(
                                     fontSize = 14.sp,
-                                    color = Color(0xFF1E3354),
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Medium
                                 ),
                                 cursorBrush = SolidColor(GalleryBlue),
@@ -178,7 +182,7 @@ fun SearchScreen(
                                         Text(
                                             text = "Search",
                                             fontSize = 14.sp,
-                                            color = Color(0x801D242E) // @color/hintLanguageColor
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                     innerTextField()
@@ -193,7 +197,7 @@ fun SearchScreen(
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_close),
                                         contentDescription = "Clear",
-                                        tint = Color.Unspecified,
+                                        tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
@@ -201,7 +205,7 @@ fun SearchScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_search_common),
                                     contentDescription = "Search",
-                                    tint = Color.Unspecified,
+                                    tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Unspecified,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -212,12 +216,12 @@ fun SearchScreen(
                 }
 
                 HorizontalDivider(
-                    color = Color(0xFFE4E6E9),
+                    color = MaterialTheme.colorScheme.settingsDivider,
                     thickness = 1.dp
                 )
             }
         },
-        containerColor = Color.White
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         if (isSearchActive && !hasResults) {
             // Reference activity_search.xml: emptyLayout
@@ -242,13 +246,13 @@ fun SearchScreen(
                         text = "Oops!",
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1E3354)
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "No search results found",
                         fontSize = 13.sp,
-                        color = Color(0xFF707C93),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -270,7 +274,7 @@ fun SearchScreen(
                             text = "Colors",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1E3354),
+                            color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.padding(horizontal = 14.dp)
                         )
 
@@ -331,7 +335,7 @@ fun SearchScreen(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         HorizontalDivider(
-                            color = Color(0xFFE4E6E9),
+                            color = MaterialTheme.colorScheme.settingsDivider,
                             thickness = 0.5.dp,
                             modifier = Modifier.padding(horizontal = 14.dp)
                         )
@@ -353,7 +357,7 @@ fun SearchScreen(
                                     text = "Albums",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF1E3354),
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.weight(1f)
                                 )
                                 Text(
@@ -406,7 +410,7 @@ fun SearchScreen(
                             }
 
                             HorizontalDivider(
-                                color = Color(0xFFE4E6E9),
+                                color = MaterialTheme.colorScheme.settingsDivider,
                                 thickness = 0.5.dp,
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
                             )
@@ -429,7 +433,7 @@ fun SearchScreen(
                                     text = "Photos",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF1E3354),
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.weight(1f)
                                 )
                                 Text(
@@ -477,7 +481,7 @@ fun SearchScreen(
                             }
 
                             HorizontalDivider(
-                                color = Color(0xFFE4E6E9),
+                                color = MaterialTheme.colorScheme.settingsDivider,
                                 thickness = 0.5.dp,
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
                             )
@@ -499,7 +503,7 @@ fun SearchScreen(
                                     text = "Videos",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF1E3354),
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -558,7 +562,7 @@ private fun SearchAlbumCard(
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFFF0F3F8)),
+                .background(MaterialTheme.colorScheme.cardBackground),
             contentAlignment = Alignment.Center
         ) {
             if (album.coverPath.isNotEmpty() && File(album.coverPath).exists()) {
@@ -584,7 +588,7 @@ private fun SearchAlbumCard(
             text = album.name,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF1E3354),
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(horizontal = 2.dp)
@@ -593,7 +597,7 @@ private fun SearchAlbumCard(
         Text(
             text = "${album.itemCount}",
             fontSize = 11.5.sp,
-            color = Color(0xFF707C93),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 2.dp)
         )
@@ -622,7 +626,7 @@ private fun SearchMediaCard(
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFFF0F3F8)),
+                .background(MaterialTheme.colorScheme.cardBackground),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -639,7 +643,7 @@ private fun SearchMediaCard(
             text = item.fileName,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF1E3354),
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(horizontal = 2.dp)
