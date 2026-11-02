@@ -1,0 +1,15 @@
+# Ralph Progress & Architecture Notes
+
+## Codebase Patterns
+- Architecture: Android MVVM with Jetpack Compose (Material 3) and Kotlin 2.x
+- Package: com.quizango.gallery
+- Target SDK: 36, Min SDK: 24, Java/JVM target: 17
+- State Management: Strict UDF via StateFlow and immutable UI states
+- Theme / Primary Color: #3478F6 (colorPrimary)
+- Navigation: Jetpack Navigation Compose with type-safe route strings and clear back-stack handling
+- Resource Parity: Reference drawables mirrored from reference APK (.analysis/apktool/res/drawable/)
+- Verification: Gradle unit tests, CodeRabbit review CLI, and ARTEMIS ADB physical device verification (Device: 10BD7J2TAS000Z5)
+
+---
+
+## Story Execution Log

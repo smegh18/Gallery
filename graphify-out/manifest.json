@@ -1,0 +1,589 @@
+{
+  ".planning/config.json": {
+    "mtime": 1793608337.409902,
+    "seen": 1793618431.7063022,
+    "ast_hash": "fe5fd4aab36c68405c6f0acef0ad9d11",
+    "semantic_hash": "fe5fd4aab36c68405c6f0acef0ad9d11",
+    "ast_empty": true
+  },
+  "app/build.gradle.kts": {
+    "mtime": 1793618347.3170717,
+    "seen": 1793618431.7063093,
+    "ast_hash": "e409b31d1b035ac6c5644e896c31e244",
+    "semantic_hash": "e409b31d1b035ac6c5644e896c31e244"
+  },
+  "app/src/main/java/com/quizango/gallery/GalleryApplication.kt": {
+    "mtime": 1793614077.814,
+    "seen": 1793618431.7064807,
+    "ast_hash": "d22593e8306bbf2d5031d59a5e1c6d2c",
+    "semantic_hash": "d22593e8306bbf2d5031d59a5e1c6d2c"
+  },
+  "app/src/main/java/com/quizango/gallery/MainActivity.kt": {
+    "mtime": 1793614101.964,
+    "seen": 1793618431.70661,
+    "ast_hash": "2ffbcf4a508a162217fe3e14bad05ded",
+    "semantic_hash": "2ffbcf4a508a162217fe3e14bad05ded"
+  },
+  "app/src/main/java/com/quizango/gallery/data/ads/AdConstants.kt": {
+    "mtime": 1793608337.414359,
+    "seen": 1793618431.7067232,
+    "ast_hash": "458fc71a439400a02cbc1d36a1e7f449",
+    "semantic_hash": "458fc71a439400a02cbc1d36a1e7f449"
+  },
+  "app/src/main/java/com/quizango/gallery/data/ads/AdManager.kt": {
+    "mtime": 1793608337.414359,
+    "seen": 1793618431.7068372,
+    "ast_hash": "a12b604418cfe6976ed0f931cb478483",
+    "semantic_hash": "a12b604418cfe6976ed0f931cb478483"
+  },
+  "app/src/main/java/com/quizango/gallery/data/local/database/GalleryDatabase.kt": {
+    "mtime": 1793608337.4151433,
+    "seen": 1793618431.7069473,
+    "ast_hash": "34874c2e233fe68f9bacb7131a71fa56",
+    "semantic_hash": "34874c2e233fe68f9bacb7131a71fa56"
+  },
+  "app/src/main/java/com/quizango/gallery/data/local/database/converter/Converters.kt": {
+    "mtime": 1793608337.4151433,
+    "seen": 1793618431.7070587,
+    "ast_hash": "52f1bff292b3d3830a1cf8636c08017a",
+    "semantic_hash": "52f1bff292b3d3830a1cf8636c08017a"
+  },
+  "app/src/main/java/com/quizango/gallery/data/local/database/dao/Daos.kt": {
+    "mtime": 1793608337.4151433,
+    "seen": 1793618431.7071688,
+    "ast_hash": "8bef7de28f956e4ea50c847bb1d4f0cd",
+    "semantic_hash": "8bef7de28f956e4ea50c847bb1d4f0cd"
+  },
+  "app/src/main/java/com/quizango/gallery/data/local/database/entity/Entities.kt": {
+    "mtime": 1793608337.4151433,
+    "seen": 1793618431.7072763,
+    "ast_hash": "210a04587c8e82a34750a39f31517813",
+    "semantic_hash": "210a04587c8e82a34750a39f31517813"
+  },
+  "app/src/main/java/com/quizango/gallery/data/local/datastore/AppPreferences.kt": {
+    "mtime": 1793608337.4151433,
+    "seen": 1793618431.7073834,
+    "ast_hash": "32e056b38d1ebfc55998cc5bb6e9ddff",
+    "semantic_hash": "32e056b38d1ebfc55998cc5bb6e9ddff"
+  },
+  "app/src/main/java/com/quizango/gallery/data/local/mediastore/MediaStoreScanner.kt": {
+    "mtime": 1793608337.4159062,
+    "seen": 1793618431.7074873,
+    "ast_hash": "d10c028b1a8e196548c372c1e399ffaa",
+    "semantic_hash": "d10c028b1a8e196548c372c1e399ffaa"
+  },
+  "app/src/main/java/com/quizango/gallery/data/repository/MediaRepository.kt": {
+    "mtime": 1793608337.4159062,
+    "seen": 1793618431.707598,
+    "ast_hash": "ba72d4b631a1a79c7a62c33bcd98b987",
+    "semantic_hash": "ba72d4b631a1a79c7a62c33bcd98b987"
+  },
+  "app/src/main/java/com/quizango/gallery/data/repository/VaultRepository.kt": {
+    "mtime": 1793608337.4159062,
+    "seen": 1793618431.7077012,
+    "ast_hash": "06c16ebbce1c35814950222b88a1badc",
+    "semantic_hash": "06c16ebbce1c35814950222b88a1badc"
+  },
+  "app/src/main/java/com/quizango/gallery/domain/model/Models.kt": {
+    "mtime": 1793608337.4159062,
+    "seen": 1793618431.707802,
+    "ast_hash": "6b011462cbfb6dbb13891e62401e2d4c",
+    "semantic_hash": "6b011462cbfb6dbb13891e62401e2d4c"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/album/AlbumDetailScreen.kt": {
+    "mtime": 1793615143.744,
+    "seen": 1793618431.707904,
+    "ast_hash": "5a752f3abb8504670828d9c39efd85f7",
+    "semantic_hash": "5a752f3abb8504670828d9c39efd85f7"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/cleaner/CleanerScreen.kt": {
+    "mtime": 1793615308.117,
+    "seen": 1793618431.7080073,
+    "ast_hash": "672a7049d739f21b2093c7baec46915d",
+    "semantic_hash": "672a7049d739f21b2093c7baec46915d"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/cleaner/DuplicateCompleteScreen.kt": {
+    "mtime": 1793615329.468,
+    "seen": 1793618431.7081084,
+    "ast_hash": "43b7e97feb263f067ba516427da2d93f",
+    "semantic_hash": "43b7e97feb263f067ba516427da2d93f"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/cleaner/DuplicatePhotoScreen.kt": {
+    "mtime": 1793615363.268,
+    "seen": 1793618431.7082083,
+    "ast_hash": "e945f93263321da511b619ebcfe91d9d",
+    "semantic_hash": "e945f93263321da511b619ebcfe91d9d"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/cleaner/DuplicateWaitingScreen.kt": {
+    "mtime": 1793608337.4173799,
+    "seen": 1793618431.7083075,
+    "ast_hash": "634d55de211894a3469ee1bd21e9ef0f",
+    "semantic_hash": "634d55de211894a3469ee1bd21e9ef0f"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/cleaner/LargeVideoScreen.kt": {
+    "mtime": 1793615387.602,
+    "seen": 1793618431.7084067,
+    "ast_hash": "b868a9633087ea9b7e3657d5d5f9312e",
+    "semantic_hash": "b868a9633087ea9b7e3657d5d5f9312e"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/cleaner/RemoveJunkScreen.kt": {
+    "mtime": 1793615825.432,
+    "seen": 1793618431.708506,
+    "ast_hash": "a2abe4158afe5bc855cc23396e9cefe6",
+    "semantic_hash": "a2abe4158afe5bc855cc23396e9cefe6"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/cleaner/ScreenShortScreen.kt": {
+    "mtime": 1793617071.57,
+    "seen": 1793618431.7086058,
+    "ast_hash": "34ab0e819f1a552cbde77369273d6bbe",
+    "semantic_hash": "34ab0e819f1a552cbde77369273d6bbe"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/components/BannerAdView.kt": {
+    "mtime": 1793608337.417907,
+    "seen": 1793618431.7087047,
+    "ast_hash": "70db7b2ec6c2ce63654b4ad880c6cfb0",
+    "semantic_hash": "70db7b2ec6c2ce63654b4ad880c6cfb0"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/components/NativeAdCard.kt": {
+    "mtime": 1793608337.417907,
+    "seen": 1793618431.7088065,
+    "ast_hash": "bfe0bb77aa507d6e09feb9979fc11341",
+    "semantic_hash": "bfe0bb77aa507d6e09feb9979fc11341"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/components/NavigationComponents.kt": {
+    "mtime": 1793614308.745,
+    "seen": 1793618431.7089052,
+    "ast_hash": "e051da7354879a36a133e9c8cd62c07c",
+    "semantic_hash": "e051da7354879a36a133e9c8cd62c07c"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/creative/BlurBgScreen.kt": {
+    "mtime": 1793616560.271,
+    "seen": 1793618431.709005,
+    "ast_hash": "e0abad24364231a6a263af42b889db25",
+    "semantic_hash": "e0abad24364231a6a263af42b889db25"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/creative/CollageMakerScreen.kt": {
+    "mtime": 1793608337.4186091,
+    "seen": 1793618431.7091055,
+    "ast_hash": "f6abe5f752cb8aee3feefb758a983c9b",
+    "semantic_hash": "f6abe5f752cb8aee3feefb758a983c9b"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/creative/ColorSplashScreen.kt": {
+    "mtime": 1793616597.356,
+    "seen": 1793618431.7092047,
+    "ast_hash": "65e7fb71befbae99df5fec676de21786",
+    "semantic_hash": "65e7fb71befbae99df5fec676de21786"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/creative/GalleryRulerView.kt": {
+    "mtime": 1793608337.4186091,
+    "seen": 1793618431.7093067,
+    "ast_hash": "0c7efb80d69e14d176668b6a53d9feb6",
+    "semantic_hash": "0c7efb80d69e14d176668b6a53d9feb6"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/creative/ImageSegmentationHelper.kt": {
+    "mtime": 1793608337.4186091,
+    "seen": 1793618431.7094066,
+    "ast_hash": "b16f402f008f649aa45fac83dbe5b6a1",
+    "semantic_hash": "b16f402f008f649aa45fac83dbe5b6a1"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/creative/RemoveBgScreen.kt": {
+    "mtime": 1793616641.582,
+    "seen": 1793618431.7095091,
+    "ast_hash": "5b9b818940b0ecdaa267668b8e7d291b",
+    "semantic_hash": "5b9b818940b0ecdaa267668b8e7d291b"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/creative/StickerScreen.kt": {
+    "mtime": 1793608337.419572,
+    "seen": 1793618431.7096128,
+    "ast_hash": "a49d2a4bd1793288f08f849bc681a966",
+    "semantic_hash": "a49d2a4bd1793288f08f849bc681a966"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/creative/WallpaperScreen.kt": {
+    "mtime": 1793608337.419572,
+    "seen": 1793618431.7098022,
+    "ast_hash": "189e4786511ebf865324a910ce6b63e8",
+    "semantic_hash": "189e4786511ebf865324a910ce6b63e8"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/discovery/AnimatedMediaScreen.kt": {
+    "mtime": 1793608337.419572,
+    "seen": 1793618431.7100499,
+    "ast_hash": "d60f71afc577f5dd7e63dc0900d211bc",
+    "semantic_hash": "d60f71afc577f5dd7e63dc0900d211bc"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/discovery/BurstPhotoScreen.kt": {
+    "mtime": 1793608337.4201815,
+    "seen": 1793618431.7102125,
+    "ast_hash": "3243a11ea8eefb5f7839b9a70844bd8a",
+    "semantic_hash": "3243a11ea8eefb5f7839b9a70844bd8a"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/discovery/MomentsScreen.kt": {
+    "mtime": 1793608337.4201815,
+    "seen": 1793618431.7103767,
+    "ast_hash": "3f69a8e2bee44a4bb8bacf158372650e",
+    "semantic_hash": "3f69a8e2bee44a4bb8bacf158372650e"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/discovery/OrganizerRecycleScreen.kt": {
+    "mtime": 1793608337.4201815,
+    "seen": 1793618431.7104993,
+    "ast_hash": "9e9acee622d9f2757cddb8be80d4d536",
+    "semantic_hash": "9e9acee622d9f2757cddb8be80d4d536"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/discovery/QuickOrganizerScreen.kt": {
+    "mtime": 1793608337.4201815,
+    "seen": 1793618431.7106152,
+    "ast_hash": "9cde9c3feee0834346733f907b7b22a7",
+    "semantic_hash": "9cde9c3feee0834346733f907b7b22a7"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/discovery/SearchColorScreen.kt": {
+    "mtime": 1793615928.572,
+    "seen": 1793618431.7107277,
+    "ast_hash": "5fedd5fe1db838e024b18ad95371a171",
+    "semantic_hash": "5fedd5fe1db838e024b18ad95371a171"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/discovery/StoryViewScreen.kt": {
+    "mtime": 1793608337.4206817,
+    "seen": 1793618431.7108376,
+    "ast_hash": "5804f86c7edab62321ca8a1d3ee827ea",
+    "semantic_hash": "5804f86c7edab62321ca8a1d3ee827ea"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/editor/PhotoEditorScreen.kt": {
+    "mtime": 1793617149.162,
+    "seen": 1793618431.7109475,
+    "ast_hash": "79bcc4c52cd099ee4b34ea22d6efa30a",
+    "semantic_hash": "79bcc4c52cd099ee4b34ea22d6efa30a"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/editor/crop/ImageCropView.kt": {
+    "mtime": 1793608337.4212286,
+    "seen": 1793618431.7110558,
+    "ast_hash": "f0204880e1a7b2c9b11e3136131434f4",
+    "semantic_hash": "f0204880e1a7b2c9b11e3136131434f4"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/favorites/FavoritesScreen.kt": {
+    "mtime": 1793614537.974,
+    "seen": 1793618431.7111645,
+    "ast_hash": "92e9bb283cd12260fa6823a0f49d72c7",
+    "semantic_hash": "92e9bb283cd12260fa6823a0f49d72c7"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/home/AlbumsTab.kt": {
+    "mtime": 1793614396.928,
+    "seen": 1793618431.7112687,
+    "ast_hash": "3a115bf520ea6eeacacba027213316b7",
+    "semantic_hash": "3a115bf520ea6eeacacba027213316b7"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/home/ExploreTab.kt": {
+    "mtime": 1793614429.607,
+    "seen": 1793618431.7113733,
+    "ast_hash": "debd7fec37752bc233eef7f76cca702b",
+    "semantic_hash": "debd7fec37752bc233eef7f76cca702b"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/home/HomeScreen.kt": {
+    "mtime": 1793615076.629,
+    "seen": 1793618431.7114768,
+    "ast_hash": "3f2782b8fdacbab182d05b5428153aa4",
+    "semantic_hash": "3f2782b8fdacbab182d05b5428153aa4"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/home/HomeViewModel.kt": {
+    "mtime": 1793608337.4225018,
+    "seen": 1793618431.7115781,
+    "ast_hash": "873e8e53b837b596217f9885a96ec107",
+    "semantic_hash": "873e8e53b837b596217f9885a96ec107"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/home/PhotosTab.kt": {
+    "mtime": 1793614443.77,
+    "seen": 1793618431.7116811,
+    "ast_hash": "d56bb4b228a05b29f190b9feb3cc0d58",
+    "semantic_hash": "d56bb4b228a05b29f190b9feb3cc0d58"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/navigation/GalleryNavHost.kt": {
+    "mtime": 1793608337.4225018,
+    "seen": 1793618431.7117813,
+    "ast_hash": "016a1814de3ee51d90dd7f49406529e9",
+    "semantic_hash": "016a1814de3ee51d90dd7f49406529e9"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/navigation/Screen.kt": {
+    "mtime": 1793608337.4230053,
+    "seen": 1793618431.711883,
+    "ast_hash": "87cf743015b5e77ed5b600a852cd6de9",
+    "semantic_hash": "87cf743015b5e77ed5b600a852cd6de9"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/onboarding/WelcomeScreen.kt": {
+    "mtime": 1793608337.4230053,
+    "seen": 1793618431.7119951,
+    "ast_hash": "264b73c8d53f7a8a20f5a163b7d2e1d6",
+    "semantic_hash": "264b73c8d53f7a8a20f5a163b7d2e1d6"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/permission/PermissionScreen.kt": {
+    "mtime": 1793617011.98,
+    "seen": 1793618431.712099,
+    "ast_hash": "7dcca92c2cd4f7755dfa3b195a78b3a6",
+    "semantic_hash": "7dcca92c2cd4f7755dfa3b195a78b3a6"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/recycle/RecycleScreen.kt": {
+    "mtime": 1793614690.76,
+    "seen": 1793618431.712201,
+    "ast_hash": "cf7a32a4e5c33ac95e80a92dd4d0eb57",
+    "semantic_hash": "cf7a32a4e5c33ac95e80a92dd4d0eb57"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/search/SearchScreen.kt": {
+    "mtime": 1793615902.413,
+    "seen": 1793618431.7123017,
+    "ast_hash": "62fcde98ebc86cffd99f7693110272ef",
+    "semantic_hash": "62fcde98ebc86cffd99f7693110272ef"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/settings/AboutScreen.kt": {
+    "mtime": 1793615957.243,
+    "seen": 1793618431.7124019,
+    "ast_hash": "5a11738134a4893ebe8373b74794b40c",
+    "semantic_hash": "5a11738134a4893ebe8373b74794b40c"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/settings/LanguageScreen.kt": {
+    "mtime": 1793614922.822,
+    "seen": 1793618431.7125044,
+    "ast_hash": "0b8b1766be8cc2042050a9112ef42686",
+    "semantic_hash": "0b8b1766be8cc2042050a9112ef42686"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/settings/SettingsScreen.kt": {
+    "mtime": 1793614180.034,
+    "seen": 1793618431.7126038,
+    "ast_hash": "c75d6f47669c54a5c657e5f14e14adcd",
+    "semantic_hash": "c75d6f47669c54a5c657e5f14e14adcd"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/settings/ThemeScreen.kt": {
+    "mtime": 1793614121.401,
+    "seen": 1793618431.7127025,
+    "ast_hash": "e8325a0ff7b9db2de1e35420501cc9c3",
+    "semantic_hash": "e8325a0ff7b9db2de1e35420501cc9c3"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/splash/SplashScreen.kt": {
+    "mtime": 1793617114.646,
+    "seen": 1793618431.712801,
+    "ast_hash": "73c282aa52d5347051df04e41c3d81cb",
+    "semantic_hash": "73c282aa52d5347051df04e41c3d81cb"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/theme/Color.kt": {
+    "mtime": 1793614033.889,
+    "seen": 1793618431.7129033,
+    "ast_hash": "ec68a0910f4b2303ccc6534bd5c6ccd4",
+    "semantic_hash": "ec68a0910f4b2303ccc6534bd5c6ccd4"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/theme/Shape.kt": {
+    "mtime": 1793608337.424639,
+    "seen": 1793618431.7130084,
+    "ast_hash": "63c3133291960e3e3d6ed185a625411f",
+    "semantic_hash": "63c3133291960e3e3d6ed185a625411f"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/theme/Theme.kt": {
+    "mtime": 1793614054.889,
+    "seen": 1793618431.7131097,
+    "ast_hash": "f8b99c71c8f469faac61e1870982c028",
+    "semantic_hash": "f8b99c71c8f469faac61e1870982c028"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/theme/Type.kt": {
+    "mtime": 1793608337.424639,
+    "seen": 1793618431.7132087,
+    "ast_hash": "9d053a693f9f42872621c0155df2a999",
+    "semantic_hash": "9d053a693f9f42872621c0155df2a999"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/vault/VaultForgotPasswordScreen.kt": {
+    "mtime": 1793615994.598,
+    "seen": 1793618431.7133107,
+    "ast_hash": "08a20770f9219b42362335aec3cea62c",
+    "semantic_hash": "08a20770f9219b42362335aec3cea62c"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/vault/VaultLockScreen.kt": {
+    "mtime": 1793614739.713,
+    "seen": 1793618431.713411,
+    "ast_hash": "77cb4f7bc442d9d3b56502ba89887a40",
+    "semantic_hash": "77cb4f7bc442d9d3b56502ba89887a40"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/vault/VaultMediaScreen.kt": {
+    "mtime": 1793614849.903,
+    "seen": 1793618431.71351,
+    "ast_hash": "6b498ae9e670f8f9770955fac50abc40",
+    "semantic_hash": "6b498ae9e670f8f9770955fac50abc40"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/vault/VaultRecoveryQuestionScreen.kt": {
+    "mtime": 1793616016.441,
+    "seen": 1793618431.713609,
+    "ast_hash": "51dd995589edf2000f7466c2b66390c2",
+    "semantic_hash": "51dd995589edf2000f7466c2b66390c2"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/vault/VaultSettingScreen.kt": {
+    "mtime": 1793614780.139,
+    "seen": 1793618431.7137084,
+    "ast_hash": "a6272d9ed78db8676fcaa0473140645f",
+    "semantic_hash": "a6272d9ed78db8676fcaa0473140645f"
+  },
+  "app/src/main/java/com/quizango/gallery/ui/viewer/MediaViewerScreen.kt": {
+    "mtime": 1793617191.503,
+    "seen": 1793618431.7138066,
+    "ast_hash": "bbd6cc6907edd4768f344d74865ea0bd",
+    "semantic_hash": "bbd6cc6907edd4768f344d74865ea0bd"
+  },
+  "app/src/main/res/raw/app_icon_lottie.json": {
+    "mtime": 1793608337.4543588,
+    "seen": 1793618431.7139084,
+    "ast_hash": "5f4d570933733178b4059c4003b0a7cd",
+    "semantic_hash": "5f4d570933733178b4059c4003b0a7cd",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/cleaner_done_lottie.json": {
+    "mtime": 1793608337.4553182,
+    "seen": 1793618431.7139108,
+    "ast_hash": "3f75c925ae1f3e2491c5988336dad7d4",
+    "semantic_hash": "3f75c925ae1f3e2491c5988336dad7d4",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/cleaner_lottie.json": {
+    "mtime": 1793608337.4558182,
+    "seen": 1793618431.7139125,
+    "ast_hash": "67ce029764ade38701d0f4caffdef062",
+    "semantic_hash": "67ce029764ade38701d0f4caffdef062",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/done_cleaner_lottie.json": {
+    "mtime": 1793608337.4558182,
+    "seen": 1793618431.7139144,
+    "ast_hash": "34d01ecc95c43123f4b1b2a49f92a090",
+    "semantic_hash": "34d01ecc95c43123f4b1b2a49f92a090",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/duplicate_scanner_lottie.json": {
+    "mtime": 1793608337.4558182,
+    "seen": 1793618431.7139158,
+    "ast_hash": "a5b452b0d1d417c460c3ba40500516b5",
+    "semantic_hash": "a5b452b0d1d417c460c3ba40500516b5",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/hand.json": {
+    "mtime": 1793608337.4558182,
+    "seen": 1793618431.7139173,
+    "ast_hash": "b8da827d44e6ab8e9b3768c92bb64167",
+    "semantic_hash": "b8da827d44e6ab8e9b3768c92bb64167",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/permission.json": {
+    "mtime": 1793608337.4558182,
+    "seen": 1793618431.713919,
+    "ast_hash": "109879a72e43687eb88b5048fa8f6e53",
+    "semantic_hash": "109879a72e43687eb88b5048fa8f6e53",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/remove_bg_loader.json": {
+    "mtime": 1793608337.4558182,
+    "seen": 1793618431.7139206,
+    "ast_hash": "e4251ef5e59d76894bb906dfae5654c4",
+    "semantic_hash": "e4251ef5e59d76894bb906dfae5654c4",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/scan_cleaner_lottie.json": {
+    "mtime": 1793608337.4567351,
+    "seen": 1793618431.7139218,
+    "ast_hash": "a988339d656215ec79f296e159f049ac",
+    "semantic_hash": "a988339d656215ec79f296e159f049ac",
+    "ast_empty": true
+  },
+  "app/src/main/res/raw/success.json": {
+    "mtime": 1793608337.4567351,
+    "seen": 1793618431.713923,
+    "ast_hash": "ef7aba58c614474c0f0774efb0f8ba80",
+    "semantic_hash": "ef7aba58c614474c0f0774efb0f8ba80",
+    "ast_empty": true
+  },
+  "app/src/test/java/com/quizango/gallery/AlbumDetailTest.kt": {
+    "mtime": 1793608337.4583402,
+    "seen": 1793618431.7139246,
+    "ast_hash": "8919c2cc28de97d1384096ae06b37a39",
+    "semantic_hash": "8919c2cc28de97d1384096ae06b37a39"
+  },
+  "app/src/test/java/com/quizango/gallery/CleanerTest.kt": {
+    "mtime": 1793608337.4583402,
+    "seen": 1793618431.7141237,
+    "ast_hash": "7983096e2907a3488470d2d01bc139c0",
+    "semantic_hash": "7983096e2907a3488470d2d01bc139c0"
+  },
+  "app/src/test/java/com/quizango/gallery/ConvertersTest.kt": {
+    "mtime": 1793608337.4583402,
+    "seen": 1793618431.714234,
+    "ast_hash": "44ab345abdeb91c1c21d1a97528c0b90",
+    "semantic_hash": "44ab345abdeb91c1c21d1a97528c0b90"
+  },
+  "app/src/test/java/com/quizango/gallery/DomainModelTest.kt": {
+    "mtime": 1793608337.4583402,
+    "seen": 1793618431.7143354,
+    "ast_hash": "7420300202fac5a7f8640e3f9f6d29e9",
+    "semantic_hash": "7420300202fac5a7f8640e3f9f6d29e9"
+  },
+  "app/src/test/java/com/quizango/gallery/DuplicateTest.kt": {
+    "mtime": 1793608337.4583402,
+    "seen": 1793618431.7144365,
+    "ast_hash": "5f1ba056a76b3755ef75373d28fb3a0e",
+    "semantic_hash": "5f1ba056a76b3755ef75373d28fb3a0e"
+  },
+  "app/src/test/java/com/quizango/gallery/FavoritesTest.kt": {
+    "mtime": 1793608337.4583402,
+    "seen": 1793618431.7145364,
+    "ast_hash": "bddc3917e8fb6c17628a69cd41665bdb",
+    "semantic_hash": "bddc3917e8fb6c17628a69cd41665bdb"
+  },
+  "app/src/test/java/com/quizango/gallery/HomeTest.kt": {
+    "mtime": 1793608337.4583402,
+    "seen": 1793618431.7146354,
+    "ast_hash": "bad4d1654aaed430394af8b30962a745",
+    "semantic_hash": "bad4d1654aaed430394af8b30962a745"
+  },
+  "app/src/test/java/com/quizango/gallery/MediaViewerTest.kt": {
+    "mtime": 1793608337.4592192,
+    "seen": 1793618431.714735,
+    "ast_hash": "9decfa8f0e8b372cd5c34b2f9888c3d1",
+    "semantic_hash": "9decfa8f0e8b372cd5c34b2f9888c3d1"
+  },
+  "app/src/test/java/com/quizango/gallery/OnboardingTest.kt": {
+    "mtime": 1793608337.4592192,
+    "seen": 1793618431.7148335,
+    "ast_hash": "e801985e39375d3cd4604d95060092cf",
+    "semantic_hash": "e801985e39375d3cd4604d95060092cf"
+  },
+  "app/src/test/java/com/quizango/gallery/PhotoEditorTest.kt": {
+    "mtime": 1793608337.4592192,
+    "seen": 1793618431.714931,
+    "ast_hash": "607a50a9f93df0863c9220118ed683d9",
+    "semantic_hash": "607a50a9f93df0863c9220118ed683d9"
+  },
+  "app/src/test/java/com/quizango/gallery/RecycleTest.kt": {
+    "mtime": 1793608337.4592192,
+    "seen": 1793618431.7150285,
+    "ast_hash": "06e99eee982f16cd9c9581d58410ede0",
+    "semantic_hash": "06e99eee982f16cd9c9581d58410ede0"
+  },
+  "app/src/test/java/com/quizango/gallery/SettingsTest.kt": {
+    "mtime": 1793608337.4592192,
+    "seen": 1793618431.715127,
+    "ast_hash": "65d5f86149fbba9137b461dca2ed0e8b",
+    "semantic_hash": "65d5f86149fbba9137b461dca2ed0e8b"
+  },
+  "app/src/test/java/com/quizango/gallery/VaultTest.kt": {
+    "mtime": 1793608337.4597208,
+    "seen": 1793618431.7152255,
+    "ast_hash": "9ae8f5e60da6369fd3782e0dbf7410e6",
+    "semantic_hash": "9ae8f5e60da6369fd3782e0dbf7410e6"
+  },
+  "build.gradle.kts": {
+    "mtime": 1793608337.4597208,
+    "seen": 1793618431.715322,
+    "ast_hash": "abf090cde1cd8c0dd4088290f194a31e",
+    "semantic_hash": "abf090cde1cd8c0dd4088290f194a31e"
+  },
+  "gradlew": {
+    "mtime": 1793608337.735693,
+    "seen": 1793618431.715413,
+    "ast_hash": "851edef9976e0c7bc9a325c91b11c865",
+    "semantic_hash": "851edef9976e0c7bc9a325c91b11c865"
+  },
+  "settings.gradle.kts": {
+    "mtime": 1793608337.7377636,
+    "seen": 1793618431.7155035,
+    "ast_hash": "994328c35358c61b8184e33848ffb360",
+    "semantic_hash": "994328c35358c61b8184e33848ffb360"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "project": "Android Gallery APK Reconstruction",
+  "branchName": "main",
+  "description": "Senior-grade APK reconstruction and refactoring of Android Gallery application to exact reference parity",
+  "userStories": [
+    {
+      "id": "STORY-1",
+      "title": "Albums Tab carousel & media types parity (fragment_album.xml)",
+      "description": "As a user, I want the authentic Albums tab featuring a 10-item horizontal feature carousel and a Media Types list section matching fragment_album.xml.",
+      "acceptanceCriteria": [
+        "HOME_TOP_FEATURES horizontal carousel contains 10 features: Vault, Favorites, Cleaner, Duplicate, Recycle Bin, Collage, Editor, Videos, Place, Moments with authentic drawables",
+        "Tapping carousel items routes correctly to each target screen or workflow",
+        "MEDIA_TYPES card displays 4 categories (Portrait, High Definition, Burst, Animated) with correct icons and item counters/placeholders",
+        "Unit tests and Gradle build pass"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "STORY-2",
+      "title": "System Cleaner live cache gauge & junk scanning flow (activity_system_cleaner.xml)",
+      "description": "As a user, I want a functional System Cleaner with live internal cache inspection, scanning animations, and direct routing to Duplicates, Large Videos, and Screenshots.",
+      "acceptanceCriteria": [
+        "Matches activity_system_cleaner.xml layout with 'Remove Junk' hero card and 3 subcategory cards",
+        "Scan Now triggers real application cache and thumbnail scanning with live size readout",
+        "Clean Junk safely purges internal cache files and resets cache gauge to 0 B",
+        "Category cards navigate to Duplicate Photo Finder, Large Video, and Screenshot screens",
+        "Unit tests and Gradle build pass"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "STORY-3",
+      "title": "Media Viewer zoom/pan gesture & ExoPlayer playback parity",
+      "description": "As a user, I want smooth pinch-to-zoom and pan gestures for photos, and seamless ExoPlayer video playback with controls in the media viewer.",
+      "acceptanceCriteria": [
+        "MediaViewerScreen supports double-tap and pinch-to-zoom with pan bounds constraints",
+        "Video items initialize ExoPlayer with playback controls, timeline scrubber, and mute toggle",
+        "Swipe-to-dismiss gesture and top/bottom overlay auto-hide on tap",
+        "Unit tests and Gradle build pass"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "STORY-4",
+      "title": "Private Vault AES file encryption & recovery question authentication",
+      "description": "As a user, I want secure AES-256 file encryption for hidden media, 4-digit PIN setup/verification, and security question password recovery.",
+      "acceptanceCriteria": [
+        "Vault lock screen enforces 4-digit PIN authentication with error shake animation",
+        "Security question recovery allows resetting PIN if answers match stored hash",
+        "Media encryption uses AES-GCM or AES-CBC to encrypt/decrypt files moving in/out of the vault directory",
+        "Unit tests and Gradle build pass"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "STORY-5",
+      "title": "Photo Editor filter shaders, crop/rotation state preservation",
+      "description": "As a user, I want photo editing capabilities including ColorMatrix filters, 90-degree rotations, aspect ratio cropping, and state undo/redo.",
+      "acceptanceCriteria": [
+        "Photo editor provides real ColorMatrix adjustments (Grayscale, Sepia, Invert, Vintage, Warm, Cool)",
+        "Supports 90-degree clockwise rotation and flip transformations without quality loss",
+        "State history preserves edits for undo/redo actions and exporting bitmap to gallery",
+        "Unit tests and Gradle build pass"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "STORY-6",
+      "title": "Styling polish, authentic vector drawables, and back-stack hygiene",
+      "description": "As a user, I want authentic vector drawables across all screens, consistent Material 3 color tokens, and clean back-stack navigation without memory leaks.",
+      "acceptanceCriteria": [
+        "All primary navigation routes handle back press cleanly without orphan activities or stack loops",
+        "Drawer and TopAppBar use authentic reference drawables and typography",
+        "Light and Dark theme tokens adhere to reference colors (#3478F6 primary)",
+        "Unit tests and Gradle build pass"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
