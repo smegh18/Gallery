@@ -190,6 +190,11 @@ class MediaRepositoryImpl(
                     }.map { it.toDomain() }
                 }
             }
+            folderPath == "filter:place" -> {
+                dao.getAllActiveMediaFlow().map { list ->
+                    list.filter { it.isLocation || it.lat != 0f || it.longs != 0f }.map { it.toDomain() }
+                }
+            }
             folderPath == "filter:favorites" -> {
                 dao.getFavoritesFlow().map { list -> list.map { it.toDomain() } }
             }

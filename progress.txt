@@ -13,3 +13,16 @@
 ---
 
 ## Story Execution Log
+
+### Story 1: Albums Tab carousel & media types parity (fragment_album.xml)
+- **Status**: Completed (`passes: true`)
+- **Changes**:
+  - Implemented 10-item `HOME_TOP_FEATURES` horizontal carousel (`rvFeaturesLists` parity: Vault, Favorites, Cleaner, Duplicate, Recycle Bin, Collage, Editor, Videos, Place, Moments).
+  - Integrated 4-item `MEDIA_TYPES` card (`mediaTitle` and `media_type_bg` parity: Portrait, High Definition, Burst, Animated) with chevron navigation.
+  - Added `filter:place` query handling to `MediaRepository.kt` to filter media by location (`isLocation`, `lat != 0f`, `longs != 0f`).
+  - Added unit test `testFeaturesAndMediaTypesResourcesValid` in `HomeTest.kt`.
+- **Quality Gates**:
+  - Gradle test: BUILD SUCCESSFUL (100% tests passing).
+  - Gradle assembleDebug: BUILD SUCCESSFUL (0 errors).
+  - CodeRabbit CLI review: 0 findings (Clean ✔).
+  - Physical Device (10BD7J2TAS000Z5): Verified with ARTEMIS hierarchy inspection — Top feature carousel, 3-column album grid, and Media Types list all verified live.

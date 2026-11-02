@@ -84,4 +84,15 @@ class HomeTest {
         assertEquals("All Media", tabNames[1])
         assertEquals("Explore", tabNames[2])
     }
+    @Test
+    fun testFeaturesAndMediaTypesResourcesValid() {
+        HOME_TOP_FEATURES.forEach { feature ->
+            assertTrue(feature.name.isNotBlank())
+            assertTrue(feature.iconRes != 0)
+        }
+        MEDIA_TYPES.forEach { mediaType ->
+            assertTrue(mediaType.title.isNotBlank())
+            assertTrue(mediaType.iconRes != 0)
+        }
+    }
 }
