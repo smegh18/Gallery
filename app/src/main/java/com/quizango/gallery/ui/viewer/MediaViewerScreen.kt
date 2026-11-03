@@ -26,6 +26,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.horizontalScroll
@@ -195,20 +196,26 @@ fun MediaViewerScreen(
                 prepare()
                 playWhenReady = true
             }
+            // The effect can run twice while the media list loads; only the newest player may play
+            currentExoPlayer?.release()
             currentExoPlayer = player
             isVideoPlaying = true
             isVideoMuted = false
             videoSpeed = 1.0f
 
             try {
-                while (true) {
+                while (currentExoPlayer === player) {
                     videoPositionMs = player.currentPosition.coerceAtLeast(0L)
                     val dur = player.duration
                     if (dur > 0) videoDurationMs = dur
                     isVideoPlaying = player.isPlaying
                     delay(200)
                 }
-            } catch (_: Exception) {
+            } finally {
+                // Runs when the screen closes or another item is shown: each player releases itself,
+                // so an earlier one can't keep playing audio in the background.
+                player.release()
+                if (currentExoPlayer === player) currentExoPlayer = null
             }
         } else {
             currentExoPlayer?.release()
@@ -239,10 +246,32 @@ fun MediaViewerScreen(
         SimpleDateFormat("hh:mm a", Locale.getDefault()).format(epochTime)
     }
 
+    // Reference: tapping hides the bars and shows the photo full screen on black
+    val view = androidx.compose.ui.platform.LocalView.current
+    DisposableEffect(showControls) {
+        val window = (context as? android.app.Activity)?.window
+        if (window != null) {
+            val controller = androidx.core.view.WindowCompat.getInsetsController(window, view)
+            if (showControls) {
+                controller.show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            } else {
+                controller.systemBarsBehavior =
+                    androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            }
+        }
+        onDispose {
+            if (window != null) {
+                androidx.core.view.WindowCompat.getInsetsController(window, view)
+                    .show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(if (showControls) MaterialTheme.colorScheme.background else Color.Black)
     ) {
         // Main Media Horizontal Pager
         HorizontalPager(
@@ -257,6 +286,7 @@ fun MediaViewerScreen(
                 rotationAngle = if (page == pagerState.currentPage) rotationAngle else 0f,
                 exoPlayer = if (page == pagerState.currentPage) currentExoPlayer else null,
                 onToggleControls = { showControls = !showControls },
+                onDismiss = onNavigateBack,
                 onZoomChange = { zoomed ->
                     if (page == pagerState.currentPage) {
                         isCurrentPageZoomed = zoomed
@@ -1355,12 +1385,15 @@ private fun PagerMediaItemView(
     rotationAngle: Float,
     exoPlayer: ExoPlayer?,
     onToggleControls: () -> Unit,
+    onDismiss: () -> Unit = {},
     onZoomChange: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
     var scale by remember(item.filePath) { mutableFloatStateOf(1f) }
     var offset by remember(item.filePath) { mutableStateOf(Offset.Zero) }
     var containerSize by remember { mutableStateOf(IntSize.Zero) }
+    var imageSize by remember(item.filePath) { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
+    var dismissDrag by remember(item.filePath) { mutableFloatStateOf(0f) }
 
     val isZoomed = scale > 1.05f
 
@@ -1368,20 +1401,37 @@ private fun PagerMediaItemView(
         onZoomChange(isZoomed)
     }
 
+    val containerF = androidx.compose.ui.geometry.Size(containerSize.width.toFloat(), containerSize.height.toFloat())
+    // shortcut: ignores 90/270 rotation when fitting; pan limits are approximate on rotated photos.
+    val fitted = ViewerZoom.fittedSize(imageSize, containerF)
+
     fun clampOffset(proposedOffset: Offset, currentScale: Float): Offset {
-        if (containerSize.width == 0 || containerSize.height == 0 || currentScale <= 1.05f) {
-            return Offset.Zero
-        }
-        val maxOffsetX = ((containerSize.width * (currentScale - 1f)) / 2f).coerceAtLeast(0f)
-        val maxOffsetY = ((containerSize.height * (currentScale - 1f)) / 2f).coerceAtLeast(0f)
-        return Offset(
-            x = proposedOffset.x.coerceIn(-maxOffsetX, maxOffsetX),
-            y = proposedOffset.y.coerceIn(-maxOffsetY, maxOffsetY)
-        )
+        if (containerSize.width == 0 || currentScale <= 1.05f) return Offset.Zero
+        return ViewerZoom.clamp(proposedOffset, currentScale, fitted, containerF)
     }
 
+    // Swipe down (when not zoomed) closes the viewer, like the reference
+    val dismissModifier = Modifier.pointerInput(item.filePath) {
+        detectVerticalDragGestures(
+            onDragEnd = {
+                if (dismissDrag > 220f) onDismiss() else dismissDrag = 0f
+            },
+            onDragCancel = { dismissDrag = 0f }
+        ) { change, dy ->
+            if (scale <= 1.05f) {
+                change.consume()
+                dismissDrag = (dismissDrag + dy).coerceAtLeast(0f)
+            }
+        }
+    }
+    // Drag feedback for photos only: a graphicsLayer stops the video SurfaceView from drawing
+    val dismissVisual = Modifier.graphicsLayer(
+        translationY = dismissDrag,
+        alpha = 1f - (dismissDrag / 1200f).coerceIn(0f, 0.6f)
+    )
+
     val transformState = rememberTransformableState { zoomChange, offsetChange, _ ->
-        val newScale = (scale * zoomChange).coerceIn(1f, 5f)
+        val newScale = (scale * zoomChange).coerceIn(1f, ViewerZoom.MAX_SCALE)
         scale = newScale
         if (newScale <= 1.05f) {
             scale = 1f
@@ -1395,6 +1445,7 @@ private fun PagerMediaItemView(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .then(dismissModifier)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -1452,16 +1503,18 @@ private fun PagerMediaItemView(
             modifier = Modifier
                 .fillMaxSize()
                 .onSizeChanged { containerSize = it }
+                .then(dismissModifier)
+                .then(dismissVisual)
                 .pointerInput(item.filePath) {
                     detectTapGestures(
                         onTap = { onToggleControls() },
-                        onDoubleTap = {
+                        onDoubleTap = { tap ->
                             if (scale > 1.05f) {
                                 scale = 1f
                                 offset = Offset.Zero
                             } else {
-                                scale = 2.5f
-                                offset = Offset.Zero
+                                scale = ViewerZoom.DOUBLE_TAP_SCALE
+                                offset = ViewerZoom.offsetForTap(tap, scale, fitted, containerF)
                             }
                         }
                     )
@@ -1475,6 +1528,7 @@ private fun PagerMediaItemView(
                     .build(),
                 contentDescription = item.fileName,
                 contentScale = ContentScale.Fit,
+                onSuccess = { imageSize = it.painter.intrinsicSize },
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer(

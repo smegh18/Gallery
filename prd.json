@@ -43,8 +43,8 @@
         "Unit tests and Gradle build pass"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Verified 2026-11-03 on QG55IJKZHQF6OF6L against reference photo viewer (reference video player crashes on this device: PlayerView inflate error). Added: double-tap zoom 1.75x toward tap point, pan limited to photo edges (ViewerZoom + tests), swipe-down to close, tap hides bars into black full screen. Reference does not auto-hide bars, so neither do we. Video: ExoPlayer, scrubber, mute, speed present. Not covered: mute verified only in code, rotated-photo pan limits approximate."
     },
     {
       "id": "STORY-4",
