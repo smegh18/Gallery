@@ -328,8 +328,9 @@ fun FavoritesScreen(
                     ) {
                         AsyncImage(
                             model = ImageRequest.Builder(context)
-                                .data(File(item.filePath))
-                                .crossfade(true)
+                                .data(item.contentUri)
+                                .size(300, 300)
+                                .allowRgb565(true)
                                 .build(),
                             contentDescription = item.fileName,
                             contentScale = ContentScale.Crop,

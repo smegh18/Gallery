@@ -1,5 +1,10 @@
 package com.quizango.gallery.domain.model
 
+import android.content.ContentUris
+import android.net.Uri
+import android.provider.MediaStore
+import java.io.File
+
 enum class MediaType(val rawCode: Int) {
     IMAGE(1),
     VIDEO(2),
@@ -49,6 +54,17 @@ data class MediaItem(
     val dateAdded: Long
         get() = if (dateTaken > 0L) dateTaken else dateModified
 
+    val contentUri: Any
+        get() = if (id > 0) {
+            if (mediaType == MediaType.VIDEO) {
+                ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
+            } else {
+                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+            }
+        } else {
+            File(filePath)
+        }
+
     val isInRecycleBin: Boolean
         get() = deletedDate > 0L
 
@@ -71,8 +87,21 @@ data class Album(
     val path: String,
     val coverPath: String,
     val itemCount: Int,
-    val isPinned: Boolean = false
-)
+    val isPinned: Boolean = false,
+    val coverId: Long = 0L,
+    val isVideoCover: Boolean = false
+) {
+    val coverUri: Any
+        get() = if (coverId > 0) {
+            if (isVideoCover) {
+                ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, coverId)
+            } else {
+                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, coverId)
+            }
+        } else {
+            File(coverPath)
+        }
+}
 
 data class VaultItem(
     val filePath: String,

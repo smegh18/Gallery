@@ -57,13 +57,14 @@ class MediaStoreScanner(private val context: Context) {
             while (cursor.moveToNext()) {
                 val path = cursor.getString(dataCol) ?: continue
                 val file = File(path)
-                if (!file.exists()) continue
+                if (!file.exists() || file.length() <= 0L) continue
 
                 val id = cursor.getLong(idCol)
+                val size = cursor.getLong(sizeCol).let { if (it > 0L) it else file.length() }
                 val name = cursor.getString(nameCol) ?: file.name
-                val size = cursor.getLong(sizeCol)
                 val mod = cursor.getLong(modCol) * 1000L
                 val taken = cursor.getLong(takenCol).let { if (it > 0) it else mod }
+                val folderPath = file.parent ?: path.substringBeforeLast('/', "")
                 val bucket = cursor.getString(bucketCol) ?: file.parentFile?.name ?: "Photos"
                 val width = cursor.getInt(widthCol)
                 val height = cursor.getInt(heightCol)
@@ -85,7 +86,7 @@ class MediaStoreScanner(private val context: Context) {
                         fileName = name,
                         fileSize = size,
                         folderName = bucket,
-                        folderPath = file.parent ?: "",
+                        folderPath = folderPath,
                         dateModified = mod,
                         dateTaken = taken,
                         dateString = dateFormat.format(Date(taken)),
@@ -134,13 +135,14 @@ class MediaStoreScanner(private val context: Context) {
             while (cursor.moveToNext()) {
                 val path = cursor.getString(dataCol) ?: continue
                 val file = File(path)
-                if (!file.exists()) continue
+                if (!file.exists() || file.length() <= 0L) continue
 
                 val id = cursor.getLong(idCol)
+                val size = cursor.getLong(sizeCol).let { if (it > 0L) it else file.length() }
                 val name = cursor.getString(nameCol) ?: file.name
-                val size = cursor.getLong(sizeCol)
                 val mod = cursor.getLong(modCol) * 1000L
                 val taken = cursor.getLong(takenCol).let { if (it > 0) it else mod }
+                val folderPath = file.parent ?: path.substringBeforeLast('/', "")
                 val bucket = cursor.getString(bucketCol) ?: file.parentFile?.name ?: "Videos"
                 val duration = cursor.getLong(durCol)
                 val width = cursor.getInt(widthCol)
@@ -153,7 +155,7 @@ class MediaStoreScanner(private val context: Context) {
                         fileName = name,
                         fileSize = size,
                         folderName = bucket,
-                        folderPath = file.parent ?: "",
+                        folderPath = folderPath,
                         dateModified = mod,
                         dateTaken = taken,
                         dateString = dateFormat.format(Date(taken)),

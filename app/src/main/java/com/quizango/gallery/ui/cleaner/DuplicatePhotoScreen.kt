@@ -338,8 +338,9 @@ fun DuplicatePhotoScreen(
                             ) {
                                 AsyncImage(
                                     model = ImageRequest.Builder(LocalContext.current)
-                                        .data(File(item.filePath))
-                                        .crossfade(true)
+                                        .data(item.contentUri)
+                                        .size(300, 300)
+                                        .allowRgb565(true)
                                         .build(),
                                     contentDescription = item.fileName,
                                     contentScale = ContentScale.Crop,

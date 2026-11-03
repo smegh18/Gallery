@@ -565,9 +565,9 @@ private fun SearchAlbumCard(
                 .background(MaterialTheme.colorScheme.cardBackground),
             contentAlignment = Alignment.Center
         ) {
-            if (album.coverPath.isNotEmpty() && File(album.coverPath).exists()) {
+            if (album.coverPath.isNotEmpty()) {
                 Image(
-                    painter = rememberAsyncImagePainter(model = File(album.coverPath)),
+                    painter = rememberAsyncImagePainter(model = coil.request.ImageRequest.Builder(androidx.compose.ui.platform.LocalContext.current).data(File(album.coverPath)).size(300, 300).allowRgb565(true).build()),
                     contentDescription = album.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -630,7 +630,7 @@ private fun SearchMediaCard(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = File(item.filePath)),
+                painter = rememberAsyncImagePainter(model = coil.request.ImageRequest.Builder(androidx.compose.ui.platform.LocalContext.current).data(File(item.filePath)).size(300, 300).allowRgb565(true).build()),
                 contentDescription = item.fileName,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

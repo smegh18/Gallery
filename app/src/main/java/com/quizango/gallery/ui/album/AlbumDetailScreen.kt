@@ -467,7 +467,8 @@ fun AlbumDetailScreen(
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
                                     .data(File(firstSelectedItem.filePath))
-                                    .crossfade(true)
+                                    .size(120, 120)
+                                    .allowRgb565(true)
                                     .build(),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,

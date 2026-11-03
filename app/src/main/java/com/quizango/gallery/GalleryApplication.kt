@@ -10,6 +10,7 @@ import coil.decode.VideoFrameDecoder
 import com.quizango.gallery.data.local.database.GalleryDatabase
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.data.local.mediastore.MediaStoreScanner
+import com.quizango.gallery.data.local.mediastore.MediaStoreThumbnailFetcher
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.data.repository.MediaRepositoryImpl
 import com.quizango.gallery.data.repository.VaultRepository
@@ -35,7 +36,19 @@ class GalleryApplication : Application(), ImageLoaderFactory {
 
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
+            .memoryCache {
+                coil.memory.MemoryCache.Builder(this)
+                    .maxSizePercent(0.30)
+                    .build()
+            }
+            .diskCache {
+                coil.disk.DiskCache.Builder()
+                    .directory(cacheDir.resolve("image_cache"))
+                    .maxSizeBytes(150L * 1024 * 1024)
+                    .build()
+            }
             .components {
+                add(MediaStoreThumbnailFetcher.Factory(this@GalleryApplication))
                 add(VideoFrameDecoder.Factory())
                 if (Build.VERSION.SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory())
@@ -43,7 +56,8 @@ class GalleryApplication : Application(), ImageLoaderFactory {
                     add(GifDecoder.Factory())
                 }
             }
-            .crossfade(true)
+            .allowRgb565(true)
+            .crossfade(false)
             .build()
     }
 

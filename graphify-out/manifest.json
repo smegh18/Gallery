@@ -13,10 +13,10 @@
     "semantic_hash": "e409b31d1b035ac6c5644e896c31e244"
   },
   "app/src/main/java/com/quizango/gallery/GalleryApplication.kt": {
-    "mtime": 1793614077.814,
-    "seen": 1793618431.7064807,
-    "ast_hash": "d22593e8306bbf2d5031d59a5e1c6d2c",
-    "semantic_hash": "d22593e8306bbf2d5031d59a5e1c6d2c"
+    "mtime": 1793686757.7244823,
+    "seen": 1793687662.3891165,
+    "ast_hash": "a2f685ff87d891ac1f454de27229fcc7",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/MainActivity.kt": {
     "mtime": 1793614101.964,
@@ -67,16 +67,16 @@
     "semantic_hash": "32e056b38d1ebfc55998cc5bb6e9ddff"
   },
   "app/src/main/java/com/quizango/gallery/data/local/mediastore/MediaStoreScanner.kt": {
-    "mtime": 1793608337.4159062,
-    "seen": 1793618431.7074873,
-    "ast_hash": "d10c028b1a8e196548c372c1e399ffaa",
-    "semantic_hash": "d10c028b1a8e196548c372c1e399ffaa"
+    "mtime": 1793687381.9995747,
+    "seen": 1793687662.3891258,
+    "ast_hash": "3597eb1d6ae6ecf10ee0e9a44a199ccc",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/data/repository/MediaRepository.kt": {
-    "mtime": 1793619354.3148217,
-    "seen": 1793619533.9527876,
-    "ast_hash": "39e2fa50d24bde39cb763828bd9c61c3",
-    "semantic_hash": "39e2fa50d24bde39cb763828bd9c61c3"
+    "mtime": 1793686612.5060318,
+    "seen": 1793687662.3891282,
+    "ast_hash": "e47b2628fea4aa03e5804279eb6f5019",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/data/repository/VaultRepository.kt": {
     "mtime": 1793608337.4159062,
@@ -85,16 +85,16 @@
     "semantic_hash": "06c16ebbce1c35814950222b88a1badc"
   },
   "app/src/main/java/com/quizango/gallery/domain/model/Models.kt": {
-    "mtime": 1793608337.4159062,
-    "seen": 1793618431.707802,
-    "ast_hash": "6b011462cbfb6dbb13891e62401e2d4c",
-    "semantic_hash": "6b011462cbfb6dbb13891e62401e2d4c"
+    "mtime": 1793685968.806743,
+    "seen": 1793687662.3891299,
+    "ast_hash": "c15d13e84f17e4b23a1cd61c52d962b1",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/album/AlbumDetailScreen.kt": {
-    "mtime": 1793615143.744,
-    "seen": 1793618431.707904,
-    "ast_hash": "5a752f3abb8504670828d9c39efd85f7",
-    "semantic_hash": "5a752f3abb8504670828d9c39efd85f7"
+    "mtime": 1793685502.2398872,
+    "seen": 1793687662.3891306,
+    "ast_hash": "3042bc7e6744fb79c1978a0eb3e73dd3",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/cleaner/CleanerScreen.kt": {
     "mtime": 1793623460.9325006,
@@ -109,9 +109,9 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/cleaner/DuplicatePhotoScreen.kt": {
-    "mtime": 1793623460.9330008,
-    "seen": 1793624161.7306042,
-    "ast_hash": "4fd43e570947d1a9d8cf5a00a9ed9190",
+    "mtime": 1793685812.0318034,
+    "seen": 1793687662.3891332,
+    "ast_hash": "6c6c7531c340752b5f54f18f45e0af43",
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/cleaner/DuplicateWaitingScreen.kt": {
@@ -241,8 +241,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/discovery/StoryViewScreen.kt": {
-    "mtime": 1793626691.2808583,
-    "seen": 1793626851.7467775,
+    "mtime": 1793626884.8041458,
+    "seen": 1793687662.3891516,
     "ast_hash": "5932ad0ea5a32e2ec6ec1a83d09a704c",
     "semantic_hash": ""
   },
@@ -259,15 +259,15 @@
     "semantic_hash": "f0204880e1a7b2c9b11e3136131434f4"
   },
   "app/src/main/java/com/quizango/gallery/ui/favorites/FavoritesScreen.kt": {
-    "mtime": 1793614537.974,
-    "seen": 1793618431.7111645,
-    "ast_hash": "92e9bb283cd12260fa6823a0f49d72c7",
-    "semantic_hash": "92e9bb283cd12260fa6823a0f49d72c7"
+    "mtime": 1793685812.0318034,
+    "seen": 1793687662.3891537,
+    "ast_hash": "4dc39b6bdb3ca148c3945db5fe4863d9",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/home/AlbumsTab.kt": {
-    "mtime": 1793625459.7317693,
-    "seen": 1793626851.746781,
-    "ast_hash": "23b849915bcd0003feca3c5b85e41a88",
+    "mtime": 1793686722.0010855,
+    "seen": 1793687662.3891547,
+    "ast_hash": "e71a7ced19c27da92869d57852db4fbd",
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/home/ExploreTab.kt": {
@@ -277,26 +277,26 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/home/HomeScreen.kt": {
-    "mtime": 1793625226.7961733,
-    "seen": 1793626851.746783,
+    "mtime": 1793626884.8046458,
+    "seen": 1793687662.3891563,
     "ast_hash": "1e14ddf7803a0269b499c9c11b89aca7",
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/home/HomeViewModel.kt": {
-    "mtime": 1793608337.4225018,
-    "seen": 1793618431.7115781,
-    "ast_hash": "873e8e53b837b596217f9885a96ec107",
-    "semantic_hash": "873e8e53b837b596217f9885a96ec107"
+    "mtime": 1793687381.9995747,
+    "seen": 1793687662.389157,
+    "ast_hash": "1aafa2cd8a15e38c9a120e0a434b590b",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/home/PhotosTab.kt": {
-    "mtime": 1793614443.77,
-    "seen": 1793618431.7116811,
-    "ast_hash": "d56bb4b228a05b29f190b9feb3cc0d58",
-    "semantic_hash": "d56bb4b228a05b29f190b9feb3cc0d58"
+    "mtime": 1793687598.1971762,
+    "seen": 1793687662.3891578,
+    "ast_hash": "e68cc3a9ea3d6b1667eee08a103d254f",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/navigation/GalleryNavHost.kt": {
-    "mtime": 1793625578.744982,
-    "seen": 1793626851.7467856,
+    "mtime": 1793626884.8046458,
+    "seen": 1793687662.3891585,
     "ast_hash": "d5479d2a6bc9ff1c3658543fc84d3dea",
     "semantic_hash": ""
   },
@@ -319,15 +319,15 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/recycle/RecycleScreen.kt": {
-    "mtime": 1793614690.76,
-    "seen": 1793618431.712201,
-    "ast_hash": "cf7a32a4e5c33ac95e80a92dd4d0eb57",
-    "semantic_hash": "cf7a32a4e5c33ac95e80a92dd4d0eb57"
+    "mtime": 1793685490.449564,
+    "seen": 1793687662.3891618,
+    "ast_hash": "46cb23ad98ffbc61f9db5b23120c3ac4",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/search/SearchScreen.kt": {
-    "mtime": 1793623460.934001,
-    "seen": 1793624161.730633,
-    "ast_hash": "1fb100ecc8a9f14637f8f9c5d3298c88",
+    "mtime": 1793685527.1140485,
+    "seen": 1793687662.3891625,
+    "ast_hash": "6005e37fed5299e5bf762274496a700d",
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/settings/AboutScreen.kt": {
@@ -337,9 +337,9 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/settings/LanguageScreen.kt": {
-    "mtime": 1793625070.2385986,
-    "seen": 1793626851.7467911,
-    "ast_hash": "ba5cf4a29837d801d3df80c79293bd22",
+    "mtime": 1793626884.8051457,
+    "seen": 1793687662.389164,
+    "ast_hash": "29db96436d46c71adfec7a96607404af",
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/settings/SettingsScreen.kt": {
@@ -397,10 +397,10 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/vault/VaultMediaScreen.kt": {
-    "mtime": 1793614849.903,
-    "seen": 1793618431.71351,
-    "ast_hash": "6b498ae9e670f8f9770955fac50abc40",
-    "semantic_hash": "6b498ae9e670f8f9770955fac50abc40"
+    "mtime": 1793685490.449564,
+    "seen": 1793687662.3891723,
+    "ast_hash": "521afb4b199e51f3889df2ff084c00fe",
+    "semantic_hash": ""
   },
   "app/src/main/java/com/quizango/gallery/ui/vault/VaultRecoveryQuestionScreen.kt": {
     "mtime": 1793623460.935001,
@@ -415,10 +415,10 @@
     "semantic_hash": "a6272d9ed78db8676fcaa0473140645f"
   },
   "app/src/main/java/com/quizango/gallery/ui/viewer/MediaViewerScreen.kt": {
-    "mtime": 1793617191.503,
-    "seen": 1793618431.7138066,
-    "ast_hash": "bbd6cc6907edd4768f344d74865ea0bd",
-    "semantic_hash": "bbd6cc6907edd4768f344d74865ea0bd"
+    "mtime": 1793685509.0433846,
+    "seen": 1793687662.389175,
+    "ast_hash": "150d7b4f8dbbd1c6417272858b79e822",
+    "semantic_hash": ""
   },
   "app/src/main/res/raw/app_icon_lottie.json": {
     "mtime": 1793608337.4543588,
@@ -880,5 +880,11 @@
     "seen": 1793619533.9606092,
     "ast_hash": "9aa79feff4990f0ca6ee3058a780bdd6",
     "semantic_hash": "9aa79feff4990f0ca6ee3058a780bdd6"
+  },
+  "app/src/main/java/com/quizango/gallery/data/local/mediastore/MediaStoreThumbnailFetcher.kt": {
+    "mtime": 1793686532.3316061,
+    "seen": 1793687662.3891273,
+    "ast_hash": "48e1d1d4b6e6e9fc17a3a6e88de3ab68",
+    "semantic_hash": ""
   }
 }

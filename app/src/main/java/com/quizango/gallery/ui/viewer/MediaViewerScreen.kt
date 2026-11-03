@@ -1425,7 +1425,7 @@ private fun PagerMediaItemView(
                 AsyncImage(
                     model = ImageRequest.Builder(context)
                         .data(File(item.filePath))
-                        .crossfade(true)
+                        .crossfade(false)
                         .build(),
                     contentDescription = item.fileName,
                     contentScale = ContentScale.Fit,
@@ -1471,7 +1471,7 @@ private fun PagerMediaItemView(
             AsyncImage(
                 model = ImageRequest.Builder(context)
                     .data(File(item.filePath))
-                    .crossfade(true)
+                    .crossfade(false)
                     .build(),
                 contentDescription = item.fileName,
                 contentScale = ContentScale.Fit,

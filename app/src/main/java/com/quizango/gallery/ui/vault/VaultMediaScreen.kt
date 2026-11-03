@@ -440,7 +440,8 @@ private fun VaultGridItem(
         AsyncImage(
             model = ImageRequest.Builder(context)
                 .data(File(item.filePath))
-                .crossfade(true)
+                .size(300, 300)
+                .allowRgb565(true)
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,

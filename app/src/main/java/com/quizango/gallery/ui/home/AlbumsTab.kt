@@ -83,6 +83,24 @@ fun AlbumsTab(
     onFeatureClick: (String) -> Unit = {},
     onMediaTypeClick: (String) -> Unit = {}
 ) {
+    val storiesData = androidx.compose.runtime.remember(mediaList, albumsList) {
+        val nonVideoMedia = mediaList.filter { it.mediaType != MediaType.VIDEO }
+        val recent = nonVideoMedia.firstOrNull()?.contentUri
+            ?: albumsList.firstOrNull { it.coverPath.isNotEmpty() }?.coverUri
+        val random = nonVideoMedia.asSequence().shuffled().firstOrNull()?.contentUri
+            ?: albumsList.drop(1).firstOrNull { it.coverPath.isNotEmpty() }?.coverUri ?: recent
+        val fav = nonVideoMedia.firstOrNull { it.isFavorite }?.contentUri
+        val folders = nonVideoMedia.map { it.folderPath }.toSet()
+        val folderNames = nonVideoMedia.map { it.folderName }.toSet()
+        val albums = albumsList.filter { album ->
+            album.coverPath.isNotEmpty() && (album.path in folders || album.name in folderNames)
+        }
+        data class StoriesData(val recent: Any?, val random: Any?, val fav: Any?, val albums: List<Album>)
+        StoriesData(recent, random, fav, albums)
+    }
+
+    val chunkedAlbums = androidx.compose.runtime.remember(albumsList) { albumsList.chunked(3) }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -114,16 +132,6 @@ fun AlbumsTab(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 // Stories Strip (Reference: llStoryView / storyRecycler in fragment_album.xml)
-                val nonVideoMedia = mediaList.filter { it.mediaType != MediaType.VIDEO }
-                val recentPhotoPath = nonVideoMedia.firstOrNull()?.filePath
-                    ?: albumsList.firstOrNull { it.coverPath.isNotEmpty() }?.coverPath ?: ""
-                val randomPhotoPath = nonVideoMedia.shuffled().firstOrNull()?.filePath
-                    ?: albumsList.drop(1).firstOrNull { it.coverPath.isNotEmpty() }?.coverPath ?: recentPhotoPath
-                val favPhotoPath = nonVideoMedia.firstOrNull { it.isFavorite }?.filePath
-                val albumsWithCover = albumsList.filter { album ->
-                    album.coverPath.isNotEmpty() && nonVideoMedia.any { it.folderPath == album.path || it.folderName == album.name }
-                }
-
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -131,11 +139,11 @@ fun AlbumsTab(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     // Story 1: Recent
-                    if (recentPhotoPath.isNotEmpty()) {
+                    if (storiesData.recent != null) {
                         item(key = "story_recent") {
                             StoryCircleItem(
                                 title = "Recent",
-                                imagePath = recentPhotoPath,
+                                imageModel = storiesData.recent,
                                 gradientColors = listOf(Color(0xFFFF3093), Color(0xFFFF5252), Color(0xFFFFC701), Color(0xFFFF3093)),
                                 onClick = { onStoryClick("recent", "Recent") }
                             )
@@ -143,11 +151,11 @@ fun AlbumsTab(
                     }
 
                     // Story 2: Random
-                    if (randomPhotoPath.isNotEmpty()) {
+                    if (storiesData.random != null) {
                         item(key = "story_random") {
                             StoryCircleItem(
                                 title = "Random",
-                                imagePath = randomPhotoPath,
+                                imageModel = storiesData.random,
                                 gradientColors = listOf(Color(0xFF0072FF), Color(0xFF00C6FF), Color(0xFF0072FF)),
                                 onClick = { onStoryClick("random", "Random") }
                             )
@@ -155,11 +163,11 @@ fun AlbumsTab(
                     }
 
                     // Story 3: Favorite (if available)
-                    if (!favPhotoPath.isNullOrEmpty()) {
+                    if (storiesData.fav != null) {
                         item(key = "story_fav") {
                             StoryCircleItem(
                                 title = "Favorite",
-                                imagePath = favPhotoPath,
+                                imageModel = storiesData.fav,
                                 gradientColors = listOf(Color(0xFFFF416C), Color(0xFFFF4B2B), Color(0xFFFF416C)),
                                 onClick = { onStoryClick("favorite", "Favorites") }
                             )
@@ -167,10 +175,10 @@ fun AlbumsTab(
                     }
 
                     // Dynamic Album Stories
-                    items(albumsWithCover, key = { "album_story_${it.id}" }) { album ->
+                    items(storiesData.albums, key = { "album_story_${it.id}" }) { album ->
                         StoryCircleItem(
                             title = album.name,
-                            imagePath = album.coverPath,
+                            imageModel = album.coverUri,
                             gradientColors = listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2)),
                             onClick = { onStoryClick(album.id, album.name) }
                         )
@@ -222,8 +230,7 @@ fun AlbumsTab(
                 }
             }
         } else {
-            val chunkedAlbums = albumsList.chunked(3)
-            items(chunkedAlbums) { rowAlbums ->
+            items(chunkedAlbums, key = { row -> row.firstOrNull()?.id ?: row.hashCode() }, contentType = { "album_row" }) { rowAlbums ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -362,10 +369,7 @@ fun AlbumCard(
         ) {
             if (album.coverPath.isNotEmpty()) {
                 AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(File(album.coverPath))
-                        .crossfade(true)
-                        .build(),
+                    model = album.coverUri,
                     contentDescription = album.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -407,13 +411,11 @@ fun AlbumCard(
 @Composable
 private fun StoryCircleItem(
     title: String,
-    imagePath: String,
+    imageModel: Any?,
     placeholderRes: Int = 0,
     gradientColors: List<Color>,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .width(76.dp)
@@ -433,12 +435,9 @@ private fun StoryCircleItem(
                 .clip(CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            if (imagePath.isNotEmpty()) {
+            if (imageModel != null) {
                 AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(File(imagePath))
-                        .crossfade(true)
-                        .build(),
+                    model = imageModel,
                     contentDescription = title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

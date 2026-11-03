@@ -8,6 +8,7 @@ import com.quizango.gallery.domain.model.MediaItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -54,7 +55,9 @@ class MediaRepositoryImpl(
                     name = "All Photos",
                     path = "filter:all_photos",
                     coverPath = photos.firstOrNull()?.filePath ?: "",
-                    itemCount = photos.size
+                    itemCount = photos.size,
+                    coverId = photos.firstOrNull()?.id ?: 0L,
+                    isVideoCover = false
                 )
             )
 
@@ -66,7 +69,9 @@ class MediaRepositoryImpl(
                     name = "Videos",
                     path = "filter:videos",
                     coverPath = videos.firstOrNull()?.filePath ?: "",
-                    itemCount = videos.size
+                    itemCount = videos.size,
+                    coverId = videos.firstOrNull()?.id ?: 0L,
+                    isVideoCover = true
                 )
             )
 
@@ -82,7 +87,9 @@ class MediaRepositoryImpl(
                     name = "Camera",
                     path = "filter:camera",
                     coverPath = cameraItems.firstOrNull()?.filePath ?: "",
-                    itemCount = cameraItems.size
+                    itemCount = cameraItems.size,
+                    coverId = cameraItems.firstOrNull()?.id ?: 0L,
+                    isVideoCover = cameraItems.firstOrNull()?.mediaType == 2
                 )
             )
 
@@ -92,13 +99,16 @@ class MediaRepositoryImpl(
                 it.folderName.contains("screenshot", ignoreCase = true)
             }
             if (screenshotItems.isNotEmpty()) {
+                val first = screenshotItems.first()
                 result.add(
                     Album(
                         id = "filter:screenshots",
                         name = "Screenshots",
                         path = "filter:screenshots",
-                        coverPath = screenshotItems.firstOrNull()?.filePath ?: "",
-                        itemCount = screenshotItems.size
+                        coverPath = first.filePath,
+                        itemCount = screenshotItems.size,
+                        coverId = first.id,
+                        isVideoCover = first.mediaType == 2
                     )
                 )
             }
@@ -116,14 +126,16 @@ class MediaRepositoryImpl(
                         name = firstItem.folderName.ifEmpty { File(folderPath).name },
                         path = folderPath,
                         coverPath = firstItem.filePath,
-                        itemCount = items.size
+                        itemCount = items.size,
+                        coverId = firstItem.id,
+                        isVideoCover = firstItem.mediaType == 2
                     )
                 }
                 .sortedByDescending { it.itemCount }
 
             result.addAll(folders)
             result
-        }
+        }.flowOn(Dispatchers.Default)
     }
 
     override fun getMediaByFolderFlow(folderPath: String): Flow<List<MediaItem>> {

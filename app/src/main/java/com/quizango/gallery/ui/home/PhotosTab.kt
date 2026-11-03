@@ -86,8 +86,11 @@ fun PhotosTab(
             }
         }
     } else {
-        // Group items chronologically
-        val grouped = mediaList.groupBy { formatGroupHeader(it.dateAdded) }
+        // Group items chronologically (remembered with todayMidnight to invalidate on day change)
+        val todayMidnight = getTodayMidnight()
+        val grouped = androidx.compose.runtime.remember(mediaList, todayMidnight) {
+            mediaList.groupBy { formatGroupHeader(it.dateAdded) }
+        }
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(columnCount),
@@ -95,7 +98,11 @@ fun PhotosTab(
             modifier = Modifier.fillMaxSize()
         ) {
             grouped.forEach { (header, items) ->
-                item(span = { GridItemSpan(columnCount) }) {
+                item(
+                    span = { GridItemSpan(columnCount) },
+                    key = "header_" + header,
+                    contentType = "header"
+                ) {
                     Text(
                         text = header,
                         style = MaterialTheme.typography.titleSmall,
@@ -107,7 +114,11 @@ fun PhotosTab(
                     )
                 }
 
-                items(items, key = { it.filePath }) { item ->
+                items(
+                    items = items,
+                    key = { it.id },
+                    contentType = { "photo" }
+                ) { item ->
                     val isSelected = selectedPaths.contains(item.filePath)
                     PhotoGridItem(
                         item = item,
@@ -150,10 +161,7 @@ fun PhotoGridItem(
             )
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(File(item.filePath))
-                .crossfade(true)
-                .build(),
+            model = item.contentUri,
             contentDescription = item.fileName,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -226,22 +234,39 @@ fun PhotoGridItem(
     }
 }
 
+private var cachedTodayMidnight = 0L
+private var cachedYesterdayMidnight = 0L
+private var lastMidnightCalcTime = 0L
+private val headerDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
+
+@Synchronized
+private fun getMidnightBoundaries(): Pair<Long, Long> {
+    val now = System.currentTimeMillis()
+    if (now - lastMidnightCalcTime > 60_000L) {
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        cachedTodayMidnight = cal.timeInMillis
+        cal.add(Calendar.DAY_OF_YEAR, -1)
+        cachedYesterdayMidnight = cal.timeInMillis
+        lastMidnightCalcTime = now
+    }
+    return Pair(cachedTodayMidnight, cachedYesterdayMidnight)
+}
+
+fun getTodayMidnight(): Long = getMidnightBoundaries().first
+
 fun formatGroupHeader(timestamp: Long): String {
     val millis = if (timestamp > 10_000_000_000L) timestamp else timestamp * 1000L
-    val date = Date(millis)
-    val now = Calendar.getInstance()
-    val itemCal = Calendar.getInstance().apply { time = date }
-
+    val (todayMidnight, yesterdayMidnight) = getMidnightBoundaries()
+    val tomorrowMidnight = todayMidnight + 86_400_000L
     return when {
-        now.get(Calendar.YEAR) == itemCal.get(Calendar.YEAR) &&
-        now.get(Calendar.DAY_OF_YEAR) == itemCal.get(Calendar.DAY_OF_YEAR) -> "Today"
-
-        now.get(Calendar.YEAR) == itemCal.get(Calendar.YEAR) &&
-        now.get(Calendar.DAY_OF_YEAR) - itemCal.get(Calendar.DAY_OF_YEAR) == 1 -> "Yesterday"
-
-        else -> {
-            SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(date)
-        }
+        millis in todayMidnight until tomorrowMidnight -> "Today"
+        millis in yesterdayMidnight until todayMidnight -> "Yesterday"
+        else -> synchronized(headerDateFormat) { headerDateFormat.format(Date(millis)) }
     }
 }
 

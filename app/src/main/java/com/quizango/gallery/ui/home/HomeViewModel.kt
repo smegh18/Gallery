@@ -13,6 +13,7 @@ import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortOrder
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
 
 data class HomeUiState(
     val selectedTab: Int = 0, // 0 = Albums (Default), 1 = Photos (All Media), 2 = Explore
@@ -42,14 +43,16 @@ class HomeViewModel(
             }
         }
 
-        viewModelScope.launch {
-            mediaRepository.getActiveMediaFlow().collect { list ->
-                _uiState.update { state ->
-                    val filtered = applyFilterAndSort(list, state.searchQuery, state.sortOrder)
-                    state.copy(mediaList = filtered)
-                }
-            }
-        }
+        combine(
+            mediaRepository.getActiveMediaFlow(),
+            _uiState.map { it.searchQuery }.distinctUntilChanged(),
+            _uiState.map { it.sortOrder }.distinctUntilChanged()
+        ) { media, query, sort ->
+            applyFilterAndSort(media, query, sort)
+        }.flowOn(Dispatchers.Default)
+        .onEach { filtered ->
+            _uiState.update { it.copy(mediaList = filtered) }
+        }.launchIn(viewModelScope)
 
         viewModelScope.launch {
             mediaRepository.getAlbumsFlow().collect { albums ->
