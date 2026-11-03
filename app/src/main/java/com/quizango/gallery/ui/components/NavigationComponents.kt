@@ -117,8 +117,7 @@ fun GalleryTopBar(
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .size(36.dp)
-                        .clip(CircleShape)
-                        .clickable(onClick = onOpenDrawer),
+                        .clickable(onClick = onOpenDrawer), // no circle clip: it cut off the dot
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -128,8 +127,9 @@ fun GalleryTopBar(
                     )
                     Box(
                         modifier = Modifier
-                            .size(7.dp)
                             .align(Alignment.TopEnd)
+                            .offset(x = (-3).dp, y = 4.dp) // sits on the icon's top-right corner
+                            .size(7.dp)
                             .clip(CircleShape)
                             .background(Color(0xFFFF3B30))
                     )
@@ -229,7 +229,7 @@ fun GalleryBottomNav(
                     Triple(2, "Explore", Pair(R.drawable.ic_explore_fill, R.drawable.ic_explore_border))
                 )
 
-                val unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                val unselectedTextColor = MaterialTheme.colorScheme.onBackground
                 tabs.forEach { (index, label, iconPair) ->
                     val isSelected = selectedTab == index
                     val currentIcon = if (isSelected) iconPair.first else iconPair.second
@@ -254,9 +254,9 @@ fun GalleryBottomNav(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = label,
-                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                            fontWeight = FontWeight.SemiBold,
                             color = if (isSelected) GalleryBlue else unselectedTextColor,
-                            fontSize = 11.5.sp,
+                            fontSize = 13.sp,
                             maxLines = 1
                         )
                     }

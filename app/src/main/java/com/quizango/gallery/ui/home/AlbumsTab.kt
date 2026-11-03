@@ -38,6 +38,7 @@ import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.theme.albumOptionBg
+import com.quizango.gallery.ui.theme.mediaTypeCardBg
 import com.quizango.gallery.ui.theme.cardBorder
 import com.quizango.gallery.ui.theme.isDark
 import com.quizango.gallery.ui.theme.topContainerBg
@@ -189,13 +190,8 @@ fun AlbumsTab(
             }
         }
 
-        // Divider below top container
+        // Reference has no divider below the top container, only the colour change
         item {
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outline,
-                thickness = 0.5.dp,
-                modifier = Modifier.fillMaxWidth()
-            )
             Spacer(modifier = Modifier.height(10.dp))
         }
 
@@ -267,9 +263,9 @@ fun AlbumsTab(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
+                    .padding(horizontal = 10.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.albumOptionBg)
+                    .background(MaterialTheme.colorScheme.mediaTypeCardBg)
                     .border(0.5.dp, MaterialTheme.colorScheme.cardBorder, RoundedCornerShape(12.dp))
             ) {
                 MEDIA_TYPES.forEachIndexed { index, mediaType ->
@@ -280,26 +276,35 @@ fun AlbumsTab(
                             .padding(horizontal = 14.dp, vertical = 13.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            painter = painterResource(id = mediaType.iconRes),
-                            contentDescription = mediaType.title,
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(28.dp)
-                        )
+                        // Reference draws each icon on a rounded tile (media_type_bg)
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.albumOptionBg),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = mediaType.iconRes),
+                                contentDescription = mediaType.title,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
                         Spacer(modifier = Modifier.width(14.dp))
                         Text(
                             text = mediaType.title,
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 14.sp,
+                            fontSize = 16.sp,
                             modifier = Modifier.weight(1f)
                         )
                         Icon(
                             painter = painterResource(id = R.drawable.ic_right_arrow),
                             contentDescription = null,
                             tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF8C9BAE),
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
 

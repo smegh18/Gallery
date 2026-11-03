@@ -69,6 +69,9 @@ val ColorScheme.topContainerBg: Color
 val ColorScheme.drawerFooterBg: Color
     get() = if (isDark) DrawerFooterBgDark else DrawerFooterBgLight
 
+val ColorScheme.mediaTypeCardBg: Color
+    get() = if (isDark) MediaTypeCardDark else MediaTypeCardLight
+
 val ColorScheme.albumOptionBg: Color
     get() = if (isDark) AlbumOptionBackDark else AlbumOptionBackLight
 
