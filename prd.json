@@ -29,8 +29,8 @@
         "Unit tests and Gradle build pass"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Verified 2026-11-03 vs reference on QG55IJKZHQF6OF6L. Replaced fabricated sizes with real JunkScanner (app cache, .apk, .tmp/.temp, .log, empty folders; skips Android/ and standard top-level folders). Clean deletes only selected files and reports bytes actually freed. Expandable rows with per-file checkboxes and APK icons; reference header, kB format, button colours; result screen survives Back. Not covered: dark mode of this flow, Deep Clean (ad-gated in reference)."
     },
     {
       "id": "STORY-3",

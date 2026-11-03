@@ -23,7 +23,7 @@ class CleanerTest {
     @Test
     fun testFormatStorageBytes() {
         assertEquals("500 B", formatStorageBytes(500L))
-        assertEquals("12 KB", formatStorageBytes(12 * 1024L))
+        assertEquals("12.0 kB", formatStorageBytes(12 * 1024L))
         assertEquals("45.0 MB", formatStorageBytes(45 * 1024 * 1024L))
         assertEquals("1.50 GB", formatStorageBytes((1.5 * 1024 * 1024 * 1024L).toLong()))
     }
