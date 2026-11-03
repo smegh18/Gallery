@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -85,10 +86,9 @@ fun AlbumsTab(
 ) {
     val storiesData = androidx.compose.runtime.remember(mediaList, albumsList) {
         val nonVideoMedia = mediaList.filter { it.mediaType != MediaType.VIDEO }
+        // Reference builds stories from photos only; no photos means no Recent/Random story.
         val recent = nonVideoMedia.firstOrNull()?.contentUri
-            ?: albumsList.firstOrNull { it.coverPath.isNotEmpty() }?.coverUri
         val random = nonVideoMedia.asSequence().shuffled().firstOrNull()?.contentUri
-            ?: albumsList.drop(1).firstOrNull { it.coverPath.isNotEmpty() }?.coverUri ?: recent
         val fav = nonVideoMedia.firstOrNull { it.isFavorite }?.contentUri
         val folders = nonVideoMedia.map { it.folderPath }.toSet()
         val folderNames = nonVideoMedia.map { it.folderName }.toSet()
@@ -323,7 +323,7 @@ private fun FeatureItemView(
 ) {
     Column(
         modifier = Modifier
-            .width(66.dp)
+            .width(64.dp)
             .clickable(onClick = onClick)
             .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -332,7 +332,8 @@ private fun FeatureItemView(
             painter = painterResource(id = feature.iconRes),
             contentDescription = feature.name,
             tint = Color.Unspecified,
-            modifier = Modifier.size(38.dp)
+            // Pill vectors are 51x34dp; reference draws them at intrinsic size.
+            modifier = Modifier.size(width = 51.dp, height = 34.dp)
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -374,6 +375,17 @@ fun AlbumCard(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
+                if (album.isVideoCover) {
+                    Icon(
+                        imageVector = Icons.Filled.Videocam,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(10.dp)
+                            .size(22.dp)
+                    )
+                }
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.image_loading_albums),
@@ -391,7 +403,7 @@ fun AlbumCard(
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             fontSize = 13.5.sp,
-            maxLines = 1,
+            maxLines = 2, // reference wraps long names
             overflow = TextOverflow.Ellipsis,
             color = MaterialTheme.colorScheme.onBackground
         )

@@ -124,14 +124,14 @@ fun MomentsScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No moments yet",
+                        text = "Oops!",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Take more photos to let Gallery create memory stories.",
+                        text = "No moment files here.",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF8C9BAE)
                     )

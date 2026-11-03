@@ -214,13 +214,13 @@ fun HomeScreen(
                             when (featureId) {
                                 "vault" -> onNavigate(Screen.VaultLock.route)
                                 "favorites" -> onNavigate(Screen.Favorites.route)
-                                "cleaner" -> onNavigate(Screen.Cleaner.route)
+                                "cleaner" -> onNavigate(Screen.RemoveJunk.route)
                                 "duplicates" -> onNavigate(Screen.Duplicates.route)
                                 "recycle" -> onNavigate(Screen.RecycleBin.route)
                                 "collage" -> onNavigate(Screen.CollageMaker.route)
                                 "editor" -> onNavigate(Screen.Editor.createRoute())
-                                "videos" -> onNavigate(Screen.LargeVideos.route)
-                                "place" -> onNavigate(Screen.AlbumDetail.createRoute("filter:place", "Places"))
+                                "videos" -> onNavigate(Screen.AlbumDetail.createRoute("filter:videos", "Videos"))
+                                "place" -> onNavigate(Screen.AlbumDetail.createRoute("filter:place", "Geographic photo"))
                                 "moments" -> onNavigate(Screen.Moments.route)
                             }
                         },

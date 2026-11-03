@@ -98,20 +98,19 @@ class MediaRepositoryImpl(
                 it.folderPath.contains("screenshot", ignoreCase = true) ||
                 it.folderName.contains("screenshot", ignoreCase = true)
             }
-            if (screenshotItems.isNotEmpty()) {
-                val first = screenshotItems.first()
-                result.add(
-                    Album(
-                        id = "filter:screenshots",
-                        name = "Screenshots",
-                        path = "filter:screenshots",
-                        coverPath = first.filePath,
-                        itemCount = screenshotItems.size,
-                        coverId = first.id,
-                        isVideoCover = first.mediaType == 2
-                    )
+            // Reference always shows Screenshots, even when empty.
+            val firstShot = screenshotItems.firstOrNull()
+            result.add(
+                Album(
+                    id = "filter:screenshots",
+                    name = "Screenshots",
+                    path = "filter:screenshots",
+                    coverPath = firstShot?.filePath ?: "",
+                    itemCount = screenshotItems.size,
+                    coverId = firstShot?.id ?: 0L,
+                    isVideoCover = firstShot?.mediaType == 2
                 )
-            }
+            )
 
             // Remaining device folders
             val folders = list.groupBy { it.folderPath }

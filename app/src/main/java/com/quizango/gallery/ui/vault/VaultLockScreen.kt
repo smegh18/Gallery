@@ -110,7 +110,7 @@ fun VaultLockScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = if (isSettingUp) "Set PIN" else "Private Vault",
+                            text = "Private Vault",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onBackground

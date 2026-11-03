@@ -15,7 +15,7 @@
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Verified 100% on device 10BD7J2TAS000Z5 with ARTEMIS. Top carousel, stories strip, albums grid, and media types list match fragment_album.xml."
+      "notes": "Re-verified 2026-11-03 side by side with reference on device QG55IJKZHQF6OF6L. Fixed: Cleaner->junk scan, Editor in-app picker, Videos->video list, Place title, Vault/Moments wording, Screenshots album always shown, stories from photos only, carousel pill size, video badge, 2-line album names. Not covered: dark mode, map view for Place (no Maps SDK), editor picker with real photos."
     },
     {
       "id": "STORY-2",
