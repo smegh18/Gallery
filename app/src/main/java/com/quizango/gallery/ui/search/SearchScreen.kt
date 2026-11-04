@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.search
 
+import kotlinx.coroutines.flow.map
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -75,7 +76,9 @@ fun SearchScreen(
     onNavigateToColorSearch: ((String) -> Unit)? = null
 ) {
     val allMedia by mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
-    val allAlbums by mediaRepository.getAlbumsFlow().collectAsState(initial = emptyList())
+    // Reference search lists real folders only, not All Photos / Videos / Camera / Screenshots
+    val allAlbums by remember { mediaRepository.getAlbumsFlow().map { list -> list.filter { !it.id.startsWith("filter:") } } }
+        .collectAsState(initial = emptyList())
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedColorIndex by remember { mutableStateOf<Int?>(null) }

@@ -63,7 +63,7 @@ fun MomentsScreen(
                     else -> "Memory #${idx + 1}"
                 }
                 val dateStr = if (items.isNotEmpty()) {
-                    SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date(items[0].dateModified * 1000))
+                    SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date(items[0].dateAdded)) // already milliseconds
                 } else "Recent"
 
                 MomentGroup(

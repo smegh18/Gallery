@@ -42,7 +42,7 @@ fun ExploreTab(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.screenBackground)
+            .background(MaterialTheme.colorScheme.background) // reference: plain page background
             .verticalScroll(scrollState)
             .padding(horizontal = 14.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -104,7 +104,7 @@ private fun ExploreHeroCard(
             Image(
                 painter = painterResource(id = iconRes),
                 contentDescription = title,
-                modifier = Modifier.size(62.dp)
+                modifier = Modifier.size(32.dp) // reference icon size
             )
 
             Spacer(modifier = Modifier.width(14.dp))

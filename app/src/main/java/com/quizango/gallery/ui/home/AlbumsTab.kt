@@ -254,8 +254,8 @@ fun AlbumsTab(
                 text = "Media Types",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 16.sp,
+                color = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Black, // reference: black heading
+                fontSize = 18.sp,
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -266,7 +266,6 @@ fun AlbumsTab(
                     .padding(horizontal = 10.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(MaterialTheme.colorScheme.mediaTypeCardBg)
-                    .border(0.5.dp, MaterialTheme.colorScheme.cardBorder, RoundedCornerShape(12.dp))
             ) {
                 MEDIA_TYPES.forEachIndexed { index, mediaType ->
                     Row(
@@ -303,8 +302,8 @@ fun AlbumsTab(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_right_arrow),
                             contentDescription = null,
-                            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF8C9BAE),
-                            modifier = Modifier.size(18.dp)
+                            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF354052) /* reference chevron */,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
 

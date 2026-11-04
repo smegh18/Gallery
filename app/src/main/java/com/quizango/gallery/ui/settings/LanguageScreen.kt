@@ -154,7 +154,7 @@ fun LanguageScreen(
                             .padding(end = 4.dp)
                             .size(width = 65.dp, height = 36.dp)
                             .clip(RoundedCornerShape(18.dp))
-                            .background(GalleryBlue)
+                            .background(com.quizango.gallery.ui.theme.GalleryPrimaryBlue) // reference confirm button: colorPrimary #3478F6
                             .clickable {
                                 scope.launch {
                                     appPreferences.setLanguage(selectedLanguage)
@@ -189,13 +189,15 @@ fun LanguageScreen(
                 itemsIndexed(APP_LANGUAGES, key = { _, lang -> lang.code }) { index, lang ->
                     val isSelected = selectedLanguage == lang.code
                     val isNight = MaterialTheme.colorScheme.isDark
-                    val cardBg = if (isNight) Color(0xFF35373B) else ItemCardBg
-                    val cardBorder = if (isSelected) BorderStroke(1.5.dp, GalleryBlue) else null
+                    // Light mode (reference): plain white rows, dark text and radios, no selected highlight
+                    val cardBg = if (isNight) Color(0xFF35373B) else Color.Transparent
+                    val cardBorder = if (isSelected && isNight) BorderStroke(1.5.dp, GalleryBlue) else null
+                    val lightInk = Color(0xFF222933)
 
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 5.dp)
+                            .padding(horizontal = 12.dp, vertical = if (isNight) 5.dp else 0.dp)
                             .clip(RoundedCornerShape(22.dp))
                             .clickable { selectedLanguage = lang.code },
                         shape = RoundedCornerShape(22.dp),
@@ -205,7 +207,7 @@ fun LanguageScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 14.dp, vertical = 8.dp),
+                                .padding(horizontal = 14.dp, vertical = if (isNight) 8.dp else 16.dp), // reference 75dp rows
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             // Circle Avatar with Badge Letter
@@ -231,9 +233,9 @@ fun LanguageScreen(
                             val textAnnotated = buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
-                                        color = if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onBackground,
+                                        color = if (!isNight) lightInk else if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onBackground,
                                         fontSize = 15.sp,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold
+                                        fontWeight = if (!isNight) FontWeight.Normal else if (isSelected) FontWeight.Bold else FontWeight.SemiBold
                                     )
                                 ) {
                                     append(lang.name)
@@ -241,7 +243,7 @@ fun LanguageScreen(
                                 }
                                 withStyle(
                                     style = SpanStyle(
-                                        color = if (isSelected) GalleryBlue.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        color = if (!isNight) Color(0xFF7E7E7E) else if (isSelected) GalleryBlue.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 13.5.sp,
                                         fontWeight = FontWeight.Normal
                                     )
@@ -263,8 +265,8 @@ fun LanguageScreen(
                                     id = if (isSelected) R.drawable.circle_checked else R.drawable.circle_unchecked
                                 ),
                                 contentDescription = if (isSelected) "Selected" else "Unselected",
-                                tint = if (isSelected) GalleryBlue else if (isNight) Color(0xFF8E8E93) else Color(0xFF7E7E7E),
-                                modifier = Modifier.size(20.dp)
+                                tint = if (!isNight) lightInk else if (isSelected) GalleryBlue else Color(0xFF8E8E93),
+                                modifier = Modifier.size(if (isNight) 20.dp else 24.dp)
                             )
                         }
                     }

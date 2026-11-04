@@ -31,6 +31,7 @@ import com.quizango.gallery.R
 import com.quizango.gallery.data.local.VaultSecret
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.isDark
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -141,6 +142,9 @@ fun VaultLockScreen(
         else -> "Enter your PIN"
     }
 
+    // Reference: lock icon and links #0066FF in light mode, white in dark mode
+    val accent = if (MaterialTheme.colorScheme.isDark) Color.White else com.quizango.gallery.ui.theme.GalleryBlueLight
+
     Scaffold(
         topBar = {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -182,14 +186,14 @@ fun VaultLockScreen(
             Icon(
                 painter = painterResource(id = R.drawable.ic_lock),
                 contentDescription = "Lock",
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = accent,
                 modifier = Modifier.size(34.dp)
             )
             Spacer(modifier = Modifier.height(18.dp))
             Text(
                 text = title,
                 fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.onBackground
+                color = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Black
             )
 
             if (usePattern) {
@@ -267,7 +271,7 @@ fun VaultLockScreen(
                     text = "Forgot password?",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = accent,
                     modifier = Modifier
                         .clickable { onNavigate(Screen.VaultForgotPassword.route) }
                         .padding(horizontal = 16.dp, vertical = 12.dp)

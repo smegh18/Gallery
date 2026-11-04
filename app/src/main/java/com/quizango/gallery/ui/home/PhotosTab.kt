@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.home
 
+import com.quizango.gallery.ui.theme.isDark
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -109,9 +110,10 @@ fun PhotosTab(
                 ) {
                     Text(
                         text = header,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        // Reference date headers: regular weight, black in light mode
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Black,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp, vertical = 10.dp)

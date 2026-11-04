@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.album
 
+import com.quizango.gallery.ui.theme.isDark
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -323,9 +324,10 @@ fun AlbumDetailScreen(
                     item(span = { GridItemSpan(4) }) {
                         Text(
                             text = header,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground,
+                            // Reference date headers: regular weight, black in light mode
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Black,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 8.dp, vertical = 8.dp)

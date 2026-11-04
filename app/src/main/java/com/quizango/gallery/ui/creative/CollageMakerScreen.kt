@@ -85,7 +85,7 @@ fun CollageMakerScreen(
                     TopAppBar(
                         title = {
                             Text(
-                                text = "Select Photos (${selectedMedia.size}/9)",
+                                text = "All Photos", // reference picker title (selection count shows in the bottom bar)
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onBackground
@@ -140,7 +140,7 @@ fun CollageMakerScreen(
                 }
             ) { paddingValues ->
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+                    columns = GridCells.Fixed(4), // reference picker grid
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)

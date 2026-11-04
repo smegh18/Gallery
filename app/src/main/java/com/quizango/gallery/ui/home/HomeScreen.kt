@@ -101,7 +101,7 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 GalleryTopBar(
-                    title = if (uiState.selectedTab == 2) "Explore" else "GALLERY",
+                    title = "GALLERY", // reference keeps the GALLERY bar on the Explore tab
                     onOpenDrawer = {
                         scope.launch { drawerState.open() }
                     },
@@ -120,12 +120,8 @@ fun HomeScreen(
                         }
                     } else null,
                     onAddAlbumClick = null,
-                    onProClick = if (uiState.selectedTab != 2) {
-                        { onNavigate(Screen.About.route) }
-                    } else null,
-                    onLockClick = if (uiState.selectedTab != 2) {
-                        { onNavigate(Screen.VaultLock.route) }
-                    } else null,
+                    onProClick = { onNavigate(Screen.About.route) },
+                    onLockClick = { onNavigate(Screen.VaultLock.route) },
                     isSelectionMode = uiState.isSelectionMode,
                     selectedCount = uiState.selectedPaths.size,
                     isAllSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty(),

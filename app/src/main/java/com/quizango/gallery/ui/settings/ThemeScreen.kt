@@ -87,20 +87,20 @@ fun ThemeScreen(
                                 applyNightMode(mode)
                             }
                         }
-                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                        .padding(horizontal = 14.dp, vertical = 12.dp), // reference row height
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(id = iconRes),
                         contentDescription = label,
                         tint = Color.Unspecified,
-                        modifier = Modifier.size(width = 54.dp, height = 42.dp)
+                        modifier = Modifier.size(width = 64.dp, height = 52.dp) // reference icon size
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = label,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.weight(1f)
                     )

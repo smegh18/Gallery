@@ -603,6 +603,16 @@ fun MediaViewerScreen(
                         }
 
                         // Edit suggestions
+                        // Reference order: background tools first
+                        SuggestionPill(iconRes = R.drawable.ic_edit_small_remove_bg, label = stringResource(R.string.remove_background)) {
+                            onNavigate(Screen.RemoveBg.createRoute(currentItem.filePath))
+                        }
+                        SuggestionPill(iconRes = R.drawable.ic_edit_small_blur_bg, label = stringResource(R.string.blur_background)) {
+                            onNavigate(Screen.BlurBg.createRoute(currentItem.filePath))
+                        }
+                        SuggestionPill(iconRes = R.drawable.ic_edit_small_color_splash, label = stringResource(R.string.color_splash)) {
+                            onNavigate(Screen.ColorSplash.createRoute(currentItem.filePath))
+                        }
                         SuggestionPill(iconRes = R.drawable.ic_edit_small_crop, label = stringResource(R.string.crop)) {
                             onNavigate(Screen.Editor.createRoute(currentItem.filePath, initialTab = "crop"))
                         }
@@ -614,15 +624,6 @@ fun MediaViewerScreen(
                         }
                         SuggestionPill(iconRes = R.drawable.ic_edit_small_filter, label = stringResource(R.string.filter)) {
                             onNavigate(Screen.Editor.createRoute(currentItem.filePath, initialTab = "filter"))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_remove_bg, label = stringResource(R.string.remove_background)) {
-                            onNavigate(Screen.RemoveBg.createRoute(currentItem.filePath))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_blur_bg, label = stringResource(R.string.blur_background)) {
-                            onNavigate(Screen.BlurBg.createRoute(currentItem.filePath))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_color_splash, label = stringResource(R.string.color_splash)) {
-                            onNavigate(Screen.ColorSplash.createRoute(currentItem.filePath))
                         }
                     }
                 }
@@ -1403,10 +1404,10 @@ private fun SuggestionPill(
 ) {
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF242730))
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color(0xFF222222)) // reference chip
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 7.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp), // reference chip is 22dp tall
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {

@@ -50,6 +50,7 @@ fun GalleryTopBar(
     onSelectAllClick: () -> Unit = {},
     onCloseSelection: () -> Unit = {}
 ) {
+    Column {
     TopAppBar(
         title = {
             if (isSelectionMode) {
@@ -84,8 +85,9 @@ fun GalleryTopBar(
             } else {
                 Text(
                     text = title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp,
+                    // Reference inner-screen titles (Videos, Favorites): medium weight, 18sp
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
@@ -199,6 +201,9 @@ fun GalleryTopBar(
             titleContentColor = MaterialTheme.colorScheme.onBackground
         )
     )
+    // Reference inner screens have a hairline under the toolbar
+    if (canNavigateBack) HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
+    }
 }
 
 @Composable
@@ -486,7 +491,7 @@ private fun DrawerRow(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 14.sp
+                fontSize = 16.sp // reference drawer item size
             )
             if (item.isAdBadge) {
                 Spacer(modifier = Modifier.width(4.dp))
@@ -518,8 +523,8 @@ private fun DrawerRow(
             Icon(
                 painter = painterResource(id = R.drawable.ic_drawer_right_arrow),
                 contentDescription = null,
-                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF8C9BAE),
-                modifier = Modifier.size(14.dp)
+                tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF354052) /* reference chevron */,
+                modifier = Modifier.size(22.dp) // reference chevron is larger
             )
         }
     }
