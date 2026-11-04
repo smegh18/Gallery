@@ -20,6 +20,7 @@
     <color name="placeBackgroundColor">#def9e9</color>
     <color name="placeAccentColor">#00b074</color>
     <color name="duplicateBackgroundColor">#e8f2ff</color>
+    <color name="duplicateStrokeColor">#dae9ff</color> <!-- reference light value; was missing (crash risk in light mode) -->
     <color name="duplicateAccentColor">#2f80ed</color>
     <color name="vaultAccentColor">#ffaa00</color>
     <color name="recoverSelectBg">#007aff</color>
