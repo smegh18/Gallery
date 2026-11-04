@@ -354,6 +354,7 @@ fun PhotoEditorScreen(
                                             brightness = brightnessValue,
                                             contrast = contrastValue,
                                             saturation = saturationValue,
+                                            sharpen = sharpenValue,
                                             drawnPaths = drawnPaths,
                                             placedStickers = placedStickers,
                                             placedTexts = placedTexts
@@ -705,7 +706,8 @@ fun PhotoEditorScreen(
                         selectedFilter,
                         brightnessValue,
                         contrastValue,
-                        saturationValue
+                        saturationValue,
+                        sharpenValue
                     ) {
                         applyAllTransformations(
                             src = originalBitmap!!,
@@ -715,7 +717,8 @@ fun PhotoEditorScreen(
                             filter = selectedFilter,
                             brightness = brightnessValue,
                             contrast = contrastValue,
-                            saturation = saturationValue
+                            saturation = saturationValue,
+                            sharpen = sharpenValue
                         )
                     }
 
@@ -1557,7 +1560,8 @@ private fun applyAllTransformations(
     filter: EditorFilter,
     brightness: Float,
     contrast: Float,
-    saturation: Float
+    saturation: Float,
+    sharpen: Float = 0f
 ): Bitmap {
     val matrix = Matrix().apply {
         if (flipX) postScale(-1f, 1f)
@@ -1656,7 +1660,7 @@ private fun applyAllTransformations(
 
     paint.colorFilter = ColorMatrixColorFilter(cm)
     canvas.drawBitmap(transformed, 0f, 0f, paint)
-    return result
+    return ImageSharpen.sharpen(result, sharpen)
 }
 
 /**
@@ -1672,6 +1676,7 @@ private suspend fun saveEditedBitmap(
     brightness: Float,
     contrast: Float,
     saturation: Float,
+    sharpen: Float,
     drawnPaths: List<DrawnPath>,
     placedStickers: List<PlacedSticker>,
     placedTexts: List<PlacedText>
@@ -1685,7 +1690,8 @@ private suspend fun saveEditedBitmap(
             filter = filter,
             brightness = brightness,
             contrast = contrast,
-            saturation = saturation
+            saturation = saturation,
+            sharpen = sharpen
         )
 
         val finalBitmap = Bitmap.createBitmap(baseFiltered.width, baseFiltered.height, Bitmap.Config.ARGB_8888)
