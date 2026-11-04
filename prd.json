@@ -57,8 +57,8 @@
         "Unit tests and Gradle build pass"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Verified 2026-11-04 on QG55IJKZHQF6OF6L. Vault files AES-256-CBC encrypted with an Android Keystore key (QGV1 header + IV; older plain vault files still readable). Restore verified byte-identical (md5). Thumbnails/viewer/share use decrypted copies in app-private cache, cleared at app start and on restore/delete. PIN and recovery answers stored as salted SHA-256 (legacy plain values accepted and upgraded). Wrong PIN shakes; fixed reset bypass when no answer was saved; fixed Next/Confirm hidden behind nav bar. Not covered: reference vault UI comparison, video in vault. Parity pass 2026-11-04 vs reference (dark mode): PIN + pattern lock (Switch to Pattern/PIN), Re-enter/Re-draw, ✓-to-confirm, reference toasts, Set Security Questions (3 fixed questions, inline Next/Submit -> vault), Password Recovery Option with question dropdown, Add Items in-app picker, date-grouped vault grid, vault viewer Share/Unhide/Delete/More (Rename, Slide show, Set as Wallpaper, Print), Hide/Unhide confirm sheets + toasts, hh:mm time. Fixed: Back from Forgot skipped the lock; first pattern dot dropped; deleted files left blank tiles. Unverified in reference: wrong-pattern toast text, minimum pattern length (3+ accepted), answer case sensitivity (ours ignores case/spaces), vault settings (reference crashes), light mode."
     },
     {
       "id": "STORY-5",

@@ -201,8 +201,8 @@ fun StoryViewScreen(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = {
-                    onEditClick?.invoke(currentItem.filePath)
+                if (onEditClick != null) IconButton(onClick = {
+                    onEditClick(currentItem.filePath)
                 }) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.White)

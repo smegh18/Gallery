@@ -1,5 +1,7 @@
 package com.quizango.gallery.ui.navigation
 
+import kotlinx.coroutines.flow.first
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,6 +49,7 @@ import com.quizango.gallery.ui.settings.ThemeScreen
 import com.quizango.gallery.ui.splash.SplashScreen
 import com.quizango.gallery.ui.vault.VaultForgotPasswordScreen
 import com.quizango.gallery.ui.vault.VaultLockScreen
+import com.quizango.gallery.ui.vault.VaultAddMediaScreen
 import com.quizango.gallery.ui.vault.VaultMediaScreen
 import com.quizango.gallery.ui.vault.VaultRecoveryQuestionScreen
 import com.quizango.gallery.ui.vault.VaultSettingScreen
@@ -244,9 +247,9 @@ fun GalleryNavHost(
             VaultLockScreen(
                 appPreferences = app.preferences,
                 onNavigate = { route ->
-                    navController.navigate(route) {
-                        popUpTo(Screen.VaultLock.route) { inclusive = true }
-                    }
+                    // Keep the lock under Forgot Password so Back returns to it (reference)
+                    if (route == Screen.VaultForgotPassword.route) navController.navigate(route)
+                    else navController.navigate(route) { popUpTo(Screen.VaultLock.route) { inclusive = true } }
                 },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -258,6 +261,15 @@ fun GalleryNavHost(
                 onNavigate = { route -> navController.navigate(route) },
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToSettings = { navController.navigate(Screen.VaultSetting.route) }
+            )
+        }
+
+        composable(Screen.VaultAdd.route) {
+            VaultAddMediaScreen(
+                mediaRepository = app.mediaRepository,
+                vaultRepository = app.vaultRepository,
+                onDone = { navController.popBackStack() },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
@@ -273,7 +285,13 @@ fun GalleryNavHost(
         composable(Screen.VaultRecoveryQuestion.route) {
             VaultRecoveryQuestionScreen(
                 appPreferences = app.preferences,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                // Reference opens the vault after Submit
+                onSaved = {
+                    navController.navigate(Screen.VaultMedia.route) {
+                        popUpTo(Screen.VaultRecoveryQuestion.route) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -281,8 +299,9 @@ fun GalleryNavHost(
             VaultForgotPasswordScreen(
                 appPreferences = app.preferences,
                 onAnswerVerified = {
+                    // Replace both the old lock and this screen with a fresh "Set PIN" lock
                     navController.navigate(Screen.VaultLock.route) {
-                        popUpTo(Screen.VaultForgotPassword.route) { inclusive = true }
+                        popUpTo(Screen.VaultLock.route) { inclusive = true }
                     }
                 },
                 onNavigateBack = { navController.popBackStack() }
@@ -410,10 +429,28 @@ fun GalleryNavHost(
                 }
             }
 
+            // Vault slideshow: decrypted cache copies of the vault's photos
+            val vaultStory by androidx.compose.runtime.produceState<List<com.quizango.gallery.domain.model.MediaItem>?>(null, path) {
+                if (path == "vault") {
+                    value = app.vaultRepository.getVaultItemsFlow().first()
+                        .filter { it.mediaType != MediaType.VIDEO }
+                        .mapNotNull { v ->
+                            app.vaultRepository.viewFile(v)?.let { f ->
+                                com.quizango.gallery.domain.model.MediaItem(
+                                    id = 0, filePath = f.path, fileName = v.fileName, fileSize = v.fileSize,
+                                    folderName = v.folderName, folderPath = v.folderPath,
+                                    dateModified = v.dateHidden, dateTaken = v.dateHidden, mediaType = v.mediaType
+                                )
+                            }
+                        }
+                }
+            }
+
             StoryViewScreen(
                 storyTitle = title,
-                mediaItems = storyItems,
-                onEditClick = { editPath -> navController.navigate(Screen.Editor.createRoute(editPath)) },
+                mediaItems = if (path == "vault") vaultStory.orEmpty() else storyItems,
+                // No editing from the vault: edits would write the decrypted copy out
+                onEditClick = if (path == "vault") null else { editPath -> navController.navigate(Screen.Editor.createRoute(editPath)) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

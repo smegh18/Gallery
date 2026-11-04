@@ -64,6 +64,8 @@ class GalleryApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        // Decrypted vault copies only live while the app runs
+        CoroutineScope(Dispatchers.IO).launch { vaultRepository.clearViewCache() }
         CoroutineScope(Dispatchers.Main.immediate).launch {
             preferences.themeMode.collect { mode ->
                 applyNightMode(mode)

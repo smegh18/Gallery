@@ -30,6 +30,16 @@ fun VaultSettingScreen(
     val scope = rememberCoroutineScope()
     val isPatternMode by appPreferences.isPatternMode.collectAsState(initial = false)
     val isFingerprintEnabled by appPreferences.isFingerprintEnabled.collectAsState(initial = false)
+    val settingsContext = androidx.compose.ui.platform.LocalContext.current
+    // Only switch on when a fingerprint can actually be used
+    fun toggleFingerprint(enable: Boolean) {
+        val reason = if (enable) VaultBiometric.unavailableReason(settingsContext) else null
+        if (reason != null) {
+            android.widget.Toast.makeText(settingsContext, reason, android.widget.Toast.LENGTH_SHORT).show()
+        } else {
+            scope.launch { appPreferences.setFingerprintEnabled(enable) }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -113,15 +123,11 @@ fun VaultSettingScreen(
                 iconRes = R.drawable.ic_fingerprint,
                 title = "Unlock with Fingerprint",
                 subtitle = "Use biometrics for security",
-                onClick = {
-                    scope.launch { appPreferences.setFingerprintEnabled(!isFingerprintEnabled) }
-                },
+                onClick = { toggleFingerprint(!isFingerprintEnabled) },
                 trailingContent = {
                     Switch(
                         checked = isFingerprintEnabled,
-                        onCheckedChange = { isChecked ->
-                            scope.launch { appPreferences.setFingerprintEnabled(isChecked) }
-                        },
+                        onCheckedChange = { isChecked -> toggleFingerprint(isChecked) },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
                             checkedTrackColor = GalleryBlue

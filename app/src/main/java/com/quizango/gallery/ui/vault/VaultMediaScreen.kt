@@ -119,7 +119,8 @@ fun VaultMediaScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background
-                    )
+                    ),
+                    expandedHeight = 56.dp
                 )
                 HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             }
@@ -127,7 +128,7 @@ fun VaultMediaScreen(
         floatingActionButton = {
             if (!isSelectionMode && vaultItems.isNotEmpty()) {
                 FloatingActionButton(
-                    onClick = onNavigateBack,
+                    onClick = { onNavigate(Screen.VaultAdd.route) },
                     containerColor = GalleryBlue,
                     contentColor = Color.White,
                     shape = CircleShape,
@@ -234,19 +235,13 @@ fun VaultMediaScreen(
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(horizontal = 32.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_lock),
-                        contentDescription = null,
-                        tint = GalleryBlue.copy(alpha = 0.5f),
-                        modifier = Modifier.size(64.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    // Reference empty state: text and "Add Items" only (no icon)
                     Text(
                         text = "Our Private Vault feature lets you store your most sensitive photos and videos securely.",
-                        fontSize = 14.sp,
-                        color = Color(0xFF605F60),
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         lineHeight = 20.sp
                     )
@@ -255,15 +250,15 @@ fun VaultMediaScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(24.dp))
                             .background(GalleryBlue)
-                            .clickable { onNavigateBack() }
-                            .padding(horizontal = 36.dp, vertical = 12.dp),
+                            .clickable { onNavigate(Screen.VaultAdd.route) }
+                            .size(width = 159.dp, height = 41.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Add Item",
+                            text = "Add Items",
                             color = Color.White,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 15.sp
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 18.sp
                         )
                     }
                 }
@@ -276,10 +271,23 @@ fun VaultMediaScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                items(vaultItems, key = { it.filePath }) { item ->
+                // Reference groups vault items under date headers ("Today", "Yesterday", "04 Jul 2026")
+                vaultItems.groupBy { vaultDateLabel(it.dateHidden) }.forEach { (label, group) ->
+                item(key = "header_$label", span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
+                    Text(
+                        text = label,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(start = 3.dp, top = 6.dp, bottom = 8.dp)
+                    )
+                }
+                items(group, key = { it.filePath }) { item ->
                     val isSelected = item.filePath in selectedPaths
+                    // Vault files are encrypted; thumbnails come from a decrypted cache copy
+                    val viewFile by produceState<File?>(null, item.filePath) { value = vaultRepository.viewFile(item) }
                     VaultGridItem(
                         item = item,
+                        viewFile = viewFile,
                         isSelected = isSelected,
                         isSelectionMode = isSelectionMode,
                         onClick = {
@@ -299,6 +307,7 @@ fun VaultMediaScreen(
                             }
                         }
                     )
+                }
                 }
             }
         }
@@ -424,6 +433,7 @@ fun VaultMediaScreen(
 @Composable
 private fun VaultGridItem(
     item: VaultItem,
+    viewFile: File?,
     isSelected: Boolean,
     isSelectionMode: Boolean,
     onClick: () -> Unit,
@@ -439,7 +449,7 @@ private fun VaultGridItem(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context)
-                .data(File(item.filePath))
+                .data(viewFile)
                 .size(300, 300)
                 .allowRgb565(true)
                 .build(),
@@ -511,4 +521,19 @@ private fun shareSelectedVaultMedia(context: Context, paths: Set<String>) {
         }
         context.startActivity(Intent.createChooser(shareIntent, "Share Media"))
     } catch (_: Exception) {}
+}
+
+
+/** "Today", "Yesterday" or "dd MMM yyyy" for a timestamp in seconds or milliseconds. */
+internal fun vaultDateLabel(epoch: Long): String {
+    val millis = if (epoch in 1..9_999_999_999L) epoch * 1000 else epoch
+    val day = java.util.Calendar.getInstance().apply { timeInMillis = millis }
+    val today = java.util.Calendar.getInstance()
+    fun sameDay(a: java.util.Calendar, b: java.util.Calendar) =
+        a.get(java.util.Calendar.YEAR) == b.get(java.util.Calendar.YEAR) &&
+            a.get(java.util.Calendar.DAY_OF_YEAR) == b.get(java.util.Calendar.DAY_OF_YEAR)
+    if (sameDay(day, today)) return "Today"
+    today.add(java.util.Calendar.DAY_OF_YEAR, -1)
+    if (sameDay(day, today)) return "Yesterday"
+    return java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date(millis))
 }

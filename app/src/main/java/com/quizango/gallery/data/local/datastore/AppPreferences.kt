@@ -42,6 +42,19 @@ class AppPreferences(private val context: Context) {
     val vaultQuestion: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_QUESTION] }
     val vaultAnswer: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_ANSWER] }
 
+    /** All saved recovery (question, answer hash) pairs, for Forgot Password. */
+    val vaultRecoveryPairs: Flow<List<Pair<String, String>>> = context.dataStore.data.map { p ->
+        listOf(
+            Keys.VAULT_QUESTION to Keys.VAULT_ANSWER,
+            Keys.VAULT_QUESTION_2 to Keys.VAULT_ANSWER_2,
+            Keys.VAULT_QUESTION_3 to Keys.VAULT_ANSWER_3
+        ).mapNotNull { (q, a) ->
+            val question = p[q]
+            val answer = p[a]
+            if (question.isNullOrEmpty() || answer.isNullOrEmpty()) null else question to answer
+        }
+    }
+
     suspend fun setFirstLaunch(completed: Boolean) {
         context.dataStore.edit { it[Keys.IS_FIRST_LAUNCH] = completed }
     }
@@ -67,11 +80,13 @@ class AppPreferences(private val context: Context) {
     }
 
     suspend fun setVaultPin(pin: String) {
-        context.dataStore.edit { it[Keys.VAULT_PIN] = pin }
+        // Stored as a salted hash; "" clears the PIN
+        context.dataStore.edit { it[Keys.VAULT_PIN] = if (pin.isEmpty()) "" else com.quizango.gallery.data.local.VaultSecret.hash(pin) }
     }
 
     suspend fun setVaultPattern(pattern: String) {
-        context.dataStore.edit { it[Keys.VAULT_PATTERN] = pattern }
+        // Stored as a salted hash; "" clears the pattern
+        context.dataStore.edit { it[Keys.VAULT_PATTERN] = if (pattern.isEmpty()) "" else com.quizango.gallery.data.local.VaultSecret.hash(pattern) }
     }
 
     suspend fun setPatternMode(enabled: Boolean) {
@@ -85,7 +100,7 @@ class AppPreferences(private val context: Context) {
     suspend fun setSecurityQuestion(question: String, answer: String) {
         context.dataStore.edit {
             it[Keys.VAULT_QUESTION] = question
-            it[Keys.VAULT_ANSWER] = answer
+            it[Keys.VAULT_ANSWER] = com.quizango.gallery.data.local.VaultSecret.hash(com.quizango.gallery.data.local.VaultSecret.normalizeAnswer(answer))
         }
     }
 
@@ -96,11 +111,12 @@ class AppPreferences(private val context: Context) {
     ) {
         context.dataStore.edit {
             it[Keys.VAULT_QUESTION] = q1
-            it[Keys.VAULT_ANSWER] = a1
+            // Answers are stored as salted hashes of the trimmed, lower-cased text
+            it[Keys.VAULT_ANSWER] = com.quizango.gallery.data.local.VaultSecret.hash(com.quizango.gallery.data.local.VaultSecret.normalizeAnswer(a1))
             it[Keys.VAULT_QUESTION_2] = q2
-            it[Keys.VAULT_ANSWER_2] = a2
+            it[Keys.VAULT_ANSWER_2] = com.quizango.gallery.data.local.VaultSecret.hash(com.quizango.gallery.data.local.VaultSecret.normalizeAnswer(a2))
             it[Keys.VAULT_QUESTION_3] = q3
-            it[Keys.VAULT_ANSWER_3] = a3
+            it[Keys.VAULT_ANSWER_3] = com.quizango.gallery.data.local.VaultSecret.hash(com.quizango.gallery.data.local.VaultSecret.normalizeAnswer(a3))
         }
     }
 }

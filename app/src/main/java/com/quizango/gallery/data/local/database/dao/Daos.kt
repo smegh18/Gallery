@@ -88,6 +88,9 @@ interface VaultDao {
     @Delete
     suspend fun delete(item: VaultEntity)
 
+    @Query("UPDATE vault_table SET fileName = :name WHERE filePath = :path")
+    suspend fun rename(path: String, name: String)
+
     @Query("DELETE FROM vault_table WHERE filePath IN (:paths)")
     suspend fun deleteByPaths(paths: List<String>)
 }

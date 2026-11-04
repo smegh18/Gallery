@@ -1,7 +1,7 @@
 package com.quizango.gallery
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -17,7 +17,8 @@ import com.quizango.gallery.ui.navigation.GalleryNavHost
 import com.quizango.gallery.ui.theme.GalleryTheme
 import com.quizango.gallery.ui.theme.applyNightMode
 
-class MainActivity : ComponentActivity() {
+// FragmentActivity: the system fingerprint prompt (BiometricPrompt) needs it
+class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -299,6 +299,13 @@ class MediaRepositoryImpl(
             }
         }
         dao.insertAll(entities)
+        // Drop rows for files deleted outside the app (they showed as blank tiles).
+        // Recycle-bin rows (deletedDate > 0) are kept.
+        val scannedPaths = scanned.mapTo(HashSet()) { it.filePath }
+        val missing = existingMap.values
+            .filter { it.deletedDate == 0L && it.filePath !in scannedPaths && !File(it.filePath).exists() }
+            .map { it.filePath }
+        if (missing.isNotEmpty()) dao.deleteByPaths(missing)
     }
 
     override suspend fun setFavorite(path: String, favorite: Boolean) = withContext(Dispatchers.IO) {

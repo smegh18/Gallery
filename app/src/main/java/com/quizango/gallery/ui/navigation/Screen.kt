@@ -35,6 +35,7 @@ sealed class Screen(val route: String) {
     data object Duplicates : Screen("duplicates")
     data object VaultLock : Screen("vault_lock")
     data object VaultMedia : Screen("vault_media")
+    data object VaultAdd : Screen("vault/add")
     data object Cleaner : Screen("cleaner")
     data object Editor : Screen("editor?path={path}&tab={tab}") {
         fun createRoute(path: String = "", initialTab: String = ""): String {
