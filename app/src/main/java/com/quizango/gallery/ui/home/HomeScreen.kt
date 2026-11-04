@@ -196,7 +196,22 @@ fun HomeScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                when (uiState.selectedTab) {
+                // Swipe left/right between tabs; kept in sync with the bottom bar
+                val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = uiState.selectedTab) { 3 }
+                LaunchedEffect(uiState.selectedTab) {
+                    if (pagerState.currentPage != uiState.selectedTab) pagerState.animateScrollToPage(uiState.selectedTab)
+                }
+                LaunchedEffect(pagerState) {
+                    androidx.compose.runtime.snapshotFlow { pagerState.settledPage }.collect { viewModel.setTab(it) }
+                }
+                androidx.compose.foundation.pager.HorizontalPager(
+                    state = pagerState,
+                    // No swiping while selecting, so a drag can't drop the selection
+                    userScrollEnabled = !uiState.isSelectionMode,
+                    beyondViewportPageCount = 1,
+                    modifier = Modifier.fillMaxSize()
+                ) { page ->
+                when (page) {
                     0 -> AlbumsTab(
                         albumsList = uiState.albumsList,
                         mediaList = uiState.mediaList,
@@ -246,6 +261,7 @@ fun HomeScreen(
                     2 -> ExploreTab(
                         onNavigate = onNavigate
                     )
+                }
                 }
 
                 if (uiState.isSyncing) {
