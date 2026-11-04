@@ -23,7 +23,9 @@ android {
         debug {
         }
         release {
-            isMinifyEnabled = false
+            // R8: shrinks and optimizes code; unminified Compose renders noticeably slower
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

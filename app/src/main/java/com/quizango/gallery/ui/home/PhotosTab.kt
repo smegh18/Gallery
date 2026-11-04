@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material3.*
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,8 +89,11 @@ fun PhotosTab(
     } else {
         // Group items chronologically (remembered with todayMidnight to invalidate on day change)
         val todayMidnight = getTodayMidnight()
-        val grouped = androidx.compose.runtime.remember(mediaList, todayMidnight) {
-            mediaList.groupBy { formatGroupHeader(it.dateAdded) }
+        // Grouping thousands of items off the main thread keeps the first frame fast
+        val grouped by androidx.compose.runtime.produceState(emptyMap<String, List<MediaItem>>(), mediaList, todayMidnight) {
+            value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+                mediaList.groupBy { formatGroupHeader(it.dateAdded) }
+            }
         }
 
         LazyVerticalGrid(

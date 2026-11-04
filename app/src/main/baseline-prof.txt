@@ -1,0 +1,19 @@
+# Baseline profile: ask Android to compile this code ahead of time at install,
+# so screens don't run in the interpreter/JIT on first use (measured: albums 3.4 s -> 1.25 s).
+# Compose libraries ship their own profiles; these rules add our app and its main libraries.
+# shortcut: wildcard rules compile everything in these packages; generate a precise profile
+# with a Macrobenchmark module if APK size or install time becomes a concern.
+HSPLcom/quizango/gallery/**;->**(**)**
+Lcom/quizango/gallery/**;
+HSPLcoil/**;->**(**)**
+Lcoil/**;
+HSPLandroidx/room/**;->**(**)**
+Landroidx/room/**;
+HSPLandroidx/datastore/**;->**(**)**
+Landroidx/datastore/**;
+HSPLandroidx/navigation/**;->**(**)**
+Landroidx/navigation/**;
+HSPLcom/airbnb/lottie/**;->**(**)**
+Lcom/airbnb/lottie/**;
+HSPLkotlinx/coroutines/**;->**(**)**
+Lkotlinx/coroutines/**;

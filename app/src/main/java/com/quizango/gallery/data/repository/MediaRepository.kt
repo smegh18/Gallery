@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -39,12 +40,29 @@ class MediaRepositoryImpl(
     private val scanner: MediaStoreScanner
 ) : MediaRepository {
 
+    // One shared Room subscription for the whole app, kept for 5 s after the last collector.
+    // Screens call these getters inside composables, so every call must return the same cached flow.
+    private val scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + Dispatchers.Default)
+    private val flows = java.util.concurrent.ConcurrentHashMap<String, Flow<*>>()
+    private val activeEntities by lazy { dao.getAllActiveMediaFlow().shared() }
+
+    private fun <T> Flow<T>.shared() =
+        flowOn(Dispatchers.Default).shareIn(scope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), replay = 1)
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> cached(key: String, create: () -> Flow<T>): Flow<T> =
+        flows.getOrPut(key) { create().shared() } as Flow<T>
+
+
     override fun getActiveMediaFlow(): Flow<List<MediaItem>> {
-        return dao.getAllActiveMediaFlow().map { list -> list.map { it.toDomain() } }
+        return cached("active") { run {
+        activeEntities.map { list -> list.map { it.toDomain() } }
+    } }
     }
 
     override fun getAlbumsFlow(): Flow<List<Album>> {
-        return dao.getAllActiveMediaFlow().map { list ->
+        return cached("albums") { run {
+        activeEntities.map { list ->
             val result = mutableListOf<Album>()
 
             // 1. All Photos (mediaType != 2)
@@ -135,17 +153,19 @@ class MediaRepositoryImpl(
             result.addAll(folders)
             result
         }.flowOn(Dispatchers.Default)
+    } }
     }
 
     override fun getMediaByFolderFlow(folderPath: String): Flow<List<MediaItem>> {
-        return when {
+        return cached("folder:$folderPath") { run {
+        when {
             folderPath == "filter:all_photos" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter { it.mediaType != 2 }.map { it.toDomain() }
                 }
             }
             folderPath == "filter:camera" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter {
                         it.folderPath.contains("Camera", ignoreCase = true) ||
                         it.folderName.equals("Camera", ignoreCase = true) ||
@@ -154,7 +174,7 @@ class MediaRepositoryImpl(
                 }
             }
             folderPath == "filter:screenshots" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter {
                         it.folderPath.contains("screenshot", ignoreCase = true) ||
                         it.folderName.contains("screenshot", ignoreCase = true)
@@ -162,12 +182,12 @@ class MediaRepositoryImpl(
                 }
             }
             folderPath == "filter:videos" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter { it.mediaType == 2 }.map { it.toDomain() }
                 }
             }
             folderPath == "filter:portrait" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter {
                         it.mediaType == 1 && (it.isPortrait || it.dimension.let { d ->
                             val parts = d.split("x", "X")
@@ -181,28 +201,28 @@ class MediaRepositoryImpl(
                 }
             }
             folderPath == "filter:hd" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter {
                         it.mediaType == 1 && (it.fileSize >= 1_500_000 || it.dimension.contains("1920") || it.dimension.contains("1080") || it.dimension.contains("4K") || it.resolution.contains("1080"))
                     }.map { it.toDomain() }
                 }
             }
             folderPath == "filter:animated" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter {
                         it.animatedType == 1 || it.filePath.endsWith(".gif", ignoreCase = true)
                     }.map { it.toDomain() }
                 }
             }
             folderPath == "filter:burst" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter {
                         it.filePath.contains("BURST", ignoreCase = true) || it.fileName.contains("BURST", ignoreCase = true)
                     }.map { it.toDomain() }
                 }
             }
             folderPath == "filter:place" -> {
-                dao.getAllActiveMediaFlow().map { list ->
+                activeEntities.map { list ->
                     list.filter { it.isLocation || it.lat != 0f || it.longs != 0f }.map { it.toDomain() }
                 }
             }
@@ -217,58 +237,74 @@ class MediaRepositoryImpl(
                 dao.getMediaByFolderFlow(folderPath).map { list -> list.map { it.toDomain() } }
             }
         }
+    } }
     }
 
     override fun getFavoritesFlow(): Flow<List<MediaItem>> {
-        return dao.getFavoritesFlow().map { list -> list.map { it.toDomain() } }
+        return cached("fav") { run {
+        dao.getFavoritesFlow().map { list -> list.map { it.toDomain() } }
+    } }
     }
 
     override fun getRecycleBinFlow(): Flow<List<MediaItem>> {
-        return dao.getRecycleBinFlow().map { list -> list.map { it.toDomain() } }
+        return cached("bin") { run {
+        dao.getRecycleBinFlow().map { list -> list.map { it.toDomain() } }
+    } }
     }
 
     override fun getDuplicatesFlow(): Flow<List<MediaItem>> {
-        return dao.getDuplicatesFlow().map { list -> list.map { it.toDomain() } }
+        return cached("dup") { run {
+        dao.getDuplicatesFlow().map { list -> list.map { it.toDomain() } }
+    } }
     }
 
     override fun getLargeVideosFlow(minSizeBytes: Long): Flow<List<MediaItem>> {
-        return dao.getAllActiveMediaFlow().map { list ->
+        return cached("large:$minSizeBytes") { run {
+        activeEntities.map { list ->
             list.filter { it.mediaType == 2 && it.fileSize >= minSizeBytes }
                 .sortedByDescending { it.fileSize }
                 .map { it.toDomain() }
         }
+    } }
     }
 
     override fun getScreenshotsFlow(): Flow<List<MediaItem>> {
-        return dao.getAllActiveMediaFlow().map { list ->
+        return cached("shots") { run {
+        activeEntities.map { list ->
             list.filter {
                 it.folderPath.contains("screenshot", ignoreCase = true) ||
                 it.folderName.contains("screenshot", ignoreCase = true) ||
                 it.fileName.contains("screenshot", ignoreCase = true)
             }.map { it.toDomain() }
         }
+    } }
     }
 
     override fun getAnimatedMediaFlow(): Flow<List<MediaItem>> {
-        return dao.getAllActiveMediaFlow().map { list ->
+        return cached("anim") { run {
+        activeEntities.map { list ->
             list.filter {
                 it.animatedType == 1 ||
                 it.filePath.endsWith(".gif", ignoreCase = true)
             }.map { it.toDomain() }
         }
+    } }
     }
 
     override fun getBurstPhotosFlow(): Flow<List<MediaItem>> {
-        return dao.getAllActiveMediaFlow().map { list ->
+        return cached("burst") { run {
+        activeEntities.map { list ->
             list.filter {
                 it.filePath.contains("BURST", ignoreCase = true) ||
                 it.fileName.contains("BURST", ignoreCase = true)
             }.map { it.toDomain() }
         }
+    } }
     }
 
     override fun searchByColorFlow(colorHex: String): Flow<List<MediaItem>> {
-        return dao.getAllActiveMediaFlow().map { list ->
+        return cached("color:$colorHex") { run {
+        activeEntities.map { list ->
             list.filter { it.mediaType != 2 }
                 .filter { item ->
                     if (colorHex.isEmpty()) true
@@ -281,6 +317,7 @@ class MediaRepositoryImpl(
                 }
                 .map { it.toDomain() }
         }
+    } }
     }
 
     override suspend fun syncMediaStore() = withContext(Dispatchers.IO) {
@@ -298,7 +335,9 @@ class MediaRepositoryImpl(
                 entity
             }
         }
-        dao.insertAll(entities)
+        // Write only new or changed rows; rewriting everything re-emits every list in the app
+        val changed = entities.filter { it != existingMap[it.filePath] }
+        if (changed.isNotEmpty()) dao.insertAll(changed)
         // Drop rows for files deleted outside the app (they showed as blank tiles).
         // Recycle-bin rows (deletedDate > 0) are kept.
         val scannedPaths = scanned.mapTo(HashSet()) { it.filePath }

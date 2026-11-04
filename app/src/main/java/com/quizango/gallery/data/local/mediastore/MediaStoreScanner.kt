@@ -57,10 +57,11 @@ class MediaStoreScanner(private val context: Context) {
             while (cursor.moveToNext()) {
                 val path = cursor.getString(dataCol) ?: continue
                 val file = File(path)
-                if (!file.exists() || file.length() <= 0L) continue
+                // MediaStore SIZE replaces a disk stat per file (slow over FUSE with thousands of photos)
+                if (cursor.getLong(sizeCol) <= 0L) continue
 
                 val id = cursor.getLong(idCol)
-                val size = cursor.getLong(sizeCol).let { if (it > 0L) it else file.length() }
+                val size = cursor.getLong(sizeCol)
                 val name = cursor.getString(nameCol) ?: file.name
                 val mod = cursor.getLong(modCol) * 1000L
                 val taken = cursor.getLong(takenCol).let { if (it > 0) it else mod }
@@ -135,10 +136,11 @@ class MediaStoreScanner(private val context: Context) {
             while (cursor.moveToNext()) {
                 val path = cursor.getString(dataCol) ?: continue
                 val file = File(path)
-                if (!file.exists() || file.length() <= 0L) continue
+                // MediaStore SIZE replaces a disk stat per file (slow over FUSE with thousands of photos)
+                if (cursor.getLong(sizeCol) <= 0L) continue
 
                 val id = cursor.getLong(idCol)
-                val size = cursor.getLong(sizeCol).let { if (it > 0L) it else file.length() }
+                val size = cursor.getLong(sizeCol)
                 val name = cursor.getString(nameCol) ?: file.name
                 val mod = cursor.getLong(modCol) * 1000L
                 val taken = cursor.getLong(takenCol).let { if (it > 0) it else mod }

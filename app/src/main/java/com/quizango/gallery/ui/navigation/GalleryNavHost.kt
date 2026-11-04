@@ -1,5 +1,10 @@
 package com.quizango.gallery.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
 import kotlinx.coroutines.flow.first
 
 import androidx.compose.runtime.Composable
@@ -63,9 +68,22 @@ fun GalleryNavHost(
     navController: NavHostController,
     app: GalleryApplication
 ) {
+    // Short fade + slight slide between screens; plain fade in and out of the splash
+    val fromSplash: androidx.compose.animation.AnimatedContentTransitionScope<androidx.navigation.NavBackStackEntry>.() -> Boolean =
+        { initialState.destination.route == Screen.Splash.route }
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route
+        startDestination = Screen.Splash.route,
+        enterTransition = {
+            if (fromSplash()) fadeIn(tween(350))
+            else fadeIn(tween(220)) + slideInHorizontally(tween(260)) { it / 10 }
+        },
+        exitTransition = {
+            if (initialState.destination.route == Screen.Splash.route) fadeOut(tween(300))
+            else fadeOut(tween(180)) + slideOutHorizontally(tween(260)) { -it / 10 }
+        },
+        popEnterTransition = { fadeIn(tween(220)) + slideInHorizontally(tween(260)) { -it / 10 } },
+        popExitTransition = { fadeOut(tween(180)) + slideOutHorizontally(tween(260)) { it / 10 } }
     ) {
         composable(Screen.Splash.route) {
             SplashScreen(

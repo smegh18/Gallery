@@ -306,8 +306,10 @@ fun AlbumDetailScreen(
                 )
             }
         } else {
-            val grouped = remember(mediaItems) {
-                mediaItems.groupBy { formatGroupHeader(it.dateAdded) }
+            val grouped by produceState(emptyMap<String, List<MediaItem>>(), mediaItems) {
+                value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+                    mediaItems.groupBy { formatGroupHeader(it.dateAdded) }
+                }
             }
 
             LazyVerticalGrid(
