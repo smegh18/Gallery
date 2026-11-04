@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = GalleryBlue,
+    primary = GalleryBlueLight,
     onPrimary = GalleryBackgroundLight,
     primaryContainer = DuplicateBackground,
     onPrimaryContainer = GalleryDarkBlue,
@@ -38,7 +38,7 @@ private val DarkColorScheme = darkColorScheme(
     onPrimary = GalleryBackgroundDark,
     primaryContainer = GalleryDarkBlue,
     onPrimaryContainer = GalleryBackgroundLight,
-    secondary = GalleryBlue,
+    secondary = GalleryBlueLight,
     onSecondary = GalleryBackgroundLight,
     background = GalleryBackgroundDark,
     onBackground = TextPrimaryDark,

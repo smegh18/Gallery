@@ -85,8 +85,8 @@
         "Unit tests and Gradle build pass"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Verified 2026-11-04 on QG55IJKZHQF6OF6L. navigateOnce: navigating to a screen already on the back stack returns to it (fixed Cleaner<->Remove Junk stack growth; verified 2 backs to home). Vault lock no longer stacks a second vault. Change Password now really sets a new PIN/pattern (VaultChangeLock route; old lock kept until confirmed). Show Pattern setting now controls the drawn line (hidden by default, as in reference). GalleryBlue follows theme: #0066FF light, #3478F6 dark (reference mainAppColor), verified title pixel. Back on non-Albums tab exits app, matching reference. Not covered: change-password flow on device (user's PIN unknown), light mode."
     }
   ]
 }

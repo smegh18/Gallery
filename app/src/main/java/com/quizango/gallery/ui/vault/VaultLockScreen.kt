@@ -44,7 +44,9 @@ import kotlinx.coroutines.launch
 fun VaultLockScreen(
     appPreferences: AppPreferences,
     onNavigate: (String) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    // Change Password: set a new lock; the old one stays until the new one is confirmed
+    changeMode: Boolean = false
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -58,18 +60,20 @@ fun VaultLockScreen(
     LaunchedEffect(Unit) {
         savedPin = appPreferences.vaultPin.first()
         savedPattern = appPreferences.vaultPattern.first()
-        usePattern = !savedPattern.isNullOrEmpty()
+        usePattern = !changeMode && !savedPattern.isNullOrEmpty()
         loaded = true
         // Fingerprint unlock (Vault Settings); PIN/pattern stays available underneath
         val hasLock = !savedPin.isNullOrEmpty() || !savedPattern.isNullOrEmpty()
         val activity = context as? androidx.fragment.app.FragmentActivity
-        if (hasLock && activity != null && appPreferences.isFingerprintEnabled.first() &&
+        if (!changeMode && hasLock && activity != null && appPreferences.isFingerprintEnabled.first() &&
             VaultBiometric.unavailableReason(context) == null
         ) {
             VaultBiometric.prompt(activity) { onNavigate(Screen.VaultMedia.route) }
         }
     }
-    val isSettingUp = loaded && savedPin.isNullOrEmpty() && savedPattern.isNullOrEmpty()
+    val isSettingUp = loaded && (changeMode || (savedPin.isNullOrEmpty() && savedPattern.isNullOrEmpty()))
+    // Vault Settings "Show Pattern": draw the traced line (off by default, like the reference)
+    val showPatternLine by appPreferences.isPatternMode.collectAsState(initial = false)
 
     // Error shake (STORY-4); the reference also shows a toast
     val shakeOffset = remember { Animatable(0f) }
@@ -98,6 +102,11 @@ fun VaultLockScreen(
                     } else {
                         appPreferences.setVaultPin(value)
                         appPreferences.setVaultPattern("")
+                    }
+                    if (changeMode) {
+                        Toast.makeText(context, if (usePattern) "Pattern changed" else "Password changed", Toast.LENGTH_SHORT).show()
+                        onNavigateBack()
+                        return@launch
                     }
                     val hasQuestion = !appPreferences.vaultQuestion.first().isNullOrEmpty()
                     onNavigate(if (hasQuestion) Screen.VaultMedia.route else Screen.VaultRecoveryQuestion.route)
@@ -186,6 +195,7 @@ fun VaultLockScreen(
             if (usePattern) {
                 Spacer(modifier = Modifier.height(40.dp))
                 PatternPad(
+                    showLine = showPatternLine || isSettingUp,
                     modifier = Modifier.offset { IntOffset(shakeOffset.value.dp.roundToPx(), 0) },
                     resetKey = "$title|${firstEntry != null}",
                     onComplete = { pattern ->
@@ -270,6 +280,7 @@ fun VaultLockScreen(
 /** 3x3 pattern grid; reports the visited dots as a string like "0367". */
 @Composable
 private fun PatternPad(
+    showLine: Boolean,
     modifier: Modifier = Modifier,
     resetKey: Any,
     onComplete: (String) -> Unit
@@ -305,6 +316,10 @@ private fun PatternPad(
     ) {
         cell = size.width / 3f
         val line = Color(0xFF1A5BD6)
+        if (!showLine) {
+            for (i in 0..8) drawCircle(dotColor, radius = 6.dp.toPx(), center = centerOf(i))
+            return@Canvas
+        }
         for (k in 1 until path.size) {
             drawLine(line, centerOf(path[k - 1]), centerOf(path[k]), strokeWidth = 4.dp.toPx(), cap = StrokeCap.Round)
         }

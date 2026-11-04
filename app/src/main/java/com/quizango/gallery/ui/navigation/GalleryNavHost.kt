@@ -127,7 +127,7 @@ fun GalleryNavHost(
             )
             HomeScreen(
                 viewModel = homeViewModel,
-                onNavigate = { route -> navController.navigate(route) }
+                onNavigate = { route -> navController.navigateOnce(route) }
             )
         }
 
@@ -148,7 +148,7 @@ fun GalleryNavHost(
                 bucketName = bucketName,
                 mediaRepository = app.mediaRepository,
                 vaultRepository = app.vaultRepository,
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -176,7 +176,7 @@ fun GalleryNavHost(
                 isVault = isVault,
                 mediaRepository = app.mediaRepository,
                 vaultRepository = app.vaultRepository,
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -184,7 +184,7 @@ fun GalleryNavHost(
         composable(Screen.Favorites.route) {
             FavoritesScreen(
                 mediaRepository = app.mediaRepository,
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -193,7 +193,7 @@ fun GalleryNavHost(
             RecycleScreen(
                 mediaRepository = app.mediaRepository,
                 appPreferences = app.preferences,
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -254,10 +254,10 @@ fun GalleryNavHost(
         composable(Screen.RemoveJunk.route) {
             RemoveJunkScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToCleaner = { navController.navigate(Screen.Cleaner.route) },
-                onNavigateToDuplicates = { navController.navigate(Screen.DuplicateWaiting.route) },
-                onNavigateToScreenshots = { navController.navigate(Screen.Screenshots.route) },
-                onNavigateToLargeVideos = { navController.navigate(Screen.LargeVideos.route) }
+                onNavigateToCleaner = { navController.navigateOnce(Screen.Cleaner.route) },
+                onNavigateToDuplicates = { navController.navigateOnce(Screen.DuplicateWaiting.route) },
+                onNavigateToScreenshots = { navController.navigateOnce(Screen.Screenshots.route) },
+                onNavigateToLargeVideos = { navController.navigateOnce(Screen.LargeVideos.route) }
             )
         }
 
@@ -266,8 +266,11 @@ fun GalleryNavHost(
                 appPreferences = app.preferences,
                 onNavigate = { route ->
                     // Keep the lock under Forgot Password so Back returns to it (reference)
-                    if (route == Screen.VaultForgotPassword.route) navController.navigate(route)
-                    else navController.navigate(route) { popUpTo(Screen.VaultLock.route) { inclusive = true } }
+                    if (route == Screen.VaultForgotPassword.route) navController.navigateOnce(route)
+                    // Back to an open vault instead of stacking a second one
+                    else if (!navController.popBackStack(route, inclusive = false)) {
+                        navController.navigate(route) { popUpTo(Screen.VaultLock.route) { inclusive = true } }
+                    }
                 },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -276,9 +279,9 @@ fun GalleryNavHost(
         composable(Screen.VaultMedia.route) {
             VaultMediaScreen(
                 vaultRepository = app.vaultRepository,
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToSettings = { navController.navigate(Screen.VaultSetting.route) }
+                onNavigateToSettings = { navController.navigateOnce(Screen.VaultSetting.route) }
             )
         }
 
@@ -291,11 +294,20 @@ fun GalleryNavHost(
             )
         }
 
+        composable(Screen.VaultChangeLock.route) {
+            VaultLockScreen(
+                appPreferences = app.preferences,
+                onNavigate = { route -> navController.navigateOnce(route) },
+                onNavigateBack = { navController.popBackStack() },
+                changeMode = true
+            )
+        }
+
         composable(Screen.VaultSetting.route) {
             VaultSettingScreen(
                 appPreferences = app.preferences,
-                onNavigateToChangePin = { navController.navigate(Screen.VaultLock.route) },
-                onNavigateToRecoveryQuestion = { navController.navigate(Screen.VaultRecoveryQuestion.route) },
+                onNavigateToChangePin = { navController.navigateOnce(Screen.VaultChangeLock.route) },
+                onNavigateToRecoveryQuestion = { navController.navigateOnce(Screen.VaultRecoveryQuestion.route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -329,10 +341,10 @@ fun GalleryNavHost(
         composable(Screen.Cleaner.route) {
             CleanerScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToDuplicates = { navController.navigate(Screen.DuplicateWaiting.route) },
-                onNavigateToLargeVideos = { navController.navigate(Screen.LargeVideos.route) },
-                onNavigateToScreenshots = { navController.navigate(Screen.Screenshots.route) },
-                onNavigateToRemoveJunk = { navController.navigate(Screen.RemoveJunk.route) }
+                onNavigateToDuplicates = { navController.navigateOnce(Screen.DuplicateWaiting.route) },
+                onNavigateToLargeVideos = { navController.navigateOnce(Screen.LargeVideos.route) },
+                onNavigateToScreenshots = { navController.navigateOnce(Screen.Screenshots.route) },
+                onNavigateToRemoveJunk = { navController.navigateOnce(Screen.RemoveJunk.route) }
             )
         }
 
@@ -353,7 +365,7 @@ fun GalleryNavHost(
                 initialTab = tab,
                 mediaRepository = app.mediaRepository,
                 onNavigateBack = { navController.popBackStack() },
-                onNavigate = { route -> navController.navigate(route) }
+                onNavigate = { route -> navController.navigateOnce(route) }
             )
         }
 
@@ -361,14 +373,14 @@ fun GalleryNavHost(
             SearchScreen(
                 mediaRepository = app.mediaRepository,
                 onMediaClick = { mediaItem ->
-                    navController.navigate(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
+                    navController.navigateOnce(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
                 },
                 onAlbumClick = { album ->
-                    navController.navigate(Screen.AlbumDetail.createRoute(album.id, album.name))
+                    navController.navigateOnce(Screen.AlbumDetail.createRoute(album.id, album.name))
                 },
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToColorSearch = { colorHex ->
-                    navController.navigate(Screen.SearchColor.createRoute(colorHex))
+                    navController.navigateOnce(Screen.SearchColor.createRoute(colorHex))
                 }
             )
         }
@@ -387,7 +399,7 @@ fun GalleryNavHost(
                 colorHex = colorHex,
                 mediaRepository = app.mediaRepository,
                 onMediaClick = { mediaItem ->
-                    navController.navigate(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
+                    navController.navigateOnce(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
                 },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -397,7 +409,7 @@ fun GalleryNavHost(
             MomentsScreen(
                 mediaRepository = app.mediaRepository,
                 onMomentClick = { moment ->
-                    navController.navigate(Screen.StoryView.createRoute(moment.coverPath, moment.title))
+                    navController.navigateOnce(Screen.StoryView.createRoute(moment.coverPath, moment.title))
                 },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -468,7 +480,7 @@ fun GalleryNavHost(
                 storyTitle = title,
                 mediaItems = if (path == "vault") vaultStory.orEmpty() else storyItems,
                 // No editing from the vault: edits would write the decrypted copy out
-                onEditClick = if (path == "vault") null else { editPath -> navController.navigate(Screen.Editor.createRoute(editPath)) },
+                onEditClick = if (path == "vault") null else { editPath -> navController.navigateOnce(Screen.Editor.createRoute(editPath)) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -477,7 +489,7 @@ fun GalleryNavHost(
             AnimatedMediaScreen(
                 mediaRepository = app.mediaRepository,
                 onMediaClick = { mediaItem ->
-                    navController.navigate(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
+                    navController.navigateOnce(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
                 },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -487,7 +499,7 @@ fun GalleryNavHost(
             BurstPhotoScreen(
                 mediaRepository = app.mediaRepository,
                 onMediaClick = { mediaItem ->
-                    navController.navigate(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
+                    navController.navigateOnce(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
                 },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -496,7 +508,7 @@ fun GalleryNavHost(
         composable(Screen.QuickOrganizer.route) {
             QuickOrganizerScreen(
                 mediaRepository = app.mediaRepository,
-                onNavigateToRecycle = { navController.navigate(Screen.OrganizerRecycle.route) },
+                onNavigateToRecycle = { navController.navigateOnce(Screen.OrganizerRecycle.route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -613,7 +625,7 @@ fun GalleryNavHost(
         composable(Screen.Settings.route) {
             SettingsScreen(
                 appPreferences = app.preferences,
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -624,4 +636,12 @@ fun GalleryNavHost(
             )
         }
     }
+}
+
+/**
+ * Navigate without stacking a second copy of a screen that is already on the back stack
+ * (Cleaner <-> Remove Junk, vault Change Password -> vault): go back to it instead.
+ */
+private fun NavHostController.navigateOnce(route: String) {
+    if (!popBackStack(route, inclusive = false)) navigate(route) { launchSingleTop = true }
 }
