@@ -71,8 +71,8 @@
         "Unit tests and Gradle build pass"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Verified 2026-11-04 on QG55IJKZHQF6OF6L. Reference editor cannot run from this APK (no native libs: GPUImage libyuv-decoder.so missing), so parity checked from its layouts only (Crop panel: Crop, Flip X, Flip Y, Rotate 90 match). Added Invert filter, real filter thumbnails, contrast pivots on mid-grey, whole-editor undo/redo (EditHistory + tests), filter Cancel restores previous. Saved output verified: full-res 1600x720 rotated + inverted JPEG. Not covered: Sharpen slider is not applied on save; reference filter list not recoverable."
     },
     {
       "id": "STORY-6",

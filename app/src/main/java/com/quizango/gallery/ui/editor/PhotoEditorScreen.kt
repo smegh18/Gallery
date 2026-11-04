@@ -96,7 +96,8 @@ enum class EditorFilter(val label: String) {
     WARM("Warm"),
     VIVID("Vivid"),
     FADE("Fade"),
-    CYBERPUNK("Neon")
+    CYBERPUNK("Neon"),
+    INVERT("Invert")
 }
 
 /**
@@ -215,6 +216,8 @@ fun PhotoEditorScreen(
 
     // Filter
     var selectedFilter by remember { mutableStateOf(EditorFilter.NONE) }
+    var filterBeforePanel by remember { mutableStateOf(EditorFilter.NONE) }
+    LaunchedEffect(activeTab) { if (activeTab == EditorTab.FILTER) filterBeforePanel = selectedFilter }
 
     // Brush
     var brushStrokeWidth by remember { mutableFloatStateOf(15f) }
@@ -232,6 +235,29 @@ fun PhotoEditorScreen(
     var showTextDialog by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf("") }
     var inputTextColor by remember { mutableStateOf(Color.White) }
+
+    // Undo/redo of the whole edit (image, rotation, flips, filter, adjustments, drawings, stickers, text)
+    val history = remember { EditHistory<EditSnapshot>() }
+    fun snapshot(): EditSnapshot? = originalBitmap?.let {
+        EditSnapshot(
+            it, rotationDegrees, flipX, flipY, selectedFilter,
+            brightnessValue, contrastValue, saturationValue, sharpenValue,
+            drawnPaths, placedStickers, placedTexts
+        )
+    }
+    fun restore(e: EditSnapshot) {
+        originalBitmap = e.bitmap
+        rotationDegrees = e.rotation; flipX = e.flipX; flipY = e.flipY
+        selectedFilter = e.filter
+        brightnessValue = e.brightness; contrastValue = e.contrast
+        saturationValue = e.saturation; sharpenValue = e.sharpen
+        drawnPaths = e.paths; undoStack = e.paths; redoStack = emptyList()
+        placedStickers = e.stickers; placedTexts = e.texts
+    }
+    // Record a step each time a tool panel closes (and for the first loaded image)
+    LaunchedEffect(activeTab, originalBitmap) {
+        if (activeTab == null) snapshot()?.let { history.record(it) }
+    }
 
     // Save state
     var isSaving by remember { mutableStateOf(false) }
@@ -296,6 +322,22 @@ fun PhotoEditorScreen(
                                 .weight(1f)
                                 .padding(start = 8.dp)
                         )
+                        if (activeTab == null) {
+                            IconButton(onClick = { history.undo()?.let { restore(it) } }, enabled = history.canUndo) {
+                                Icon(
+                                    painterResource(R.drawable.ic_undo),
+                                    contentDescription = "Undo",
+                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = if (history.canUndo) 1f else 0.3f)
+                                )
+                            }
+                            IconButton(onClick = { history.redo()?.let { restore(it) } }, enabled = history.canRedo) {
+                                Icon(
+                                    painterResource(R.drawable.ic_redo),
+                                    contentDescription = "Redo",
+                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = if (history.canRedo) 1f else 0.3f)
+                                )
+                            }
+                        }
                         // Save Button (Matches save_btn_bg: blue pill with white text)
                         Button(
                             onClick = {
@@ -557,9 +599,11 @@ fun PhotoEditorScreen(
                                 EditorTab.FILTER -> {
                                     // Filter Panel (Matches item_filter_layout.xml)
                                     FilterPanel(
+                                        source = originalBitmap,
                                         selectedFilter = selectedFilter,
                                         onFilterSelected = { selectedFilter = it },
-                                        onClose = { activeTab = null },
+                                        // Cancel keeps the filter you had before opening the panel
+                                        onClose = { selectedFilter = filterBeforePanel; activeTab = null },
                                         onDone = { activeTab = null }
                                     )
                                 }
@@ -1125,11 +1169,18 @@ private fun AdjustPanel(
  */
 @Composable
 private fun FilterPanel(
+    source: Bitmap?,
     selectedFilter: EditorFilter,
     onFilterSelected: (EditorFilter) -> Unit,
     onClose: () -> Unit,
     onDone: () -> Unit
 ) {
+    val thumb = remember(source) {
+        source?.let {
+            val scale = 160f / maxOf(it.width, it.height)
+            Bitmap.createScaledBitmap(it, (it.width * scale).toInt().coerceAtLeast(1), (it.height * scale).toInt().coerceAtLeast(1), true)
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1164,17 +1215,7 @@ private fun FilterPanel(
                             .size(54.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .background(
-                                when (filter) {
-                                    EditorFilter.NONE -> Color(0xFFE8ECEF)
-                                    EditorFilter.GRAYSCALE -> Color(0xFF757575)
-                                    EditorFilter.SEPIA -> Color(0xFFD7C4A5)
-                                    EditorFilter.VINTAGE -> Color(0xFFEAD5C3)
-                                    EditorFilter.COOL -> Color(0xFFB3D4E5)
-                                    EditorFilter.WARM -> Color(0xFFF7D5BA)
-                                    EditorFilter.VIVID -> Color(0xFFFFB4A2)
-                                    EditorFilter.FADE -> Color(0xFFCFD8DC)
-                                    EditorFilter.CYBERPUNK -> Color(0xFFCE93D8)
-                                }
+                                MaterialTheme.colorScheme.surfaceVariant
                             )
                             .border(
                                 width = if (isSelected) 2.5.dp else 1.dp,
@@ -1183,12 +1224,13 @@ private fun FilterPanel(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = filter.label.take(2).uppercase(),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (filter == EditorFilter.NONE) MaterialTheme.colorScheme.onSurface else Color.White
-                        )
+                        // Real preview: the photo's thumbnail with this filter applied
+                        val preview = remember(thumb, filter) {
+                            thumb?.let { applyAllTransformations(it, 0f, false, false, filter, 0f, 0f, 0f).asImageBitmap() }
+                        }
+                        if (preview != null) {
+                            Image(bitmap = preview, contentDescription = filter.label, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                        }
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -1575,6 +1617,14 @@ private fun applyAllTransformations(
                     0f, 0f, 0f, 1f, 0f
                 ))
             }
+            EditorFilter.INVERT -> {
+                set(floatArrayOf(
+                    -1f, 0f, 0f, 0f, 255f,
+                    0f, -1f, 0f, 0f, 255f,
+                    0f, 0f, -1f, 0f, 255f,
+                    0f, 0f, 0f, 1f, 0f
+                ))
+            }
             EditorFilter.CYBERPUNK -> {
                 set(floatArrayOf(
                     1.2f, 0f, 0.5f, 0f, 10f,
@@ -1588,7 +1638,8 @@ private fun applyAllTransformations(
         if (brightness != 0f || contrast != 0f || saturation != 0f) {
             val adjCm = ColorMatrix()
             val scale = 1f + (contrast / 100f)
-            val translate = brightness * 1.5f
+            // Contrast pivots on mid-grey (128) so it doesn't also brighten
+            val translate = brightness * 1.5f + (1f - scale) * 128f
             adjCm.set(floatArrayOf(
                 scale, 0f, 0f, 0f, translate,
                 0f, scale, 0f, 0f, translate,
@@ -1770,3 +1821,20 @@ private fun EditorPhotoPicker(
         }
     }
 }
+
+
+/** One undoable editor state. Bitmaps are never mutated, so keeping references is safe. */
+data class EditSnapshot(
+    val bitmap: Bitmap,
+    val rotation: Float,
+    val flipX: Boolean,
+    val flipY: Boolean,
+    val filter: EditorFilter,
+    val brightness: Float,
+    val contrast: Float,
+    val saturation: Float,
+    val sharpen: Float,
+    val paths: List<DrawnPath>,
+    val stickers: List<PlacedSticker>,
+    val texts: List<PlacedText>
+)
