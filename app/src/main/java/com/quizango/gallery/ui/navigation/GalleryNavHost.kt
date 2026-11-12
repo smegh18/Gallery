@@ -408,8 +408,9 @@ fun GalleryNavHost(
         composable(Screen.Moments.route) {
             MomentsScreen(
                 mediaRepository = app.mediaRepository,
-                onMomentClick = { moment ->
-                    navController.navigateOnce(Screen.StoryView.createRoute(moment.coverPath, moment.title))
+                moments = app.moments,
+                onMomentClick = { label ->
+                    navController.navigateOnce(Screen.AlbumDetail.createRoute("filter:moment:$label", label))
                 },
                 onNavigateBack = { navController.popBackStack() }
             )

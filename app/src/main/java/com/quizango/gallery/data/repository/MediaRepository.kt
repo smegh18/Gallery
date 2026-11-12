@@ -37,7 +37,8 @@ interface MediaRepository {
 
 class MediaRepositoryImpl(
     private val dao: GalleryDao,
-    private val scanner: MediaStoreScanner
+    private val scanner: MediaStoreScanner,
+    private val momentLabels: Flow<Map<String, String>>
 ) : MediaRepository {
 
     // One shared Room subscription for the whole app, kept for 5 s after the last collector.
@@ -229,6 +230,12 @@ class MediaRepositoryImpl(
             }
             folderPath == "filter:favorites" -> {
                 dao.getFavoritesFlow().map { list -> list.map { it.toDomain() } }
+            }
+            folderPath.startsWith("filter:moment:") -> {
+                val label = folderPath.removePrefix("filter:moment:")
+                kotlinx.coroutines.flow.combine(activeEntities, momentLabels) { list, labels ->
+                    list.filter { it.mediaType != 2 && labels[it.filePath] == label }.map { it.toDomain() }
+                }
             }
             folderPath.startsWith("filter:color:") -> {
                 val hex = folderPath.removePrefix("filter:color:")

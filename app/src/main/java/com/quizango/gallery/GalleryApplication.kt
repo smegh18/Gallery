@@ -27,8 +27,10 @@ class GalleryApplication : Application(), ImageLoaderFactory {
     val scanner by lazy { MediaStoreScanner(this) }
 
     val mediaRepository: MediaRepository by lazy {
-        MediaRepositoryImpl(database.galleryDao(), scanner)
+        MediaRepositoryImpl(database.galleryDao(), scanner, moments.labels)
     }
+
+    val moments by lazy { com.quizango.gallery.data.local.MomentScanner(this) }
 
     val vaultRepository: VaultRepository by lazy {
         VaultRepositoryImpl(this, database.vaultDao(), database.galleryDao())

@@ -86,6 +86,7 @@ dependencies {
     // ML Kit Subject Segmentation
     implementation(libs.play.services.mlkit.subject.segmentation)
     implementation(libs.mlkit.vision.common)
+    implementation(libs.play.services.mlkit.image.labeling)
 
     // Testing
     testImplementation(libs.junit)
