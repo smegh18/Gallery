@@ -227,4 +227,10 @@
     <string name="usage_access_story_title">이 스토리가 마음에 드셨나요?</string>
     <string name="usage_access_video_title">비디오가 마음에 드셨나요?</string>
     <string name="whatsapp">와츠앱</string>
+    <string name="call_permission_need">통화 기능을 활성화하려면 이 권한이 필요합니다.</string>
+    <string name="open_setting_dialog">1. 설정 열기</string>
+    <string name="select_phone_call_dialog">3. 전화 통화 선택</string>
+    <string name="tap_allow_dialog">4. 허용 탭</string>
+    <string name="tap_permission_dialog">2. 권한 탭</string>
+    <string name="why_this_permission_needed">이 권한이 필요한 이유는 무엇인가요?</string>
 </resources>

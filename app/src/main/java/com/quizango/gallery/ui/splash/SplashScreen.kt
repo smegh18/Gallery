@@ -70,15 +70,15 @@ fun SplashScreen(
     // The logo's movement ends at frame 25 of 90 (0.83 s); the rest of the file just holds the
     // last frame, which looked frozen. Leave a short beat after the movement; the cap covers a failed load.
     LaunchedEffect(Unit) {
-        val hasCompletedWelcome = appPreferences.hasCompletedWelcome.first()
+        val hasCompletedOnboarding = appPreferences.hasCompletedOnboarding.first()
         val hasPermissions = checkStoragePermissions(context)
         kotlinx.coroutines.withTimeoutOrNull(2_000) {
             snapshotFlow { lottieProgress >= 26f / 90f }.first { it }
             delay(350)
         }
 
-        if (!hasCompletedWelcome) {
-            onNavigate(Screen.Welcome.route)
+        if (!hasCompletedOnboarding) {
+            onNavigate(Screen.Language.route)
         } else if (!hasPermissions) {
             onNavigate(Screen.Permission.route)
         } else {

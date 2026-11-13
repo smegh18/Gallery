@@ -122,4 +122,8 @@
     <color name="photos_tab_header_text">#ffe4e7eb</color>
     <color name="photos_tab_shimmer">#ff24272b</color>
     <color name="photos_tab_thumb_bg">#ff1a1c1f</color>
+    <color name="gray_permission">#ffaaaaaa</color>
+    <color name="op_onboarding_ac_prem_desc">#ffaaaaaa</color>
+    <color name="op_onboarding_desc_color">#ffaaaaaa</color>
+    <color name="per_text_color">#ffffffff</color>
 </resources>

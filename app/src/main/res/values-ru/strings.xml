@@ -229,4 +229,10 @@
     <string name="usage_access_story_title">Вам понравились эти истории?</string>
     <string name="usage_access_video_title">Вам понравилось это видео?</string>
     <string name="whatsapp">WhatsApp</string>
+    <string name="call_permission_need">Это разрешение необходимо для включения функций вызова.</string>
+    <string name="open_setting_dialog">1. Откройте настройки</string>
+    <string name="select_phone_call_dialog">3. Выберите Телефонные вызовы</string>
+    <string name="tap_allow_dialog">4. Нажмите Разрешить</string>
+    <string name="tap_permission_dialog">2. Нажмите Разрешения</string>
+    <string name="why_this_permission_needed">Зачем нужно это разрешение?</string>
 </resources>

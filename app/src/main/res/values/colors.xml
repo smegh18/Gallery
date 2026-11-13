@@ -219,4 +219,9 @@
     <color name="ic_text_button">#ffffffff</color>
     <color name="gs_menu_card_color">#fff2f3f5</color>
     <color name="gs_top_bg">#fff5f5f7</color>
+    <color name="gray_permission">#ff7a8389</color>
+    <color name="op_onboarding_ac_prem_desc">#ff373742</color>
+    <color name="op_onboarding_desc_color">#ff7a8389</color>
+    <color name="per_text_color">#ff1e3354</color>
+    <color name="radioButtonUncheckedColor">#ff7a8389</color>
 </resources>

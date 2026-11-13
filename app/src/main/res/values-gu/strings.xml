@@ -211,4 +211,10 @@
     <string name="usage_access_story_title">શું તમને આ વાર્તાઓ ગમી?</string>
     <string name="usage_access_video_title">શું તમને તે વિડિઓ ગમ્યો?</string>
     <string name="whatsapp">વ્હાટ્સઅપ</string>
+    <string name="call_permission_need">કોલિંગ સુવિધાઓ સક્રિય કરવા માટે આ પરવાનગી જરૂરી છે.</string>
+    <string name="open_setting_dialog">1. સેટિંગ્સ ખોલો</string>
+    <string name="select_phone_call_dialog">3. ફોન કોલ પસંદ કરો</string>
+    <string name="tap_allow_dialog">4. મંજૂરી આપો પર ટૅપ કરો</string>
+    <string name="tap_permission_dialog">2. પરવાનગીઓ પર ટૅપ કરો</string>
+    <string name="why_this_permission_needed">આ પરવાનગી શા માટે જરૂરી છે?</string>
 </resources>

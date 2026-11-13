@@ -43,7 +43,6 @@ import com.quizango.gallery.ui.editor.PhotoEditorScreen
 import com.quizango.gallery.ui.favorites.FavoritesScreen
 import com.quizango.gallery.ui.home.HomeScreen
 import com.quizango.gallery.ui.home.HomeViewModel
-import com.quizango.gallery.ui.onboarding.WelcomeScreen
 import com.quizango.gallery.ui.permission.PermissionScreen
 import com.quizango.gallery.ui.recycle.RecycleScreen
 import com.quizango.gallery.ui.search.SearchScreen
@@ -91,17 +90,6 @@ fun GalleryNavHost(
                 onNavigate = { route ->
                     navController.navigate(route) {
                         popUpTo(Screen.Splash.route) { inclusive = true }
-                    }
-                }
-            )
-        }
-
-        composable(Screen.Welcome.route) {
-            WelcomeScreen(
-                appPreferences = app.preferences,
-                onNavigate = { route ->
-                    navController.navigate(route) {
-                        popUpTo(Screen.Welcome.route) { inclusive = true }
                     }
                 }
             )
@@ -618,7 +606,7 @@ fun GalleryNavHost(
 
         composable(Screen.Language.route) {
             val canNavigateBack = navController.previousBackStackEntry != null &&
-                navController.previousBackStackEntry?.destination?.route != Screen.Welcome.route
+                navController.previousBackStackEntry?.destination?.route != Screen.Splash.route
             LanguageScreen(
                 appPreferences = app.preferences,
                 canNavigateBack = canNavigateBack,

@@ -227,4 +227,10 @@
     <string name="usage_access_story_title">Podobały Ci się te historie?</string>
     <string name="usage_access_video_title">Podobał Ci się ten film?</string>
     <string name="whatsapp">Whatsapp</string>
+    <string name="call_permission_need">To uprawnienie jest wymagane do włączenia funkcji połączeń.</string>
+    <string name="open_setting_dialog">1. Otwórz Ustawienia</string>
+    <string name="select_phone_call_dialog">3. Wybierz Połączenia telefoniczne</string>
+    <string name="tap_allow_dialog">4. Dotknij Zezwól</string>
+    <string name="tap_permission_dialog">2. Dotknij Uprawnienia</string>
+    <string name="why_this_permission_needed">Dlaczego to uprawnienie jest potrzebne?</string>
 </resources>

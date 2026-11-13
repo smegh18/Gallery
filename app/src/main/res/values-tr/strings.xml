@@ -217,4 +217,10 @@
     <string name="usage_access_settings_title">Uygulama kullanım istatistikleri paylaşılsın mı?</string>
     <string name="usage_access_story_title">Bu hikayeleri beğendiniz mi?</string>
     <string name="usage_access_video_title">Bu videoyu beğendiniz mi?</string>
+    <string name="call_permission_need">Arama özelliklerini etkinleştirmek için bu izin gereklidir.</string>
+    <string name="open_setting_dialog">1. Ayarları Aç</string>
+    <string name="select_phone_call_dialog">3. Telefon Aramasını Seç</string>
+    <string name="tap_allow_dialog">"4. İzin Ver'e Dokun"</string>
+    <string name="tap_permission_dialog">2. İzinlere Dokun</string>
+    <string name="why_this_permission_needed">Bu izin neden gerekli?</string>
 </resources>

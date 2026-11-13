@@ -301,4 +301,10 @@
     <string name="usage_access_story_title">Loved these stories?</string>
     <string name="usage_access_video_title">Enjoyed that video?</string>
     <string name="whatsapp">Whatsapp</string>
+    <string name="call_permission_need">This permission is needed to enable calling features.</string>
+    <string name="open_setting_dialog">1. Open Settings</string>
+    <string name="select_phone_call_dialog">3. Select Phone Call</string>
+    <string name="tap_allow_dialog">4. Tap Allow</string>
+    <string name="tap_permission_dialog">2. Tap Permissions</string>
+    <string name="why_this_permission_needed">Why This Permission Is Needed?</string>
 </resources>

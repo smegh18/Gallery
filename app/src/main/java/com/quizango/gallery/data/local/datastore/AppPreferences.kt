@@ -13,6 +13,7 @@ class AppPreferences(private val context: Context) {
     private object Keys {
         val IS_FIRST_LAUNCH = booleanPreferencesKey("is_first_launch")
         val HAS_COMPLETED_WELCOME = booleanPreferencesKey("has_completed_welcome")
+        val HAS_COMPLETED_ONBOARDING = booleanPreferencesKey("has_completed_onboarding")
         val APP_LANGUAGE = stringPreferencesKey("app_language")
         val THEME_MODE = intPreferencesKey("theme_mode") // 0: Light, 1: Dark, 2: System
         val MEDIA_COL_COUNT = intPreferencesKey("media_col_count")
@@ -31,6 +32,9 @@ class AppPreferences(private val context: Context) {
 
     val isFirstLaunch: Flow<Boolean> = context.dataStore.data.map { it[Keys.IS_FIRST_LAUNCH] ?: true }
     val hasCompletedWelcome: Flow<Boolean> = context.dataStore.data.map { it[Keys.HAS_COMPLETED_WELCOME] ?: false }
+    val hasCompletedOnboarding: Flow<Boolean> = context.dataStore.data.map {
+        it[Keys.HAS_COMPLETED_ONBOARDING] ?: it[Keys.HAS_COMPLETED_WELCOME] ?: false
+    }
     val appLanguage: Flow<String> = context.dataStore.data.map { it[Keys.APP_LANGUAGE] ?: "en" }
     val themeMode: Flow<Int> = context.dataStore.data.map { it[Keys.THEME_MODE] ?: 2 }
     val mediaColCount: Flow<Int> = context.dataStore.data.map { it[Keys.MEDIA_COL_COUNT] ?: 4 }
@@ -61,6 +65,13 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setCompletedWelcome(completed: Boolean) {
         context.dataStore.edit { it[Keys.HAS_COMPLETED_WELCOME] = completed }
+    }
+
+    suspend fun setOnboardingCompleted(completed: Boolean = true) {
+        context.dataStore.edit {
+            it[Keys.HAS_COMPLETED_ONBOARDING] = completed
+            it[Keys.HAS_COMPLETED_WELCOME] = completed
+        }
     }
 
     suspend fun setLanguage(langCode: String) {

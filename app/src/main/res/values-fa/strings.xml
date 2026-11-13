@@ -219,4 +219,10 @@
     <string name="usage_access_story_title">از این داستان‌ها خوشتان آمد؟</string>
     <string name="usage_access_video_title">از این ویدیو لذت بردید؟</string>
     <string name="whatsapp">واتس‌اپ</string>
+    <string name="call_permission_need">برای فعال‌سازی قابلیت‌های تماس به این مجوز نیاز است.</string>
+    <string name="open_setting_dialog">1. تنظیمات را باز کنید</string>
+    <string name="select_phone_call_dialog">3. تماس تلفنی را انتخاب کنید</string>
+    <string name="tap_allow_dialog">4. روی اجازه دادن ضربه بزنید</string>
+    <string name="tap_permission_dialog">2. روی مجوزها ضربه بزنید</string>
+    <string name="why_this_permission_needed">چرا این مجوز لازم است؟</string>
 </resources>

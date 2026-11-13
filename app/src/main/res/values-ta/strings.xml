@@ -228,4 +228,10 @@
     <string name="usage_access_story_title">இந்தக் கதைகள் பிடித்திருந்தனவா?</string>
     <string name="usage_access_video_title">இந்த வீடியோ பிடித்திருந்ததா?</string>
     <string name="whatsapp">வாட்ஸ்அப்</string>
+    <string name="call_permission_need">அழைப்பு அம்சங்களை இயக்க இந்த அனுமதி தேவை.</string>
+    <string name="open_setting_dialog">1. அமைப்புகளைத் திறக்கவும்</string>
+    <string name="select_phone_call_dialog">3. தொலைபேசி அழைப்பைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="tap_allow_dialog">4. அனுமதி அளி என்பதைத் தட்டவும்</string>
+    <string name="tap_permission_dialog">2. அனுமதிகளைத் தட்டவும்</string>
+    <string name="why_this_permission_needed">இந்த அனுமதி ஏன் தேவை?</string>
 </resources>

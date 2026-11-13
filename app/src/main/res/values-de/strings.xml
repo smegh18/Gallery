@@ -219,4 +219,10 @@
     <string name="usage_access_story_title">Gefallen Ihnen diese Stories?</string>
     <string name="usage_access_video_title">Hat Ihnen das Video gefallen?</string>
     <string name="whatsapp">Whatsapp</string>
+    <string name="call_permission_need">Diese Berechtigung ist erforderlich, um Anruffunktionen zu aktivieren.</string>
+    <string name="open_setting_dialog">1. Einstellungen öffnen</string>
+    <string name="select_phone_call_dialog">3. Telefonanruf auswählen</string>
+    <string name="tap_allow_dialog">4. Auf Zulassen tippen</string>
+    <string name="tap_permission_dialog">2. Auf Berechtigungen tippen</string>
+    <string name="why_this_permission_needed">Warum wird diese Berechtigung benötigt?</string>
 </resources>

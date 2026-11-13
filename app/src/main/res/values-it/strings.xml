@@ -227,4 +227,10 @@
     <string name="usage_access_story_title">Ti sono piaciute queste storie?</string>
     <string name="usage_access_video_title">Ti è piaciuto questo video?</string>
     <string name="whatsapp">Whatsapp</string>
+    <string name="call_permission_need">Questa autorizzazione è necessaria per abilitare le funzioni di chiamata.</string>
+    <string name="open_setting_dialog">1. Apri Impostazioni</string>
+    <string name="select_phone_call_dialog">3. Seleziona Chiamate telefoniche</string>
+    <string name="tap_allow_dialog">4. Tocca Consenti</string>
+    <string name="tap_permission_dialog">2. Tocca Autorizzazioni</string>
+    <string name="why_this_permission_needed">Perché è necessaria questa autorizzazione?</string>
 </resources>
