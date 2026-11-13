@@ -43,6 +43,7 @@ import com.quizango.gallery.ui.editor.PhotoEditorScreen
 import com.quizango.gallery.ui.favorites.FavoritesScreen
 import com.quizango.gallery.ui.home.HomeScreen
 import com.quizango.gallery.ui.home.HomeViewModel
+import com.quizango.gallery.ui.onboarding.FeaturePromoScreen
 import com.quizango.gallery.ui.permission.PermissionScreen
 import com.quizango.gallery.ui.recycle.RecycleScreen
 import com.quizango.gallery.ui.search.SearchScreen
@@ -101,6 +102,17 @@ fun GalleryNavHost(
                 onNavigate = { route ->
                     navController.navigate(route) {
                         popUpTo(Screen.Permission.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Screen.FeaturePromo.route) {
+            FeaturePromoScreen(
+                appPreferences = app.preferences,
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
                     }
                 }
             )
