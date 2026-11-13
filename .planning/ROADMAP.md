@@ -49,10 +49,17 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Checklist rows**: Section C (shared parts)
 **Success Criteria** (what must be TRUE):
   1. All 107 new and 5 changed 2.7.2 drawables exist in the app and draw correctly in light and dark mode, with the reference logo/name art replaced by our own.
-  2. With the device language switched across every supported language, the 85 new and 8 changed 2.7.2 strings appear translated (for example "Select all" and "Close" use the 2.7.2 wording), with no untranslated fallbacks.
+  2. With the device language switched across every supported language, the 85 new and 8 changed 2.7.2 strings appear translated (for example "Select all" and "Close" use the 2.7.2 wording), translated exactly where 2.7.2 translates them; keys 2.7.2 itself leaves in English (album_tab_*, close_button, explore_tab_ai_editor, onb_feature_*, some gs2_*) stay English for parity.
   3. Existing screens render with the 2.7.2 colours and text styles in both light and dark mode, with no visual regression and a clean `assembleDebug`.
   4. The Lottie animations still in use match their 2.7.2 copies (including the changed `app_setings`), and Lotties 2.7.2 removed are no longer shipped unless a screen still uses them.
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Tracer: Home "Select all" in 2.7.2 wording/accent/Inter/language (strings sync script, #0066FF, Inter), then sdp/ssp helper and 23 text styles (wave 1)
+- [ ] 01-02-PLAN.md — Lotties to 2.7.2: delete-complete on dm_success, retired Lottie removed, 13 more imported (wave 1)
+- [ ] 01-03-PLAN.md — 2.7.2 colours light/dark, 26 sdp buckets, 106 drawables, splash_bg window background (wave 2)
+- [ ] 01-04-PLAN.md — 2.7.2 English strings (74 new, 8 changed) and translations for 24 languages (wave 2)
+- [ ] 01-05-PLAN.md — Quality gates: CodeRabbit, unslop, release build, on-device light/dark/language check (wave 3, checkpoint)
 **UI hint**: yes
 
 ### Phase 2: Onboarding
