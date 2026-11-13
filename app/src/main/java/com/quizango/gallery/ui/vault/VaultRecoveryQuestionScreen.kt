@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
+import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.GalleryBlue
 import com.quizango.gallery.ui.theme.cardBackground
 import com.quizango.gallery.ui.theme.isDark
@@ -213,7 +214,7 @@ internal fun AnswerField(value: String, onValueChange: (String) -> Unit) {
         // ✓ on the keyboard closes it so the button underneath is reachable
         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Done),
         keyboardActions = androidx.compose.foundation.text.KeyboardActions(onDone = { focus.clearFocus() }),
-        textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp, color = MaterialTheme.colorScheme.onBackground),
+        textStyle = androidx.compose.ui.text.TextStyle(fontFamily = Inter, fontSize = 16.sp, color = MaterialTheme.colorScheme.onBackground),
         cursorBrush = androidx.compose.ui.graphics.SolidColor(GalleryBlue),
         modifier = Modifier
             .fillMaxWidth()
