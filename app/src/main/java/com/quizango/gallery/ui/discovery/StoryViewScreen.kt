@@ -29,12 +29,24 @@ import coil.compose.AsyncImage
 import com.quizango.gallery.domain.model.MediaItem
 import java.io.File
 
+/** Story row order (path to title) from the Albums tab, so a finished story can open the next one. */
+object StoryQueue {
+    var stories: List<Pair<String, String>> = emptyList()
+
+    fun next(path: String): Pair<String, String>? {
+        val i = stories.indexOfFirst { it.first == path }
+        return if (i < 0) null else stories.getOrNull(i + 1)
+    }
+}
+
 @Composable
 fun StoryViewScreen(
     storyTitle: String,
     mediaItems: List<MediaItem>,
     onEditClick: ((String) -> Unit)? = null,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    // Reference: after the last photo, play the next story in the row
+    onFinished: () -> Unit = onNavigateBack
 ) {
     val context = LocalContext.current
 
@@ -47,9 +59,10 @@ fun StoryViewScreen(
         ) {
             CircularProgressIndicator(color = Color.White)
         }
+        val latest by rememberUpdatedState(mediaItems) // items may still be loading
         LaunchedEffect(Unit) {
             kotlinx.coroutines.delay(800)
-            if (mediaItems.isEmpty()) {
+            if (latest.isEmpty()) {
                 onNavigateBack()
             }
         }
@@ -82,7 +95,7 @@ fun StoryViewScreen(
             if (currentIndex < mediaItems.size - 1) {
                 currentIndex++
             } else {
-                onNavigateBack()
+                onFinished()
             }
         }
     }
@@ -109,7 +122,7 @@ fun StoryViewScreen(
                             if (currentIndex < mediaItems.size - 1) {
                                 currentIndex++
                             } else {
-                                onNavigateBack()
+                                onFinished()
                             }
                         }
                     }

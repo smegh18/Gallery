@@ -428,8 +428,12 @@ fun GalleryNavHost(
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
             val path = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
             val allMedia by app.mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
+            // Built-in albums (Screenshots, Camera...) are "filter:" ids, not folders
+            val filterMedia by androidx.compose.runtime.produceState(emptyList<com.quizango.gallery.domain.model.MediaItem>(), path) {
+                if (path.startsWith("filter:")) app.mediaRepository.getMediaByFolderFlow(path).collect { value = it }
+            }
 
-            val storyItems = androidx.compose.runtime.remember(path, title, allMedia) {
+            val storyItems = androidx.compose.runtime.remember(path, title, allMedia, filterMedia) {
                 val photosOnly = allMedia.filter { it.mediaType != MediaType.VIDEO }
                 when {
                     path == "recent" -> {
@@ -437,6 +441,9 @@ fun GalleryNavHost(
                     }
                     path == "random" -> {
                         photosOnly.shuffled().take(20)
+                    }
+                    path.startsWith("filter:") -> {
+                        filterMedia.filter { it.mediaType != MediaType.VIDEO }.take(20)
                     }
                     path == "favorite" -> {
                         val favs = photosOnly.filter { it.isFavorite }
@@ -482,7 +489,14 @@ fun GalleryNavHost(
                 mediaItems = if (path == "vault") vaultStory.orEmpty() else storyItems,
                 // No editing from the vault: edits would write the decrypted copy out
                 onEditClick = if (path == "vault") null else { editPath -> navController.navigateOnce(Screen.Editor.createRoute(editPath)) },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onFinished = {
+                    val next = com.quizango.gallery.ui.discovery.StoryQueue.next(path)
+                    if (next == null) navController.popBackStack()
+                    else navController.navigate(Screen.StoryView.createRoute(next.first, next.second)) {
+                        popUpTo(Screen.StoryView.route) { inclusive = true }
+                    }
+                }
             )
         }
 

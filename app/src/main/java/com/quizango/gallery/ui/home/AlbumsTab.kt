@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.discovery.StoryQueue
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
@@ -133,6 +134,12 @@ fun AlbumsTab(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 // Stories Strip (Reference: llStoryView / storyRecycler in fragment_album.xml)
+                StoryQueue.stories = buildList {
+                    if (storiesData.recent != null) add("recent" to "Recent")
+                    if (storiesData.random != null) add("random" to "Random")
+                    if (storiesData.fav != null) add("favorite" to "Favorites")
+                    storiesData.albums.forEach { add(it.id to it.name) }
+                }
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
