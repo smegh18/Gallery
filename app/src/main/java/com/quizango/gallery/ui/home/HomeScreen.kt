@@ -75,7 +75,7 @@ fun HomeScreen(
                     when (route) {
                         "favorites" -> onNavigate(Screen.Favorites.route)
                         "recycle" -> onNavigate(Screen.RecycleBin.route)
-                        "duplicates" -> onNavigate(Screen.Duplicates.route)
+                        "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
                         "vault" -> onNavigate(Screen.VaultLock.route)
                         "cleaner" -> onNavigate(Screen.Cleaner.route)
                         "editor" -> onNavigate(Screen.Editor.createRoute())
@@ -226,7 +226,7 @@ fun HomeScreen(
                                 "vault" -> onNavigate(Screen.VaultLock.route)
                                 "favorites" -> onNavigate(Screen.Favorites.route)
                                 "cleaner" -> onNavigate(Screen.RemoveJunk.route)
-                                "duplicates" -> onNavigate(Screen.Duplicates.route)
+                                "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
                                 "recycle" -> onNavigate(Screen.RecycleBin.route)
                                 "collage" -> onNavigate(Screen.CollageMaker.route)
                                 "editor" -> onNavigate(Screen.Editor.createRoute())

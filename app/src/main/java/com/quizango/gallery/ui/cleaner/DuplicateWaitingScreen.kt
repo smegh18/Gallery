@@ -39,10 +39,9 @@ fun DuplicateWaitingScreen(
     scan: suspend (onProgress: (Float) -> Unit) -> Unit,
     onScanFinished: () -> Unit
 ) {
-    var progress by remember { mutableFloatStateOf(0f) }
     var isScanComplete by remember { mutableStateOf(false) }
 
-    val successComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.cleaner_done_lottie))
+    val successComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.success)) // reference @raw/success
     val lottieProgress by animateLottieCompositionAsState(
         composition = successComposition,
         isPlaying = isScanComplete
@@ -51,10 +50,10 @@ fun DuplicateWaitingScreen(
     LaunchedEffect(Unit) {
         // Real scan; keep the screen up at least as long as before so it doesn't flash
         val started = System.currentTimeMillis()
-        scan { progress = it }
+        scan { }
         delay((1800 - (System.currentTimeMillis() - started)).coerceAtLeast(0))
         isScanComplete = true
-        delay(900)
+        delay(2200) // let @raw/success finish (65 frames at 30 fps)
         onScanFinished()
     }
 
@@ -100,28 +99,6 @@ fun DuplicateWaitingScreen(
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(28.dp))
-
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier
-                        .fillMaxWidth(0.72f)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
-                    color = Color.White,
-                    trackColor = Color.White.copy(alpha = 0.3f),
-                    gapSize = 0.dp,
-                    drawStopIndicator = {}
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = "${(progress * 100).toInt()}%",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White.copy(alpha = 0.9f)
-                )
             }
         }
 
@@ -140,7 +117,7 @@ fun DuplicateWaitingScreen(
                 LottieAnimation(
                     composition = successComposition,
                     progress = { lottieProgress },
-                    modifier = Modifier.size(140.dp)
+                    modifier = Modifier.size(150.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
