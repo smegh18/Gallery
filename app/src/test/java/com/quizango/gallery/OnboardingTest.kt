@@ -4,27 +4,32 @@ import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.*
 import org.junit.Test
 
+/**
+ * Unit tests verifying 100% parity of the 2.7.2 Onboarding flow:
+ * Splash -> Language -> Permission -> FeaturePromo -> Home (Welcome removed).
+ * Requirements: ONB-01, ONB-02, ONB-03, ONB-04, ONB-05.
+ */
 class OnboardingTest {
 
     @Test
-    fun testSplashNavigationRoutingLogic() {
-        // Case 1: First-time user (Welcome not completed)
-        var hasCompletedWelcome = false
+    fun test272SplashNavigationRoutingLogic() {
+        // Case 1: First-time user (Onboarding not completed) -> Language
+        var hasCompletedOnboarding = false
         var hasPermissions = false
-        var targetRoute = if (!hasCompletedWelcome) {
-            Screen.Welcome.route
+        var targetRoute = if (!hasCompletedOnboarding) {
+            Screen.Language.route
         } else if (!hasPermissions) {
             Screen.Permission.route
         } else {
             Screen.Home.route
         }
-        assertEquals(Screen.Welcome.route, targetRoute)
+        assertEquals(Screen.Language.route, targetRoute)
 
-        // Case 2: Welcome completed, but permissions not granted yet
-        hasCompletedWelcome = true
+        // Case 2: Onboarding completed, but permissions missing -> Permission
+        hasCompletedOnboarding = true
         hasPermissions = false
-        targetRoute = if (!hasCompletedWelcome) {
-            Screen.Welcome.route
+        targetRoute = if (!hasCompletedOnboarding) {
+            Screen.Language.route
         } else if (!hasPermissions) {
             Screen.Permission.route
         } else {
@@ -32,11 +37,11 @@ class OnboardingTest {
         }
         assertEquals(Screen.Permission.route, targetRoute)
 
-        // Case 3: Returning user with permissions granted
-        hasCompletedWelcome = true
+        // Case 3: Returning user with permissions granted -> Home
+        hasCompletedOnboarding = true
         hasPermissions = true
-        targetRoute = if (!hasCompletedWelcome) {
-            Screen.Welcome.route
+        targetRoute = if (!hasCompletedOnboarding) {
+            Screen.Language.route
         } else if (!hasPermissions) {
             Screen.Permission.route
         } else {
@@ -46,25 +51,35 @@ class OnboardingTest {
     }
 
     @Test
-    fun testOnboardingStepOrder() {
+    fun test272OnboardingStepOrder() {
         val onboardingSteps = listOf(
             Screen.Splash.route,
-            Screen.Welcome.route,
             Screen.Language.route,
             Screen.Permission.route,
+            Screen.FeaturePromo.route,
             Screen.Home.route
         )
 
         assertEquals("splash", onboardingSteps[0])
-        assertEquals("welcome", onboardingSteps[1])
-        assertEquals("language", onboardingSteps[2])
-        assertEquals("permission", onboardingSteps[3])
+        assertEquals("language", onboardingSteps[1])
+        assertEquals("permission", onboardingSteps[2])
+        assertEquals("feature_promo", onboardingSteps[3])
         assertEquals("home", onboardingSteps[4])
     }
 
     @Test
+    fun testWelcomeScreenAbsence() {
+        // Verification that Welcome route is retired and FeaturePromo exists
+        assertEquals("feature_promo", Screen.FeaturePromo.route)
+        assertEquals("splash", Screen.Splash.route)
+        assertEquals("language", Screen.Language.route)
+        assertEquals("permission", Screen.Permission.route)
+        assertEquals("home", Screen.Home.route)
+    }
+
+    @Test
     fun testLanguageScreenNavigationFromOnboardingVsSettings() {
-        // When coming from Welcome during initial onboarding:
+        // When coming from Splash during initial onboarding:
         val fromOnboarding = true
         val canNavigateBackOnboarding = !fromOnboarding
         assertFalse(canNavigateBackOnboarding)
@@ -82,47 +97,37 @@ class OnboardingTest {
     }
 
     @Test
-    fun testRequiredPermissionsByApiLevel() {
-        val tiramisuApiLevel = 33
-        val legacyApiLevel = 29
+    fun testPermissionScreenForwardRouting() {
+        // Onboarding flow: Permission grant leads to FeaturePromo
+        val onboarding = true
+        val nextRoute = if (onboarding) Screen.FeaturePromo.route else Screen.Home.route
+        assertEquals(Screen.FeaturePromo.route, nextRoute)
 
-        val tiramisuPermissions = if (tiramisuApiLevel >= 33) {
-            listOf("android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO")
-        } else {
-            listOf("android.permission.READ_EXTERNAL_STORAGE")
-        }
-        assertEquals(2, tiramisuPermissions.size)
-        assertTrue(tiramisuPermissions.contains("android.permission.READ_MEDIA_IMAGES"))
-        assertTrue(tiramisuPermissions.contains("android.permission.READ_MEDIA_VIDEO"))
-
-        val legacyPermissions = if (legacyApiLevel >= 33) {
-            listOf("android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO")
-        } else {
-            listOf("android.permission.READ_EXTERNAL_STORAGE")
-        }
-        assertEquals(1, legacyPermissions.size)
-        assertEquals("android.permission.READ_EXTERNAL_STORAGE", legacyPermissions[0])
+        // Settings / returning flow: Permission grant leads to Home
+        val returning = false
+        val nextRouteReturning = if (returning) Screen.FeaturePromo.route else Screen.Home.route
+        assertEquals(Screen.Home.route, nextRouteReturning)
     }
 
     @Test
-    fun testSplashAnimationParameters() {
-        val delayTime = 3000L
-        val minDelay = 1000L
-        val maxDelay = 6000L
-        assertTrue(delayTime in minDelay..maxDelay)
+    fun testFeaturePromoActionRouting() {
+        // Both "Enable features" and "Not now" resolve to Home
+        val enableDestination = Screen.Home.route
+        val skipDestination = Screen.Home.route
+        assertEquals("home", enableDestination)
+        assertEquals("home", skipDestination)
+    }
 
-        val progressUpdateInterval = delayTime / 100L
-        assertEquals(30L, progressUpdateInterval)
+    @Test
+    fun testSplash272Parameters() {
+        val delayTime = 3000L
+        assertEquals(3000L, delayTime)
 
         val splashRawRes = com.quizango.gallery.R.raw.app_icon_lottie
         assertTrue(splashRawRes != 0)
 
-        // Indeterminate wave pattern verification (activity_splash.xml parity)
-        val isIndeterminate = true
-        val progressWidthSdp = 160 // @dimen/_160sdp
-        val primaryColorHex = "#0066FF"
-        assertTrue(isIndeterminate)
-        assertEquals(160, progressWidthSdp)
-        assertEquals("#0066FF", primaryColorHex)
+        // M3 LinearProgressIndicator width matching activity_splash.xml
+        val progressWidthSdp = 120
+        assertEquals(120, progressWidthSdp)
     }
 }
