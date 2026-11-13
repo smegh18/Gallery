@@ -2,8 +2,8 @@ package com.quizango.gallery.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary Brand Colors (matching reference APK mainAppColor #0066ff and colorPrimary #3478f6)
-/** Reference mainAppColor: #0066FF in light mode, #3478F6 (colorPrimary) in dark mode. */
+// Primary Brand Colors (reference 2.7.2: colorPrimary and mainAppColor are #0066FF in light and dark)
+/** Reference mainAppColor: #0066FF in light and dark mode (2.7.2). */
 val GalleryBlue: Color
     @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable
     get() = androidx.compose.material3.MaterialTheme.colorScheme.primary
