@@ -147,77 +147,80 @@ fun VaultMediaScreen(
                     color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // 1. Share Action
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                    // Edge-to-edge: keep the content above the system navigation bar
+                    Box(Modifier.navigationBarsPadding()) {
+                        Row(
                             modifier = Modifier
-                                .clickable { shareSelectedVaultMedia(context, selectedPaths) }
-                                .padding(vertical = 4.dp, horizontal = 12.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_home_select_share),
-                                contentDescription = "Share",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Share",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                            // 1. Share Action
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { shareSelectedVaultMedia(context, selectedPaths) }
+                                    .padding(vertical = 4.dp, horizontal = 12.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_home_select_share),
+                                    contentDescription = "Share",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Share",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 2. Unhide Action (ic_unhide)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .clickable { showUnhideConfirmDialog = true }
-                                .padding(vertical = 4.dp, horizontal = 12.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_unhide),
-                                contentDescription = "Unhide",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Unhide",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                            // 2. Unhide Action (ic_unhide)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { showUnhideConfirmDialog = true }
+                                    .padding(vertical = 4.dp, horizontal = 12.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_unhide),
+                                    contentDescription = "Unhide",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Unhide",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 3. Delete Action
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .clickable { showDeleteConfirmDialog = true }
-                                .padding(vertical = 4.dp, horizontal = 12.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_album_select_delete),
-                                contentDescription = "Delete",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Delete",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                            // 3. Delete Action
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { showDeleteConfirmDialog = true }
+                                    .padding(vertical = 4.dp, horizontal = 12.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_album_select_delete),
+                                    contentDescription = "Delete",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Delete",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 }

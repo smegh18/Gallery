@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.R
+import com.quizango.gallery.data.local.DuplicateFinder
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.theme.GalleryBlue
@@ -52,6 +53,7 @@ import java.io.File
 @Composable
 fun DuplicatePhotoScreen(
     mediaRepository: MediaRepository,
+    duplicateFinder: DuplicateFinder,
     onNavigateBack: () -> Unit,
     onNavigateToComplete: ((count: Int, sizeBytes: Long) -> Unit)? = null
 ) {
@@ -61,25 +63,9 @@ fun DuplicatePhotoScreen(
     var keepBestPhotoEnabled by remember { mutableStateOf(true) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    // Duplicate grouping algorithm:
-    // 1. Group by explicit duplicateGroup if set > 0
-    // 2. Otherwise group by identical non-zero fileSize
-    val duplicateGroups: List<List<MediaItem>> = remember(allMedia) {
-        val explicitGroups = allMedia.filter { it.duplicateGroup != 0L }
-            .groupBy { it.duplicateGroup }
-            .filter { it.value.size > 1 }
-            .values
-            .toList()
-
-        val explicitPaths = explicitGroups.flatten().map { it.filePath }.toSet()
-
-        val sizeGroups = allMedia.filter { it.filePath !in explicitPaths && it.fileSize > 0 }
-            .groupBy { it.fileSize }
-            .filter { it.value.size > 1 }
-            .values
-            .toList()
-
-        (explicitGroups + sizeGroups).distinctBy { group -> group.map { it.filePath }.sorted() }
+    // Reference rule: same thumbnail fingerprint (see DuplicateFinder); cached, so this is fast after the scan
+    val duplicateGroups: List<List<MediaItem>> by produceState(emptyList(), allMedia) {
+        value = DuplicateFinder.group(allMedia, duplicateFinder.fingerprints(allMedia))
     }
 
     // Default selection logic:
@@ -173,27 +159,30 @@ fun DuplicatePhotoScreen(
                     color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp)
-                    ) {
+                    // Edge-to-edge: keep the content above the system navigation bar
+                    Box(Modifier.navigationBarsPadding()) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Color(0xFFE11A1A))
-                                .clickable { showDeleteDialog = true },
-                            contentAlignment = Alignment.Center
+                                .padding(horizontal = 16.dp, vertical = 12.dp)
                         ) {
-                            val sizeText = if (selectedBytes > 0) " (${formatDuplicateSize(selectedBytes)})" else " (${selectedDuplicates.size})"
-                            Text(
-                                text = "${stringResource(id = R.string.delete_selected)}$sizeText",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color(0xFFE11A1A))
+                                    .clickable { showDeleteDialog = true },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val sizeText = if (selectedBytes > 0) " (${formatDuplicateSize(selectedBytes)})" else " (${selectedDuplicates.size})"
+                                Text(
+                                    text = "${stringResource(id = R.string.delete_selected)}$sizeText",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
                 }

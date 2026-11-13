@@ -99,177 +99,180 @@ fun AlbumDetailScreen(
                     color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val scrollState = rememberScrollState()
-                    val anyNotFav = remember(selectedPaths, mediaItems) {
-                        mediaItems.any { it.filePath in selectedPaths && !it.isFavorite }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(scrollState)
-                            .padding(horizontal = 8.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // 1. Share (ic_home_select_share)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .width(56.dp)
-                                .clickable { shareSelectedMedia(context, selectedPaths) }
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_home_select_share),
-                                contentDescription = "Share",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Share",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                    // Edge-to-edge: keep the content above the system navigation bar
+                    Box(Modifier.navigationBarsPadding()) {
+                        val scrollState = rememberScrollState()
+                        val anyNotFav = remember(selectedPaths, mediaItems) {
+                            mediaItems.any { it.filePath in selectedPaths && !it.isFavorite }
                         }
 
-                        // 2. Favorite (ic_home_select_fav / ic_fav_fill)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                        Row(
                             modifier = Modifier
-                                .width(56.dp)
-                                .clickable {
-                                    scope.launch {
-                                        selectedPaths.forEach { path ->
-                                            mediaRepository.setFavorite(path, anyNotFav)
+                                .fillMaxWidth()
+                                .horizontalScroll(scrollState)
+                                .padding(horizontal = 8.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // 1. Share (ic_home_select_share)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(56.dp)
+                                    .clickable { shareSelectedMedia(context, selectedPaths) }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_home_select_share),
+                                    contentDescription = "Share",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Share",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+
+                            // 2. Favorite (ic_home_select_fav / ic_fav_fill)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(56.dp)
+                                    .clickable {
+                                        scope.launch {
+                                            selectedPaths.forEach { path ->
+                                                mediaRepository.setFavorite(path, anyNotFav)
+                                            }
+                                            val msg = if (anyNotFav) "Added to Favorites" else "Removed from Favorites"
+                                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                            selectedPaths = emptySet()
                                         }
-                                        val msg = if (anyNotFav) "Added to Favorites" else "Removed from Favorites"
-                                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                                        selectedPaths = emptySet()
                                     }
-                                }
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    id = if (anyNotFav) R.drawable.ic_home_select_fav else R.drawable.ic_fav_fill
-                                ),
-                                contentDescription = if (anyNotFav) "Favorite" else "Unfavorite",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = if (anyNotFav) "Favorite" else "Unfavorite",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (anyNotFav) R.drawable.ic_home_select_fav else R.drawable.ic_fav_fill
+                                    ),
+                                    contentDescription = if (anyNotFav) "Favorite" else "Unfavorite",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = if (anyNotFav) "Favorite" else "Unfavorite",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 3. Add to (ic_home_select_add)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .width(56.dp)
-                                .clickable { showAddToDialog = true }
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_home_select_add),
-                                contentDescription = "Add to",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Add to",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                            // 3. Add to (ic_home_select_add)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(56.dp)
+                                    .clickable { showAddToDialog = true }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_home_select_add),
+                                    contentDescription = "Add to",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Add to",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 4. Add to Private (Vault) (ic_home_select_hide)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .width(70.dp)
-                                .clickable {
-                                    scope.launch {
-                                        val toVault = mediaItems.filter { it.filePath in selectedPaths }
-                                        toVault.forEach { vaultRepository.moveToVault(it) }
-                                        mediaRepository.syncMediaStore()
-                                        Toast.makeText(context, "Added to Private Vault", Toast.LENGTH_SHORT).show()
-                                        selectedPaths = emptySet()
+                            // 4. Add to Private (Vault) (ic_home_select_hide)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .clickable {
+                                        scope.launch {
+                                            val toVault = mediaItems.filter { it.filePath in selectedPaths }
+                                            toVault.forEach { vaultRepository.moveToVault(it) }
+                                            mediaRepository.syncMediaStore()
+                                            Toast.makeText(context, "Added to Private Vault", Toast.LENGTH_SHORT).show()
+                                            selectedPaths = emptySet()
+                                        }
                                     }
-                                }
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_home_select_hide),
-                                contentDescription = "Add to Private",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Add to Private",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_home_select_hide),
+                                    contentDescription = "Add to Private",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Add to Private",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 5. Delete (ic_album_select_delete)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .width(56.dp)
-                                .clickable { showDeleteDialog = true }
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_album_select_delete),
-                                contentDescription = "Delete",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Delete",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                            // 5. Delete (ic_album_select_delete)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(56.dp)
+                                    .clickable { showDeleteDialog = true }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_album_select_delete),
+                                    contentDescription = "Delete",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Delete",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 6. Create album (ic_home_select_create_album)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .width(70.dp)
-                                .clickable {
-                                    newAlbumName = ""
-                                    showCreateAlbumDialog = true
-                                }
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_home_select_create_album),
-                                contentDescription = "Create album",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Create album",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                            // 6. Create album (ic_home_select_create_album)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .clickable {
+                                        newAlbumName = ""
+                                        showCreateAlbumDialog = true
+                                    }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_home_select_create_album),
+                                    contentDescription = "Create album",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Create album",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 }

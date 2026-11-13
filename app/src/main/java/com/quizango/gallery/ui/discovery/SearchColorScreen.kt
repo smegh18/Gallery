@@ -128,53 +128,56 @@ fun SearchColorScreen(
                     color = MaterialTheme.colorScheme.surface,
                     shadowElevation = 8.dp
                 ) {
-                    Column {
-                        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.settingsDivider)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 10.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.weight(1f)
+                    // Edge-to-edge: keep the content above the system navigation bar
+                    Box(Modifier.navigationBarsPadding()) {
+                        Column {
+                            HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.settingsDivider)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 10.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_home_select_share),
-                                    contentDescription = "Share",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Share", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
-                            }
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_album_select_delete),
-                                    contentDescription = "Delete",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Delete", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
-                            }
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_more),
-                                    contentDescription = "More",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "More", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_home_select_share),
+                                        contentDescription = "Share",
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(text = "Share", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_album_select_delete),
+                                        contentDescription = "Delete",
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(text = "Delete", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_more),
+                                        contentDescription = "More",
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(text = "More", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
                             }
                         }
                     }

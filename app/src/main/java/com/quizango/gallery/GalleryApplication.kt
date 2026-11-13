@@ -30,6 +30,8 @@ class GalleryApplication : Application(), ImageLoaderFactory {
         MediaRepositoryImpl(database.galleryDao(), scanner, moments.labels)
     }
 
+    val duplicates by lazy { com.quizango.gallery.data.local.DuplicateFinder(this) }
+
     val moments by lazy { com.quizango.gallery.data.local.MomentScanner(this) }
 
     val vaultRepository: VaultRepository by lazy {

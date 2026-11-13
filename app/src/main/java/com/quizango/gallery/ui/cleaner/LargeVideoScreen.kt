@@ -129,40 +129,43 @@ fun LargeVideoScreen(
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp)
-                    ) {
-                        val isEnabled = selectedPaths.isNotEmpty()
-                        val deleteBtnText = when {
-                            selectedPaths.isEmpty() -> stringResource(R.string.delete_selected)
-                            selectedPaths.size == 1 -> "Delete (${formatVideoSize(selectedBytes)})"
-                            else -> "Delete All (${formatVideoSize(selectedBytes)})"
-                        }
-
-                        Button(
-                            onClick = {
-                                if (isEnabled) {
-                                    showDeleteConfirmDialog = true
-                                }
-                            },
-                            enabled = isEnabled,
+                    // Edge-to-edge: keep the content above the system navigation bar
+                    Box(Modifier.navigationBarsPadding()) {
+                        Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
-                            shape = RoundedCornerShape(25.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFE11A1A),
-                                disabledContainerColor = Color(0xFFCCCCCC)
-                            )
+                                .padding(horizontal = 16.dp, vertical = 12.dp)
                         ) {
-                            Text(
-                                text = deleteBtnText,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp
-                            )
+                            val isEnabled = selectedPaths.isNotEmpty()
+                            val deleteBtnText = when {
+                                selectedPaths.isEmpty() -> stringResource(R.string.delete_selected)
+                                selectedPaths.size == 1 -> "Delete (${formatVideoSize(selectedBytes)})"
+                                else -> "Delete All (${formatVideoSize(selectedBytes)})"
+                            }
+
+                            Button(
+                                onClick = {
+                                    if (isEnabled) {
+                                        showDeleteConfirmDialog = true
+                                    }
+                                },
+                                enabled = isEnabled,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp),
+                                shape = RoundedCornerShape(25.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFE11A1A),
+                                    disabledContainerColor = Color(0xFFCCCCCC)
+                                )
+                            ) {
+                                Text(
+                                    text = deleteBtnText,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                )
+                            }
                         }
                     }
                 }

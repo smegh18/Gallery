@@ -111,29 +111,32 @@ fun CollageMakerScreen(
                         color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp, vertical = 12.dp)
-                        ) {
-                            Button(
-                                onClick = { currentStep = CollageStep.EDITOR },
-                                enabled = selectedMedia.size in 2..9,
+                        // Edge-to-edge: keep the content above the system navigation bar
+                        Box(Modifier.navigationBarsPadding()) {
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(48.dp),
-                                shape = RoundedCornerShape(24.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = GalleryBlue,
-                                    disabledContainerColor = GalleryBlue.copy(alpha = 0.4f)
-                                )
+                                    .padding(horizontal = 20.dp, vertical = 12.dp)
                             ) {
-                                Text(
-                                    text = if (selectedMedia.size < 2) "Select at least 2 photos" else "Next",
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp
-                                )
+                                Button(
+                                    onClick = { currentStep = CollageStep.EDITOR },
+                                    enabled = selectedMedia.size in 2..9,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(48.dp),
+                                    shape = RoundedCornerShape(24.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = GalleryBlue,
+                                        disabledContainerColor = GalleryBlue.copy(alpha = 0.4f)
+                                    )
+                                ) {
+                                    Text(
+                                        text = if (selectedMedia.size < 2) "Select at least 2 photos" else "Next",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp
+                                    )
+                                }
                             }
                         }
                     }

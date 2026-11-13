@@ -109,32 +109,35 @@ fun WallpaperScreen(
                 color = Color.Black.copy(alpha = 0.6f),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    FilterChip(
-                        selected = previewMode == "lock",
-                        onClick = { previewMode = "lock" },
-                        label = { Text("Lock Screen Preview") },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = GalleryBlue,
-                            selectedLabelColor = Color.White,
-                            labelColor = Color.White
+                // Edge-to-edge: keep the content above the system navigation bar
+                Box(Modifier.navigationBarsPadding()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        FilterChip(
+                            selected = previewMode == "lock",
+                            onClick = { previewMode = "lock" },
+                            label = { Text("Lock Screen Preview") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = GalleryBlue,
+                                selectedLabelColor = Color.White,
+                                labelColor = Color.White
+                            )
                         )
-                    )
-                    FilterChip(
-                        selected = previewMode == "home",
-                        onClick = { previewMode = "home" },
-                        label = { Text("Home Screen Preview") },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = GalleryBlue,
-                            selectedLabelColor = Color.White,
-                            labelColor = Color.White
+                        FilterChip(
+                            selected = previewMode == "home",
+                            onClick = { previewMode = "home" },
+                            label = { Text("Home Screen Preview") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = GalleryBlue,
+                                selectedLabelColor = Color.White,
+                                labelColor = Color.White
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

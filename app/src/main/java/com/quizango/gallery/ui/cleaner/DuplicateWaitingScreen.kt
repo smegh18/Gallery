@@ -36,6 +36,7 @@ import kotlinx.coroutines.delay
  */
 @Composable
 fun DuplicateWaitingScreen(
+    scan: suspend (onProgress: (Float) -> Unit) -> Unit,
     onScanFinished: () -> Unit
 ) {
     var progress by remember { mutableFloatStateOf(0f) }
@@ -48,11 +49,10 @@ fun DuplicateWaitingScreen(
     )
 
     LaunchedEffect(Unit) {
-        // Smooth scanning progression matching reference SERVICE_IDLE_CHECK / MIN_SCREEN_MS
-        for (i in 1..100) {
-            progress = i / 100f
-            delay(18)
-        }
+        // Real scan; keep the screen up at least as long as before so it doesn't flash
+        val started = System.currentTimeMillis()
+        scan { progress = it }
+        delay((1800 - (System.currentTimeMillis() - started)).coerceAtLeast(0))
         isScanComplete = true
         delay(900)
         onScanFinished()

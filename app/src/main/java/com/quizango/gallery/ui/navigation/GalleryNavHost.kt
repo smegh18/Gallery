@@ -201,6 +201,7 @@ fun GalleryNavHost(
         composable(Screen.Duplicates.route) {
             DuplicatePhotoScreen(
                 mediaRepository = app.mediaRepository,
+                duplicateFinder = app.duplicates,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToComplete = { count, size ->
                     navController.navigate(Screen.DuplicateComplete.createRoute(count, size)) {
@@ -212,6 +213,7 @@ fun GalleryNavHost(
 
         composable(Screen.DuplicateWaiting.route) {
             DuplicateWaitingScreen(
+                scan = { onProgress -> app.duplicates.fingerprints(app.mediaRepository.getActiveMediaFlow().first(), onProgress) },
                 onScanFinished = {
                     navController.navigate(Screen.Duplicates.route) {
                         popUpTo(Screen.DuplicateWaiting.route) { inclusive = true }

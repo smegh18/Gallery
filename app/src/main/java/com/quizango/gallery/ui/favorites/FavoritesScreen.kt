@@ -163,89 +163,92 @@ fun FavoritesScreen(
                     color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // 1. Share (ic_home_select_share)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                    // Edge-to-edge: keep the content above the system navigation bar
+                    Box(Modifier.navigationBarsPadding()) {
+                        Row(
                             modifier = Modifier
-                                .width(60.dp)
-                                .clickable { shareFavoriteMedia(context, selectedPaths) }
-                                .padding(vertical = 4.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_home_select_share),
-                                contentDescription = "Share",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(id = R.string.share),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                            // 1. Share (ic_home_select_share)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .clickable { shareFavoriteMedia(context, selectedPaths) }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_home_select_share),
+                                    contentDescription = "Share",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = stringResource(id = R.string.share),
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 2. Unfavorite / Remove (ic_home_select_fav)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .width(68.dp)
-                                .clickable {
-                                    val count = selectedPaths.size
-                                    scope.launch {
-                                        selectedPaths.forEach { path ->
-                                            mediaRepository.setFavorite(path, false)
+                            // 2. Unfavorite / Remove (ic_home_select_fav)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(68.dp)
+                                    .clickable {
+                                        val count = selectedPaths.size
+                                        scope.launch {
+                                            selectedPaths.forEach { path ->
+                                                mediaRepository.setFavorite(path, false)
+                                            }
+                                            Toast.makeText(context, "$count removed from favorites", Toast.LENGTH_SHORT).show()
+                                            selectedPaths = emptySet()
                                         }
-                                        Toast.makeText(context, "$count removed from favorites", Toast.LENGTH_SHORT).show()
-                                        selectedPaths = emptySet()
                                     }
-                                }
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_home_select_fav),
-                                contentDescription = "Unfavorite",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Remove",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_home_select_fav),
+                                    contentDescription = "Unfavorite",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Remove",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 3. Delete (ic_album_select_delete)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .width(60.dp)
-                                .clickable { showDeleteDialog = true }
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_album_select_delete),
-                                contentDescription = "Delete",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(id = R.string.delete),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                            // 3. Delete (ic_album_select_delete)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .clickable { showDeleteDialog = true }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_album_select_delete),
+                                    contentDescription = "Delete",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = stringResource(id = R.string.delete),
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 }

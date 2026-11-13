@@ -150,55 +150,58 @@ fun RecycleScreen(
                     color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 48.dp, vertical = 12.dp),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // 1. Restore Action (matching RecycleActivity layoutSelectMediaBottom)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                    // Edge-to-edge: keep the content above the system navigation bar
+                    Box(Modifier.navigationBarsPadding()) {
+                        Row(
                             modifier = Modifier
-                                .clickable { showRestoreConfirmDialog = true }
-                                .padding(8.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 48.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_restore),
-                                contentDescription = "Restore",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Restore",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                            // 1. Restore Action (matching RecycleActivity layoutSelectMediaBottom)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { showRestoreConfirmDialog = true }
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_restore),
+                                    contentDescription = "Restore",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(26.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Restore",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        // 2. Permanently Delete Action (matching RecycleActivity layoutSelectMediaBottom)
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .clickable { showDeleteConfirmDialog = true }
-                                .padding(8.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_album_select_delete),
-                                contentDescription = "Delete",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Delete",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                            // 2. Permanently Delete Action (matching RecycleActivity layoutSelectMediaBottom)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { showDeleteConfirmDialog = true }
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_album_select_delete),
+                                    contentDescription = "Delete",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(26.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Delete",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 }
