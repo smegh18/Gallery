@@ -8,8 +8,8 @@ data class Story(val id: String, val title: String, val items: List<MediaItem>)
 
 /**
  * Home stories, as the reference HomeViewModel builds them: photos only (no video, GIF or
- * screenshot folders), at most 15 per story, empty stories dropped, ordered
- * Recent, Random, Favorite, then Timeline / Flashback.
+ * screenshot folders), at most 15 per story, empty stories dropped. Row order comes from the
+ * reference sort values: Recent 0, Memories 2/4, Flashback 3/5, Random 5, Favorite 6.
  */
 object StoryBuilder {
     private const val MAX = 15
@@ -26,20 +26,18 @@ object StoryBuilder {
         val random = photos.shuffled().take(MAX)
         val favorite = photos.filter { it.isFavorite }.shuffled().take(MAX).sortedWith(newestFirst)
 
-        // (sort key, story): reference sorts by these priorities
-        val stories = mutableListOf(
-            0 to Story("recent", "Recent", recent),
-            1 to Story("random", "Random", random),
-            2 to Story("favorite", "Favorite", favorite)
-        )
-        for ((n, id, title) in listOf(Triple(1, "timeline", "Timeline"), Triple(3, "flashback", "Flashback"))) {
+        // (sort value, story) in the reference's insertion order; the sort is stable
+        val stories = mutableListOf(0 to Story("recent", "Recent", recent))
+        for ((n, id, title) in listOf(Triple(1, "memories", "Memories"), Triple(3, "flashback", "Flashback"))) {
             val years = window(photos, now, n, Calendar.YEAR)
-            if (years.isNotEmpty()) {
-                stories += (if (n == 1) 5 else 6) to Story(id, title, years.take(MAX))
+            stories += if (years.isNotEmpty()) {
+                (if (n == 1) 4 else 5) to Story(id, title, years.take(MAX))
             } else {
-                stories += (if (n == 1) 3 else 4) to Story(id, title, window(photos, now, n, Calendar.MONTH).take(MAX))
+                (if (n == 1) 2 else 3) to Story(id, title, window(photos, now, n, Calendar.MONTH).take(MAX))
             }
         }
+        stories += 5 to Story("random", "Random", random)
+        stories += 6 to Story("favorite", "Favorite", favorite)
         return stories.filter { it.second.items.isNotEmpty() }.sortedBy { it.first }.map { it.second }
     }
 

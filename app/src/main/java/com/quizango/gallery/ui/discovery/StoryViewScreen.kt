@@ -28,6 +28,10 @@ import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.quizango.gallery.domain.model.MediaItem
 import java.io.File
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import com.quizango.gallery.R
+import androidx.compose.ui.res.painterResource
 
 /** The Albums tab's story row, so the viewer plays the same photos and a finished story opens the next one. */
 object StoryQueue {
@@ -39,6 +43,12 @@ object StoryQueue {
         val i = stories.indexOfFirst { it.id == id }
         return if (i < 0) null else stories.getOrNull(i + 1)
     }
+}
+
+/** Reference story title: the photo's date, e.g. "04 Nov 2026". */
+private fun storyDate(item: MediaItem): String {
+    val millis = if (item.dateTaken > 0) item.dateTaken else item.dateModified
+    return java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date(millis))
 }
 
 @Composable
@@ -180,72 +190,82 @@ fun StoryViewScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = storyTitle,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = Color.White
-                    )
-                }
-            }
-        }
-
-        // Bottom Bar matching activity_story_view_photo.xml
-        Surface(
-            color = Color.Black.copy(alpha = 0.5f),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .navigationBarsPadding()
-        ) {
+            // Reference header (activity_story_view_photo): close, photo date, share
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
+                    .padding(top = 12.dp)
+                    .height(28.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (onEditClick != null) IconButton(onClick = {
-                    onEditClick(currentItem.filePath)
-                }) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.White)
-                        Text("Edit", color = Color.White, fontSize = 11.sp)
-                    }
-                }
-
-                IconButton(onClick = {
-                    try {
-                        val file = File(currentItem.filePath)
-                        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "image/*"
-                            putExtra(Intent.EXTRA_STREAM, uri)
-                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                Icon(
+                    painter = painterResource(R.drawable.ic_story_close),
+                    contentDescription = "Close",
+                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable(onClick = onNavigateBack)
+                        .padding(5.dp)
+                )
+                Text(
+                    text = storyDate(currentItem),
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 13.sp,
+                    style = androidx.compose.ui.text.TextStyle(
+                        shadow = androidx.compose.ui.graphics.Shadow(Color(0x80000000), androidx.compose.ui.geometry.Offset(2f, 2f), 4f)
+                    ),
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .weight(1f)
+                )
+                Icon(
+                    painter = painterResource(R.drawable.ic_share_story),
+                    contentDescription = "Share",
+                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable {
+                            try {
+                                val file = File(currentItem.filePath)
+                                val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "image/*"
+                                    putExtra(Intent.EXTRA_STREAM, uri)
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                context.startActivity(Intent.createChooser(shareIntent, "Share Story"))
+                            } catch (_: Exception) {}
                         }
-                        context.startActivity(Intent.createChooser(shareIntent, "Share Story"))
-                    } catch (_: Exception) {}
-                }) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.Share, contentDescription = "Share", tint = Color.White)
-                        Text("Share", color = Color.White, fontSize = 11.sp)
-                    }
-                }
+                        .padding(5.dp)
+                )
             }
+        }
+
+        // Reference Edit pill: #DD000000, 6dp corners, 32dp high, 30dp above the bottom
+        if (onEditClick != null) Row(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(bottom = 30.dp)
+                .height(32.dp)
+                .widthIn(min = 80.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .background(Color(0xDD000000))
+                .clickable { onEditClick(currentItem.filePath) }
+                .padding(start = 14.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(painter = painterResource(R.drawable.ic_edit), contentDescription = null, tint = Color.Unspecified)
+            Text(
+                text = "Edit",
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 13.sp,
+                maxLines = 1,
+                modifier = Modifier.padding(start = 6.dp)
+            )
         }
     }
 }

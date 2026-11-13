@@ -36,11 +36,11 @@ class StoryQueueTest {
                 photo("lastYear", 365 * day - 2 * day)
             )
         val stories = StoryBuilder.build(media, now)
-        assertEquals(listOf("recent", "random", "favorite", "timeline"), stories.map { it.id })
+        assertEquals(listOf("recent", "memories", "random", "favorite"), stories.map { it.id })
         val recent = stories[0].items.map { it.filePath }
         assertEquals(listOf("new1", "new2"), recent) // last 10 days, newest first, no screenshots or videos
         assertTrue(stories.all { it.items.size <= 15 })
-        assertEquals(listOf("lastYear"), stories[3].items.map { it.filePath })
-        assertTrue(stories[1].items.none { it.filePath == "shot" || it.filePath == "vid" })
+        assertEquals(listOf("lastYear"), stories[1].items.map { it.filePath })
+        assertTrue(stories[2].items.none { it.filePath == "shot" || it.filePath == "vid" })
     }
 }
