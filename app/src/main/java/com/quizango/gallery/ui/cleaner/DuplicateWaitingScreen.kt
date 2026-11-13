@@ -41,7 +41,7 @@ fun DuplicateWaitingScreen(
     var progress by remember { mutableFloatStateOf(0f) }
     var isScanComplete by remember { mutableStateOf(false) }
 
-    val successComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.cleaner_done_lottie))
+    val successComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.success))
     val lottieProgress by animateLottieCompositionAsState(
         composition = successComposition,
         isPlaying = isScanComplete

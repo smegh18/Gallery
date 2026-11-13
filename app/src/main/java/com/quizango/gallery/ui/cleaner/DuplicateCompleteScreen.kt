@@ -36,7 +36,7 @@ import com.quizango.gallery.ui.theme.settingsDivider
  * and DuplicateDeleteCompleteActivity.java.
  * Features:
  * - TopBar with "Cleanup complete" title, back button, and settings icon
- * - Success celebration Lottie animation
+ * - 2.7.2 dm_success celebration Lottie animation (looping)
  * - "Task completed" and "Your device is ready to use" typography
  * - Card cleanup summary with exact file removal count
  * - Authentic bg_dup_storage_feed_card storage freed row with img_system_cleaner_duplicate icon
@@ -49,7 +49,7 @@ fun DuplicateCompleteScreen(
     freedSizeBytes: Long,
     onDoneClick: () -> Unit
 ) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.cleaner_done_lottie))
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.dm_success))
     val progress by animateLottieCompositionAsState(
         composition = composition,
         iterations = LottieConstants.IterateForever
