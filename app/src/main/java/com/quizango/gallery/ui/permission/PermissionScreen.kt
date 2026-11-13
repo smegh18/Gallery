@@ -56,12 +56,7 @@ fun PermissionScreen(
     var hasPermission by remember { mutableStateOf(checkStoragePermissions(context)) }
     var showAboutDialog by remember { mutableStateOf(false) }
 
-    val permissionsToRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        arrayOf(
-            Manifest.permission.READ_MEDIA_IMAGES,
-            Manifest.permission.READ_MEDIA_VIDEO
-        )
-    } else {
+    val permissionsToRequest = run {
         arrayOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -73,6 +68,16 @@ fun PermissionScreen(
     ) { result ->
         val granted = result.values.all { it }
         if (granted) {
+            hasPermission = true
+            onNavigate(Screen.Home.route)
+        }
+    }
+
+    // Android 11+: the reference asks for "All files access" on the system settings page
+    val allFilesLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (checkStoragePermissions(context)) {
             hasPermission = true
             onNavigate(Screen.Home.route)
         }
@@ -257,7 +262,19 @@ fun PermissionScreen(
                 // 7. Primary CTA Button: "Grant Access" (btnAllow: height 52dp, marginHorizontal 15dp)
                 Button(
                     onClick = {
-                        launcher.launch(permissionsToRequest)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            val appPage = Intent(
+                                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                                Uri.parse("package:${context.packageName}")
+                            )
+                            // Some devices lack the per-app page; fall back to the full list
+                            allFilesLauncher.launch(
+                                if (appPage.resolveActivity(context.packageManager) != null) appPage
+                                else Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                            )
+                        } else {
+                            launcher.launch(permissionsToRequest)
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
