@@ -477,3 +477,6 @@ Asset provenance gate instead: only copy from `R272/res`; never copy ad-SDK reso
 - [ ] Dimension 7 Inventory Provenance: PASS
 
 **Approval:** pending
+
+## Decision: brand art (2026-11-13, user)
+Keep the reference brand art as-is for now: launcher icons, splash icon, about logo, `app_icon_lottie`, `anime_overlay` and the feature-promo photos. The user will replace them with their own art later. This is **not** a Phase 1 blocker. Track it as a pre-release task, and do not ship a store build with it.
