@@ -97,6 +97,7 @@ fun GalleryNavHost(
 
         composable(Screen.Permission.route) {
             PermissionScreen(
+                appPreferences = app.preferences,
                 onNavigate = { route ->
                     navController.navigate(route) {
                         popUpTo(Screen.Permission.route) { inclusive = true }
