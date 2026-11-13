@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 2.7.2 splash_bg minus its empty <item android:drawable="@null"/>, which API 30 rejects at window inflate (crash on launch) -->
 <layer-list
   xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:gravity="fill" android:drawable="@color/backgroundColor" />
-    <item android:gravity="center" android:drawable="@null" />
 </layer-list>
