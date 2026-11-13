@@ -29,12 +29,14 @@ import coil.compose.AsyncImage
 import com.quizango.gallery.domain.model.MediaItem
 import java.io.File
 
-/** Story row order (path to title) from the Albums tab, so a finished story can open the next one. */
+/** The Albums tab's story row, so the viewer plays the same photos and a finished story opens the next one. */
 object StoryQueue {
-    var stories: List<Pair<String, String>> = emptyList()
+    var stories: List<Story> = emptyList()
 
-    fun next(path: String): Pair<String, String>? {
-        val i = stories.indexOfFirst { it.first == path }
+    fun find(id: String): Story? = stories.firstOrNull { it.id == id }
+
+    fun next(id: String): Story? {
+        val i = stories.indexOfFirst { it.id == id }
         return if (i < 0) null else stories.getOrNull(i + 1)
     }
 }

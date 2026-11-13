@@ -435,7 +435,10 @@ fun GalleryNavHost(
 
             val storyItems = androidx.compose.runtime.remember(path, title, allMedia, filterMedia) {
                 val photosOnly = allMedia.filter { it.mediaType != MediaType.VIDEO }
+                val rowStory = com.quizango.gallery.ui.discovery.StoryQueue.find(path)
                 when {
+                    // Albums row story: play exactly the photos the row picked
+                    rowStory != null -> rowStory.items
                     path == "recent" -> {
                         photosOnly.sortedByDescending { it.dateModified }.take(20)
                     }
@@ -493,7 +496,7 @@ fun GalleryNavHost(
                 onFinished = {
                     val next = com.quizango.gallery.ui.discovery.StoryQueue.next(path)
                     if (next == null) navController.popBackStack()
-                    else navController.navigate(Screen.StoryView.createRoute(next.first, next.second)) {
+                    else navController.navigate(Screen.StoryView.createRoute(next.id, next.title)) {
                         popUpTo(Screen.StoryView.route) { inclusive = true }
                     }
                 }

@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.discovery.StoryBuilder
 import com.quizango.gallery.ui.discovery.StoryQueue
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
@@ -86,20 +87,8 @@ fun AlbumsTab(
     onFeatureClick: (String) -> Unit = {},
     onMediaTypeClick: (String) -> Unit = {}
 ) {
-    val storiesData = androidx.compose.runtime.remember(mediaList, albumsList) {
-        val nonVideoMedia = mediaList.filter { it.mediaType != MediaType.VIDEO }
-        // Reference builds stories from photos only; no photos means no Recent/Random story.
-        val recent = nonVideoMedia.firstOrNull()?.contentUri
-        val random = nonVideoMedia.asSequence().shuffled().firstOrNull()?.contentUri
-        val fav = nonVideoMedia.firstOrNull { it.isFavorite }?.contentUri
-        val folders = nonVideoMedia.map { it.folderPath }.toSet()
-        val folderNames = nonVideoMedia.map { it.folderName }.toSet()
-        val albums = albumsList.filter { album ->
-            album.coverPath.isNotEmpty() && (album.path in folders || album.name in folderNames)
-        }
-        data class StoriesData(val recent: Any?, val random: Any?, val fav: Any?, val albums: List<Album>)
-        StoriesData(recent, random, fav, albums)
-    }
+    // Reference story rules (HomeViewModel): see StoryBuilder
+    val stories = androidx.compose.runtime.remember(mediaList) { StoryBuilder.build(mediaList) }
 
     val chunkedAlbums = androidx.compose.runtime.remember(albumsList) { albumsList.chunked(3) }
 
@@ -134,61 +123,24 @@ fun AlbumsTab(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 // Stories Strip (Reference: llStoryView / storyRecycler in fragment_album.xml)
-                StoryQueue.stories = buildList {
-                    if (storiesData.recent != null) add("recent" to "Recent")
-                    if (storiesData.random != null) add("random" to "Random")
-                    if (storiesData.fav != null) add("favorite" to "Favorites")
-                    storiesData.albums.forEach { add(it.id to it.name) }
-                }
+                StoryQueue.stories = stories
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp, vertical = 2.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    // Story 1: Recent
-                    if (storiesData.recent != null) {
-                        item(key = "story_recent") {
-                            StoryCircleItem(
-                                title = "Recent",
-                                imageModel = storiesData.recent,
-                                gradientColors = listOf(Color(0xFFFF3093), Color(0xFFFF5252), Color(0xFFFFC701), Color(0xFFFF3093)),
-                                onClick = { onStoryClick("recent", "Recent") }
-                            )
-                        }
-                    }
-
-                    // Story 2: Random
-                    if (storiesData.random != null) {
-                        item(key = "story_random") {
-                            StoryCircleItem(
-                                title = "Random",
-                                imageModel = storiesData.random,
-                                gradientColors = listOf(Color(0xFF0072FF), Color(0xFF00C6FF), Color(0xFF0072FF)),
-                                onClick = { onStoryClick("random", "Random") }
-                            )
-                        }
-                    }
-
-                    // Story 3: Favorite (if available)
-                    if (storiesData.fav != null) {
-                        item(key = "story_fav") {
-                            StoryCircleItem(
-                                title = "Favorite",
-                                imageModel = storiesData.fav,
-                                gradientColors = listOf(Color(0xFFFF416C), Color(0xFFFF4B2B), Color(0xFFFF416C)),
-                                onClick = { onStoryClick("favorite", "Favorites") }
-                            )
-                        }
-                    }
-
-                    // Dynamic Album Stories
-                    items(storiesData.albums, key = { "album_story_${it.id}" }) { album ->
+                    items(stories, key = { "story_${it.id}" }) { story ->
                         StoryCircleItem(
-                            title = album.name,
-                            imageModel = album.coverUri,
-                            gradientColors = listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2)),
-                            onClick = { onStoryClick(album.id, album.name) }
+                            title = story.title,
+                            imageModel = story.items.first().contentUri,
+                            gradientColors = when (story.id) {
+                                "recent" -> listOf(Color(0xFFFF3093), Color(0xFFFF5252), Color(0xFFFFC701), Color(0xFFFF3093))
+                                "random" -> listOf(Color(0xFF0072FF), Color(0xFF00C6FF), Color(0xFF0072FF))
+                                "favorite" -> listOf(Color(0xFFFF416C), Color(0xFFFF4B2B), Color(0xFFFF416C))
+                                else -> listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2))
+                            },
+                            onClick = { onStoryClick(story.id, story.title) }
                         )
                     }
                 }
