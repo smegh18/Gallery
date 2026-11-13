@@ -1,7 +1,7 @@
 package com.quizango.gallery
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -17,8 +17,8 @@ import com.quizango.gallery.ui.navigation.GalleryNavHost
 import com.quizango.gallery.ui.theme.GalleryTheme
 import com.quizango.gallery.ui.theme.applyNightMode
 
-// FragmentActivity: the system fingerprint prompt (BiometricPrompt) needs it
-class MainActivity : FragmentActivity() {
+// AppCompatActivity (a FragmentActivity, so BiometricPrompt still works) applies the in-app theme and language to XML resources too
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +28,6 @@ class MainActivity : FragmentActivity() {
 
         setContent {
             val themeMode by app.preferences.themeMode.collectAsState(initial = 2)
-            LaunchedEffect(themeMode) {
-                applyNightMode(themeMode)
-            }
             val isDark = when (themeMode) {
                 0 -> false
                 1 -> true

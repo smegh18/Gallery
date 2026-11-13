@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.NewGallery" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.NewGallery" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:statusBarColor">@color/backgroundColor</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@drawable/splash_bg</item>
+        <!-- We ship our own dark theme; stop the system (e.g. MIUI) from darkening Day mode -->
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 </resources>

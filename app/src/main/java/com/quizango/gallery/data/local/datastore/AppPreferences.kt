@@ -65,6 +65,10 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setLanguage(langCode: String) {
         context.dataStore.edit { it[Keys.APP_LANGUAGE] = langCode }
+        // Applies the language to the app now (AppCompat stores it across restarts)
+        androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
+            androidx.core.os.LocaleListCompat.forLanguageTags(langCode)
+        )
     }
 
     suspend fun setThemeMode(mode: Int) {

@@ -18,6 +18,7 @@ import com.quizango.gallery.data.repository.VaultRepositoryImpl
 import com.quizango.gallery.ui.theme.applyNightMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class GalleryApplication : Application(), ImageLoaderFactory {
@@ -70,11 +71,8 @@ class GalleryApplication : Application(), ImageLoaderFactory {
         instance = this
         // Decrypted vault copies only live while the app runs
         CoroutineScope(Dispatchers.IO).launch { vaultRepository.clearViewCache() }
-        CoroutineScope(Dispatchers.Main.immediate).launch {
-            preferences.themeMode.collect { mode ->
-                applyNightMode(mode)
-            }
-        }
+        // Set the saved theme before any activity exists; re-applying it later restarts the activity
+        applyNightMode(kotlinx.coroutines.runBlocking { preferences.themeMode.first() })
     }
 
     companion object {
