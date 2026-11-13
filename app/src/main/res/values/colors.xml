@@ -2,7 +2,7 @@
 <resources>
     <!-- Brand & Accent Colors -->
     <color name="colorPrimary">#0066ff</color>
-    <color name="colorPrimaryDark">#0052cc</color>
+    <color name="colorPrimaryDark">#ffffffff</color>
     <color name="colorAccent">#0066ff</color>
     <color name="mainAppColor">#0066ff</color>
     <color name="ic_launcher_gallery_background">#1e62e1</color>
@@ -42,7 +42,7 @@
     <color name="textColorSecondaryDark">#a0aab8</color>
 
     <!-- Dividers & Borders -->
-    <color name="dividerColor">#e4e6e9</color>
+    <color name="dividerColor">#1a002847</color>
     <color name="dividerColorDark">#2a2a2a</color>
     <color name="rippleColor">#1f0066ff</color>
     <color name="onlyWhite">#ffffff</color>
@@ -54,11 +54,11 @@
     <color name="bottomNavTextColor">#1e3354</color>
     <color name="collage_header_text_color">#000000</color>
     <color name="dialogBack">#ffffff</color>
-    <color name="fastScrollerColor">#3478f6</color>
-    <color name="item_cleaner_sub_txt">#707c93</color>
-    <color name="home_collage_new_btn">#ff4d4f</color>
-    <color name="drawer_bottom_trans_text">#707c93</color>
-    <color name="actionbarDividerColor">#e4e6e9</color>
+    <color name="fastScrollerColor">#ff0066ff</color>
+    <color name="item_cleaner_sub_txt">#ff7d90a3</color>
+    <color name="home_collage_new_btn">#ffff1414</color>
+    <color name="drawer_bottom_trans_text">#ff597393</color>
+    <color name="actionbarDividerColor">#ffffffff</color>
 
     <!-- Additional Reference Colors -->
     <color name="dark_blue">#0066ff</color>
@@ -82,7 +82,7 @@
     <color name="sky_blue_color_picker">#76d7ea</color>
     <color name="sticker_hint_color">#7a91ad</color>
     <color name="yellow_color_picker">#fbe870</color>
-    <color name="view_line">#e0e0e0</color>
+    <color name="view_line">#ffbfd4e4</color>
     <color name="about_divider">#dbe2f3</color>
     <color name="about_text">#777777</color>
     <color name="graySubTitle">#605f60</color>
@@ -101,8 +101,8 @@
     <color name="cleaner_delete_sub_text">#616161</color>
     <color name="cleaner_delete_cancel_btn_color">#969696</color>
     <color name="ic_cleaner_expand_arrow_color">#071427</color>
-    <color name="btn_delete_disable">#cccccc</color>
-    <color name="junkCleanerSubTitleColor">#7d90a3</color>
+    <color name="btn_delete_disable">#ffbabbbc</color>
+    <color name="junkCleanerSubTitleColor">#ff7b8999</color>
 
     <!-- Explore Tab Colors (Reference Parity) -->
     <color name="explore_ad_body">#a1a8b0</color>
@@ -141,4 +141,82 @@
     <color name="premium_explore_bg">#1ea543</color>
     <color name="premium_explore_button">#03681f</color>
     <color name="premium_explore_button_bg">#e3ffe4</color>
+
+    <!-- 2.7.2 colours (Phase 1), values copied from R272 values/colors.xml -->
+    <color name="album_tab_bg">@color/backgroundColor</color>
+    <color name="album_tab_card_placeholder">#ffeef0f3</color>
+    <color name="album_tab_count">#ff7a8389</color>
+    <color name="album_tab_deleted_dim">#8f000000</color>
+    <color name="album_tab_divider">#fff2f3f5</color>
+    <color name="album_tab_icon">#ffffffff</color>
+    <color name="album_tab_name">#ff1f3355</color>
+    <color name="album_tab_story_label">#ff2c4060</color>
+    <color name="album_tab_story_ring">#ff0066ff</color>
+    <color name="floating_sidebar_accent">#ff3478f6</color>
+    <color name="floating_sidebar_collapse_bg">#ffe8e8eb</color>
+    <color name="floating_sidebar_collapse_icon">#ff8a8a8e</color>
+    <color name="floating_sidebar_handle">#d9f2f2f2</color>
+    <color name="floating_sidebar_handle_drag">#b3808080</color>
+    <color name="floating_sidebar_handle_stroke">#33000000</color>
+    <color name="floating_sidebar_icon_bg">#ff0066ff</color>
+    <color name="floating_sidebar_panel_bg">#fff7f7f8</color>
+    <color name="floating_sidebar_remove">#fff2453d</color>
+    <color name="floating_sidebar_subtext">#ff8a8a8e</color>
+    <color name="floating_sidebar_text">#ff1b1a1f</color>
+    <color name="gs2_background">#ffffffff</color>
+    <color name="gs2_open_btn_bg">#ffa3a8b1</color>
+    <color name="gs2_progress_track">#ffffffff</color>
+    <color name="gs2_status_bg">#ffedf4ff</color>
+    <color name="gs2_subtitle">#ff9ba2ab</color>
+    <color name="gs_avatar_bg">#ff9e9ea3</color>
+    <color name="gs_call_green">#ff1db954</color>
+    <color name="gs_header_button_bg">#ffffffff</color>
+    <color name="gs_message_blue">#ff0a66ff</color>
+    <color name="gs_tab_unselected">#ff8e8e93</color>
+    <color name="home_shell_ad_free_blue">#ff64b9fc</color>
+    <color name="home_shell_ad_free_red">#fffb4a59</color>
+    <color name="home_shell_icon">#ff1f3355</color>
+    <color name="home_shell_popup_bg">#ffffffff</color>
+    <color name="home_shell_popup_ripple">#141f3355</color>
+    <color name="home_shell_popup_text">#ff1f3355</color>
+    <color name="home_shell_tab_bg">#fff7f7f7</color>
+    <color name="home_shell_tab_divider">#fff0f1f2</color>
+    <color name="home_shell_tab_icon_cutout">#ffffffff</color>
+    <color name="home_shell_tab_selected">#ff0066ff</color>
+    <color name="home_shell_tab_unselected">#ff7a8389</color>
+    <color name="home_shell_title">#ff1f3355</color>
+    <color name="iu_bg">#ffffffff</color>
+    <color name="iu_button_bg">#ffeaecf0</color>
+    <color name="iu_primary">#ff1073fe</color>
+    <color name="iu_primary_soft">#ffe5f2ff</color>
+    <color name="iu_stroke">#ffeaeff6</color>
+    <color name="iu_text_primary">#ff101828</color>
+    <color name="iu_text_secondary">#ff667085</color>
+    <color name="media_full_glass_bg">#8c1c1d21</color>
+    <color name="media_full_glass_icon">#ffffffff</color>
+    <color name="media_full_pill_bg">#e61c1d21</color>
+    <color name="media_full_pill_stroke">#26ffffff</color>
+    <color name="photos_tab_ad_cta">#ff0066ff</color>
+    <color name="photos_tab_ad_media_bg">#fff2f4f6</color>
+    <color name="photos_tab_ad_subtitle">#ff8a9399</color>
+    <color name="photos_tab_ad_tag">#ff6b6b6b</color>
+    <color name="photos_tab_ad_title">#ff1e3353</color>
+    <color name="photos_tab_divider">#ffeef0f2</color>
+    <color name="photos_tab_header_text">#ff1e3353</color>
+    <color name="photos_tab_shimmer">#ffe4e5e7</color>
+    <color name="photos_tab_thumb_bg">#ffeef0f3</color>
+    <color name="splash_loader_track">#290066ff</color>
+    <color name="usage_grabber">#ffe5e7eb</color>
+    <color name="usage_not_now_stroke">#ffe5e7eb</color>
+    <color name="usage_settings_accent">#ff0066ff</color>
+    <color name="usage_settings_accent_soft">#ffe1ecff</color>
+    <color name="usage_sheet_bg">#ffffffff</color>
+    <color name="usage_subtitle">#ff6b7280</color>
+    <color name="black">#ff000000</color>
+    <color name="whiteOnlyColor">#ffffffff</color>
+    <color name="callercad_screen_bg">#ffffffff</color>
+    <color name="gs_banner_text_color">#ff3478f6</color>
+    <color name="ic_text_button">#ffffffff</color>
+    <color name="gs_menu_card_color">#fff2f3f5</color>
+    <color name="gs_top_bg">#fff5f5f7</color>
 </resources>
