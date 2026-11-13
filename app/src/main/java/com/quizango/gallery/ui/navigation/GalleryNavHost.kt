@@ -610,14 +610,14 @@ fun GalleryNavHost(
             LanguageScreen(
                 appPreferences = app.preferences,
                 canNavigateBack = canNavigateBack,
-                onApply = {
-                    if (canNavigateBack) {
-                        navController.popBackStack()
-                    } else {
-                        navController.navigate(Screen.Permission.route) {
-                            popUpTo(Screen.Language.route) { inclusive = true }
-                        }
+                isOnboarding = !canNavigateBack,
+                onNavigateToPermission = {
+                    navController.navigate(Screen.Permission.route) {
+                        popUpTo(Screen.Language.route) { inclusive = true }
                     }
+                },
+                onApply = {
+                    navController.popBackStack()
                 },
                 onNavigateBack = { navController.popBackStack() }
             )

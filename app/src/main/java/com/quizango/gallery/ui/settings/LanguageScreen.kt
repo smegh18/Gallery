@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -31,7 +32,10 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.sdp
+import com.quizango.gallery.ui.theme.ssp
 import kotlinx.coroutines.launch
 
 data class LanguageOption(
@@ -51,7 +55,7 @@ private val APP_LANGUAGES = listOf(
     LanguageOption("fil", "Filipino", "Filipino", "A"),
     LanguageOption("fr", "French", "Français", "É"),
     LanguageOption("gu", "Gujarati", "ગુજરાતી", "અ"),
-    LanguageOption("hi", "Hindi", "हिन्दी", "अ"),
+    LanguageOption("hi", "Hindi", "हिन्दी", "અ"),
     LanguageOption("in", "Indonesian", "Bahasa Indonesia", "K"),
     LanguageOption("it", "Italian", "Italiano", "È"),
     LanguageOption("ja", "Japanese", "日本語", "あ"),
@@ -80,14 +84,13 @@ private val AvatarPastelColors = listOf(
     Color(0xFFF9FCFF)
 )
 
-private val ItemCardBg = Color(0xFFF2F6FC)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageScreen(
     appPreferences: AppPreferences,
     canNavigateBack: Boolean = true,
-    showHandAnimation: Boolean = !canNavigateBack,
+    isOnboarding: Boolean = !canNavigateBack,
+    showHandAnimation: Boolean = isOnboarding,
+    onNavigateToPermission: () -> Unit = {},
     onApply: () -> Unit = {},
     onNavigateBack: () -> Unit = {}
 ) {
@@ -102,14 +105,14 @@ fun LanguageScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colorResource(R.color.backgroundColor))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
         ) {
-            // Toolbar (matching ConstraintLayout @id/toolbar in activity_app_language.xml)
+            // Toolbar (activity_app_language.xml)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -118,47 +121,49 @@ fun LanguageScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 10.dp),
+                        .padding(horizontal = 10.sdp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (canNavigateBack) {
                         IconButton(
                             onClick = onNavigateBack,
-                            modifier = Modifier.size(36.dp)
+                            modifier = Modifier.size(32.sdp).padding(2.sdp)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(24.dp)
+                                tint = colorResource(R.color.titleColor),
+                                modifier = Modifier.size(20.sdp)
                             )
                         }
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(6.sdp))
                     } else {
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(6.sdp))
                     }
 
                     Text(
                         text = stringResource(id = R.string.select_app_language),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        style = GalleryText.BodyXLargeSemiBold,
+                        color = colorResource(R.color.titleColor),
                         modifier = Modifier.weight(1f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    // Confirm Tick Button (toolbarIvTick: width @dimen/_50sdp ~65dp, height @dimen/_28sdp ~36dp)
+                    // Confirm Tick Button (toolbarIvTick: width _50sdp, height _28sdp)
                     Box(
                         modifier = Modifier
-                            .padding(end = 4.dp)
-                            .size(width = 65.dp, height = 36.dp)
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(com.quizango.gallery.ui.theme.GalleryPrimaryBlue) // reference confirm button: colorPrimary #3478F6
+                            .size(width = 50.sdp, height = 28.sdp)
+                            .clip(RoundedCornerShape(14.sdp))
+                            .background(colorResource(R.color.colorPrimary))
                             .clickable {
                                 scope.launch {
                                     appPreferences.setLanguage(selectedLanguage)
-                                    onApply()
+                                    if (isOnboarding) {
+                                        onNavigateToPermission()
+                                    } else {
+                                        onApply()
+                                    }
                                 }
                             },
                         contentAlignment = Alignment.Center
@@ -166,8 +171,8 @@ fun LanguageScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_done_bold),
                             contentDescription = "Apply Language",
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
+                            tint = colorResource(R.color.onlyWhite),
+                            modifier = Modifier.size(16.sdp)
                         )
                     }
                 }
@@ -176,7 +181,7 @@ fun LanguageScreen(
             // Divider
             HorizontalDivider(
                 thickness = 1.dp,
-                color = if (MaterialTheme.colorScheme.isDark) Color(0x20FFFFFF) else Color(0xFFE4E6E9)
+                color = colorResource(R.color.dividerColor)
             )
 
             // Language List
@@ -184,12 +189,11 @@ fun LanguageScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .navigationBarsPadding(),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp)
+                contentPadding = PaddingValues(top = 3.sdp, bottom = 24.dp)
             ) {
                 itemsIndexed(APP_LANGUAGES, key = { _, lang -> lang.code }) { index, lang ->
                     val isSelected = selectedLanguage == lang.code
                     val isNight = MaterialTheme.colorScheme.isDark
-                    // Light mode (reference): plain white rows, dark text and radios, no selected highlight
                     val cardBg = if (isNight) Color(0xFF35373B) else Color.Transparent
                     val cardBorder = if (isSelected && isNight) BorderStroke(1.5.dp, GalleryBlue) else null
                     val lightInk = Color(0xFF222933)
@@ -197,7 +201,7 @@ fun LanguageScreen(
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = if (isNight) 5.dp else 0.dp)
+                            .padding(horizontal = 12.sdp, vertical = if (isNight) 5.dp else 0.dp)
                             .clip(RoundedCornerShape(22.dp))
                             .clickable { selectedLanguage = lang.code },
                         shape = RoundedCornerShape(22.dp),
@@ -207,34 +211,32 @@ fun LanguageScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 14.dp, vertical = if (isNight) 8.dp else 16.dp), // reference 75dp rows
+                                .padding(horizontal = 14.sdp, vertical = if (isNight) 8.dp else 16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Circle Avatar with Badge Letter
                             val avatarBg = if (isNight) Color(0xFF26282B) else AvatarPastelColors[index % AvatarPastelColors.size]
                             Box(
                                 modifier = Modifier
-                                    .size(42.dp)
+                                    .size(42.sdp)
                                     .clip(CircleShape)
                                     .background(avatarBg),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = lang.badgeLetter,
-                                    fontSize = 20.sp,
+                                    fontSize = 16.ssp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = if (isNight) Color.White else Color(0xFF373742)
                                 )
                             }
 
-                            Spacer(modifier = Modifier.width(14.dp))
+                            Spacer(modifier = Modifier.width(14.sdp))
 
-                            // Language Name & Native Name (e.g., "English (English)")
                             val textAnnotated = buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
                                         color = if (!isNight) lightInk else if (isSelected) GalleryBlue else MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 15.sp,
+                                        fontSize = 12.ssp,
                                         fontWeight = if (!isNight) FontWeight.Normal else if (isSelected) FontWeight.Bold else FontWeight.SemiBold
                                     )
                                 ) {
@@ -244,7 +246,7 @@ fun LanguageScreen(
                                 withStyle(
                                     style = SpanStyle(
                                         color = if (!isNight) Color(0xFF7E7E7E) else if (isSelected) GalleryBlue.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant,
-                                        fontSize = 13.5.sp,
+                                        fontSize = 11.ssp,
                                         fontWeight = FontWeight.Normal
                                     )
                                 ) {
@@ -259,7 +261,6 @@ fun LanguageScreen(
                                 overflow = TextOverflow.Ellipsis
                             )
 
-                            // Radio Indicator: circle_checked vs circle_unchecked
                             Icon(
                                 painter = painterResource(
                                     id = if (isSelected) R.drawable.circle_checked else R.drawable.circle_unchecked
@@ -274,7 +275,7 @@ fun LanguageScreen(
             }
         }
 
-        // Lottie animated hand (lavFirstTime in activity_app_language.xml)
+        // Lottie animated hand (lavFirstTime in activity_app_language.xml: 55sdp width)
         if (showHandAnimation) {
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.hand))
             val progress by animateLottieCompositionAsState(
@@ -282,23 +283,23 @@ fun LanguageScreen(
                 iterations = LottieConstants.IterateForever
             )
 
-            val handWidth = 72.dp
-            val handHeight = 120.dp
             LottieAnimation(
                 composition = composition,
                 progress = { progress },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .statusBarsPadding()
-                    .padding(end = 6.dp)
-                    .offset(y = 56.dp - (handHeight / 2))
-                    .width(handWidth)
-                    .height(handHeight)
-                    .padding(10.dp)
+                    .padding(end = 5.sdp)
+                    .offset(y = 20.sdp)
+                    .width(55.sdp)
                     .clickable {
                         scope.launch {
                             appPreferences.setLanguage(selectedLanguage)
-                            onApply()
+                            if (isOnboarding) {
+                                onNavigateToPermission()
+                            } else {
+                                onApply()
+                            }
                         }
                     }
             )
