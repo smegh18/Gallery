@@ -105,7 +105,65 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 
 ## Traceability
 
-(Filled by the roadmap.)
+| Requirement | Phase | Status |
+|---|---|---|
+| FND-01 | Phase 1: Foundation | Pending |
+| FND-02 | Phase 1: Foundation | Pending |
+| FND-03 | Phase 1: Foundation | Pending |
+| FND-04 | Phase 1: Foundation | Pending |
+| ONB-01 | Phase 2: Onboarding | Pending |
+| ONB-02 | Phase 2: Onboarding | Pending |
+| ONB-03 | Phase 2: Onboarding | Pending |
+| ONB-04 | Phase 2: Onboarding | Pending |
+| ONB-05 | Phase 2: Onboarding | Pending |
+| HOME-01 | Phase 3: Home Shell and Photos Tab | Pending |
+| HOME-02 | Phase 3: Home Shell and Photos Tab | Pending |
+| HOME-03 | Phase 3: Home Shell and Photos Tab | Pending |
+| PHO-01 | Phase 3: Home Shell and Photos Tab | Pending |
+| ALB-01 | Phase 4: Albums, Stories and Explore | Pending |
+| ALB-02 | Phase 4: Albums, Stories and Explore | Pending |
+| EXP-01 | Phase 4: Albums, Stories and Explore | Pending |
+| VIEW-01 | Phase 5: Viewing and Browsing | Pending |
+| VIEW-02 | Phase 5: Viewing and Browsing | Pending |
+| VIEW-03 | Phase 5: Viewing and Browsing | Pending |
+| CLN-01 | Phase 6: Manage and Cleaner | Pending |
+| CLN-02 | Phase 6: Manage and Cleaner | Pending |
+| CLN-03 | Phase 6: Manage and Cleaner | Pending |
+| CLN-04 | Phase 6: Manage and Cleaner | Pending |
+| VLT-01 | Phase 7: Private Vault | Pending |
+| VLT-02 | Phase 7: Private Vault | Pending |
+| EDT-01 | Phase 8: Create and Edit | Pending |
+| EDT-02 | Phase 8: Create and Edit | Pending |
+| EDT-03 | Phase 8: Create and Edit | Pending |
+| SET-01 | Phase 9: Settings and System | Pending |
+| SET-02 | Phase 9: Settings and System | Pending |
+| SET-03 | Phase 9: Settings and System | Pending |
+| SET-04 | Phase 9: Settings and System | Pending |
+| SET-05 | Phase 9: Settings and System | Pending |
+| FLT-01 | Phase 10: Floating Sidebar | Pending |
+| FLT-02 | Phase 10: Floating Sidebar | Pending |
+| FLT-03 | Phase 10: Floating Sidebar | Pending |
+| FLT-04 | Phase 10: Floating Sidebar | Pending |
+| GS-01 | Phase 11: After-Call and Install Screens | Pending |
+| GS-02 | Phase 11: After-Call and Install Screens | Pending |
+| GS-03 | Phase 11: After-Call and Install Screens | Pending |
+| GS-04 | Phase 11: After-Call and Install Screens | Pending |
+| USG-01 | Phase 12: Usage Access and Cleanup | Pending |
+| CLR-01 | Phase 12: Usage Access and Cleanup | Pending |
+| VER-01 | Phase 13: Device Verification and Quality Gates | Pending |
+| VER-02 | Phase 13: Device Verification and Quality Gates | Pending |
+| VER-03 | Phase 13: Device Verification and Quality Gates | Pending |
+
+**Coverage:**
+- v1 requirements: 46 total
+- Mapped to phases: 46
+- Unmapped: 0
+
+**Notes:**
+- VER-03 is a gate on every phase 1-13, mapped to Phase 13 for traceability.
+- ALB-02, CLN-01, CLN-03 and SET-01 mention the usage-access prompt. Their screens are ported in Phases 4, 6 and 9, and the dialog with all its triggers is delivered in Phase 12 (USG-01).
+- CLR-01: each phase removes what its replacement obsoletes; Phase 12 is the final sweep.
 
 ---
 *Requirements defined: 2026-11-13*
+*Traceability updated: 2026-11-13 after roadmap creation*
