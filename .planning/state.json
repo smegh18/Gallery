@@ -1,12 +1,78 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v2.0",
-  "phases": [],
+  "milestone": "v2.0 — Reference 2.7.2 parity",
+  "phases": [
+    {
+      "number": "1",
+      "name": "Foundation",
+      "status": "complete"
+    },
+    {
+      "number": "2",
+      "name": "Onboarding",
+      "status": "pending"
+    },
+    {
+      "number": "3",
+      "name": "Home Shell and Photos Tab",
+      "status": "pending"
+    },
+    {
+      "number": "4",
+      "name": "Albums, Stories and Explore",
+      "status": "pending"
+    },
+    {
+      "number": "5",
+      "name": "Viewing and Browsing",
+      "status": "pending"
+    },
+    {
+      "number": "6",
+      "name": "Manage and Cleaner",
+      "status": "pending"
+    },
+    {
+      "number": "7",
+      "name": "Private Vault",
+      "status": "pending"
+    },
+    {
+      "number": "8",
+      "name": "Create and Edit",
+      "status": "pending"
+    },
+    {
+      "number": "9",
+      "name": "Settings and System",
+      "status": "pending"
+    },
+    {
+      "number": "10",
+      "name": "Floating Sidebar",
+      "status": "pending"
+    },
+    {
+      "number": "11",
+      "name": "After-Call and Install Screens",
+      "status": "pending"
+    },
+    {
+      "number": "12",
+      "name": "Usage Access and Cleanup",
+      "status": "pending"
+    },
+    {
+      "number": "13",
+      "name": "Device Verification and Quality Gates",
+      "status": "pending"
+    }
+  ],
   "next": {
-    "command": "/gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd-progress --next",
+    "label": "Advance to the next step (plan phase 2)",
+    "reason": "Phase 2 of 13 — needs a plan"
   },
-  "updated_at": "2026-11-13T06:56:41.349Z"
+  "updated_at": "2026-11-13T12:08:26.133Z"
 }

@@ -18,7 +18,7 @@ status: complete
 requirements: [FND-01, FND-02, FND-03, FND-04]
 ---
 
-# Phase 1 Plan 5: Quality gates and device check (draft, awaiting the on-device check)
+# Phase 1 Plan 5: Quality gates and device check
 
 Tasks 1 and 2 are done; Task 3 (on-device check in light, dark and other languages) is waiting for the user. This file is the draft the checkpoint refers to.
 
@@ -82,9 +82,13 @@ Scope: the UI Phase 1 changed. The app is native Android (Compose), so the audit
 
 No emoji, exclamation marks, hue gradients, glows or looping decorative motion were introduced by Phase 1.
 
-## Pending: Task 3 results
+## Task 3 results (user, 2026-11-13)
 
-To be filled after the user's answer: steps 1-7 approval, the step 8 observation (XML icons in app-Dark with phone in light) and the decision on the open unslop items above.
+- Steps 1-6: approved after fix commit 6d5a159 (theme, language, force dark). The delete-complete Lottie plays on the device.
+- Step 7 (clipping in de/ru/ta/ar and RTL mirroring): deferred by the user to Phase 13 device verification.
+- Step 8 (app Dark mode with the phone in light mode): covered by the 6d5a159 AppCompat DayNight change. XML resources now follow the in-app theme.
+- Open unslop items, deferred by the user: "N freed" string and ssp sizes go to Phase 6 (duplicate screens); the half-width All Media grid goes to Phase 3 (Photos tab).
+- CodeRabbit: 6d5a159 had 0 findings. The rate-limited scripts/ re-check ran and reported 2 minor findings, fixed in 447697d.
 
 ## Known Stubs
 

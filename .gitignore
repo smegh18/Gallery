@@ -15,3 +15,4 @@ graphify-out/cache/
 
 # Reference APKs (large, local only)
 reference/
+__pycache__/
