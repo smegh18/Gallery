@@ -14,7 +14,7 @@ key-files:
     - app/src/main/res/drawable/splash_bg.xml
     - scripts/ref_res.py
     - .planning/STATE.md
-status: checkpoint-pending
+status: complete
 requirements: [FND-01, FND-02, FND-03, FND-04]
 ---
 
@@ -93,3 +93,12 @@ None.
 ## Threat Flags
 
 None.
+
+## Device check (user, 2026-11-13): approved after fixes
+
+The user ran checks 1-5. Checks 3-5 failed at first. Fixed in 6d5a159:
+- Theme: MainActivity is now an AppCompatActivity on a DayNight theme, so Day/Night reaches XML resources too. The saved theme is applied once at startup, which ends the restart loop. Force dark is off, so MIUI no longer darkens Day mode.
+- Language: the chosen language is applied through AppCompat locales and kept across restarts. locales_config is added.
+- Delete animation (dm_success.lottie): plays on the device (Android 11).
+
+Known follow-up: about 175 UI labels are hardcoded in English. Each one switches to the reference's string when its screen is ported (Phases 2-9).
