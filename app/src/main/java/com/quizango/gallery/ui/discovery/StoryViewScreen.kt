@@ -157,7 +157,10 @@ fun StoryViewScreen(
                             .height(3.dp)
                             .clip(RoundedCornerShape(1.5.dp)),
                         color = Color.White,
-                        trackColor = Color.White.copy(alpha = 0.35f)
+                        trackColor = Color.White.copy(alpha = 0.35f),
+                        // plain filling line: no M3 end dot or gap
+                        gapSize = 0.dp,
+                        drawStopIndicator = {}
                     )
                 }
             }

@@ -109,7 +109,9 @@ fun DuplicateWaitingScreen(
                         .height(6.dp)
                         .clip(RoundedCornerShape(3.dp)),
                     color = Color.White,
-                    trackColor = Color.White.copy(alpha = 0.3f)
+                    trackColor = Color.White.copy(alpha = 0.3f),
+                    gapSize = 0.dp,
+                    drawStopIndicator = {}
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))

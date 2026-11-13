@@ -146,7 +146,10 @@ private fun ScanningCard(p: MomentScanner.Progress) {
             progress = { if (p.total == 0) 0f else p.done.toFloat() / p.total },
             modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(4.dp)),
             color = GalleryBlue,
-            trackColor = MaterialTheme.colorScheme.outlineVariant
+            trackColor = MaterialTheme.colorScheme.outlineVariant,
+            // plain filling line: no M3 end dot or gap
+            gapSize = 0.dp,
+            drawStopIndicator = {}
         )
         Spacer(Modifier.height(8.dp))
         Text(
