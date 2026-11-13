@@ -12,3 +12,6 @@ local.properties
 .DS_Store
 
 graphify-out/cache/
+
+# Reference APKs (large, local only)
+reference/
