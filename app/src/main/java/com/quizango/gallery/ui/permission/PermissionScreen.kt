@@ -115,11 +115,6 @@ fun PermissionScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (hasPermission) {
-            navigateNext()
-        }
-    }
 
     Box(
         modifier = Modifier

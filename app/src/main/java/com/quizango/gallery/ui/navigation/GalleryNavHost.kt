@@ -101,7 +101,9 @@ fun GalleryNavHost(
                 appPreferences = app.preferences,
                 onNavigate = { route ->
                     navController.navigate(route) {
-                        popUpTo(Screen.Permission.route) { inclusive = true }
+                        if (route == Screen.Home.route) {
+                            popUpTo(Screen.Permission.route) { inclusive = true }
+                        }
                     }
                 }
             )
@@ -112,7 +114,7 @@ fun GalleryNavHost(
                 appPreferences = app.preferences,
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                        popUpTo(Screen.Language.route) { inclusive = true }
                     }
                 }
             )

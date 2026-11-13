@@ -70,26 +70,35 @@ fun FeaturePromoScreen(
     val overlayLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
-        scope.launch {
-            appPreferences.setOnboardingCompleted(true)
-            onNavigateToHome()
+        val hasOverlay = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.canDrawOverlays(context)
+        } else {
+            true
+        }
+        if (hasOverlay) {
+            scope.launch {
+                appPreferences.setOnboardingCompleted(true)
+                onNavigateToHome()
+            }
         }
     }
 
     val phonePermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
-    ) {
-        // After phone permission, check overlay permission
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
-            val intent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:${context.packageName}")
-            )
-            overlayLauncher.launch(intent)
-        } else {
-            scope.launch {
-                appPreferences.setOnboardingCompleted(true)
-                onNavigateToHome()
+    ) { granted ->
+        if (granted) {
+            // After phone permission granted, check overlay permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:${context.packageName}")
+                )
+                overlayLauncher.launch(intent)
+            } else {
+                scope.launch {
+                    appPreferences.setOnboardingCompleted(true)
+                    onNavigateToHome()
+                }
             }
         }
     }
