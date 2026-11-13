@@ -77,7 +77,13 @@ Plans:
   3. The Permission screen matches 2.7.2, and refusing the permission shows the new "permission needed" dialog with 2.7.2's layout and actions.
   4. The "Get more from your Gallery" step matches 2.7.2: Enable asks for Phone and Display-over-other-apps, Not now skips, and both paths land on Home.
 
-**Plans**: TBD
+**Plans**: 5 plans
+- [x] 02-01-PLAN.md — Import assets, add dialog strings & colors, retire WelcomeScreen, add AppPreferences onboarding flag (wave 1)
+- [x] 02-02-PLAN.md — Align SplashScreen to 2.7.2 layout and add onboarding mode with tick button & hand Lottie to LanguageScreen (wave 2)
+- [x] 02-03-PLAN.md — Build PermissionNeededDialog and reconstruct PermissionScreen to 2.7.2 layout (wave 2)
+- [x] 02-04-PLAN.md — Build FeaturePromoScreen and wire full onboarding navigation flow (wave 3)
+- [x] 02-05-PLAN.md — Quality gates: unit tests, assembleDebug, parity scripts, CodeRabbit review, unslop audit, and verification report (wave 4)
+
 **UI hint**: yes
 
 ### Phase 3: Home Shell and Photos Tab

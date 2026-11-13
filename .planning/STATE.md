@@ -2,20 +2,20 @@
 gsd_state_version: "1.0"
 milestone: v2.0
 milestone_name: Reference 2.7.2 parity
-current_phase: 2
-current_phase_name: Onboarding
-status: planning
-stopped_at: Phase 1 complete, ready to plan Phase 2
-last_updated: "2026-11-13T12:08:26.104Z"
+current_phase: 3
+current_phase_name: Home Shell and Photos Tab
+status: ready_to_plan
+stopped_at: Phase 2 complete, ready to plan Phase 3
+last_updated: "2026-11-13T13:25:00.000Z"
 last_activity: 2026-11-13
-last_activity_desc: Phase 1 complete, transitioned to Phase 2
-state_head: 447697d205074f1bcf817a7a6ae2343cf7607659
+last_activity_desc: Phase 2 complete (Onboarding flow verified at 100% parity with 2.7.2)
+state_head: 31ef42d
 progress:
   total_phases: 13
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
-  percent: 8
+  completed_phases: 2
+  total_plans: 10
+  completed_plans: 10
+  percent: 15
 ---
 
 # Project State
@@ -25,21 +25,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-13)
 
 **Core value:** a user cannot tell our app from reference 2.7.2: same screens, flows, animations and behaviour.
-**Current focus:** Phase 1 - Foundation (shared 2.7.2 drawables, strings, theme, Lotties)
+**Current focus:** Phase 3 - Home Shell and Photos Tab
 
 ## Current Position
 
-Phase: 2 of 13 (Onboarding)
+Phase: 3 of 13 (Home Shell and Photos Tab)
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-11-13 — Phase 1 complete, transitioned to Phase 2
+Last activity: 2026-11-13 — Phase 2 complete (Onboarding flow verified at 100% parity with 2.7.2)
 
-Progress: [█░░░░░░░░░] 8%
+Progress: [██░░░░░░░░] 15%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 10
 - Average duration: -
 - Total execution time: 0.0 hours
 
@@ -48,6 +48,9 @@ Progress: [█░░░░░░░░░] 8%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 5 | - | - |
+| 2 | 5 | - | - |
+
+*Updated after each plan completion*
 
 *Updated after each plan completion*
 

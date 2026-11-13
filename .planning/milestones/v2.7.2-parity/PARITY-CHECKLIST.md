@@ -34,11 +34,11 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 ### A1. Launch and onboarding
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 1 | SplashActivity | activity_splash CHANGED | splash/SplashScreen.kt | [ ] | [ ] |
-| 2 | ~~WelcomeActivity~~ (removed in 2.7.2) | activity_welcome removed | onboarding/WelcomeScreen.kt: **remove or reroute** | [ ] | [ ] |
-| 3 | AppLanguageActivity | activity_app_language CHANGED | settings/LanguageScreen.kt | [ ] | [ ] |
-| 4 | PermissionActivity | activity_permission same; dialog_permission_needed NEW | permission/PermissionScreen.kt | [ ] | [ ] |
-| 5 | FeaturePromoActivity (obFeature) | activity_feature_promo NEW | none: **decision D1** | [ ] | [ ] |
+| 1 | SplashActivity | activity_splash CHANGED | splash/SplashScreen.kt | [x] | [ ] |
+| 2 | ~~WelcomeActivity~~ (removed in 2.7.2) | activity_welcome removed | onboarding/WelcomeScreen.kt: **remove or reroute** | [x] | [ ] |
+| 3 | AppLanguageActivity | activity_app_language CHANGED | settings/LanguageScreen.kt | [x] | [ ] |
+| 4 | PermissionActivity | activity_permission same; dialog_permission_needed NEW | permission/PermissionScreen.kt | [x] | [ ] |
+| 5 | FeaturePromoActivity (obFeature) | activity_feature_promo NEW | onboarding/FeaturePromoScreen.kt | [x] | [ ] |
 
 ### A2. Home shell and tabs
 | # | Reference | Layouts | Ours | Ported | Verified |

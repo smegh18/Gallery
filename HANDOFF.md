@@ -7,27 +7,35 @@ Written 2026-11-13 by Claude Code for Antigravity to continue this work.
 - It is a rebuild of a reference app, `albums.gallery.photo.folder.picasa.app.web.gallery`. Our app matched reference **2.6.7**. The current goal is **100% parity with reference 2.7.2**: every screen, flow, animation and behaviour.
 
 ## Where things stand
-- Main is at `a8cd653` (Phase 1 complete), **pushed**, and the working tree is clean.
+- Main is ahead of origin with Phase 2 complete. Working tree is clean.
 - Planning is done with GSD (get-shit-done) in `.planning/`:
   - `PROJECT.md`: milestone goal and approach.
   - `REQUIREMENTS.md`: 46 requirement IDs with traceability.
   - `ROADMAP.md`: 13 phases.
   - `STATE.md`: current position.
-  - `milestones/v2.7.2-parity/PARITY-CHECKLIST.md`: **the master list of 53 screens**, each with Ported and Verified boxes, plus the decisions and flows to verify.
-  - `phases/01-foundation/`: UI-SPEC, 5 PLANs, 5 SUMMARYs and VERIFICATION. This is the template for how a phase is done.
-- **Phase 1 (Foundation) is complete and verified.** It added the 2.7.2 drawables (106), strings with 24 translations, colours (#0066FF accent in light and dark), the Inter font, the sdp/ssp sizing (`ui/theme/Dimens.kt`), the Lotties, AppCompat theme and locale switching, and the MIUI force-dark opt-out.
+  - `milestones/v2.7.2-parity/PARITY-CHECKLIST.md`: **the master list of 53 screens**, each with Ported and Verified boxes, plus the decisions and flows to verify. Rows #1-#5 are now marked **Ported**.
+  - `phases/01-foundation/`: Complete and verified.
+  - `phases/02-onboarding/`: UI-SPEC, 5 PLANs, 5 SUMMARYs, and 02-VERIFICATION. Complete and verified.
+- **Phase 1 (Foundation) is complete and verified.**
+- **Phase 2 (Onboarding) is complete and verified.** Reconstructed Splash (140.sdp card, M3 progress indicator), Language onboarding mode (50.sdp x 28.sdp tick button, 55.sdp hand Lottie), Permission (activity_permission.xml match, dialog_permission_needed.xml), and FeaturePromo ("Get more from your Gallery" with Phone + Overlay permissions and 2s delayed skip). WelcomeScreen is completely removed. Quality gates pass: 107 unit tests pass, assembleDebug passes, 24 languages synced, 183 light/118 night colors match, CodeRabbit review completed with findings fixed, and unslop audit passes.
 
 ## Next step
-**Phase 2: Onboarding (ONB-01..05).** The flow becomes Splash → Language → Permission → Feature promo ("Get more from your Gallery") → Home. The Welcome screen is **removed** in 2.7.2.
-- Read the Phase 2 block in `.planning/ROADMAP.md` and rows #1-#5 of the parity checklist.
-- Follow the same cycle as Phase 1:
-  1. Write a UI-SPEC. The user chose to have one per phase.
-  2. Plan.
-  3. Check the plan.
-  4. Execute in small atomic commits.
-  5. Run the quality gates.
-  6. Ask the user for a device check.
-  7. Write the verification report.
+**Phase 3: Home Shell and Photos Tab (HOME-01, HOME-02, HOME-03, PHO-01).**
+- Checklist rows: #6 (HomeActivity shell), #7 (Photos tab / fragment_all_media), #10 (Exit popup).
+- Goals:
+  1. Home tabs in 2.7.2 order (Photos / Album / Explore) with 2.7.2 top bars.
+  2. ⋮ popup menu and ad-free button matching 2.7.2.
+  3. Vault hint banner appearing per 2.7.2 logic.
+  4. Exit popup on Back press matching dialog_exit_popup.xml.
+  5. Photos tab showing 2.7.2 date headers, grid items, ad-placeholder rows, pinch-to-zoom column scaling, and multi-select.
+- Follow the same cycle:
+  1. Write Phase 3 UI-SPEC (`03-UI-SPEC.md`).
+  2. Run UI checker subagent.
+  3. Plan Phase 3 (`/gsd-plan-phase 3`).
+  4. Run Plan checker subagent.
+  5. Execute plans in small atomic commits.
+  6. Quality gates (unit tests, assembleDebug, CodeRabbit review, unslop audit).
+  7. Verification report and update checklist/state/handoff.
 
 ## How to read the reference app (source of truth)
 See `tooling-setup.md`.
