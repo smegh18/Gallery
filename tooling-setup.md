@@ -43,3 +43,4 @@ App code is under `smali/smali/albums/gallery/photo/folder/picasa/app/web/galler
 - **Home stories:** the rules are in `presentation/home/viewmodel/HomeViewModel.smali` (`OooOoO0` builds the row), and the row labels are in `bw/j.smali`. They are mirrored in `app/src/main/java/com/quizango/gallery/ui/discovery/StoryBuilder.kt`.
 - **Story screen:** the layout is `res/layout/activity_story_view_photo.xml`. Its icons (`ic_story_close`, `ic_share_story`, `ic_edit`) are copied into `app/src/main/res/drawable/`.
 - **Screen comparison:** `adb exec-out screencap -p > file.png`. The reference shows full-screen ads: close them, and never tap Install.
+- **Reference strings:** after adding reference string keys to `values/strings.xml`, run `python -I scripts/ref_res.py sync-strings` (then `check-strings`) to pull their 2.7.2 translations; `check-colors` compares colours with 2.7.2.

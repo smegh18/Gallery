@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -117,7 +118,7 @@ fun RecycleScreen(
                                 }
                             ) {
                                 Text(
-                                    text = if (selectedPaths.size == recycleItems.size) "Deselect" else "Select All",
+                                    text = stringResource(if (selectedPaths.size == recycleItems.size) R.string.unselect_all else R.string.select_all),
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 14.sp,
                                     color = GalleryBlue
