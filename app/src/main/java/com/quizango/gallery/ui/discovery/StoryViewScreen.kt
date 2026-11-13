@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.discovery
 
+import com.quizango.gallery.ui.theme.Inter
 import android.content.Intent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -213,6 +214,7 @@ fun StoryViewScreen(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 13.sp,
                     style = androidx.compose.ui.text.TextStyle(
+                        fontFamily = Inter,
                         shadow = androidx.compose.ui.graphics.Shadow(Color(0x80000000), androidx.compose.ui.geometry.Offset(2f, 2f), 4f)
                     ),
                     modifier = Modifier

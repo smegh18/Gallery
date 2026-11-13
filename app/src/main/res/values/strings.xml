@@ -43,7 +43,7 @@
     <string name="no">No</string>
     <string name="save">Save</string>
     <string name="search">Search</string>
-    <string name="select_all">Select All</string>
+    <string name="select_all">Select all</string>
     <string name="properties">Properties</string>
     <string name="rename">Rename</string>
     <string name="set_as_wallpaper">Set as Wallpaper</string>
@@ -163,7 +163,7 @@
     <string name="deep_clean">Deep Clean</string>
     <string name="delete_selected">Delete Selected</string>
     <string name="delete_all">Delete All</string>
-    <string name="unselect_all">Unselect All</string>
+    <string name="unselect_all">Unselect all</string>
     <string name="permanent_delete_video_title">Want to delete the videos?</string>
     <string name="permanent_delete_video_sub_title">Once deleted, the videos can’t be restored.</string>
     <string name="permanent_delete_Image_title">Want to delete the screenshot?</string>

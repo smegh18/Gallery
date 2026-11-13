@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.home
 
+import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.isDark
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -194,6 +195,7 @@ fun PhotoGridItem(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
                     style = androidx.compose.ui.text.TextStyle(
+                        fontFamily = Inter,
                         shadow = androidx.compose.ui.graphics.Shadow(
                             color = Color.Black,
                             offset = androidx.compose.ui.geometry.Offset(2f, 2f),

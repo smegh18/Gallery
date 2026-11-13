@@ -300,6 +300,7 @@ fun PermissionScreen(
                         .clickable { showAboutDialog = true }
                         .padding(vertical = 8.dp, horizontal = 16.dp),
                     style = TextStyle(
+                        fontFamily = Inter,
                         textDecoration = TextDecoration.Underline,
                         color = permissionTextColor,
                         fontSize = 13.5.sp,

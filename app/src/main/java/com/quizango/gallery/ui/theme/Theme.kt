@@ -34,7 +34,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = GalleryPrimaryBlue,
+    primary = GalleryBlueLight,
     onPrimary = GalleryBackgroundDark,
     primaryContainer = GalleryDarkBlue,
     onPrimaryContainer = GalleryBackgroundLight,

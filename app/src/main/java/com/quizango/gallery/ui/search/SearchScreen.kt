@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.search
 
+import com.quizango.gallery.ui.theme.Inter
 import kotlinx.coroutines.flow.map
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -174,6 +175,7 @@ fun SearchScreen(
                                 onValueChange = { searchQuery = it },
                                 singleLine = true,
                                 textStyle = TextStyle(
+                                    fontFamily = Inter,
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Medium

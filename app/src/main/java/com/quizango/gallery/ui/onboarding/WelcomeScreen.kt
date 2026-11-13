@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.onboarding
 
+import com.quizango.gallery.ui.theme.Inter
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -157,6 +158,7 @@ fun WelcomeScreen(
         ClickableText(
             text = annotatedString,
             style = TextStyle(
+                fontFamily = Inter,
                 textAlign = TextAlign.Center,
                 fontSize = 13.sp,
                 lineHeight = 18.sp

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -142,7 +143,7 @@ fun GalleryTopBar(
             if (isSelectionMode) {
                 TextButton(onClick = onSelectAllClick) {
                     Text(
-                        text = if (isAllSelected) "Unselect All" else "Select All",
+                        text = stringResource(if (isAllSelected) R.string.unselect_all else R.string.select_all),
                         fontWeight = FontWeight.SemiBold,
                         color = GalleryBlue,
                         fontSize = 14.sp
