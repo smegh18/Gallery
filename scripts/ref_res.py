@@ -1,9 +1,9 @@
 """Regenerate and check app translations from the decoded 2.7.2 reference.
 
-Usage: python -I scripts/ref_res.py <sync-strings|check-strings> [--ref DIR]
+Usage: python -I scripts/ref_res.py <sync-strings|check-strings|check-colors> [--ref DIR] [--ref267 DIR]
 
 --ref is the decoded reference res/ folder (default: %TEMP%/ref272/dec/res, see
-tooling-setup.md). The values-<lang>/strings.xml files written here are generated
+tooling-setup.md); --ref267 is the decoded 2.6.7 one, used only by check-colors. The values-<lang>/strings.xml files written here are generated
 and must not be edited by hand; rerun sync-strings instead.
 """
 import argparse
@@ -34,6 +34,69 @@ def spec(element):
 def _selftest():
     assert spec(ET.fromstring("<s>%1$s of %2$d</s>")) == ["%1$s", "%2$d"]
     assert spec(ET.fromstring("<s>100%% done</s>")) == ["%%"]
+    assert norm("#fff", {}, {}) == "#ffffffff" and norm("#0066FF", {}, {}) == "#ff0066ff"
+    assert norm("#1a002847", {}, {}) == "#1a002847" and norm("@android:color/transparent", {}, {}) == "#00000000"
+
+
+AD_COLORS = {"dismiss_icon_grey_500", "dismiss_icon_grey_700", "im_browser_bg", "im_browser_loader_bg",
+             "tt_bf161823", "background_dark", "background_light"}
+FIXED = {"@android:color/transparent": "#00000000", "@android:color/white": "#ffffffff",
+         "@android:color/black": "#ff000000"}
+
+
+def load(path):
+    if not os.path.isfile(path):
+        return {}
+    return {e.get("name"): (e.text or "").strip() for e in ET.parse(path).getroot() if e.tag == "color"}
+
+
+def norm(value, table, light, depth=10):
+    """Resolve @color references, then expand any hex spelling to #aarrggbb."""
+    if value in FIXED:
+        return FIXED[value]
+    if value.startswith("@color/") and depth:
+        name = value[7:]
+        return norm(table.get(name, light.get(name, value)), table, light, depth - 1)
+    h = value.lower()
+    if re.fullmatch(r"#[0-9a-f]{3,4}", h):
+        h = "#" + "".join(c * 2 for c in h[1:])
+    if re.fullmatch(r"#[0-9a-f]{6}", h):
+        h = "#ff" + h[1:]
+    return h
+
+
+def check_colors(ref, ref267):
+    ours = load(os.path.join(RES, "values", "colors.xml"))
+    ours_n = load(os.path.join(RES, "values-night", "colors.xml"))
+    r_l, r_n = load(os.path.join(ref, "values", "colors.xml")), load(os.path.join(ref, "values-night", "colors.xml"))
+    old = load(os.path.join(ref267, "values", "colors.xml"))
+    problems = []
+    need = {n for n in r_l if n not in old} - AD_COLORS
+    for d in os.listdir(RES):
+        if d.startswith("drawable"):
+            for f in os.listdir(os.path.join(RES, d)):
+                if f.endswith(".xml"):
+                    with open(os.path.join(RES, d, f), encoding="utf-8") as fh:
+                        need.update(re.findall(r"@color/(\w+)", fh.read()))
+    problems += ["missing: %s" % n for n in sorted(need - set(ours))]
+    light = [n for n in ours if n in r_l]
+    for n in light:
+        if norm(ours[n], ours, ours) != norm(r_l[n], r_l, r_l):
+            problems.append("differs (light): %s %s != %s" % (n, ours[n], r_l[n]))
+    night = [n for n in r_n if n in ours]
+    for n in night:
+        if n not in ours_n:
+            problems.append("missing (night): %s" % n)
+        elif norm(ours_n[n], ours_n, ours) != norm(r_n[n], r_n, r_l):
+            problems.append("differs (night): %s %s != %s" % (n, ours_n[n], r_n[n]))
+    for n in ours_n:
+        if n in r_l and n not in r_n and norm(ours_n[n], ours_n, ours) != norm(r_l[n], r_l, r_l):
+            problems.append("extra night override: %s" % n)
+    print("\n".join(problems))
+    if problems:
+        return 1
+    print("colors: %d light / %d night names match 2.7.2" % (len(light), len(night)))
+    return 0
 
 
 def languages():
@@ -102,13 +165,17 @@ def check_strings(ref):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("command", choices=["sync-strings", "check-strings"])
+    parser.add_argument("command", choices=["sync-strings", "check-strings", "check-colors"])
     parser.add_argument("--ref", default=os.path.join(os.environ.get("TEMP", ""), "ref272", "dec", "res"))
+    parser.add_argument("--ref267", default=os.path.join(os.environ.get("TEMP", ""), "ref267", "dec", "res"))
     args = parser.parse_args()
     _selftest()
-    if not os.path.isfile(os.path.join(args.ref, "values", "strings.xml")):
-        print("reference not decoded: %s (see tooling-setup.md)" % args.ref)
-        return 2
+    for d in (args.ref, args.ref267) if args.command == "check-colors" else (args.ref,):
+        if not os.path.isfile(os.path.join(d, "values", "strings.xml")):
+            print("reference not decoded: %s (see tooling-setup.md)" % d)
+            return 2
+    if args.command == "check-colors":
+        return check_colors(args.ref, args.ref267)
     return {"sync-strings": sync_strings, "check-strings": check_strings}[args.command](args.ref)
 
 
