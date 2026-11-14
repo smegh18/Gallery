@@ -1,7 +1,8 @@
 ---
 phase: "3"
 slug: "home-shell-and-photos-tab"
-status: draft
+status: approved
+reviewed_at: 2026-11-14
 shadcn_initialized: false
 preset: none
 created: "2026-11-14"
@@ -376,3 +377,9 @@ Asset provenance gate (Phase 1 rule): copy only from `R272/res`; no ad-SDK resou
 - [ ] Dimension 7 Inventory Provenance: PASS
 
 **Approval:** pending
+
+## Checker notes (2026-11-14, approved, non-blocking)
+- **Tab labels:** the planner names the three tab label keys (Photos, Albums, Explore) from the reference `item_bottom_option_layout` / `activity_home`.
+- **Spacing:** add 7.dp (sync bar margin) to the unscaled spacing exceptions.
+- **Drawables:** the planner checks that `ic_check`, `ic_un_check`, `ic_empty_img`, `image_loading_albums`, `ic_close`, `ic_home_select_*`, `ic_album_select_delete` and `fastScrollerColor` exist in our res, and imports any that are missing.
+- **`zoom_in`:** drop it unless used.
