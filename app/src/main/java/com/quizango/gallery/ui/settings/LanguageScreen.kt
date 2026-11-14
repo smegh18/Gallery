@@ -286,12 +286,14 @@ fun LanguageScreen(
             LottieAnimation(
                 composition = composition,
                 progress = { progress },
+                // Reference: centred on the toolbar's bottom edge (56dp) at the end, so the finger points at the tick
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .statusBarsPadding()
                     .padding(end = 5.sdp)
-                    .offset(y = 20.sdp)
-                    .width(55.sdp)
+                    .offset(y = 56.dp - ((55.sdp - 20.dp) * (1000f / 512f) + 20.dp) / 2)
+                    .size(width = 55.sdp, height = (55.sdp - 20.dp) * (1000f / 512f) + 20.dp)
+                    .padding(10.dp)
                     .clickable {
                         scope.launch {
                             appPreferences.setLanguage(selectedLanguage)
