@@ -224,4 +224,10 @@
     <color name="op_onboarding_desc_color">#ff7a8389</color>
     <color name="per_text_color">#ff1e3354</color>
     <color name="radioButtonUncheckedColor">#ff7a8389</color>
+
+    <!-- 2.7.2 colours (Phase 3) -->
+    <color name="hint_home">#e5000000</color>
+    <color name="tooltip_bg">#cc202331</color>
+    <color name="exitViewBackgroundColor">#ffffffff</color>
+    <color name="cancel_button_stroke_color">#ff0066ff</color>
 </resources>

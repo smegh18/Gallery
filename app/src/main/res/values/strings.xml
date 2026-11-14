@@ -307,4 +307,37 @@
     <string name="tap_allow_dialog">4. Tap Allow</string>
     <string name="tap_permission_dialog">2. Tap Permissions</string>
     <string name="why_this_permission_needed">Why This Permission Is Needed?</string>
+
+    <!-- 2.7.2 strings (Phase 3), copied verbatim from R272 values/strings.xml -->
+    <string name="albums">Albums</string>
+    <string name="explore">Explore</string>
+    <string name="camera">Camera</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="items_selected">%d item(s) selected</string>
+    <string name="vault_hint_title">Hold Gallery to open Private Vault</string>
+    <string name="vault_hint_description">Secure your hidden photos here</string>
+    <string name="zoom_out">Zoom Out</string>
+    <string name="change_number">Change the number of columns</string>
+    <string name="got_it">GOT IT</string>
+    <string name="tap_again_to_exit">Tap again to exit</string>
+    <string name="sort_by">Sort by</string>
+    <string name="last_modified">Last Modified</string>
+    <string name="filename">File Name</string>
+    <string name="file_size">File Size</string>
+    <string name="created_date">Created Date</string>
+    <string name="ascending_order">Ascending Order</string>
+    <string name="descending_order">Descending Order</string>
+    <string name="GIF">GIF</string>
+    <string name="RAW">RAW</string>
+    <string name="SVG">SVG</string>
+    <string name="create_an_album">Create an album</string>
+    <string name="album_name">Album Name</string>
+    <string name="enter_album_name">Enter Album Name</string>
+    <string name="caller_ok">OK</string>
+    <string name="deleted_title">Are you sure you want to delete</string>
+    <string name="deleted_items">items?</string>
+    <string name="add_to_title">Add To</string>
+    <string name="items_copied_successfully">Media files copied successfully.</string>
+    <string name="items">items</string>
 </resources>

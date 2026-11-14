@@ -35,8 +35,6 @@ import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
-import com.quizango.gallery.ui.components.GalleryBottomNav
-import com.quizango.gallery.ui.components.GalleryDrawer
 import com.quizango.gallery.ui.components.GalleryTopBar
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
@@ -44,85 +42,28 @@ import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
     onNavigate: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showSortDialog by remember { mutableStateOf(false) }
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
-    var showMoreMenu by remember { mutableStateOf(false) }
     var newAlbumName by remember { mutableStateOf("") }
-    
-    BackHandler(enabled = drawerState.isOpen) {
-        scope.launch { drawerState.close() }
-    }
-    
+
     BackHandler(enabled = uiState.isSelectionMode) {
         viewModel.clearSelection()
     }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            GalleryDrawer(
-                onNavigate = { route ->
-                    when (route) {
-                        "favorites" -> onNavigate(Screen.Favorites.route)
-                        "recycle" -> onNavigate(Screen.RecycleBin.route)
-                        "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
-                        "vault" -> onNavigate(Screen.VaultLock.route)
-                        "cleaner" -> onNavigate(Screen.Cleaner.route)
-                        "editor" -> onNavigate(Screen.Editor.createRoute())
-                        "language" -> onNavigate(Screen.Language.route)
-                        "theme" -> onNavigate(Screen.Theme.route)
-                        "settings" -> onNavigate(Screen.Settings.route)
-                        "about" -> onNavigate(Screen.About.route)
-                        "games", "more_apps" -> {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps"))
-                            try { context.startActivity(intent) } catch (_: Exception) {}
-                        }
-                    }
-                },
-                onCreateAlbumClick = {
-                    showCreateAlbumDialog = true
-                },
-                onCloseDrawer = {
-                    scope.launch { drawerState.close() }
-                }
-            )
-        }
-    ) {
-        Scaffold(
-            topBar = {
+    Scaffold(
+        topBar = {
+            if (uiState.isSelectionMode) {
+                // 03-03 restyles the selection bar
                 GalleryTopBar(
-                    title = "GALLERY", // reference keeps the GALLERY bar on the Explore tab
-                    onOpenDrawer = {
-                        scope.launch { drawerState.open() }
-                    },
-                    onSearchClick = {
-                        onNavigate(Screen.Search.route)
-                    },
-                    onSortClick = if (uiState.selectedTab == 1) {
-                        { showSortDialog = true }
-                    } else null,
-                    onCameraClick = if (uiState.selectedTab == 0) {
-                        {
-                            val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-                            if (cameraIntent.resolveActivity(context.packageManager) != null) {
-                                context.startActivity(cameraIntent)
-                            }
-                        }
-                    } else null,
-                    onAddAlbumClick = null,
-                    onProClick = { onNavigate(Screen.About.route) },
-                    onLockClick = { onNavigate(Screen.VaultLock.route) },
-                    isSelectionMode = uiState.isSelectionMode,
+                    title = "",
+                    isSelectionMode = true,
                     selectedCount = uiState.selectedPaths.size,
                     isAllSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty(),
                     onSelectAllClick = {
@@ -134,144 +75,143 @@ fun HomeScreen(
                     },
                     onCloseSelection = { viewModel.clearSelection() }
                 )
-            },
-            bottomBar = {
-                if (uiState.isSelectionMode) {
-                    Surface(
-                        shadowElevation = 8.dp,
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .navigationBarsPadding()
-                                .horizontalScroll(rememberScrollState())
-                                .padding(horizontal = 8.dp, vertical = 6.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_share,
-                                label = stringResource(id = R.string.share),
-                                onClick = { shareSelectedMedia(context, uiState.selectedPaths) }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_fav,
-                                label = stringResource(id = R.string.favorite),
-                                onClick = { viewModel.toggleFavoriteSelected() }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_add,
-                                label = stringResource(id = R.string.add_to),
-                                onClick = { showCreateAlbumDialog = true }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_hide,
-                                label = stringResource(id = R.string.ad_to_private),
-                                onClick = { viewModel.moveSelectedToVault() }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_album_select_delete,
-                                label = stringResource(id = R.string.delete),
-                                onClick = { viewModel.moveSelectedToTrash() }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_create_album,
-                                label = stringResource(id = R.string.create_albums),
-                                onClick = { showCreateAlbumDialog = true }
-                            )
-                        }
-                    }
-                } else {
-                    GalleryBottomNav(
-                        selectedTab = uiState.selectedTab,
-                        onTabSelected = { viewModel.setTab(it) }
-                    )
-                }
+            } else {
+                HomeTopBar(uiState.selectedTab)
             }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                // Swipe left/right between tabs; kept in sync with the bottom bar
-                val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = uiState.selectedTab) { 3 }
-                LaunchedEffect(uiState.selectedTab) {
-                    if (pagerState.currentPage != uiState.selectedTab) pagerState.animateScrollToPage(uiState.selectedTab)
-                }
-                LaunchedEffect(pagerState) {
-                    androidx.compose.runtime.snapshotFlow { pagerState.settledPage }.collect { viewModel.setTab(it) }
-                }
-                androidx.compose.foundation.pager.HorizontalPager(
-                    state = pagerState,
-                    // No swiping while selecting, so a drag can't drop the selection
-                    userScrollEnabled = !uiState.isSelectionMode,
-                    beyondViewportPageCount = 1,
-                    modifier = Modifier.fillMaxSize()
-                ) { page ->
-                when (page) {
-                    0 -> AlbumsTab(
-                        albumsList = uiState.albumsList,
-                        mediaList = uiState.mediaList,
-                        onAlbumClick = { album ->
-                            onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
-                        },
-                        onStoryClick = { path, title ->
-                            onNavigate(Screen.StoryView.createRoute(path, title))
-                        },
-                        onFeatureClick = { featureId ->
-                            when (featureId) {
-                                "vault" -> onNavigate(Screen.VaultLock.route)
-                                "favorites" -> onNavigate(Screen.Favorites.route)
-                                "cleaner" -> onNavigate(Screen.RemoveJunk.route)
-                                "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
-                                "recycle" -> onNavigate(Screen.RecycleBin.route)
-                                "collage" -> onNavigate(Screen.CollageMaker.route)
-                                "editor" -> onNavigate(Screen.Editor.createRoute())
-                                "videos" -> onNavigate(Screen.AlbumDetail.createRoute("filter:videos", "Videos"))
-                                "place" -> onNavigate(Screen.AlbumDetail.createRoute("filter:place", "Geographic photo"))
-                                "moments" -> onNavigate(Screen.Moments.route)
-                            }
-                        },
-                        onMediaTypeClick = { typeId ->
-                            when (typeId) {
-                                "portrait" -> onNavigate(Screen.AlbumDetail.createRoute("filter:portrait", "Portraits"))
-                                "high_definition" -> onNavigate(Screen.AlbumDetail.createRoute("filter:hd", "High Definition"))
-                                "burst" -> onNavigate(Screen.BurstPhotos.route)
-                                "animated" -> onNavigate(Screen.AnimatedMedia.route)
-                                else -> viewModel.setTab(1)
-                            }
-                        }
-                    )
-                    1 -> PhotosTab(
-                        mediaList = uiState.mediaList,
-                        columnCount = uiState.columnCount,
-                        selectedPaths = uiState.selectedPaths,
-                        isSelectionMode = uiState.isSelectionMode,
-                        onMediaClick = { item ->
-                            onNavigate(Screen.MediaViewer.createRoute(item.filePath, ""))
-                        },
-                        onMediaLongClick = { item ->
-                            viewModel.toggleSelection(item.filePath)
-                        },
-                        onRefresh = { viewModel.syncMedia() }
-                    )
-                    2 -> ExploreTab(
-                        onNavigate = onNavigate
-                    )
-                }
-                }
-
-                if (uiState.isSyncing) {
-                    LinearProgressIndicator(
+        },
+        bottomBar = {
+            if (uiState.isSelectionMode) {
+                Surface(
+                    shadowElevation = 8.dp,
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .align(Alignment.TopCenter),
-                        color = GalleryBlue
-                    )
+                            .navigationBarsPadding()
+                            .horizontalScroll(rememberScrollState())
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SelectionActionItem(
+                            iconRes = R.drawable.ic_home_select_share,
+                            label = stringResource(id = R.string.share),
+                            onClick = { shareSelectedMedia(context, uiState.selectedPaths) }
+                        )
+                        SelectionActionItem(
+                            iconRes = R.drawable.ic_home_select_fav,
+                            label = stringResource(id = R.string.favorite),
+                            onClick = { viewModel.toggleFavoriteSelected() }
+                        )
+                        SelectionActionItem(
+                            iconRes = R.drawable.ic_home_select_add,
+                            label = stringResource(id = R.string.add_to),
+                            onClick = { showCreateAlbumDialog = true }
+                        )
+                        SelectionActionItem(
+                            iconRes = R.drawable.ic_home_select_hide,
+                            label = stringResource(id = R.string.ad_to_private),
+                            onClick = { viewModel.moveSelectedToVault() }
+                        )
+                        SelectionActionItem(
+                            iconRes = R.drawable.ic_album_select_delete,
+                            label = stringResource(id = R.string.delete),
+                            onClick = { viewModel.moveSelectedToTrash() }
+                        )
+                        SelectionActionItem(
+                            iconRes = R.drawable.ic_home_select_create_album,
+                            label = stringResource(id = R.string.create_albums),
+                            onClick = { showCreateAlbumDialog = true }
+                        )
+                    }
                 }
+            } else {
+                HomeTabBar(uiState.selectedTab) { viewModel.setTab(it) }
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            // Swipe left/right between tabs; kept in sync with the bottom bar
+            val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = uiState.selectedTab) { 3 }
+            LaunchedEffect(uiState.selectedTab) {
+                if (pagerState.currentPage != uiState.selectedTab) pagerState.animateScrollToPage(uiState.selectedTab)
+            }
+            LaunchedEffect(pagerState) {
+                androidx.compose.runtime.snapshotFlow { pagerState.settledPage }.collect { viewModel.setTab(it) }
+            }
+            androidx.compose.foundation.pager.HorizontalPager(
+                state = pagerState,
+                // No swiping while selecting, so a drag can't drop the selection
+                userScrollEnabled = !uiState.isSelectionMode,
+                beyondViewportPageCount = 2, // HA setOffscreenPageLimit(2)
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+            when (page) {
+                PAGE_ALBUMS -> AlbumsTab(
+                    albumsList = uiState.albumsList,
+                    mediaList = uiState.mediaList,
+                    onAlbumClick = { album ->
+                        onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
+                    },
+                    onStoryClick = { path, title ->
+                        onNavigate(Screen.StoryView.createRoute(path, title))
+                    },
+                    onFeatureClick = { featureId ->
+                        when (featureId) {
+                            "vault" -> onNavigate(Screen.VaultLock.route)
+                            "favorites" -> onNavigate(Screen.Favorites.route)
+                            "cleaner" -> onNavigate(Screen.RemoveJunk.route)
+                            "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
+                            "recycle" -> onNavigate(Screen.RecycleBin.route)
+                            "collage" -> onNavigate(Screen.CollageMaker.route)
+                            "editor" -> onNavigate(Screen.Editor.createRoute())
+                            "videos" -> onNavigate(Screen.AlbumDetail.createRoute("filter:videos", "Videos"))
+                            "place" -> onNavigate(Screen.AlbumDetail.createRoute("filter:place", "Geographic photo"))
+                            "moments" -> onNavigate(Screen.Moments.route)
+                        }
+                    },
+                    onMediaTypeClick = { typeId ->
+                        when (typeId) {
+                            "portrait" -> onNavigate(Screen.AlbumDetail.createRoute("filter:portrait", "Portraits"))
+                            "high_definition" -> onNavigate(Screen.AlbumDetail.createRoute("filter:hd", "High Definition"))
+                            "burst" -> onNavigate(Screen.BurstPhotos.route)
+                            "animated" -> onNavigate(Screen.AnimatedMedia.route)
+                            else -> viewModel.setTab(PAGE_PHOTOS)
+                        }
+                    }
+                )
+                PAGE_PHOTOS -> PhotosTab(
+                    mediaList = uiState.mediaList,
+                    columnCount = uiState.columnCount,
+                    selectedPaths = uiState.selectedPaths,
+                    isSelectionMode = uiState.isSelectionMode,
+                    onMediaClick = { item ->
+                        onNavigate(Screen.MediaViewer.createRoute(item.filePath, ""))
+                    },
+                    onMediaLongClick = { item ->
+                        viewModel.toggleSelection(item.filePath)
+                    },
+                    onRefresh = { viewModel.syncMedia() }
+                )
+                PAGE_EXPLORE -> ExploreTab(
+                    onNavigate = onNavigate
+                )
+            }
+            }
+
+            if (uiState.isSyncing) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter),
+                    color = GalleryBlue
+                )
             }
         }
     }

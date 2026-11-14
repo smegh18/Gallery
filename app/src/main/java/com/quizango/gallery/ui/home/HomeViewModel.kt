@@ -15,8 +15,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 
+// Pager pages (2.7.2 HOME_TAB_ORDER [1,0,2]): Photos first, and the default.
+const val PAGE_PHOTOS = 0
+const val PAGE_ALBUMS = 1
+const val PAGE_EXPLORE = 2
+
 data class HomeUiState(
-    val selectedTab: Int = 0, // 0 = Albums (Default), 1 = Photos (All Media), 2 = Explore
+    val selectedTab: Int = PAGE_PHOTOS, // PAGE_PHOTOS (default), PAGE_ALBUMS, PAGE_EXPLORE
     val mediaList: List<MediaItem> = emptyList(),
     val albumsList: List<Album> = emptyList(),
     val columnCount: Int = 4,
