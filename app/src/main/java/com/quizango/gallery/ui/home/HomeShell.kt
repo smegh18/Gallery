@@ -5,21 +5,40 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.splash.checkStoragePermissions
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.sdp
 
@@ -38,8 +57,37 @@ internal val HOME_TABS = listOf(
     HomeTab(R.string.explore, R.string.explore, R.drawable.ic_tab_explore_fill, R.drawable.ic_tab_explore_outline)
 )
 
+internal enum class TopBarSlot { AD_FREE, ADD_ALBUM, SEARCH, CAMERA, MORE }
+
+internal enum class MoreMenuRow { SORT, RECYCLE_BIN, SETTINGS }
+
+/** Top-bar buttons left to right (HA.o000o0oO); + and the more button need media permission. */
+internal fun topBarSlots(page: Int, hasMediaPermission: Boolean): List<TopBarSlot> = buildList {
+    add(TopBarSlot.AD_FREE)
+    if (page == PAGE_ALBUMS && hasMediaPermission) add(TopBarSlot.ADD_ALBUM)
+    add(TopBarSlot.SEARCH)
+    if (page == PAGE_PHOTOS) add(TopBarSlot.CAMERA)
+    if (page != PAGE_EXPLORE && hasMediaPermission) add(TopBarSlot.MORE)
+}
+
+/** Sort is on Photos only (HA.OoooooO: activeTabNumber == 1). */
+internal fun moreMenuRows(page: Int): List<MoreMenuRow> = buildList {
+    if (page == PAGE_PHOTOS) add(MoreMenuRow.SORT)
+    add(MoreMenuRow.RECYCLE_BIN)
+    add(MoreMenuRow.SETTINGS)
+}
+
 @Composable
-internal fun HomeTopBar(page: Int) {
+internal fun HomeTopBar(
+    page: Int,
+    onSearch: () -> Unit,
+    onCamera: () -> Unit,
+    onAddAlbum: () -> Unit,
+    onMoreRow: (MoreMenuRow) -> Unit,
+    onTitleLongPress: () -> Unit
+) {
+    val haptic = LocalHapticFeedback.current
+    val slots = topBarSlots(page, checkStoragePermissions(LocalContext.current))
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,9 +103,113 @@ internal fun HomeTopBar(page: Int) {
             color = colorResource(R.color.home_shell_title),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(start = 13.sdp)
+            modifier = Modifier
+                .padding(start = 13.sdp)
+                .pointerInput(onTitleLongPress) {
+                    detectTapGestures(onLongPress = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onTitleLongPress()
+                    })
+                }
         )
         Spacer(Modifier.weight(1f))
+        slots.forEach { slot ->
+            when (slot) {
+                // Opens the Pro screen in the reference; Phase 9 builds it, so the tap does nothing until then.
+                TopBarSlot.AD_FREE -> SlotButton(R.drawable.home_shell_ic_ad_free, null) {}
+                TopBarSlot.ADD_ALBUM -> SlotButton(R.drawable.home_shell_ic_add, stringResource(R.string.create_album), onAddAlbum)
+                TopBarSlot.SEARCH -> SlotButton(R.drawable.home_shell_ic_search, stringResource(R.string.search), onSearch)
+                TopBarSlot.CAMERA -> SlotButton(R.drawable.home_shell_ic_camera, stringResource(R.string.camera), onCamera)
+                // The menu state is keyed on the page, so it closes when the page changes.
+                TopBarSlot.MORE -> {
+                    var open by remember(page) { mutableStateOf(false) }
+                    Box {
+                        SlotButton(R.drawable.home_shell_ic_more, stringResource(R.string.home_shell_more_options)) { open = true }
+                        if (open) {
+                            MoreMenu(page, onDismiss = { open = false }, onRow = { open = false; onMoreRow(it) })
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SlotButton(@DrawableRes icon: Int, description: String?, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(32.sdp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(bounded = false),
+                onClick = onClick
+            )
+            .padding(7.sdp)
+    ) {
+        Image(painterResource(icon), description, Modifier.fillMaxSize())
+    }
+}
+
+/** home_shell_popup_menu: under the more button, end-aligned, shifted 8.sdp inward and 8.sdp down (HA.OoooooO). */
+@Composable
+private fun MoreMenu(page: Int, onDismiss: () -> Unit, onRow: (MoreMenuRow) -> Unit) {
+    val density = LocalDensity.current
+    val inset = 8.sdp // room for the 8.sdp shadow, which a popup window would otherwise clip
+    val offset = with(density) { 8.sdp.roundToPx() }
+    val insetPx = with(density) { inset.roundToPx() }
+    val position = remember(offset, insetPx) {
+        object : PopupPositionProvider {
+            override fun calculatePosition(
+                anchorBounds: IntRect, windowSize: IntSize, layoutDirection: LayoutDirection, popupContentSize: IntSize
+            ): IntOffset {
+                val contentWidth = popupContentSize.width - 2 * insetPx
+                val x = if (layoutDirection == LayoutDirection.Ltr) anchorBounds.right - contentWidth - offset
+                else anchorBounds.left + offset
+                return IntOffset(x - insetPx, anchorBounds.bottom + offset)
+            }
+        }
+    }
+    Popup(popupPositionProvider = position, onDismissRequest = onDismiss, properties = PopupProperties(focusable = true)) {
+        Column(
+            modifier = Modifier
+                .padding(start = inset, end = inset, bottom = inset)
+                .shadow(8.sdp, RoundedCornerShape(10.sdp))
+                .background(colorResource(R.color.home_shell_popup_bg), RoundedCornerShape(10.sdp))
+                .widthIn(min = 120.sdp)
+                .width(IntrinsicSize.Max)
+                .padding(vertical = 3.sdp)
+        ) {
+            moreMenuRows(page).forEach { row ->
+                val (icon, label) = when (row) {
+                    MoreMenuRow.SORT -> R.drawable.home_shell_ic_sort to R.string.home_shell_sort
+                    MoreMenuRow.RECYCLE_BIN -> R.drawable.home_shell_ic_recycle to R.string.recycle_bin
+                    MoreMenuRow.SETTINGS -> R.drawable.home_shell_ic_settings to R.string.settings
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(37.sdp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = ripple(color = colorResource(R.color.home_shell_popup_ripple)),
+                            onClick = { onRow(row) }
+                        )
+                        .padding(start = 12.sdp, end = 17.sdp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(painterResource(icon), null, Modifier.size(16.sdp))
+                    Text(
+                        text = stringResource(label),
+                        style = GalleryText.BodyMediumMedium,
+                        color = colorResource(R.color.home_shell_popup_text),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(start = 10.sdp)
+                    )
+                }
+            }
+        }
     }
 }
 

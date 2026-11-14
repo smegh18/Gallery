@@ -38,6 +38,7 @@ import com.quizango.gallery.domain.model.SortOrder
 import com.quizango.gallery.ui.components.GalleryTopBar
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 import java.io.File
@@ -76,7 +77,25 @@ fun HomeScreen(
                     onCloseSelection = { viewModel.clearSelection() }
                 )
             } else {
-                HomeTopBar(uiState.selectedTab)
+                HomeTopBar(
+                    page = uiState.selectedTab,
+                    onSearch = { onNavigate(Screen.Search.route) },
+                    onCamera = {
+                        val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                        if (cameraIntent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(cameraIntent)
+                        }
+                    },
+                    onAddAlbum = { showCreateAlbumDialog = true },
+                    onMoreRow = { row ->
+                        when (row) {
+                            MoreMenuRow.SORT -> showSortDialog = true
+                            MoreMenuRow.RECYCLE_BIN -> onNavigate(Screen.RecycleBin.route)
+                            MoreMenuRow.SETTINGS -> onNavigate(Screen.Settings.route)
+                        }
+                    },
+                    onTitleLongPress = { onNavigate(Screen.VaultLock.route) }
+                )
             }
         },
         bottomBar = {
@@ -232,19 +251,18 @@ fun HomeScreen(
             onDismissRequest = { showSortDialog = false },
             title = {
                 Text(
-                    text = "Sort by",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    text = stringResource(R.string.sort_by),
+                    style = GalleryText.BodyXLargeSemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Column {
                     val fieldOptions = listOf(
-                        "Last Modified" to SortField.DATE_MODIFIED,
-                        "File Name" to SortField.NAME,
-                        "File Size" to SortField.SIZE,
-                        "Created Date" to SortField.DATE_TAKEN
+                        R.string.last_modified to SortField.DATE_MODIFIED,
+                        R.string.filename to SortField.NAME,
+                        R.string.file_size to SortField.SIZE,
+                        R.string.created_date to SortField.DATE_TAKEN
                     )
                     fieldOptions.forEach { (label, field) ->
                         Row(
@@ -260,10 +278,9 @@ fun HomeScreen(
                                 colors = RadioButtonDefaults.colors(selectedColor = GalleryBlue)
                             )
                             Text(
-                                text = label,
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = stringResource(label),
+                                style = GalleryText.BodyMediumMedium,
                                 color = if (tempField == field) GalleryBlue else MaterialTheme.colorScheme.onSurface,
-                                fontWeight = if (tempField == field) FontWeight.SemiBold else FontWeight.Normal,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
@@ -276,8 +293,8 @@ fun HomeScreen(
                     )
 
                     val directionOptions = listOf(
-                        "Ascending Order" to SortDirection.ASCENDING,
-                        "Descending Order" to SortDirection.DESCENDING
+                        R.string.ascending_order to SortDirection.ASCENDING,
+                        R.string.descending_order to SortDirection.DESCENDING
                     )
                     directionOptions.forEach { (label, direction) ->
                         Row(
@@ -293,10 +310,9 @@ fun HomeScreen(
                                 colors = RadioButtonDefaults.colors(selectedColor = GalleryBlue)
                             )
                             Text(
-                                text = label,
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = stringResource(label),
+                                style = GalleryText.BodyMediumMedium,
                                 color = if (tempDirection == direction) GalleryBlue else MaterialTheme.colorScheme.onSurface,
-                                fontWeight = if (tempDirection == direction) FontWeight.SemiBold else FontWeight.Normal,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
@@ -312,14 +328,14 @@ fun HomeScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text("Ok", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.ok), style = GalleryText.BodyMediumSemiBold, color = Color.White)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showSortDialog = false }
                 ) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.cancel), style = GalleryText.BodyMediumSemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,
@@ -335,16 +351,15 @@ fun HomeScreen(
             },
             title = {
                 Text(
-                    text = "Create an album",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    text = stringResource(R.string.create_an_album),
+                    style = GalleryText.BodyXLargeSemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Column {
                     Text(
-                        text = "Album name",
+                        text = stringResource(R.string.album_name),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 6.dp)
@@ -352,7 +367,7 @@ fun HomeScreen(
                     OutlinedTextField(
                         value = newAlbumName,
                         onValueChange = { newAlbumName = it },
-                        placeholder = { Text("Enter album name") },
+                        placeholder = { Text(stringResource(R.string.enter_album_name)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp),
@@ -386,7 +401,7 @@ fun HomeScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text("OK", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.caller_ok), style = GalleryText.BodyMediumSemiBold, color = Color.White)
                 }
             },
             dismissButton = {
@@ -394,7 +409,7 @@ fun HomeScreen(
                     showCreateAlbumDialog = false
                     newAlbumName = ""
                 }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.cancel), style = GalleryText.BodyMediumSemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,

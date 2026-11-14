@@ -2,7 +2,13 @@ package com.quizango.gallery
 
 import com.quizango.gallery.ui.home.HOME_TABS
 import com.quizango.gallery.ui.home.HomeUiState
+import com.quizango.gallery.ui.home.MoreMenuRow
+import com.quizango.gallery.ui.home.PAGE_ALBUMS
+import com.quizango.gallery.ui.home.PAGE_EXPLORE
 import com.quizango.gallery.ui.home.PAGE_PHOTOS
+import com.quizango.gallery.ui.home.TopBarSlot
+import com.quizango.gallery.ui.home.moreMenuRows
+import com.quizango.gallery.ui.home.topBarSlots
 import com.quizango.gallery.ui.home.clampColumnCount
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -35,5 +41,24 @@ class HomeShellTest {
     @Test
     fun firstSyncStartsUnfinished() {
         assertEquals(false, HomeUiState().initialSyncDone)
+    }
+
+    @Test
+    fun topBarSlotsPerTab() {
+        assertEquals(listOf(TopBarSlot.AD_FREE, TopBarSlot.SEARCH, TopBarSlot.CAMERA, TopBarSlot.MORE), topBarSlots(PAGE_PHOTOS, true))
+        assertEquals(listOf(TopBarSlot.AD_FREE, TopBarSlot.ADD_ALBUM, TopBarSlot.SEARCH, TopBarSlot.MORE), topBarSlots(PAGE_ALBUMS, true))
+        assertEquals(listOf(TopBarSlot.AD_FREE, TopBarSlot.SEARCH), topBarSlots(PAGE_EXPLORE, true))
+    }
+
+    @Test
+    fun addAlbumAndMoreNeedMediaPermission() {
+        assertEquals(listOf(TopBarSlot.AD_FREE, TopBarSlot.SEARCH, TopBarSlot.CAMERA), topBarSlots(PAGE_PHOTOS, false))
+        assertEquals(listOf(TopBarSlot.AD_FREE, TopBarSlot.SEARCH), topBarSlots(PAGE_ALBUMS, false))
+    }
+
+    @Test
+    fun sortRowIsOnPhotosOnly() {
+        assertEquals(listOf(MoreMenuRow.SORT, MoreMenuRow.RECYCLE_BIN, MoreMenuRow.SETTINGS), moreMenuRows(PAGE_PHOTOS))
+        assertEquals(listOf(MoreMenuRow.RECYCLE_BIN, MoreMenuRow.SETTINGS), moreMenuRows(PAGE_ALBUMS))
     }
 }
