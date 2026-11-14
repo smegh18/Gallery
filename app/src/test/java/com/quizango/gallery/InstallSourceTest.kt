@@ -9,6 +9,7 @@ class InstallSourceTest {
     fun organicOnlyWhenPlaySaysSo() {
         assertEquals(InstallSource.ORGANIC, InstallSource.classify("utm_source=google-play&utm_medium=organic"))
         assertEquals(InstallSource.CAMPAIGN, InstallSource.classify("utm_source=fb&utm_medium=cpc&utm_campaign=x"))
+        assertEquals(InstallSource.CAMPAIGN, InstallSource.classify("utm_source=x&utm_medium=organic_social"))
         assertEquals(InstallSource.CAMPAIGN, InstallSource.classify(null)) // sideloaded / debug
     }
 }

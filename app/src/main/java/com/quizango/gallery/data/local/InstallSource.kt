@@ -18,8 +18,10 @@ object InstallSource {
     const val ORGANIC = "organic"
     const val CAMPAIGN = "campaign"
 
-    fun classify(referrer: String?): String =
-        if (referrer?.contains("utm_medium=organic") == true) ORGANIC else CAMPAIGN
+    fun classify(referrer: String?): String {
+        val medium = referrer?.split('&')?.firstOrNull { it.startsWith("utm_medium=") }?.substringAfter('=')
+        return if (medium == "organic") ORGANIC else CAMPAIGN
+    }
 
     suspend fun isCampaign(context: Context, prefs: AppPreferences): Boolean {
         // Play answers "organic" even for adb installs, so debug builds always take the campaign flow
@@ -42,6 +44,7 @@ object InstallSource {
             }
 
             override fun onInstallReferrerServiceDisconnected() {
+                client.endConnection()
                 if (cont.isActive) cont.resume(null)
             }
         })
