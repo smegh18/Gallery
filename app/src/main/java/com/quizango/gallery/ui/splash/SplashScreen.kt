@@ -58,12 +58,13 @@ fun SplashScreen(
             delay(350)
         }
 
-        if (!hasCompletedOnboarding) {
-            onNavigate(Screen.Language.route)
-        } else if (!hasPermissions) {
-            onNavigate(Screen.Permission.route)
-        } else {
-            onNavigate(Screen.Home.route)
+        // Reference order: Permission first; Language + Feature promo only for campaign installs
+        when {
+            !hasPermissions -> onNavigate(Screen.Permission.route)
+            !hasCompletedOnboarding &&
+                com.quizango.gallery.data.local.InstallSource.isCampaign(context, appPreferences) ->
+                onNavigate(Screen.Language.route)
+            else -> onNavigate(Screen.Home.route)
         }
     }
 

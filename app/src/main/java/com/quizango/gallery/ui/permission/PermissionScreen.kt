@@ -65,14 +65,14 @@ fun PermissionScreen(
         if (appPreferences != null) {
             scope.launch {
                 val completed = appPreferences.hasCompletedOnboarding.first()
-                if (!completed) {
-                    onNavigate(Screen.FeaturePromo.route)
+                if (!completed && com.quizango.gallery.data.local.InstallSource.isCampaign(context, appPreferences)) {
+                    onNavigate(Screen.Language.route)
                 } else {
                     onNavigate(Screen.Home.route)
                 }
             }
         } else {
-            onNavigate(Screen.FeaturePromo.route)
+            onNavigate(Screen.Home.route)
         }
     }
 

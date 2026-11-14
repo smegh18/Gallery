@@ -101,9 +101,7 @@ fun GalleryNavHost(
                 appPreferences = app.preferences,
                 onNavigate = { route ->
                     navController.navigate(route) {
-                        if (route == Screen.Home.route) {
-                            popUpTo(Screen.Permission.route) { inclusive = true }
-                        }
+                        popUpTo(Screen.Permission.route) { inclusive = true }
                     }
                 }
             )
@@ -114,7 +112,7 @@ fun GalleryNavHost(
                 appPreferences = app.preferences,
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Language.route) { inclusive = true }
+                        popUpTo(Screen.FeaturePromo.route) { inclusive = true }
                     }
                 }
             )
@@ -626,8 +624,9 @@ fun GalleryNavHost(
                 appPreferences = app.preferences,
                 canNavigateBack = canNavigateBack,
                 isOnboarding = !canNavigateBack,
+                // Reference: onboarding Language continues to Feature promo
                 onNavigateToPermission = {
-                    navController.navigate(Screen.Permission.route) {
+                    navController.navigate(Screen.FeaturePromo.route) {
                         popUpTo(Screen.Language.route) { inclusive = true }
                     }
                 },

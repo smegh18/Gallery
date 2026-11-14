@@ -15,6 +15,7 @@ class AppPreferences(private val context: Context) {
         val HAS_COMPLETED_WELCOME = booleanPreferencesKey("has_completed_welcome")
         val HAS_COMPLETED_ONBOARDING = booleanPreferencesKey("has_completed_onboarding")
         val APP_LANGUAGE = stringPreferencesKey("app_language")
+        val INSTALL_SOURCE = stringPreferencesKey("install_source")
         val THEME_MODE = intPreferencesKey("theme_mode") // 0: Light, 1: Dark, 2: System
         val MEDIA_COL_COUNT = intPreferencesKey("media_col_count")
         val AUTO_DELETE_TRASH = booleanPreferencesKey("auto_delete_trash_30_days")
@@ -65,6 +66,12 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setCompletedWelcome(completed: Boolean) {
         context.dataStore.edit { it[Keys.HAS_COMPLETED_WELCOME] = completed }
+    }
+
+    val installSource: Flow<String?> = context.dataStore.data.map { it[Keys.INSTALL_SOURCE] }
+
+    suspend fun setInstallSource(source: String) {
+        context.dataStore.edit { it[Keys.INSTALL_SOURCE] = source }
     }
 
     suspend fun setOnboardingCompleted(completed: Boolean = true) {
