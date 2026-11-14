@@ -38,7 +38,7 @@ class AppPreferences(private val context: Context) {
     }
     val appLanguage: Flow<String> = context.dataStore.data.map { it[Keys.APP_LANGUAGE] ?: "en" }
     val themeMode: Flow<Int> = context.dataStore.data.map { it[Keys.THEME_MODE] ?: 2 }
-    val mediaColCount: Flow<Int> = context.dataStore.data.map { it[Keys.MEDIA_COL_COUNT] ?: 4 }
+    val mediaColCount: Flow<Int> = context.dataStore.data.map { it[Keys.MEDIA_COL_COUNT] ?: 3 }
     val autoDeleteTrash: Flow<Boolean> = context.dataStore.data.map { it[Keys.AUTO_DELETE_TRASH] ?: true }
     val vaultPin: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PIN] }
     val vaultPattern: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PATTERN] }

@@ -142,6 +142,13 @@ fun HomeScreen(
             LaunchedEffect(uiState.selectedTab) {
                 if (pagerState.currentPage != uiState.selectedTab) pagerState.animateScrollToPage(uiState.selectedTab)
             }
+            // Turning swiping off mid-drag (long-press then move) cancels the drag and leaves the pager
+            // between pages, so the grid draws half off-screen; ViewPager2 never rests there. Settle it.
+            LaunchedEffect(uiState.isSelectionMode) {
+                if (uiState.isSelectionMode && pagerState.currentPageOffsetFraction != 0f) {
+                    pagerState.animateScrollToPage(pagerState.currentPage)
+                }
+            }
             LaunchedEffect(pagerState) {
                 androidx.compose.runtime.snapshotFlow { pagerState.settledPage }.collect { viewModel.setTab(it) }
             }
@@ -155,6 +162,7 @@ fun HomeScreen(
             when (page) {
                 PAGE_ALBUMS -> AlbumsTab(
                     albumsList = uiState.albumsList,
+                    isLoading = uiState.albumsList.isEmpty() && !uiState.initialSyncDone,
                     mediaList = uiState.mediaList,
                     onAlbumClick = { album ->
                         onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
@@ -188,6 +196,7 @@ fun HomeScreen(
                 )
                 PAGE_PHOTOS -> PhotosTab(
                     mediaList = uiState.mediaList,
+                    isLoading = uiState.mediaList.isEmpty() && !uiState.initialSyncDone,
                     columnCount = uiState.columnCount,
                     selectedPaths = uiState.selectedPaths,
                     isSelectionMode = uiState.isSelectionMode,
@@ -196,8 +205,7 @@ fun HomeScreen(
                     },
                     onMediaLongClick = { item ->
                         viewModel.toggleSelection(item.filePath)
-                    },
-                    onRefresh = { viewModel.syncMedia() }
+                    }
                 )
                 PAGE_EXPLORE -> ExploreTab(
                     onNavigate = onNavigate

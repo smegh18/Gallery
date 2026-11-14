@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.Image
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,14 +49,22 @@ import java.util.*
 @Composable
 fun PhotosTab(
     mediaList: List<MediaItem>,
+    isLoading: Boolean,
     columnCount: Int,
     selectedPaths: Set<String>,
     isSelectionMode: Boolean,
     onMediaClick: (MediaItem) -> Unit,
-    onMediaLongClick: (MediaItem) -> Unit,
-    onRefresh: () -> Unit
+    onMediaLongClick: (MediaItem) -> Unit
 ) {
-    if (mediaList.isEmpty()) {
+    if (isLoading) {
+        // fragment_all_media progressBar: no empty copy until the first sync has returned
+        Box(
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
+        }
+    } else if (mediaList.isEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
