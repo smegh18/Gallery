@@ -243,7 +243,7 @@ fun FeaturePromoScreen(
                             progress = { progress },
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
-                                .offset(y = (-22).dp)
+                                .offset(y = 46.sdp / 2 - 8.dp) // top at row bottom - 40dp (64dp row), as in 2.7.2
                                 .padding(end = 18.sdp)
                                 .size(46.sdp)
                                 .zIndex(2f)
