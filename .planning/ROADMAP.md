@@ -99,7 +99,15 @@ Plans:
   4. Pressing Back on Home shows the 2.7.2 exit popup.
   5. The Photos tab shows 2.7.2's date headers, grid items and ad-placeholder rows; pinching changes the column count; long-press enters selection mode with the 2.7.2 actions.
 
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Tracer: Home opens on Photos with the 2.7.2 tab bar and titles (all Phase 3 strings, colours, drawables imported); loading spinner, 3..5 columns, half-width bug; per-tab top bars, ⋮ popup, title long-press (wave 1)
+- [ ] 03-02-PLAN.md — Photos tab content: grid geometry, 2.7.2 date headers and cells, ad-row skeleton, empty state, fast-scroll thumb (wave 2)
+- [ ] 03-03-PLAN.md — Selection mode bars, delete confirmation, Add to / Create album, hide-on-scroll tab bar and sync line (wave 2)
+- [ ] 03-04-PLAN.md — Pinch to change columns with live preview, first-run pinch tutorial (wave 3)
+- [ ] 03-05-PLAN.md — Vault hint (sessions 4/8/12) and the Home exit popup with Back order (wave 4)
+- [ ] 03-06-PLAN.md — Quality gates: CodeRabbit, unslop, parity scripts, checklist ticks, on-device side-by-side check (wave 5, checkpoint)
 **UI hint**: yes
 
 ### Phase 4: Albums, Stories and Explore
@@ -184,6 +192,7 @@ Plans:
 **Depends on**: Phase 8
 **Requirements**: SET-01, SET-02, SET-03, SET-04, SET-05
 **Checklist rows**: #46-#49, #52, #53
+**Carried in from Phase 3**: wire the Home ad-free button (`ivPro`, today a no-op in `ui/home/HomeShell.kt`) to the new Pro screen (`HA.Ooooo00`); when Home is opened from a notification, widget or deep link, skip the vault hint (`HA.o000O00O`, shortcut comment at `shouldShowVaultHint`); hold the vault hint while the Home notification-permission request is showing.
 **Success Criteria** (what must be TRUE):
   1. Settings matches 2.7.2's `activity_setting`, each row and toggle works, and the "Share app usage stats" toggle is present.
   2. Theme (Light / Dark / System) and About match 2.7.2, and the privacy policy opens the 2.7.2 URL.
@@ -200,6 +209,7 @@ Plans:
 **Depends on**: Phase 9 (also uses the overlay permission asked for in Phase 2)
 **Requirements**: FLT-01, FLT-02, FLT-03, FLT-04
 **Checklist rows**: #11, #12
+**Carried in from Phase 3**: if the floating-button dialog can open on Home at start, hold the vault hint until it closes (`isVaultHintShowPending`, shortcut comment at `shouldShowVaultHint` in `ui/home/HomeShell.kt`).
 **Success Criteria** (what must be TRUE):
   1. After granting Display-over-other-apps, the user can turn on an edge handle that stays over other apps and opens the quick-tools sidebar when used; turning it off removes the handle.
   2. The first time the sidebar opens, the two-step intro shows ("Your quick tools live here", "Put it where you like").
@@ -230,6 +240,7 @@ Plans:
 **Depends on**: Phase 11 (hosts the prompts ported in Phases 3, 4, 6 and 9)
 **Requirements**: USG-01, CLR-01
 **Checklist rows**: #6, #15, #27, #30, #46, section E
+**Carried in from Phase 3**: the Home usage-access popup must hold the vault hint until it closes (`isVaultHintShowPending`), and the final sweep checks every vault-hint show condition of 03-UI-SPEC section 1.4 is wired: no hint after notification/widget/deep-link entry (Phase 9) and none while any start dialog is up (Phases 9, 10, 12). Also sweep the drawer-only drawables left unused when Phase 3 removed the Home drawer.
 **Success Criteria** (what must be TRUE):
   1. The usage-access dialog appears at 2.7.2's trigger points: Home, after a story, the large-video screen, the Recycle Bin, and from the Settings "Share app usage stats" toggle.
   2. Allow opens the system Usage Access screen, and Not now dismisses the dialog without blocking the screen.
@@ -262,7 +273,7 @@ Phases execute in numeric order: 1 → 2 → 3 → … → 13
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-11-13 |
 | 2. Onboarding | 0/TBD | Not started | - |
-| 3. Home Shell and Photos Tab | 0/TBD | Not started | - |
+| 3. Home Shell and Photos Tab | 0/6 | Planned | - |
 | 4. Albums, Stories and Explore | 0/TBD | Not started | - |
 | 5. Viewing and Browsing | 0/TBD | Not started | - |
 | 6. Manage and Cleaner | 0/TBD | Not started | - |
