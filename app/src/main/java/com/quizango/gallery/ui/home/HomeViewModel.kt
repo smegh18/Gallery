@@ -15,14 +15,23 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 
+// Pager pages (2.7.2 HOME_TAB_ORDER [1,0,2]): Photos first, and the default.
+const val PAGE_PHOTOS = 0
+const val PAGE_ALBUMS = 1
+const val PAGE_EXPLORE = 2
+
+/** 2.7.2 Photos grid: minSpanCount 3, maxSpanCount 5. */
+internal fun clampColumnCount(n: Int) = n.coerceIn(3, 5)
+
 data class HomeUiState(
-    val selectedTab: Int = 0, // 0 = Albums (Default), 1 = Photos (All Media), 2 = Explore
+    val selectedTab: Int = PAGE_PHOTOS, // PAGE_PHOTOS (default), PAGE_ALBUMS, PAGE_EXPLORE
     val mediaList: List<MediaItem> = emptyList(),
     val albumsList: List<Album> = emptyList(),
-    val columnCount: Int = 4,
+    val columnCount: Int = 3,
     val selectedPaths: Set<String> = emptySet(),
     val isSelectionMode: Boolean = false,
     val isSyncing: Boolean = false,
+    val initialSyncDone: Boolean = false, // stays true once the first MediaStore sync returns
     val sortOrder: SortOrder = SortOrder.DATE_DESC,
     val searchQuery: String = ""
 )
@@ -39,7 +48,7 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             preferences.mediaColCount.collect { count ->
-                _uiState.update { it.copy(columnCount = count) }
+                _uiState.update { it.copy(columnCount = clampColumnCount(count)) }
             }
         }
 
@@ -69,7 +78,7 @@ class HomeViewModel(
             try {
                 mediaRepository.syncMediaStore()
             } finally {
-                _uiState.update { it.copy(isSyncing = false) }
+                _uiState.update { it.copy(isSyncing = false, initialSyncDone = true) }
             }
         }
     }
@@ -90,7 +99,7 @@ class HomeViewModel(
     }
 
     fun setColumnCount(count: Int) {
-        val clamped = count.coerceIn(2, 5)
+        val clamped = clampColumnCount(count)
         viewModelScope.launch {
             preferences.setMediaColCount(clamped)
         }
