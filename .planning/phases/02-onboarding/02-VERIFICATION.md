@@ -120,3 +120,13 @@ All four ROADMAP success criteria and the five phase requirements (ONB-01 throug
      - No generic AI glows, purples, or unaligned paddings.
      - Strict 4px / sdp spacing token alignment.
      - 100% adherence to 2.7.2 reference layouts.
+
+## Post-handoff review (Claude Code, 2026-11-14)
+
+The user's device test found issues. All are fixed and checked on the device:
+- Flow order did not match 2.7.2. The reference shows Permission first, then Language → Feature promo → Home only on campaign installs; organic installs go Splash → Permission → Home. Install source now comes from the Play Install Referrer: an exact `utm_medium=organic` match means organic, anything else means campaign. Debug builds always take the campaign flow. Commits 3171a1e, 1e78554.
+- Language: the hand Lottie floated over the list. It now sits centred on the toolbar's bottom edge under the tick. Commit fd0c81b.
+- Feature promo: the toggle Lottie sat on the row's top edge. It now uses the 2.7.2 offset, inside the row. Commit bc6f08d.
+- Feature promo: "Enable features" did nothing, because READ_PHONE_STATE and SYSTEM_ALERT_WINDOW were undeclared. Both are now declared, and a denial continues to Home. Commit f7e8af5.
+- The 10 s black startup is debug-install only: ART verifies uncompiled dex on every launch. After `adb shell cmd package compile -m speed-profile -f com.quizango.gallery` the cold start is about 1.5 s.
+- CodeRabbit on these fixes: 2 minor findings, both fixed in 1e78554.

@@ -62,7 +62,7 @@ See `tooling-setup.md`.
 
 ## Device testing
 - **Phone:** Redmi M2006C3MII, Android 11, wireless adb (`adb devices`). It runs **MIUI with system dark mode**.
-- **Our app:** debug build installed. `adb install -r app/build/outputs/apk/debug/app-debug.apk` works because it uses the same debug key. Launch with `adb shell monkey -p com.quizango.gallery -c android.intent.category.LAUNCHER 1`. The first launch after an install takes about 10 s.
+- **Our app:** debug build installed. `adb install -r app/build/outputs/apk/debug/app-debug.apk` works because it uses the same debug key. **Then run `adb shell cmd package compile -m speed-profile -f com.quizango.gallery`**: otherwise every launch takes about 10 s with a black screen, because ART verifies uncompiled debug dex. Store installs are compiled at install time. Launch with `adb shell monkey -p com.quizango.gallery -c android.intent.category.LAUNCHER 1`. The first launch after an install takes about 10 s.
 - **Commands:**
   - screenshots: `adb exec-out screencap -p > x.png`
   - Git Bash needs `MSYS_NO_PATHCONV=1` for `/sdcard` paths
