@@ -100,6 +100,12 @@ fun FeaturePromoScreen(
                     onNavigateToHome()
                 }
             }
+        } else {
+            // Denied: don't leave the user stuck on this screen
+            scope.launch {
+                appPreferences.setOnboardingCompleted(true)
+                onNavigateToHome()
+            }
         }
     }
 
