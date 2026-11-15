@@ -13,6 +13,8 @@ import com.quizango.gallery.ui.home.buildPhotoRows
 import com.quizango.gallery.ui.home.dayStartOf
 import com.quizango.gallery.ui.home.fileTypeLabel
 import com.quizango.gallery.ui.home.headerKind
+import com.quizango.gallery.ui.home.indexForThumbFraction
+import com.quizango.gallery.ui.home.thumbFraction
 import com.quizango.gallery.ui.home.MEDIA_TYPES
 import com.quizango.gallery.ui.home.formatDuration
 import com.quizango.gallery.ui.home.formatGroupHeader
@@ -146,5 +148,17 @@ class HomeTest {
         assertEquals(R.string.SVG, fileTypeLabel("d.svg", false))
         assertNull(fileTypeLabel("e.jpg", false))
         assertNull(fileTypeLabel("f.gif", true))
+    }
+
+    @Test
+    fun testFastScrollMath() {
+        assertEquals(0f, thumbFraction(0, 10, 100), 0f)
+        assertEquals(1f, thumbFraction(90, 10, 100), 0f)
+        assertEquals(0.5f, thumbFraction(45, 10, 100), 0f)
+        assertEquals(0f, thumbFraction(0, 10, 8), 0f) // list fits: no division by zero
+        assertEquals(0, indexForThumbFraction(0f, 100))
+        assertEquals(99, indexForThumbFraction(1f, 100))
+        assertEquals(50, indexForThumbFraction(0.5f, 100))
+        assertEquals(99, indexForThumbFraction(2f, 100))
     }
 }
