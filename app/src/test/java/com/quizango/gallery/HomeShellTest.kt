@@ -15,6 +15,9 @@ import com.quizango.gallery.ui.home.MOVE_TO_RECYCLE_BIN_DEFAULT
 import com.quizango.gallery.ui.home.deleteActionFor
 import com.quizango.gallery.ui.home.settledBarOffset
 import com.quizango.gallery.ui.home.barSettleEasing
+import com.quizango.gallery.ui.home.shouldShowVaultHint
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -92,5 +95,17 @@ class HomeShellTest {
         assertEquals(0f, barSettleEasing(0f), 1e-6f)
         assertEquals(1f, barSettleEasing(1f), 1e-6f)
         assertEquals(0.875f, barSettleEasing(0.5f), 1e-6f)
+    }
+
+    @Test
+    fun vaultHintShowsInSessions4_8_12Only() {
+        fun show(session: Int, seen: Boolean = false, closed: Int = 0, perm: Boolean = true) =
+            shouldShowVaultHint(session, seen, closed, perm)
+        listOf(4, 8, 12).forEach { assertTrue("session $it", show(it)) }
+        listOf(1, 3, 5, 13).forEach { assertFalse("session $it", show(it)) }
+        assertFalse(show(4, seen = true)) // vault lock was opened once
+        assertFalse(show(4, closed = 4)) // already closed this session
+        assertTrue(show(8, closed = 4))
+        assertFalse(show(4, perm = false))
     }
 }
