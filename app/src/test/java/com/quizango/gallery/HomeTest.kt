@@ -14,6 +14,7 @@ import com.quizango.gallery.ui.home.dayStartOf
 import com.quizango.gallery.ui.home.fileTypeLabel
 import com.quizango.gallery.ui.home.headerKind
 import com.quizango.gallery.ui.home.indexForThumbFraction
+import com.quizango.gallery.ui.home.nextColumnCount
 import com.quizango.gallery.ui.home.thumbFraction
 import com.quizango.gallery.ui.home.MEDIA_TYPES
 import com.quizango.gallery.ui.home.formatDuration
@@ -160,5 +161,15 @@ class HomeTest {
         assertEquals(99, indexForThumbFraction(1f, 100))
         assertEquals(50, indexForThumbFraction(0.5f, 100))
         assertEquals(99, indexForThumbFraction(2f, 100))
+    }
+
+    @Test
+    fun testNextColumnCount() {
+        assertEquals(3, nextColumnCount(3, 1.3f)) // already the fewest
+        assertEquals(3, nextColumnCount(4, 1.3f)) // spread: fewer, bigger cells
+        assertEquals(5, nextColumnCount(4, 0.7f)) // pinch: more columns
+        assertEquals(5, nextColumnCount(5, 0.7f)) // already the most
+        assertEquals(4, nextColumnCount(4, 1.05f)) // dead zone
+        assertEquals(4, nextColumnCount(4, 0.95f))
     }
 }
