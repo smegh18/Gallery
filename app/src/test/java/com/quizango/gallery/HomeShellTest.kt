@@ -10,6 +10,9 @@ import com.quizango.gallery.ui.home.TopBarSlot
 import com.quizango.gallery.ui.home.moreMenuRows
 import com.quizango.gallery.ui.home.topBarSlots
 import com.quizango.gallery.ui.home.clampColumnCount
+import com.quizango.gallery.ui.home.DeleteAction
+import com.quizango.gallery.ui.home.MOVE_TO_RECYCLE_BIN_DEFAULT
+import com.quizango.gallery.ui.home.deleteActionFor
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -60,5 +63,17 @@ class HomeShellTest {
     fun sortRowIsOnPhotosOnly() {
         assertEquals(listOf(MoreMenuRow.SORT, MoreMenuRow.RECYCLE_BIN, MoreMenuRow.SETTINGS), moreMenuRows(PAGE_PHOTOS))
         assertEquals(listOf(MoreMenuRow.RECYCLE_BIN, MoreMenuRow.SETTINGS), moreMenuRows(PAGE_ALBUMS))
+    }
+
+    @Test
+    fun deleteCheckboxMapsToDeleteKind() {
+        assertEquals(DeleteAction.MOVE_TO_RECYCLE_BIN, deleteActionFor(moveToRecycleBinChecked = true))
+        assertEquals(DeleteAction.DELETE_PERMANENTLY, deleteActionFor(false))
+    }
+
+    @Test
+    fun recycleBinIsCheckedByDefault() {
+        // S272/oa/j.smali: setChecked(true) in onCreate
+        assertEquals(true, MOVE_TO_RECYCLE_BIN_DEFAULT)
     }
 }
