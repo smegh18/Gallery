@@ -3,7 +3,16 @@ package com.quizango.gallery
 import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
+import com.quizango.gallery.R
+import com.quizango.gallery.domain.model.MediaItem
+import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.home.HOME_TOP_FEATURES
+import com.quizango.gallery.ui.home.HeaderKind
+import com.quizango.gallery.ui.home.PhotoRow
+import com.quizango.gallery.ui.home.buildPhotoRows
+import com.quizango.gallery.ui.home.dayStartOf
+import com.quizango.gallery.ui.home.fileTypeLabel
+import com.quizango.gallery.ui.home.headerKind
 import com.quizango.gallery.ui.home.MEDIA_TYPES
 import com.quizango.gallery.ui.home.formatDuration
 import com.quizango.gallery.ui.home.formatGroupHeader
@@ -94,5 +103,48 @@ class HomeTest {
             assertTrue(mediaType.title.isNotBlank())
             assertTrue(mediaType.iconRes != 0)
         }
+    }
+
+    private fun at(y: Int, m: Int, d: Int, h: Int): Long =
+        Calendar.getInstance().apply { clear(); set(y, m - 1, d, h, 0, 0) }.timeInMillis
+
+    private fun media(id: Long, taken: Long) = MediaItem(
+        id = id, filePath = "/p/$id.jpg", fileName = "$id.jpg", fileSize = 1L,
+        folderName = "p", folderPath = "/p", dateModified = 0L, dateTaken = taken
+    )
+
+    @Test
+    fun testBuildPhotoRows() {
+        assertTrue(buildPhotoRows(emptyList()).isEmpty())
+        val a1 = media(1, at(2026, 6, 15, 10))
+        val a2 = media(2, at(2026, 6, 15, 8))
+        val b = media(3, at(2026, 6, 14, 9) / 1000) // seconds are normalised
+        val dayA = dayStartOf(a1.dateAdded)
+        val dayB = dayStartOf(b.dateAdded)
+        assertEquals(at(2026, 6, 15, 0), dayA)
+        assertEquals(at(2026, 6, 14, 0), dayB)
+        assertEquals(
+            listOf(PhotoRow.Header(dayA), PhotoRow.Media(a1), PhotoRow.Media(a2), PhotoRow.Header(dayB), PhotoRow.Media(b)),
+            buildPhotoRows(listOf(a1, a2, b))
+        )
+    }
+
+    @Test
+    fun testHeaderKind() {
+        val now = at(2026, 6, 15, 12)
+        assertEquals(HeaderKind.TODAY, headerKind(dayStartOf(at(2026, 6, 15, 8)), now))
+        assertEquals(HeaderKind.YESTERDAY, headerKind(dayStartOf(at(2026, 6, 14, 23)), now))
+        assertEquals(HeaderKind.THIS_YEAR, headerKind(dayStartOf(at(2026, 3, 1, 12)), now))
+        assertEquals(HeaderKind.OTHER_YEAR, headerKind(dayStartOf(at(2025, 12, 31, 12)), now))
+    }
+
+    @Test
+    fun testFileTypeLabel() {
+        assertEquals(R.string.GIF, fileTypeLabel("a.GIF", false))
+        assertEquals(R.string.RAW, fileTypeLabel("b.dng", false))
+        assertEquals(R.string.RAW, fileTypeLabel("c.CR3", false))
+        assertEquals(R.string.SVG, fileTypeLabel("d.svg", false))
+        assertNull(fileTypeLabel("e.jpg", false))
+        assertNull(fileTypeLabel("f.gif", true))
     }
 }
