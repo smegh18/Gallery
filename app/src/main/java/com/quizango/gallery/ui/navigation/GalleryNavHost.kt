@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import kotlinx.coroutines.flow.first
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -265,6 +266,8 @@ fun GalleryNavHost(
         }
 
         composable(Screen.VaultLock.route) {
+            // VaultLockActivity sets isVaultHintToolTip on open: the Home vault hint never shows again
+            LaunchedEffect(Unit) { app.preferences.setVaultHintToolTip(true) }
             VaultLockScreen(
                 appPreferences = app.preferences,
                 onNavigate = { route ->

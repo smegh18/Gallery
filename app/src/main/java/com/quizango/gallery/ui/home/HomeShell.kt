@@ -213,6 +213,15 @@ private fun MoreMenu(page: Int, onDismiss: () -> Unit, onRow: (MoreMenuRow) -> U
     }
 }
 
+/** Remote-config default vault_hint_tooltip "session": [4, 8, 12]. */
+internal val VAULT_HINT_SESSIONS = setOf(4, 8, 12)
+
+/** HA.o000o0O0 show rules (UI-SPEC 1.4). */
+internal fun shouldShowVaultHint(session: Int, hintSeen: Boolean, closedSession: Int, hasMediaPermission: Boolean): Boolean =
+    session in VAULT_HINT_SESSIONS && !hintSeen && closedSession != session && hasMediaPermission
+// shortcut: Home has no notification/widget/deep-link entry yet, so HA.o000O00O is not checked; Phase 9 skips the hint for those entries.
+// shortcut: no other start-up dialog exists on Home yet; Phases 9, 10 and 12 must hold the hint until theirs closes (isVaultHintShowPending).
+
 /** HomeBottomBarBehavior SETTLE_MS (0xdc). */
 internal const val BAR_SETTLE_MS = 220
 

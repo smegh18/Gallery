@@ -29,6 +29,9 @@ data class HomeUiState(
     val albumsList: List<Album> = emptyList(),
     val columnCount: Int = 3,
     val pinchTipSeen: Boolean = true, // true until the preference loads, so the tutorial never flashes
+    val sessionCount: Int = 0,
+    val vaultHintSeen: Boolean = true, // true until the preference loads, so the hint never flashes
+    val vaultHintClosedSession: Int = 0,
     val selectedPaths: Set<String> = emptySet(),
     val isSelectionMode: Boolean = false,
     val isSyncing: Boolean = false,
@@ -58,6 +61,10 @@ class HomeViewModel(
                 _uiState.update { it.copy(pinchTipSeen = seen) }
             }
         }
+
+        combine(preferences.sessionCount, preferences.isVaultHintToolTip, preferences.vaultHintClosedSession) { session, seen, closed ->
+            _uiState.update { it.copy(sessionCount = session, vaultHintSeen = seen, vaultHintClosedSession = closed) }
+        }.launchIn(viewModelScope)
 
         combine(
             mediaRepository.getActiveMediaFlow(),
@@ -114,6 +121,13 @@ class HomeViewModel(
 
     fun dismissPinchTip() {
         viewModelScope.launch { preferences.setPinchInOutToolTip(true) }
+    }
+
+    /** HA.o000O0O: closed for this session only. */
+    fun closeVaultHint() {
+        val session = _uiState.value.sessionCount
+        _uiState.update { it.copy(vaultHintClosedSession = session) }
+        viewModelScope.launch { preferences.setVaultHintClosedSession(session) }
     }
 
     fun toggleSelection(filePath: String) {

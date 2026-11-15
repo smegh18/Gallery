@@ -51,6 +51,7 @@ fun SplashScreen(
     )
 
     LaunchedEffect(Unit) {
+        appPreferences.incrementSessionCount() // awaited, so Home reads this launch's number
         val hasCompletedOnboarding = appPreferences.hasCompletedOnboarding.first()
         val hasPermissions = checkStoragePermissions(context)
         kotlinx.coroutines.withTimeoutOrNull(2_000) {
