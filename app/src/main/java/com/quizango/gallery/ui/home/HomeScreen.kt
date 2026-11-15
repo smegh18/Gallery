@@ -69,8 +69,16 @@ fun HomeScreen(
         uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context)
     )
 
-    BackHandler(enabled = uiState.isSelectionMode) {
-        viewModel.clearSelection()
+    var showExitPopup by remember { mutableStateOf(false) }
+
+    // HA.Oooo0oO order: vault hint, then the ⋮ popup (its focusable window eats Back itself), then selection,
+    // then the exit popup. The pinch tutorial is not checked, so Back opens the exit popup above it.
+    BackHandler {
+        when {
+            showVaultHint -> viewModel.closeVaultHint()
+            uiState.isSelectionMode -> viewModel.clearSelection()
+            else -> showExitPopup = true
+        }
     }
 
     // activity_home bottomMainBar under HomeBottomBarBehavior: the tab bar follows the scroll, then settles.
@@ -287,6 +295,12 @@ fun HomeScreen(
         }
     }
 
+    if (showExitPopup) {
+        HomeExitPopup(
+            onExit = { (context as? Activity)?.finishAffinity() }, // jt/a.Wja3o2vx62
+            onDismiss = { showExitPopup = false }
+        )
+    }
 
     if (showSortDialog) {
         var tempField by remember { mutableStateOf(uiState.sortOrder.field) }

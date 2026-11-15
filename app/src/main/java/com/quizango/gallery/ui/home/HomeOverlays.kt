@@ -1,5 +1,9 @@
 package com.quizango.gallery.ui.home
 
+import android.graphics.Color as AndroidColor
+import android.graphics.drawable.ColorDrawable
+import android.view.Gravity
+import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -12,6 +16,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +43,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -50,6 +64,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
 
 /**
@@ -190,6 +205,44 @@ fun VaultHintOverlay(title: String, titleBounds: Rect?, onClose: () -> Unit, onO
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * dialog_exit through S272/jt/a: bottom sheet window, full width, wrap height, transparent background, system dim.
+ * Cancelable, so Back and an outside tap call [onDismiss]; the text calls [onExit]. The ad frame stays empty (D5).
+ */
+@Composable
+fun HomeExitPopup(onExit: () -> Unit, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        val window = (LocalView.current.parent as? DialogWindowProvider)?.window
+        SideEffect {
+            window?.run {
+                setGravity(Gravity.BOTTOM)
+                setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                setBackgroundDrawable(ColorDrawable(AndroidColor.TRANSPARENT))
+            }
+        }
+        // _15sdp is a dp dimension used as textSize
+        val textSize = with(LocalDensity.current) { 15.sdp.toSp() }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .drawableBackground(R.drawable.exit_rectangle) // 25.dp top corners, unscaled
+                .padding(4.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.tap_again_to_exit),
+                style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.W400, fontSize = textSize),
+                color = Color(0xFF9A9A9A),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onExit)
+                    .wrapContentSize(Alignment.Center)
+            )
         }
     }
 }
