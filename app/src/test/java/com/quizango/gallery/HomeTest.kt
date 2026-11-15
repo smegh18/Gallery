@@ -115,7 +115,7 @@ class HomeTest {
 
     @Test
     fun testBuildPhotoRows() {
-        assertTrue(buildPhotoRows(emptyList()).isEmpty())
+        assertTrue(buildPhotoRows(emptyList()).isEmpty()) // no lone ad row
         val a1 = media(1, at(2026, 6, 15, 10))
         val a2 = media(2, at(2026, 6, 15, 8))
         val b = media(3, at(2026, 6, 14, 9) / 1000) // seconds are normalised
@@ -124,7 +124,7 @@ class HomeTest {
         assertEquals(at(2026, 6, 15, 0), dayA)
         assertEquals(at(2026, 6, 14, 0), dayB)
         assertEquals(
-            listOf(PhotoRow.Header(dayA), PhotoRow.Media(a1), PhotoRow.Media(a2), PhotoRow.Header(dayB), PhotoRow.Media(b)),
+            listOf(PhotoRow.Ad, PhotoRow.Header(dayA), PhotoRow.Media(a1), PhotoRow.Media(a2), PhotoRow.Header(dayB), PhotoRow.Media(b)),
             buildPhotoRows(listOf(a1, a2, b))
         )
     }
