@@ -28,6 +28,7 @@ data class HomeUiState(
     val mediaList: List<MediaItem> = emptyList(),
     val albumsList: List<Album> = emptyList(),
     val columnCount: Int = 3,
+    val pinchTipSeen: Boolean = true, // true until the preference loads, so the tutorial never flashes
     val selectedPaths: Set<String> = emptySet(),
     val isSelectionMode: Boolean = false,
     val isSyncing: Boolean = false,
@@ -49,6 +50,12 @@ class HomeViewModel(
         viewModelScope.launch {
             preferences.mediaColCount.collect { count ->
                 _uiState.update { it.copy(columnCount = clampColumnCount(count)) }
+            }
+        }
+
+        viewModelScope.launch {
+            preferences.isPinchInOutToolTip.collect { seen ->
+                _uiState.update { it.copy(pinchTipSeen = seen) }
             }
         }
 
@@ -103,6 +110,10 @@ class HomeViewModel(
         viewModelScope.launch {
             preferences.setMediaColCount(clamped)
         }
+    }
+
+    fun dismissPinchTip() {
+        viewModelScope.launch { preferences.setPinchInOutToolTip(true) }
     }
 
     fun toggleSelection(filePath: String) {

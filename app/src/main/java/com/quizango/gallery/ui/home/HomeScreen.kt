@@ -41,6 +41,7 @@ import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
 import com.quizango.gallery.ui.components.AddToAlbumSheet
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.splash.checkStoragePermissions
 import com.quizango.gallery.ui.theme.GalleryBlue
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.settingsDivider
@@ -101,166 +102,171 @@ fun HomeScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        if (uiState.isSelectionMode) {
-            val allSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()
-            HomeSelectionTopBar(
-                count = uiState.selectedPaths.size,
-                allSelected = allSelected,
-                onClose = { viewModel.clearSelection() },
-                onToggleAll = { if (allSelected) viewModel.clearSelection() else viewModel.selectAll() }
-            )
-        } else {
-            HomeTopBar(
-                page = uiState.selectedTab,
-                onSearch = { onNavigate(Screen.Search.route) },
-                onCamera = {
-                    val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-                    if (cameraIntent.resolveActivity(context.packageManager) != null) {
-                        context.startActivity(cameraIntent)
-                    }
-                },
-                onAddAlbum = { showCreateAlbumDialog = true },
-                onMoreRow = { row ->
-                    when (row) {
-                        MoreMenuRow.SORT -> showSortDialog = true
-                        MoreMenuRow.RECYCLE_BIN -> onNavigate(Screen.RecycleBin.route)
-                        MoreMenuRow.SETTINGS -> onNavigate(Screen.Settings.route)
-                    }
-                },
-                onTitleLongPress = { onNavigate(Screen.VaultLock.route) }
-            )
-        }
-        Box(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .clipToBounds()
-                .nestedScroll(barScroll)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            // Swipe left/right between tabs; kept in sync with the bottom bar
-            val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = uiState.selectedTab) { 3 }
-            LaunchedEffect(uiState.selectedTab) {
-                if (pagerState.currentPage != uiState.selectedTab) pagerState.animateScrollToPage(uiState.selectedTab)
-            }
-            // Turning swiping off mid-drag (long-press then move) cancels the drag and leaves the pager
-            // between pages, so the grid draws half off-screen; ViewPager2 never rests there. Settle it.
-            LaunchedEffect(uiState.isSelectionMode) {
-                if (uiState.isSelectionMode && pagerState.currentPageOffsetFraction != 0f) {
-                    pagerState.animateScrollToPage(pagerState.currentPage)
-                }
-            }
-            LaunchedEffect(pagerState) {
-                androidx.compose.runtime.snapshotFlow { pagerState.settledPage }.collect { viewModel.setTab(it) }
-            }
-            androidx.compose.foundation.pager.HorizontalPager(
-                state = pagerState,
-                // No swiping while selecting, so a drag can't drop the selection
-                userScrollEnabled = !uiState.isSelectionMode,
-                beyondViewportPageCount = 2, // HA setOffscreenPageLimit(2)
-                modifier = Modifier.fillMaxSize()
-            ) { page ->
-            when (page) {
-                PAGE_ALBUMS -> AlbumsTab(
-                    albumsList = uiState.albumsList,
-                    isLoading = uiState.albumsList.isEmpty() && !uiState.initialSyncDone,
-                    mediaList = uiState.mediaList,
-                    onAlbumClick = { album ->
-                        onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
-                    },
-                    onStoryClick = { path, title ->
-                        onNavigate(Screen.StoryView.createRoute(path, title))
-                    },
-                    onFeatureClick = { featureId ->
-                        when (featureId) {
-                            "vault" -> onNavigate(Screen.VaultLock.route)
-                            "favorites" -> onNavigate(Screen.Favorites.route)
-                            "cleaner" -> onNavigate(Screen.RemoveJunk.route)
-                            "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
-                            "recycle" -> onNavigate(Screen.RecycleBin.route)
-                            "collage" -> onNavigate(Screen.CollageMaker.route)
-                            "editor" -> onNavigate(Screen.Editor.createRoute())
-                            "videos" -> onNavigate(Screen.AlbumDetail.createRoute("filter:videos", "Videos"))
-                            "place" -> onNavigate(Screen.AlbumDetail.createRoute("filter:place", "Geographic photo"))
-                            "moments" -> onNavigate(Screen.Moments.route)
-                        }
-                    },
-                    onMediaTypeClick = { typeId ->
-                        when (typeId) {
-                            "portrait" -> onNavigate(Screen.AlbumDetail.createRoute("filter:portrait", "Portraits"))
-                            "high_definition" -> onNavigate(Screen.AlbumDetail.createRoute("filter:hd", "High Definition"))
-                            "burst" -> onNavigate(Screen.BurstPhotos.route)
-                            "animated" -> onNavigate(Screen.AnimatedMedia.route)
-                            else -> viewModel.setTab(PAGE_PHOTOS)
-                        }
-                    }
-                )
-                PAGE_PHOTOS -> PhotosTab(
-                    mediaList = uiState.mediaList,
-                    isLoading = uiState.mediaList.isEmpty() && !uiState.initialSyncDone,
-                    columnCount = uiState.columnCount,
-                    selectedPaths = uiState.selectedPaths,
-                    isSelectionMode = uiState.isSelectionMode,
-                    onMediaClick = { item ->
-                        onNavigate(Screen.MediaViewer.createRoute(item.filePath, ""))
-                    },
-                    onMediaLongClick = { item ->
-                        viewModel.toggleSelection(item.filePath)
-                    },
-                    onColumnCountChange = viewModel::setColumnCount
-                )
-                PAGE_EXPLORE -> ExploreTab(
-                    onNavigate = onNavigate
-                )
-            }
-            }
-
             if (uiState.isSelectionMode) {
-                HomeSelectionBottomBar(
-                    onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
-                    onFavorite = { viewModel.toggleFavoriteSelected() },
-                    onAddTo = { showAddToSheet = true },
-                    onHide = { viewModel.moveSelectedToVault() },
-                    onDelete = { showDeleteDialog = true },
-                    onCreateAlbum = { showCreateAlbumDialog = true },
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                val allSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()
+                HomeSelectionTopBar(
+                    count = uiState.selectedPaths.size,
+                    allSelected = allSelected,
+                    onClose = { viewModel.clearSelection() },
+                    onToggleAll = { if (allSelected) viewModel.clearSelection() else viewModel.selectAll() }
                 )
             } else {
-                HomeTabBar(
-                    selectedPage = uiState.selectedTab,
-                    onSelect = { viewModel.setTab(it) },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .onSizeChanged { barHeight = it.height }
-                        .graphicsLayer { translationY = barOffset }
+                HomeTopBar(
+                    page = uiState.selectedTab,
+                    onSearch = { onNavigate(Screen.Search.route) },
+                    onCamera = {
+                        val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                        if (cameraIntent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(cameraIntent)
+                        }
+                    },
+                    onAddAlbum = { showCreateAlbumDialog = true },
+                    onMoreRow = { row ->
+                        when (row) {
+                            MoreMenuRow.SORT -> showSortDialog = true
+                            MoreMenuRow.RECYCLE_BIN -> onNavigate(Screen.RecycleBin.route)
+                            MoreMenuRow.SETTINGS -> onNavigate(Screen.Settings.route)
+                        }
+                    },
+                    onTitleLongPress = { onNavigate(Screen.VaultLock.route) }
                 )
             }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .clipToBounds()
+                    .nestedScroll(barScroll)
+            ) {
+                // Swipe left/right between tabs; kept in sync with the bottom bar
+                val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = uiState.selectedTab) { 3 }
+                LaunchedEffect(uiState.selectedTab) {
+                    if (pagerState.currentPage != uiState.selectedTab) pagerState.animateScrollToPage(uiState.selectedTab)
+                }
+                // Turning swiping off mid-drag (long-press then move) cancels the drag and leaves the pager
+                // between pages, so the grid draws half off-screen; ViewPager2 never rests there. Settle it.
+                LaunchedEffect(uiState.isSelectionMode) {
+                    if (uiState.isSelectionMode && pagerState.currentPageOffsetFraction != 0f) {
+                        pagerState.animateScrollToPage(pagerState.currentPage)
+                    }
+                }
+                LaunchedEffect(pagerState) {
+                    androidx.compose.runtime.snapshotFlow { pagerState.settledPage }.collect { viewModel.setTab(it) }
+                }
+                androidx.compose.foundation.pager.HorizontalPager(
+                    state = pagerState,
+                    // No swiping while selecting, so a drag can't drop the selection
+                    userScrollEnabled = !uiState.isSelectionMode,
+                    beyondViewportPageCount = 2, // HA setOffscreenPageLimit(2)
+                    modifier = Modifier.fillMaxSize()
+                ) { page ->
+                when (page) {
+                    PAGE_ALBUMS -> AlbumsTab(
+                        albumsList = uiState.albumsList,
+                        isLoading = uiState.albumsList.isEmpty() && !uiState.initialSyncDone,
+                        mediaList = uiState.mediaList,
+                        onAlbumClick = { album ->
+                            onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
+                        },
+                        onStoryClick = { path, title ->
+                            onNavigate(Screen.StoryView.createRoute(path, title))
+                        },
+                        onFeatureClick = { featureId ->
+                            when (featureId) {
+                                "vault" -> onNavigate(Screen.VaultLock.route)
+                                "favorites" -> onNavigate(Screen.Favorites.route)
+                                "cleaner" -> onNavigate(Screen.RemoveJunk.route)
+                                "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
+                                "recycle" -> onNavigate(Screen.RecycleBin.route)
+                                "collage" -> onNavigate(Screen.CollageMaker.route)
+                                "editor" -> onNavigate(Screen.Editor.createRoute())
+                                "videos" -> onNavigate(Screen.AlbumDetail.createRoute("filter:videos", "Videos"))
+                                "place" -> onNavigate(Screen.AlbumDetail.createRoute("filter:place", "Geographic photo"))
+                                "moments" -> onNavigate(Screen.Moments.route)
+                            }
+                        },
+                        onMediaTypeClick = { typeId ->
+                            when (typeId) {
+                                "portrait" -> onNavigate(Screen.AlbumDetail.createRoute("filter:portrait", "Portraits"))
+                                "high_definition" -> onNavigate(Screen.AlbumDetail.createRoute("filter:hd", "High Definition"))
+                                "burst" -> onNavigate(Screen.BurstPhotos.route)
+                                "animated" -> onNavigate(Screen.AnimatedMedia.route)
+                                else -> viewModel.setTab(PAGE_PHOTOS)
+                            }
+                        }
+                    )
+                    PAGE_PHOTOS -> PhotosTab(
+                        mediaList = uiState.mediaList,
+                        isLoading = uiState.mediaList.isEmpty() && !uiState.initialSyncDone,
+                        columnCount = uiState.columnCount,
+                        selectedPaths = uiState.selectedPaths,
+                        isSelectionMode = uiState.isSelectionMode,
+                        onMediaClick = { item ->
+                            onNavigate(Screen.MediaViewer.createRoute(item.filePath, ""))
+                        },
+                        onMediaLongClick = { item ->
+                            viewModel.toggleSelection(item.filePath)
+                        },
+                        onColumnCountChange = viewModel::setColumnCount
+                    )
+                    PAGE_EXPLORE -> ExploreTab(
+                        onNavigate = onNavigate
+                    )
+                }
+                }
 
-            // dataSync: 5.sdp bar pulled up 3.dp so a thin line shows (its -7.dp bottom margin only shrinks a slot nothing sits in here)
-            if (uiState.isSyncing) {
-                val primary = colorResource(R.color.colorPrimary)
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .offset(y = (-3).dp)
-                        .fillMaxWidth()
-                        .height(5.sdp),
-                    color = primary,
-                    trackColor = primary.copy(alpha = 0.3f) // framework indeterminate track: colorControlActivated at disabledAlpha
-                )
+                if (uiState.isSelectionMode) {
+                    HomeSelectionBottomBar(
+                        onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
+                        onFavorite = { viewModel.toggleFavoriteSelected() },
+                        onAddTo = { showAddToSheet = true },
+                        onHide = { viewModel.moveSelectedToVault() },
+                        onDelete = { showDeleteDialog = true },
+                        onCreateAlbum = { showCreateAlbumDialog = true },
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
+                } else {
+                    HomeTabBar(
+                        selectedPage = uiState.selectedTab,
+                        onSelect = { viewModel.setTab(it) },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .onSizeChanged { barHeight = it.height }
+                            .graphicsLayer { translationY = barOffset }
+                    )
+                }
+
+                // dataSync: 5.sdp bar pulled up 3.dp so a thin line shows (its -7.dp bottom margin only shrinks a slot nothing sits in here)
+                if (uiState.isSyncing) {
+                    val primary = colorResource(R.color.colorPrimary)
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(y = (-3).dp)
+                            .fillMaxWidth()
+                            .height(5.sdp),
+                        color = primary,
+                        trackColor = primary.copy(alpha = 0.3f) // framework indeterminate track: colorControlActivated at disabledAlpha
+                    )
+                }
             }
+            // navBarBg: fixed strip behind the system navigation bar
+            Spacer(
+                Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(R.color.home_shell_tab_bg))
+                    .navigationBarsPadding()
+            )
         }
-        // navBarBg: fixed strip behind the system navigation bar
-        Spacer(
-            Modifier
-                .fillMaxWidth()
-                .background(colorResource(R.color.home_shell_tab_bg))
-                .navigationBarsPadding()
-        )
+        if (uiState.selectedTab == PAGE_PHOTOS && !uiState.pinchTipSeen && checkStoragePermissions(context)) {
+            PinchTutorialOverlay(onGotIt = { viewModel.dismissPinchTip() })
+        }
     }
 
 

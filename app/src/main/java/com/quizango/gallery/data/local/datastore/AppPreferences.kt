@@ -18,6 +18,7 @@ class AppPreferences(private val context: Context) {
         val INSTALL_SOURCE = stringPreferencesKey("install_source")
         val THEME_MODE = intPreferencesKey("theme_mode") // 0: Light, 1: Dark, 2: System
         val MEDIA_COL_COUNT = intPreferencesKey("media_col_count")
+        val PINCH_TIP_SEEN = booleanPreferencesKey("isPinchInOutToolTip") // 2.7.2 key name
         val AUTO_DELETE_TRASH = booleanPreferencesKey("auto_delete_trash_30_days")
         val VAULT_PIN = stringPreferencesKey("vault_pin")
         val VAULT_PATTERN = stringPreferencesKey("vault_pattern")
@@ -39,6 +40,7 @@ class AppPreferences(private val context: Context) {
     val appLanguage: Flow<String> = context.dataStore.data.map { it[Keys.APP_LANGUAGE] ?: "en" }
     val themeMode: Flow<Int> = context.dataStore.data.map { it[Keys.THEME_MODE] ?: 2 }
     val mediaColCount: Flow<Int> = context.dataStore.data.map { it[Keys.MEDIA_COL_COUNT] ?: 3 }
+    val isPinchInOutToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.PINCH_TIP_SEEN] ?: false }
     val autoDeleteTrash: Flow<Boolean> = context.dataStore.data.map { it[Keys.AUTO_DELETE_TRASH] ?: true }
     val vaultPin: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PIN] }
     val vaultPattern: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PATTERN] }
@@ -95,6 +97,10 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setMediaColCount(count: Int) {
         context.dataStore.edit { it[Keys.MEDIA_COL_COUNT] = count }
+    }
+
+    suspend fun setPinchInOutToolTip(seen: Boolean) {
+        context.dataStore.edit { it[Keys.PINCH_TIP_SEEN] = seen }
     }
 
     suspend fun setAutoDeleteTrash(enabled: Boolean) {
