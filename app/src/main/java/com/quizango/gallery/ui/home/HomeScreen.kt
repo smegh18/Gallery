@@ -10,32 +10,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
-import com.quizango.gallery.ui.components.GalleryTopBar
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
 import com.quizango.gallery.ui.theme.GalleryText
@@ -53,6 +42,7 @@ fun HomeScreen(
     var showSortDialog by remember { mutableStateOf(false) }
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
     var newAlbumName by remember { mutableStateOf("") }
+    val shareTitle = stringResource(R.string.share)
 
     BackHandler(enabled = uiState.isSelectionMode) {
         viewModel.clearSelection()
@@ -61,20 +51,12 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             if (uiState.isSelectionMode) {
-                // 03-03 restyles the selection bar
-                GalleryTopBar(
-                    title = "",
-                    isSelectionMode = true,
-                    selectedCount = uiState.selectedPaths.size,
-                    isAllSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty(),
-                    onSelectAllClick = {
-                        if (uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()) {
-                            viewModel.clearSelection()
-                        } else {
-                            viewModel.selectAll()
-                        }
-                    },
-                    onCloseSelection = { viewModel.clearSelection() }
+                val allSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()
+                HomeSelectionTopBar(
+                    count = uiState.selectedPaths.size,
+                    allSelected = allSelected,
+                    onClose = { viewModel.clearSelection() },
+                    onToggleAll = { if (allSelected) viewModel.clearSelection() else viewModel.selectAll() }
                 )
             } else {
                 HomeTopBar(
@@ -100,51 +82,16 @@ fun HomeScreen(
         },
         bottomBar = {
             if (uiState.isSelectionMode) {
-                Surface(
-                    shadowElevation = 8.dp,
-                    color = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .navigationBarsPadding()
-                            .horizontalScroll(rememberScrollState())
-                            .padding(horizontal = 8.dp, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        SelectionActionItem(
-                            iconRes = R.drawable.ic_home_select_share,
-                            label = stringResource(id = R.string.share),
-                            onClick = { shareSelectedMedia(context, uiState.selectedPaths) }
-                        )
-                        SelectionActionItem(
-                            iconRes = R.drawable.ic_home_select_fav,
-                            label = stringResource(id = R.string.favorite),
-                            onClick = { viewModel.toggleFavoriteSelected() }
-                        )
-                        SelectionActionItem(
-                            iconRes = R.drawable.ic_home_select_add,
-                            label = stringResource(id = R.string.add_to),
-                            onClick = { showCreateAlbumDialog = true }
-                        )
-                        SelectionActionItem(
-                            iconRes = R.drawable.ic_home_select_hide,
-                            label = stringResource(id = R.string.ad_to_private),
-                            onClick = { viewModel.moveSelectedToVault() }
-                        )
-                        SelectionActionItem(
-                            iconRes = R.drawable.ic_album_select_delete,
-                            label = stringResource(id = R.string.delete),
-                            onClick = { viewModel.moveSelectedToTrash() }
-                        )
-                        SelectionActionItem(
-                            iconRes = R.drawable.ic_home_select_create_album,
-                            label = stringResource(id = R.string.create_albums),
-                            onClick = { showCreateAlbumDialog = true }
-                        )
-                    }
+                Column {
+                    HomeSelectionBottomBar(
+                        onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
+                        onFavorite = { viewModel.toggleFavoriteSelected() },
+                        onAddTo = { showCreateAlbumDialog = true },
+                        onHide = { viewModel.moveSelectedToVault() },
+                        onDelete = { viewModel.moveSelectedToTrash() },
+                        onCreateAlbum = { showCreateAlbumDialog = true }
+                    )
+                    Spacer(Modifier.fillMaxWidth().background(colorResource(R.color.home_shell_tab_bg)).navigationBarsPadding())
                 }
             } else {
                 HomeTabBar(uiState.selectedTab) { viewModel.setTab(it) }
@@ -418,7 +365,7 @@ fun HomeScreen(
     }
 }
 
-private fun shareSelectedMedia(context: Context, paths: Set<String>) {
+private fun shareSelectedMedia(context: Context, paths: Set<String>, chooserTitle: String) {
     if (paths.isEmpty()) return
     try {
         val uris = ArrayList<Uri>()
@@ -447,36 +394,6 @@ private fun shareSelectedMedia(context: Context, paths: Set<String>) {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
         }
-        context.startActivity(Intent.createChooser(shareIntent, "Share Media"))
+        context.startActivity(Intent.createChooser(shareIntent, chooserTitle))
     } catch (_: Exception) {}
-}
-
-@Composable
-private fun SelectionActionItem(
-    iconRes: Int,
-    label: String,
-    onClick: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 6.dp)
-    ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = label,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1
-        )
-    }
 }
