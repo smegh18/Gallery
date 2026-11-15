@@ -21,6 +21,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalContext
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -30,7 +37,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.MediaItem
@@ -45,6 +51,7 @@ import java.util.Date
 
 /** One line of the Photos grid (2.7.2 PA view types). */
 internal sealed interface PhotoRow {
+    data object Ad : PhotoRow
     data class Header(val dayStart: Long) : PhotoRow
     data class Media(val item: MediaItem) : PhotoRow
 }
@@ -58,8 +65,9 @@ internal fun dayStartOf(millis: Long): Long = Calendar.getInstance().apply {
     set(Calendar.MILLISECOND, 0)
 }.timeInMillis
 
-/** A header per calendar day in first-seen order, each followed by that day's media. */
-internal fun buildPhotoRows(media: List<MediaItem>): List<PhotoRow> = buildList {
+/** The ad slot first (PF puts it at index 0), then a header per calendar day in first-seen order, each followed by that day's media. */
+internal fun buildPhotoRows(media: List<MediaItem>): List<PhotoRow> = if (media.isEmpty()) emptyList() else buildList {
+    add(PhotoRow.Ad)
     media.groupBy { dayStartOf(it.dateAdded) }.forEach { (day, items) ->
         add(PhotoRow.Header(day))
         items.forEach { add(PhotoRow.Media(it)) }
@@ -134,6 +142,7 @@ fun PhotosTab(
                 count = rows.size,
                 key = { i ->
                     when (val row = rows[i]) {
+                        PhotoRow.Ad -> "ad"
                         is PhotoRow.Header -> "header_${row.dayStart}"
                         is PhotoRow.Media -> row.item.id
                     }
@@ -142,6 +151,7 @@ fun PhotosTab(
                 contentType = { i -> rows[i]::class }
             ) { i ->
                 when (val row = rows[i]) {
+                    PhotoRow.Ad -> PhotosAdRow()
                     is PhotoRow.Header -> PhotosDateHeader(
                         when (headerKind(row.dayStart, now)) {
                             HeaderKind.TODAY -> stringResource(R.string.today)
@@ -235,36 +245,75 @@ fun PhotosTabGridItem(
     }
 }
 
+/** Ad slot (photos_tab_item_ad): the native-ad loading skeleton, drawn static with no text or click (D5: ads stay placeholders). */
+@Composable
+private fun PhotosAdRow() {
+    val edge = 13.sdp
+    Column(
+        // PD gives ad rows no edge inset: widen past the grid's 13.sdp side padding
+        modifier = Modifier.layout { measurable, constraints ->
+            val inset = edge.roundToPx()
+            val width = constraints.maxWidth + 2 * inset
+            val placeable = measurable.measure(constraints.copy(minWidth = width, maxWidth = width))
+            layout(constraints.maxWidth, placeable.height) { placeable.place(-inset, 0) }
+        }
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(start = 18.sdp, end = 18.sdp, top = 10.sdp, bottom = 8.sdp)) {
+            Box(modifier = Modifier.fillMaxWidth().height(22.sdp)) {
+                DrawableBox(R.drawable.photos_tab_shimmer_block, Modifier.size(22.sdp))
+                // title bar: icon end + 5.sdp to CTA start - 25.sdp, top-aligned with the icon
+                DrawableBox(
+                    R.drawable.photos_tab_shimmer_block,
+                    Modifier.padding(start = 27.sdp, end = 75.sdp).fillMaxWidth().height(8.sdp)
+                )
+                // subtitle bar: title start to CTA start - 7.sdp, bottom-aligned with the icon
+                DrawableBox(
+                    R.drawable.photos_tab_shimmer_block,
+                    Modifier.align(Alignment.BottomStart).padding(start = 27.sdp, end = 57.sdp).fillMaxWidth().height(7.sdp)
+                )
+                DrawableBox(R.drawable.photos_tab_ad_cta_bg, Modifier.align(Alignment.TopEnd).size(width = 50.sdp, height = 22.sdp))
+            }
+            Spacer(modifier = Modifier.height(7.sdp))
+            Box(modifier = Modifier.fillMaxWidth().height(132.sdp).background(colorResource(R.color.photos_tab_shimmer)))
+        }
+        HorizontalDivider(thickness = 1.dp, color = colorResource(R.color.photos_tab_divider))
+    }
+}
+
+/** Draws an XML shape drawable, which painterResource cannot load. */
+@Composable
+private fun DrawableBox(@DrawableRes id: Int, modifier: Modifier) {
+    val drawable = ContextCompat.getDrawable(LocalContext.current, id) ?: return
+    Box(modifier = modifier.drawBehind {
+        drawIntoCanvas { canvas ->
+            drawable.setBounds(0, 0, size.width.toInt(), size.height.toInt())
+            drawable.draw(canvas.nativeCanvas)
+        }
+    })
+}
+
+/** fragment_all_media emptyLayout */
 @Composable
 private fun PhotosEmptyState() {
-    Box(
+    Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(horizontal = 40.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_empty_img),
-                contentDescription = null,
-                modifier = Modifier.size(160.dp)
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = stringResource(id = R.string.no_items),
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(id = R.string.no_media_file),
-                fontSize = 13.5.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                lineHeight = 18.sp
-            )
-        }
+        val titleColor = colorResource(R.color.titleColor)
+        Image(painter = painterResource(R.drawable.ic_empty_img), contentDescription = null)
+        Text(
+            text = stringResource(R.string.no_items),
+            style = GalleryText.BodyLargeSemiBold,
+            color = titleColor,
+            modifier = Modifier.padding(top = 20.sdp, bottom = 10.sdp)
+        )
+        Text(
+            text = stringResource(R.string.no_media_file),
+            style = GalleryText.BodySmallRegular,
+            color = titleColor,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 50.sdp)
+        )
     }
 }
