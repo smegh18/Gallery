@@ -5,16 +5,16 @@ milestone_name: Reference 2.7.2 parity
 current_phase: 3
 current_phase_name: Home Shell and Photos Tab
 status: in_progress
-stopped_at: Plan 03-03 complete, next 03-04
+stopped_at: Plan 03-04 complete, next 03-05
 last_updated: "2026-11-15T12:00:00.000Z"
 last_activity: 2026-11-15
-last_activity_desc: Plan 03-03 complete (selection mode, delete confirm, add-to sheet, tab bar hide on scroll)
-state_head: 733b0ac
+last_activity_desc: Plan 03-04 complete (pinch columns 3..5, first-run pinch tutorial)
+state_head: 14390c0
 progress:
   total_phases: 13
   completed_phases: 2
   total_plans: 16
-  completed_plans: 13
+  completed_plans: 14
   percent: 15
 ---
 
@@ -30,9 +30,9 @@ See: .planning/PROJECT.md (updated 2026-11-13)
 ## Current Position
 
 Phase: 3 of 13 (Home Shell and Photos Tab)
-Plan: 3 of 6 complete (next 03-04)
+Plan: 4 of 6 complete (next 03-05)
 Status: In progress
-Last activity: 2026-11-15 — Plan 03-03 complete (selection mode, delete confirm, add-to sheet, tab bar behaviour)
+Last activity: 2026-11-15 — Plan 03-04 complete (pinch columns, first-run tutorial)
 
 Progress: [██░░░░░░░░] 15%
 

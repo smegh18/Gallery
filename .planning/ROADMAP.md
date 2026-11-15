@@ -105,7 +105,7 @@ Plans:
 - [x] 03-01-PLAN.md — Tracer: Home opens on Photos with the 2.7.2 tab bar and titles (all Phase 3 strings, colours, drawables imported); loading spinner, 3..5 columns, half-width bug; per-tab top bars, ⋮ popup, title long-press (wave 1)
 - [x] 03-02-PLAN.md — Photos tab content: grid geometry, 2.7.2 date headers and cells, ad-row skeleton, empty state, fast-scroll thumb (wave 2)
 - [x] 03-03-PLAN.md — Selection mode bars, delete confirmation, Add to / Create album, hide-on-scroll tab bar and sync line (wave 2)
-- [ ] 03-04-PLAN.md — Pinch to change columns with live preview, first-run pinch tutorial (wave 3)
+- [x] 03-04-PLAN.md — Pinch to change columns with live preview, first-run pinch tutorial (wave 3)
 - [ ] 03-05-PLAN.md — Vault hint (sessions 4/8/12) and the Home exit popup with Back order (wave 4)
 - [ ] 03-06-PLAN.md — Quality gates: CodeRabbit, unslop, parity scripts, checklist ticks, on-device side-by-side check (wave 5, checkpoint)
 **UI hint**: yes
