@@ -8,11 +8,19 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,10 +52,12 @@ import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import kotlin.math.roundToInt
 
 /** One line of the Photos grid (2.7.2 PA view types). */
 internal sealed interface PhotoRow {
@@ -100,6 +110,14 @@ internal fun fileTypeLabel(fileName: String, isVideo: Boolean): Int? = when {
     else -> null
 }
 
+/** Fast-scroll thumb position 0..1 for the first visible index; 0 when everything fits. */
+internal fun thumbFraction(firstVisible: Int, visibleCount: Int, total: Int): Float =
+    if (total <= visibleCount) 0f else (firstVisible.toFloat() / (total - visibleCount)).coerceIn(0f, 1f)
+
+/** Grid index the fast-scroll drag at [fraction] jumps to. */
+internal fun indexForThumbFraction(fraction: Float, total: Int): Int =
+    (fraction * (total - 1)).roundToInt().coerceIn(0, maxOf(total - 1, 0))
+
 @Composable
 fun PhotosTab(
     mediaList: List<MediaItem>,
@@ -131,49 +149,93 @@ fun PhotosTab(
                 SimpleDateFormat(DateFormat.getBestDateTimePattern(locale, "dMMMyyyy"), locale)
         }
         val now = System.currentTimeMillis()
+        val gridState = rememberLazyGridState()
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columnCount),
-            contentPadding = PaddingValues(start = 13.sdp, end = 13.sdp, bottom = 50.sdp),
-            horizontalArrangement = Arrangement.spacedBy(4.sdp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(
-                count = rows.size,
-                key = { i ->
-                    when (val row = rows[i]) {
-                        PhotoRow.Ad -> "ad"
-                        is PhotoRow.Header -> "header_${row.dayStart}"
-                        is PhotoRow.Media -> row.item.id
-                    }
-                },
-                span = { i -> GridItemSpan(if (rows[i] is PhotoRow.Media) 1 else maxLineSpan) },
-                contentType = { i -> rows[i]::class }
-            ) { i ->
-                when (val row = rows[i]) {
-                    PhotoRow.Ad -> PhotosAdRow()
-                    is PhotoRow.Header -> PhotosDateHeader(
-                        when (headerKind(row.dayStart, now)) {
-                            HeaderKind.TODAY -> stringResource(R.string.today)
-                            HeaderKind.YESTERDAY -> stringResource(R.string.yesterday)
-                            HeaderKind.THIS_YEAR -> dayFormats.first.format(Date(row.dayStart))
-                            HeaderKind.OTHER_YEAR -> dayFormats.second.format(Date(row.dayStart))
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            LazyVerticalGrid(
+                state = gridState,
+                columns = GridCells.Fixed(columnCount),
+                contentPadding = PaddingValues(start = 13.sdp, end = 13.sdp, bottom = 50.sdp),
+                horizontalArrangement = Arrangement.spacedBy(4.sdp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(
+                    count = rows.size,
+                    key = { i ->
+                        when (val row = rows[i]) {
+                            PhotoRow.Ad -> "ad"
+                            is PhotoRow.Header -> "header_${row.dayStart}"
+                            is PhotoRow.Media -> row.item.id
                         }
-                    )
-                    is PhotoRow.Media -> {
-                        val item = row.item
-                        PhotosTabGridItem(
-                            item = item,
-                            isSelected = selectedPaths.contains(item.filePath),
-                            isSelectionMode = isSelectionMode,
-                            onClick = { if (isSelectionMode) onMediaLongClick(item) else onMediaClick(item) },
-                            onLongClick = { onMediaLongClick(item) }
+                    },
+                    span = { i -> GridItemSpan(if (rows[i] is PhotoRow.Media) 1 else maxLineSpan) },
+                    contentType = { i -> rows[i]::class }
+                ) { i ->
+                    when (val row = rows[i]) {
+                        PhotoRow.Ad -> PhotosAdRow()
+                        is PhotoRow.Header -> PhotosDateHeader(
+                            when (headerKind(row.dayStart, now)) {
+                                HeaderKind.TODAY -> stringResource(R.string.today)
+                                HeaderKind.YESTERDAY -> stringResource(R.string.yesterday)
+                                HeaderKind.THIS_YEAR -> dayFormats.first.format(Date(row.dayStart))
+                                HeaderKind.OTHER_YEAR -> dayFormats.second.format(Date(row.dayStart))
+                            }
                         )
+                        is PhotoRow.Media -> {
+                            val item = row.item
+                            PhotosTabGridItem(
+                                item = item,
+                                isSelected = selectedPaths.contains(item.filePath),
+                                isSelectionMode = isSelectionMode,
+                                onClick = { if (isSelectionMode) onMediaLongClick(item) else onMediaClick(item) },
+                                onLongClick = { onMediaLongClick(item) }
+                            )
+                        }
                     }
                 }
             }
+            FastScrollThumb(gridState, trackHeightPx = constraints.maxHeight)
         }
     }
+}
+
+/**
+ * RecyclerViewFastScroller thumb on the end edge: follows the scroll, dragging jumps the grid.
+ * Never auto-hides (handleVisibilityDuration -1) and shows no date bubble (2.7.2 never binds one).
+ * The thumb ImageView has no background, so its 8.sdp elevation casts no shadow: none is drawn here.
+ */
+@Composable
+private fun BoxScope.FastScrollThumb(state: LazyGridState, trackHeightPx: Int) {
+    if (!state.canScrollForward && !state.canScrollBackward) return
+    val painter = painterResource(R.drawable.ic_scroll)
+    val range = (trackHeightPx - painter.intrinsicSize.height).coerceAtLeast(0f)
+    val scrollFraction = {
+        val info = state.layoutInfo
+        thumbFraction(state.firstVisibleItemIndex, info.visibleItemsInfo.size, info.totalItemsCount)
+    }
+    var dragFraction by remember { mutableStateOf<Float?>(null) }
+    val scope = rememberCoroutineScope()
+    Image(
+        painter = painter,
+        contentDescription = null,
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .offset { IntOffset(0, ((dragFraction ?: scrollFraction()) * range).roundToInt()) }
+            .pointerInput(state, range) {
+                detectVerticalDragGestures(
+                    onDragStart = { dragFraction = scrollFraction() },
+                    onDragEnd = { dragFraction = null },
+                    onDragCancel = { dragFraction = null }
+                ) { change, dy ->
+                    change.consume()
+                    if (range > 0f) {
+                        val f = ((dragFraction ?: scrollFraction()) + dy / range).coerceIn(0f, 1f)
+                        dragFraction = f
+                        scope.launch { state.scrollToItem(indexForThumbFraction(f, state.layoutInfo.totalItemsCount)) }
+                    }
+                }
+            }
+    )
 }
 
 /** photos_tab_item_date */
