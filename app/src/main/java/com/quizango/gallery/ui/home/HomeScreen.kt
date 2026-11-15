@@ -64,6 +64,11 @@ fun HomeScreen(
     val copiedMessage = stringResource(R.string.items_copied_successfully)
     val onCopied: (Int) -> Unit = { Toast.makeText(context, copiedMessage, Toast.LENGTH_SHORT).show() }
 
+    var titleBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
+    val showVaultHint = !uiState.isSelectionMode && shouldShowVaultHint(
+        uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context)
+    )
+
     BackHandler(enabled = uiState.isSelectionMode) {
         viewModel.clearSelection()
     }
@@ -134,7 +139,11 @@ fun HomeScreen(
                             MoreMenuRow.SETTINGS -> onNavigate(Screen.Settings.route)
                         }
                     },
-                    onTitleLongPress = { onNavigate(Screen.VaultLock.route) }
+                    onTitleLongPress = {
+                        if (showVaultHint) viewModel.closeVaultHint() // HA.o000OO0o closes the hint first
+                        onNavigate(Screen.VaultLock.route)
+                    },
+                    onTitlePositioned = { titleBounds = it }
                 )
             }
             Box(
@@ -264,6 +273,15 @@ fun HomeScreen(
                     .navigationBarsPadding()
             )
         }
+        if (showVaultHint) {
+            VaultHintOverlay(
+                title = stringResource(HOME_TABS[uiState.selectedTab].title),
+                titleBounds = titleBounds,
+                onClose = { viewModel.closeVaultHint() },
+                onOpenVault = { onNavigate(Screen.VaultLock.route) }
+            )
+        }
+        // Drawn above the vault hint (2.7.2 elevations 10.sdp vs 9.sdp)
         if (uiState.selectedTab == PAGE_PHOTOS && !uiState.pinchTipSeen && checkStoragePermissions(context)) {
             PinchTutorialOverlay(onGotIt = { viewModel.dismissPinchTip() })
         }

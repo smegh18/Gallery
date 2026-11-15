@@ -20,6 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -84,7 +87,8 @@ internal fun HomeTopBar(
     onCamera: () -> Unit,
     onAddAlbum: () -> Unit,
     onMoreRow: (MoreMenuRow) -> Unit,
-    onTitleLongPress: () -> Unit
+    onTitleLongPress: () -> Unit,
+    onTitlePositioned: (Rect) -> Unit = {}
 ) {
     val haptic = LocalHapticFeedback.current
     val slots = topBarSlots(page, checkStoragePermissions(LocalContext.current))
@@ -105,6 +109,7 @@ internal fun HomeTopBar(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .padding(start = 13.sdp)
+                .onGloballyPositioned { onTitlePositioned(it.boundsInWindow()) } // the vault-hint pill sits on it
                 .pointerInput(onTitleLongPress) {
                     detectTapGestures(onLongPress = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
