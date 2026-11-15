@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 2
+open_count: 4
 waived_count: 0
 fixed_count: 0
-total_count: 2
-last_updated: 2026-11-15T16:13:28.879Z
+total_count: 4
+last_updated: 2026-11-15T16:29:13.314Z
 ---
 
 # Broken Windows Ledger
@@ -17,6 +17,8 @@ last_updated: 2026-11-15T16:13:28.879Z
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
 | 1 | 03 | deviation | app/src/main/java/com/quizango/gallery/ui/home/PhotosTab.kt |  | Pinch commit threshold is the plan's 1.2 fallback and commit/cancel = 280/200 ms is unconfirmed; check S272/ai/n.smali when the 2.7.2 decode is available | open |  | 2026-11-15T16:13:27.761Z |  |
 | 2 | 03 | unrun-verify | app/src/main/java/com/quizango/gallery/ui/home/HomeOverlays.kt |  | 03-04 pinch gesture and tutorial not run on a device (Redmi has a differently signed build); backstop in 03-06 | open |  | 2026-11-15T16:13:28.879Z |  |
+| 3 | 03 | unrun-verify | app/src/main/java/com/quizango/gallery/ui/home/HomeScreen.kt |  | 03-05 device Back check (vault hint closes on Back, 'Tap again to exit' appears) not run: Redmi has a differently signed build; backstop in 03-06 | open |  | 2026-11-15T16:29:12.157Z |  |
+| 4 | 03 | deviation | app/src/main/java/com/quizango/gallery/ui/home/HomeOverlays.kt |  | Vault-hint arrow size (intrinsic 65x71dp) and copy-column bottom alignment guessed: layout_home_vault_hint.xml not on this machine; check against 2.7.2 in 03-06 | open |  | 2026-11-15T16:29:13.314Z |  |
 
 ````json
 [
@@ -42,6 +44,30 @@ last_updated: 2026-11-15T16:13:28.879Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-11-15T16:13:28.879Z",
+    "resolved_at": null
+  },
+  {
+    "id": 3,
+    "kind": "unrun-verify",
+    "phase": "03",
+    "file": "app/src/main/java/com/quizango/gallery/ui/home/HomeScreen.kt",
+    "line": null,
+    "description": "03-05 device Back check (vault hint closes on Back, 'Tap again to exit' appears) not run: Redmi has a differently signed build; backstop in 03-06",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-11-15T16:29:12.157Z",
+    "resolved_at": null
+  },
+  {
+    "id": 4,
+    "kind": "deviation",
+    "phase": "03",
+    "file": "app/src/main/java/com/quizango/gallery/ui/home/HomeOverlays.kt",
+    "line": null,
+    "description": "Vault-hint arrow size (intrinsic 65x71dp) and copy-column bottom alignment guessed: layout_home_vault_hint.xml not on this machine; check against 2.7.2 in 03-06",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-11-15T16:29:13.314Z",
     "resolved_at": null
   }
 ]
