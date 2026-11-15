@@ -213,14 +213,23 @@ private fun MoreMenu(page: Int, onDismiss: () -> Unit, onRow: (MoreMenuRow) -> U
     }
 }
 
+/** HomeBottomBarBehavior SETTLE_MS (0xdc). */
+internal const val BAR_SETTLE_MS = 220
+
+/** On scroll stop the bar hides only when more than half of it is already hidden (strictly greater). */
+internal fun settledBarOffset(offset: Float, height: Float): Float = if (offset > height / 2f) height else 0f
+
+/** Settle progress of S272/z/p.smali: ease-out cubic. */
+internal fun barSettleEasing(t: Float): Float = 1f - (1f - t) * (1f - t) * (1f - t)
+
 /** No banner-ad slot: the reference slot is 0 high with no ad SDK (decision D5). */
 @Composable
-internal fun HomeTabBar(selectedPage: Int, onSelect: (Int) -> Unit) {
+internal fun HomeTabBar(selectedPage: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+    // The nav-bar strip under it is HomeScreen's navBarBg, which stays put while this bar slides.
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(colorResource(R.color.home_shell_tab_bg))
-            .navigationBarsPadding()
     ) {
         HorizontalDivider(thickness = 1.dp, color = colorResource(R.color.home_shell_tab_divider))
         Row(modifier = Modifier.fillMaxWidth().height(44.sdp)) {

@@ -13,6 +13,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Velocity
+import com.quizango.gallery.ui.theme.sdp
+import kotlinx.coroutines.Job
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,60 +67,80 @@ fun HomeScreen(
         viewModel.clearSelection()
     }
 
-    Scaffold(
-        topBar = {
-            if (uiState.isSelectionMode) {
-                val allSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()
-                HomeSelectionTopBar(
-                    count = uiState.selectedPaths.size,
-                    allSelected = allSelected,
-                    onClose = { viewModel.clearSelection() },
-                    onToggleAll = { if (allSelected) viewModel.clearSelection() else viewModel.selectAll() }
-                )
-            } else {
-                HomeTopBar(
-                    page = uiState.selectedTab,
-                    onSearch = { onNavigate(Screen.Search.route) },
-                    onCamera = {
-                        val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-                        if (cameraIntent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(cameraIntent)
-                        }
-                    },
-                    onAddAlbum = { showCreateAlbumDialog = true },
-                    onMoreRow = { row ->
-                        when (row) {
-                            MoreMenuRow.SORT -> showSortDialog = true
-                            MoreMenuRow.RECYCLE_BIN -> onNavigate(Screen.RecycleBin.route)
-                            MoreMenuRow.SETTINGS -> onNavigate(Screen.Settings.route)
-                        }
-                    },
-                    onTitleLongPress = { onNavigate(Screen.VaultLock.route) }
-                )
+    // activity_home bottomMainBar under HomeBottomBarBehavior: the tab bar follows the scroll, then settles.
+    val barScope = rememberCoroutineScope()
+    var barHeight by remember { mutableIntStateOf(0) }
+    var barOffset by remember { mutableFloatStateOf(0f) }
+    val settleJob = remember { arrayOfNulls<Job>(1) }
+    fun settleBarTo(target: Float) {
+        settleJob[0]?.cancel()
+        settleJob[0] = barScope.launch {
+            animate(barOffset, target, animationSpec = tween(BAR_SETTLE_MS, easing = Easing(::barSettleEasing))) { v, _ -> barOffset = v }
+        }
+    }
+    val barScroll = remember(uiState.isSelectionMode) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (uiState.isSelectionMode) return Offset.Zero
+                settleJob[0]?.cancel()
+                barOffset = (barOffset - available.y).coerceIn(0f, barHeight.toFloat())
+                return Offset.Zero // the bar moves alongside the content, it never eats the scroll
             }
-        },
-        bottomBar = {
-            if (uiState.isSelectionMode) {
-                Column {
-                    HomeSelectionBottomBar(
-                        onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
-                        onFavorite = { viewModel.toggleFavoriteSelected() },
-                        onAddTo = { showAddToSheet = true },
-                        onHide = { viewModel.moveSelectedToVault() },
-                        onDelete = { showDeleteDialog = true },
-                        onCreateAlbum = { showCreateAlbumDialog = true }
-                    )
-                    Spacer(Modifier.fillMaxWidth().background(colorResource(R.color.home_shell_tab_bg)).navigationBarsPadding())
-                }
-            } else {
-                HomeTabBar(uiState.selectedTab) { viewModel.setTab(it) }
+
+            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                if (!uiState.isSelectionMode) settleBarTo(settledBarOffset(barOffset, barHeight.toFloat()))
+                return Velocity.Zero
             }
         }
-    ) { paddingValues ->
+    }
+    LaunchedEffect(uiState.selectedTab) { settleBarTo(0f) }
+    LaunchedEffect(uiState.isSelectionMode) {
+        if (uiState.isSelectionMode) {
+            settleJob[0]?.cancel()
+            barOffset = 0f
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        if (uiState.isSelectionMode) {
+            val allSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()
+            HomeSelectionTopBar(
+                count = uiState.selectedPaths.size,
+                allSelected = allSelected,
+                onClose = { viewModel.clearSelection() },
+                onToggleAll = { if (allSelected) viewModel.clearSelection() else viewModel.selectAll() }
+            )
+        } else {
+            HomeTopBar(
+                page = uiState.selectedTab,
+                onSearch = { onNavigate(Screen.Search.route) },
+                onCamera = {
+                    val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                    if (cameraIntent.resolveActivity(context.packageManager) != null) {
+                        context.startActivity(cameraIntent)
+                    }
+                },
+                onAddAlbum = { showCreateAlbumDialog = true },
+                onMoreRow = { row ->
+                    when (row) {
+                        MoreMenuRow.SORT -> showSortDialog = true
+                        MoreMenuRow.RECYCLE_BIN -> onNavigate(Screen.RecycleBin.route)
+                        MoreMenuRow.SETTINGS -> onNavigate(Screen.Settings.route)
+                    }
+                },
+                onTitleLongPress = { onNavigate(Screen.VaultLock.route) }
+            )
+        }
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+                .weight(1f)
+                .fillMaxWidth()
+                .clipToBounds()
+                .nestedScroll(barScroll)
         ) {
             // Swipe left/right between tabs; kept in sync with the bottom bar
             val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = uiState.selectedTab) { 3 }
@@ -185,16 +218,50 @@ fun HomeScreen(
             }
             }
 
+            if (uiState.isSelectionMode) {
+                HomeSelectionBottomBar(
+                    onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
+                    onFavorite = { viewModel.toggleFavoriteSelected() },
+                    onAddTo = { showAddToSheet = true },
+                    onHide = { viewModel.moveSelectedToVault() },
+                    onDelete = { showDeleteDialog = true },
+                    onCreateAlbum = { showCreateAlbumDialog = true },
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                )
+            } else {
+                HomeTabBar(
+                    selectedPage = uiState.selectedTab,
+                    onSelect = { viewModel.setTab(it) },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .onSizeChanged { barHeight = it.height }
+                        .graphicsLayer { translationY = barOffset }
+                )
+            }
+
+            // dataSync: 5.sdp bar pulled up 3.dp so a thin line shows (its -7.dp bottom margin only shrinks a slot nothing sits in here)
             if (uiState.isSyncing) {
+                val primary = colorResource(R.color.colorPrimary)
                 LinearProgressIndicator(
                     modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = (-3).dp)
                         .fillMaxWidth()
-                        .align(Alignment.TopCenter),
-                    color = GalleryBlue
+                        .height(5.sdp),
+                    color = primary,
+                    trackColor = primary.copy(alpha = 0.3f) // framework indeterminate track: colorControlActivated at disabledAlpha
                 )
             }
         }
+        // navBarBg: fixed strip behind the system navigation bar
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .background(colorResource(R.color.home_shell_tab_bg))
+                .navigationBarsPadding()
+        )
     }
+
 
     if (showSortDialog) {
         var tempField by remember { mutableStateOf(uiState.sortOrder.field) }
