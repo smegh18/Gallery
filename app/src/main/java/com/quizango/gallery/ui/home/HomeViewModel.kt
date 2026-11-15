@@ -148,13 +148,26 @@ class HomeViewModel(
         }
     }
 
-    fun moveSelectedToTrash() {
+    /** Runs after the delete confirmation; the checkbox state reaches here only through deleteActionFor. */
+    internal fun deleteSelected(action: DeleteAction) {
         val paths = _uiState.value.selectedPaths.toList()
         viewModelScope.launch {
-            paths.forEach { path ->
-                mediaRepository.moveToTrash(path)
+            when (action) {
+                DeleteAction.MOVE_TO_RECYCLE_BIN -> paths.forEach { mediaRepository.moveToTrash(it) }
+                DeleteAction.DELETE_PERMANENTLY -> mediaRepository.deletePermanently(paths)
             }
             clearSelection()
+        }
+    }
+
+    /** Copies the selection into [folderPath] and reports how many copies succeeded. */
+    fun addSelectedToFolder(folderPath: String, onDone: (Int) -> Unit) {
+        val paths = _uiState.value.selectedPaths.toList()
+        viewModelScope.launch {
+            val copied = paths.count { mediaRepository.copyMediaToFolder(it, folderPath) }
+            mediaRepository.syncMediaStore()
+            clearSelection()
+            onDone(copied)
         }
     }
 

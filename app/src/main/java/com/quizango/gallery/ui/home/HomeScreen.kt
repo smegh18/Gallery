@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
+import com.quizango.gallery.ui.components.AddToAlbumSheet
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
 import com.quizango.gallery.ui.theme.GalleryText
@@ -42,7 +44,11 @@ fun HomeScreen(
     var showSortDialog by remember { mutableStateOf(false) }
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
     var newAlbumName by remember { mutableStateOf("") }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showAddToSheet by remember { mutableStateOf(false) }
     val shareTitle = stringResource(R.string.share)
+    val copiedMessage = stringResource(R.string.items_copied_successfully)
+    val onCopied: (Int) -> Unit = { Toast.makeText(context, copiedMessage, Toast.LENGTH_SHORT).show() }
 
     BackHandler(enabled = uiState.isSelectionMode) {
         viewModel.clearSelection()
@@ -86,9 +92,9 @@ fun HomeScreen(
                     HomeSelectionBottomBar(
                         onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
                         onFavorite = { viewModel.toggleFavoriteSelected() },
-                        onAddTo = { showCreateAlbumDialog = true },
+                        onAddTo = { showAddToSheet = true },
                         onHide = { viewModel.moveSelectedToVault() },
-                        onDelete = { viewModel.moveSelectedToTrash() },
+                        onDelete = { showDeleteDialog = true },
                         onCreateAlbum = { showCreateAlbumDialog = true }
                     )
                     Spacer(Modifier.fillMaxWidth().background(colorResource(R.color.home_shell_tab_bg)).navigationBarsPadding())
@@ -290,6 +296,30 @@ fun HomeScreen(
         )
     }
 
+    if (showDeleteDialog) {
+        DeleteMediaDialog(
+            count = uiState.selectedPaths.size,
+            onConfirm = { checked ->
+                showDeleteDialog = false
+                viewModel.deleteSelected(deleteActionFor(checked))
+            },
+            onDismiss = { showDeleteDialog = false }
+        )
+    }
+
+    if (showAddToSheet) {
+        AddToAlbumSheet(
+            albums = uiState.albumsList,
+            previewItem = uiState.mediaList.firstOrNull { it.filePath in uiState.selectedPaths },
+            selectedCount = uiState.selectedPaths.size,
+            onAlbumClick = { album ->
+                showAddToSheet = false
+                viewModel.addSelectedToFolder(album.path, onCopied)
+            },
+            onDismiss = { showAddToSheet = false }
+        )
+    }
+
     if (showCreateAlbumDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -339,7 +369,9 @@ fun HomeScreen(
                                 if (!newDir.exists()) {
                                     newDir.mkdirs()
                                 }
-                                viewModel.syncMedia()
+                                // Create album from the selection bar copies the selection in; the Albums + makes it empty.
+                                if (uiState.isSelectionMode) viewModel.addSelectedToFolder(newDir.absolutePath, onCopied)
+                                else viewModel.syncMedia()
                             } catch (_: Exception) {}
                         }
                         showCreateAlbumDialog = false
