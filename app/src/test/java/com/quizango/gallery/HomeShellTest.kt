@@ -13,6 +13,8 @@ import com.quizango.gallery.ui.home.clampColumnCount
 import com.quizango.gallery.ui.home.DeleteAction
 import com.quizango.gallery.ui.home.MOVE_TO_RECYCLE_BIN_DEFAULT
 import com.quizango.gallery.ui.home.deleteActionFor
+import com.quizango.gallery.ui.home.settledBarOffset
+import com.quizango.gallery.ui.home.barSettleEasing
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -75,5 +77,20 @@ class HomeShellTest {
     fun recycleBinIsCheckedByDefault() {
         // S272/oa/j.smali: setChecked(true) in onCreate
         assertEquals(true, MOVE_TO_RECYCLE_BIN_DEFAULT)
+    }
+
+    @Test
+    fun barSettlesHiddenOnlyPastHalf() {
+        assertEquals(0f, settledBarOffset(offset = 30f, height = 100f), 0f)
+        assertEquals(0f, settledBarOffset(50f, 100f), 0f) // strictly greater than half hides
+        assertEquals(100f, settledBarOffset(51f, 100f), 0f)
+        assertEquals(0f, settledBarOffset(0f, 0f), 0f) // no tab row, e.g. selection mode
+    }
+
+    @Test
+    fun barSettleIsEaseOutCubic() {
+        assertEquals(0f, barSettleEasing(0f), 1e-6f)
+        assertEquals(1f, barSettleEasing(1f), 1e-6f)
+        assertEquals(0.875f, barSettleEasing(0.5f), 1e-6f)
     }
 }
