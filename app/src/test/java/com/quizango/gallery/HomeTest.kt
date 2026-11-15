@@ -15,6 +15,7 @@ import com.quizango.gallery.ui.home.fileTypeLabel
 import com.quizango.gallery.ui.home.headerKind
 import com.quizango.gallery.ui.home.indexForThumbFraction
 import com.quizango.gallery.ui.home.nextColumnCount
+import com.quizango.gallery.ui.home.pinchPreviewScale
 import com.quizango.gallery.ui.home.thumbFraction
 import com.quizango.gallery.ui.home.MEDIA_TYPES
 import com.quizango.gallery.ui.home.formatDuration
@@ -171,5 +172,9 @@ class HomeTest {
         assertEquals(5, nextColumnCount(5, 0.7f)) // already the most
         assertEquals(4, nextColumnCount(4, 1.05f)) // dead zone
         assertEquals(4, nextColumnCount(4, 0.95f))
+        assertEquals(1.05f, pinchPreviewScale(3, 2f), 0f) // elastic at the fewest columns
+        assertEquals(0.95f, pinchPreviewScale(5, 0.5f), 0f) // elastic at the most
+        assertEquals(4f / 3f, pinchPreviewScale(4, 2f), 1e-6f) // up to the 3-column cell size
+        assertEquals(1.1f, pinchPreviewScale(4, 1.1f), 0f)
     }
 }

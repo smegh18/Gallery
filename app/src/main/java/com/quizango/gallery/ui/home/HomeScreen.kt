@@ -210,7 +210,8 @@ fun HomeScreen(
                     },
                     onMediaLongClick = { item ->
                         viewModel.toggleSelection(item.filePath)
-                    }
+                    },
+                    onColumnCountChange = viewModel::setColumnCount
                 )
                 PAGE_EXPLORE -> ExploreTab(
                     onNavigate = onNavigate

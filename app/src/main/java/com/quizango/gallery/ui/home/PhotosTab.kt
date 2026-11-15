@@ -11,14 +11,27 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculateCentroid
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.ui.geometry.isSpecified
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.produceState
@@ -118,6 +131,32 @@ internal fun thumbFraction(firstVisible: Int, visibleCount: Int, total: Int): Fl
 internal fun indexForThumbFraction(fraction: Float, total: Int): Int =
     (fraction * (total - 1)).roundToInt().coerceIn(0, maxOf(total - 1, 0))
 
+// Cumulative pinch zoom that commits one column step on release.
+// shortcut: 2.7.2's commit threshold (S272/ai/n.smali) could not be read on this machine, so this is the plan's 1.2 fallback; replace it once the smali is checked.
+private const val PINCH_STEP_ZOOM = 1.2f
+// S272/ai/n.smali: elastic limits 0.95 / 1.05 when already at 3 or 5 columns
+private const val ELASTIC_MIN = 0.95f
+private const val ELASTIC_MAX = 1.05f
+// S272/ai/n.smali constructor PathInterpolator(0.18, 0, 0.08, 1); 280 / 200 ms durations (which is commit vs cancel unconfirmed)
+private val PinchEasing = CubicBezierEasing(0.18f, 0f, 0.08f, 1f)
+private const val PINCH_COMMIT_MS = 280
+private const val PINCH_CANCEL_MS = 200
+
+/** Column count after a pinch with cumulative [zoom]: one step per gesture, spread gives fewer columns, kept in 3..5. */
+internal fun nextColumnCount(current: Int, zoom: Float): Int = clampColumnCount(
+    when {
+        zoom >= PINCH_STEP_ZOOM -> current - 1
+        zoom <= 1f / PINCH_STEP_ZOOM -> current + 1
+        else -> current
+    }
+)
+
+/** Live preview scale: up to the next step's cell size, or the elastic limit when there is no step that way. */
+internal fun pinchPreviewScale(current: Int, zoom: Float): Float = zoom.coerceIn(
+    if (current >= 5) ELASTIC_MIN else current / (current + 1f),
+    if (current <= 3) ELASTIC_MAX else current / (current - 1f)
+)
+
 @Composable
 fun PhotosTab(
     mediaList: List<MediaItem>,
@@ -126,7 +165,8 @@ fun PhotosTab(
     selectedPaths: Set<String>,
     isSelectionMode: Boolean,
     onMediaClick: (MediaItem) -> Unit,
-    onMediaLongClick: (MediaItem) -> Unit
+    onMediaLongClick: (MediaItem) -> Unit,
+    onColumnCountChange: (Int) -> Unit
 ) {
     if (isLoading) {
         // fragment_all_media progressBar: no empty copy until the first sync has returned
@@ -150,14 +190,66 @@ fun PhotosTab(
         }
         val now = System.currentTimeMillis()
         val gridState = rememberLazyGridState()
+        // Shown at once on commit; the saved value catches up through the preference flow
+        var shownCount by remember(columnCount) { mutableIntStateOf(columnCount) }
+        val count by rememberUpdatedState(shownCount)
+        val onCount by rememberUpdatedState(onColumnCountChange)
+        val scale = remember { Animatable(1f) }
+        var origin by remember { mutableStateOf(TransformOrigin.Center) }
+        val scope = rememberCoroutineScope()
+        val placement = tween<IntOffset>(PINCH_COMMIT_MS, easing = PinchEasing)
 
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                // Initial pass, so a pinch is taken before the grid or pager can scroll; one finger is never consumed
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                        var zoom = 1f
+                        var pinching = false
+                        do {
+                            val event = awaitPointerEvent(PointerEventPass.Initial)
+                            if (event.changes.count { it.pressed } >= 2) {
+                                pinching = true
+                                zoom *= event.calculateZoom()
+                                val c = event.calculateCentroid()
+                                if (c.isSpecified && size.width > 0 && size.height > 0) {
+                                    origin = TransformOrigin(c.x / size.width, c.y / size.height)
+                                }
+                                val target = pinchPreviewScale(count, zoom)
+                                scope.launch { scale.snapTo(target) }
+                                event.changes.forEach { it.consume() }
+                            }
+                        } while (event.changes.any { it.pressed })
+                        if (pinching) {
+                            val from = count
+                            val next = nextColumnCount(from, zoom)
+                            scope.launch {
+                                if (next != from) {
+                                    // re-express the preview against the new layout, then settle while cells glide (animateItem)
+                                    scale.snapTo(scale.value * next / from)
+                                    shownCount = next
+                                    onCount(next)
+                                    scale.animateTo(1f, tween(PINCH_COMMIT_MS, easing = PinchEasing))
+                                } else {
+                                    scale.animateTo(1f, tween(PINCH_CANCEL_MS, easing = PinchEasing))
+                                }
+                            }
+                        }
+                    }
+                }
+        ) {
             LazyVerticalGrid(
                 state = gridState,
-                columns = GridCells.Fixed(columnCount),
+                columns = GridCells.Fixed(shownCount),
                 contentPadding = PaddingValues(start = 13.sdp, end = 13.sdp, bottom = 50.sdp),
                 horizontalArrangement = Arrangement.spacedBy(4.sdp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                    transformOrigin = origin
+                }
             ) {
                 items(
                     count = rows.size,
@@ -171,25 +263,28 @@ fun PhotosTab(
                     span = { i -> GridItemSpan(if (rows[i] is PhotoRow.Media) 1 else maxLineSpan) },
                     contentType = { i -> rows[i]::class }
                 ) { i ->
-                    when (val row = rows[i]) {
-                        PhotoRow.Ad -> PhotosAdRow()
-                        is PhotoRow.Header -> PhotosDateHeader(
-                            when (headerKind(row.dayStart, now)) {
-                                HeaderKind.TODAY -> stringResource(R.string.today)
-                                HeaderKind.YESTERDAY -> stringResource(R.string.yesterday)
-                                HeaderKind.THIS_YEAR -> dayFormats.first.format(Date(row.dayStart))
-                                HeaderKind.OTHER_YEAR -> dayFormats.second.format(Date(row.dayStart))
-                            }
-                        )
-                        is PhotoRow.Media -> {
-                            val item = row.item
-                            PhotosTabGridItem(
-                                item = item,
-                                isSelected = selectedPaths.contains(item.filePath),
-                                isSelectionMode = isSelectionMode,
-                                onClick = { if (isSelectionMode) onMediaLongClick(item) else onMediaClick(item) },
-                                onLongClick = { onMediaLongClick(item) }
+                    // headers move with the cells so a column change reflows as one piece
+                    Box(Modifier.animateItem(fadeInSpec = null, placementSpec = placement, fadeOutSpec = null)) {
+                        when (val row = rows[i]) {
+                            PhotoRow.Ad -> PhotosAdRow()
+                            is PhotoRow.Header -> PhotosDateHeader(
+                                when (headerKind(row.dayStart, now)) {
+                                    HeaderKind.TODAY -> stringResource(R.string.today)
+                                    HeaderKind.YESTERDAY -> stringResource(R.string.yesterday)
+                                    HeaderKind.THIS_YEAR -> dayFormats.first.format(Date(row.dayStart))
+                                    HeaderKind.OTHER_YEAR -> dayFormats.second.format(Date(row.dayStart))
+                                }
                             )
+                            is PhotoRow.Media -> {
+                                val item = row.item
+                                PhotosTabGridItem(
+                                    item = item,
+                                    isSelected = selectedPaths.contains(item.filePath),
+                                    isSelectionMode = isSelectionMode,
+                                    onClick = { if (isSelectionMode) onMediaLongClick(item) else onMediaClick(item) },
+                                    onLongClick = { onMediaLongClick(item) }
+                                )
+                            }
                         }
                     }
                 }
