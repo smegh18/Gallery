@@ -4,17 +4,17 @@ milestone: v2.0
 milestone_name: Reference 2.7.2 parity
 current_phase: 3
 current_phase_name: Home Shell and Photos Tab
-status: ready_to_plan
-stopped_at: Phase 2 complete, ready to plan Phase 3
-last_updated: "2026-11-13T13:25:00.000Z"
-last_activity: 2026-11-13
-last_activity_desc: Phase 2 complete (Onboarding flow verified at 100% parity with 2.7.2)
-state_head: 31ef42d
+status: in_progress
+stopped_at: Plan 03-02 complete, next 03-03
+last_updated: "2026-11-15T00:00:00.000Z"
+last_activity: 2026-11-15
+last_activity_desc: Plans 03-01 and 03-02 complete (Home shell, Photos tab content)
+state_head: e4b6480
 progress:
   total_phases: 13
   completed_phases: 2
-  total_plans: 10
-  completed_plans: 10
+  total_plans: 16
+  completed_plans: 12
   percent: 15
 ---
 
@@ -30,9 +30,9 @@ See: .planning/PROJECT.md (updated 2026-11-13)
 ## Current Position
 
 Phase: 3 of 13 (Home Shell and Photos Tab)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-11-13 — Phase 2 complete (Onboarding flow verified at 100% parity with 2.7.2)
+Plan: 2 of 6 complete (next 03-03)
+Status: In progress
+Last activity: 2026-11-15 — Plan 03-02 complete (Photos grid, headers, cells, ad row, empty state, fast-scroll)
 
 Progress: [██░░░░░░░░] 15%
 
