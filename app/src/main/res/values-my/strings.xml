@@ -271,4 +271,6 @@
     <string name="copy">ကူးပေးရပါ</string>
     <string name="media_files_should_not_move_to_same_folder">မီဒီယာ ဖိုင်များသည် တစ်ခုတည်းမှ တည်းဖြတ်ရပါမည်။</string>
     <string name="items_moved_successfully">မီဒီယာ ဖိုင်များကို အောင်မြင်စွာ သွားသည်။</string>
+    <string name="hide_media">မီဒီယာ ကိုရုတ်ရန်</string>
+    <string name="hide_item_permission">သင့်နှင့်အပြင် မီဒီယာကို ရုတ်ပုံသိမ်းနိုင်ပါသလဲ?</string>
 </resources>

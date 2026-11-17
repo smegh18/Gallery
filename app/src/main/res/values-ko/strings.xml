@@ -271,4 +271,6 @@
     <string name="copy">복사</string>
     <string name="media_files_should_not_move_to_same_folder">미디어 파일은 동일한 폴더로 이동해서는 안됩니다.</string>
     <string name="items_moved_successfully">미디어 파일이 성공적으로 이동되었습니다.</string>
+    <string name="hide_media">미디어 숨기기</string>
+    <string name="hide_item_permission">미디어를 숨기시겠습니까?</string>
 </resources>

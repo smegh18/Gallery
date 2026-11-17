@@ -271,4 +271,6 @@
     <string name="copy">Kopiuj</string>
     <string name="media_files_should_not_move_to_same_folder">Pliki multimedialne nie powinny być przenoszone do tego samego folderu.</string>
     <string name="items_moved_successfully">Pliki multimedialne przeniesione pomyślnie.</string>
+    <string name="hide_media">Ukryj Media</string>
+    <string name="hide_item_permission">Czy jesteś pewien, że chcesz ukryć media?</string>
 </resources>

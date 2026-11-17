@@ -263,4 +263,6 @@
     <string name="copy">Copiar</string>
     <string name="media_files_should_not_move_to_same_folder">Los archivos multimedia no deben moverse al mismo carpeta.</string>
     <string name="items_moved_successfully">Archivos multimedia movidos con éxito.</string>
+    <string name="hide_media">Ocultar medios</string>
+    <string name="hide_item_permission">¿Está seguro de que desea ocultar los medios?</string>
 </resources>

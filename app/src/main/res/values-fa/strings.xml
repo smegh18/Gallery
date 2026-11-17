@@ -263,4 +263,6 @@
     <string name="copy">کپی</string>
     <string name="media_files_should_not_move_to_same_folder">فایل‌های رسانه نباید به همان پوشه منتقل شوند.</string>
     <string name="items_moved_successfully">فایل‌های رسانه با موفقیت منتقل شدند.</string>
+    <string name="hide_media">مخفی کردن رسانه</string>
+    <string name="hide_item_permission">آیا مطمئن هستید که می‌خواهید رسانه‌ها را مخفی کنید؟</string>
 </resources>

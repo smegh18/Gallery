@@ -273,4 +273,6 @@
     <string name="copy">Копировать</string>
     <string name="media_files_should_not_move_to_same_folder">Медиа файлы не должны перемещаться в ту же папку.</string>
     <string name="items_moved_successfully">Медиа файлы успешно перемещены.</string>
+    <string name="hide_media">Скрыть медиа</string>
+    <string name="hide_item_permission">Вы уверены, что хотите скрыть медиа?</string>
 </resources>

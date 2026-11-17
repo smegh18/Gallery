@@ -263,4 +263,6 @@
     <string name="copy">Kopieren</string>
     <string name="media_files_should_not_move_to_same_folder">Mediendateien sollten nicht in denselben Ordner verschoben werden.</string>
     <string name="items_moved_successfully">Mediendateien erfolgreich verschoben.</string>
+    <string name="hide_media">Medien ausblenden</string>
+    <string name="hide_item_permission">Sind Sie sicher, dass Sie Medien ausblenden möchten?</string>
 </resources>

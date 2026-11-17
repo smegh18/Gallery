@@ -271,4 +271,6 @@
     <string name="copy">कॉपी करें</string>
     <string name="media_files_should_not_move_to_same_folder">मीडिया फ़ाइलें एक ही फ़ोल्डर में मूव नहीं होनी चाहिए।</string>
     <string name="items_moved_successfully">मीडिया फ़ाइलें सफलतापूर्वक मूव हो गईं हैं।</string>
+    <string name="hide_media">मीडिया छुपाएं</string>
+    <string name="hide_item_permission">क्या आप मीडिया छुपाना चाहते हैं?</string>
 </resources>

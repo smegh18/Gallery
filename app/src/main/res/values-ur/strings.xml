@@ -241,4 +241,6 @@
     <string name="copy">کاپی کریں</string>
     <string name="media_files_should_not_move_to_same_folder">میڈیا فائلیں ایک ہی فولڈر میں منتقل نہیں کی جانی چاہئیں</string>
     <string name="items_moved_successfully">میڈیا فائلیں کامیابی سے منتقل ہوگئیں ہیں۔</string>
+    <string name="hide_media">میڈیا چھپائیں</string>
+    <string name="hide_item_permission">کیا آپ میڈیا چھپانا چاہتے ہیں؟</string>
 </resources>

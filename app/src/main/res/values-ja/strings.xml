@@ -271,4 +271,6 @@
     <string name="copy">コピー</string>
     <string name="media_files_should_not_move_to_same_folder">メディアファイルは同じフォルダに移動してはいけません。</string>
     <string name="items_moved_successfully">メディアファイルが正常に移動しました</string>
+    <string name="hide_media">メディアを非表示</string>
+    <string name="hide_item_permission">メディアを非表示にしますか？</string>
 </resources>

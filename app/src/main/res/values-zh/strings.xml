@@ -261,4 +261,6 @@
     <string name="copy">复制</string>
     <string name="media_files_should_not_move_to_same_folder">媒体文件不应移动到同一文件夹。</string>
     <string name="items_moved_successfully">媒体文件移动成功。</string>
+    <string name="hide_media">隐藏媒体</string>
+    <string name="hide_item_permission">您确定要隐藏媒体吗？</string>
 </resources>

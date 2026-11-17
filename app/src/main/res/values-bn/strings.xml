@@ -223,4 +223,6 @@
     <string name="copy">কপি</string>
     <string name="media_files_should_not_move_to_same_folder">মিডিয়া ফাইল একই ফোল্ডারে সরানো উচিত নয়।</string>
     <string name="items_moved_successfully">মিডিয়া ফাইল সফলভাবে সরানো হয়েছে৷</string>
+    <string name="hide_media">মিডিয়া লুকান</string>
+    <string name="hide_item_permission">আপনি কি নিশ্চিত মিডিয়া লুকাতে চান?</string>
 </resources>

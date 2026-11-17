@@ -60,6 +60,7 @@ fun HomeScreen(
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showAddToSheet by remember { mutableStateOf(false) }
+    var showHideDialog by remember { mutableStateOf(false) }
     val shareTitle = stringResource(R.string.share)
     val copiedMessage = stringResource(R.string.items_copied_successfully)
     val movedMessage = stringResource(R.string.items_moved_successfully)
@@ -246,7 +247,7 @@ fun HomeScreen(
                         onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
                         onFavorite = { viewModel.toggleFavoriteSelected() },
                         onAddTo = { showAddToSheet = true },
-                        onHide = { viewModel.moveSelectedToVault() },
+                        onHide = { showHideDialog = true },
                         onDelete = { showDeleteDialog = true },
                         onCreateAlbum = { showCreateAlbumDialog = true },
                         modifier = Modifier.align(Alignment.BottomCenter)
@@ -313,6 +314,16 @@ fun HomeScreen(
                 showSortDialog = false
             },
             onDismiss = { showSortDialog = false }
+        )
+    }
+
+    if (showHideDialog) {
+        HideMediaDialog(
+            onConfirm = {
+                showHideDialog = false
+                viewModel.moveSelectedToVault()
+            },
+            onDismiss = { showHideDialog = false }
         )
     }
 

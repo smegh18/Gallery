@@ -263,4 +263,6 @@
     <string name="copy">نسخ</string>
     <string name="media_files_should_not_move_to_same_folder">يجب ألا تتم نقل ملفات الوسائط إلى نفس المجلد.</string>
     <string name="items_moved_successfully">تم نقل ملفات الوسائط بنجاح.</string>
+    <string name="hide_media">إخفاء الوسائط</string>
+    <string name="hide_item_permission">هل أنت متأكد أنك تريد إخفاء الوسائط؟</string>
 </resources>

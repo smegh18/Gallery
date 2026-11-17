@@ -263,4 +263,6 @@
     <string name="copy">Copier</string>
     <string name="media_files_should_not_move_to_same_folder">Les fichiers multimédias ne doivent pas être déplacés vers le même dossier.</string>
     <string name="items_moved_successfully">Fichiers multimédias déplacés avec succès.</string>
+    <string name="hide_media">Masquer les médias</string>
+    <string name="hide_item_permission">Êtes-vous sûr de vouloir masquer les médias ?</string>
 </resources>

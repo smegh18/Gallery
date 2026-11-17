@@ -263,4 +263,6 @@
     <string name="copy">Kopya</string>
     <string name="media_files_should_not_move_to_same_folder">Ang mga file ng media ay hindi dapat ilipat sa parehong folder.</string>
     <string name="items_moved_successfully">Matagumpay na inilipat ang mga file ng media.</string>
+    <string name="hide_media">Itago ang Midya</string>
+    <string name="hide_item_permission">Sigurado ka bang nais mong itago ang midya?</string>
 </resources>

@@ -272,4 +272,6 @@
     <string name="copy">நகல் செய்</string>
     <string name="media_files_should_not_move_to_same_folder">மீடியா கோப்புகள் ஒருசேர அநேகமாக செல்லக்கூடாது.</string>
     <string name="items_moved_successfully">மீடியா கோப்புகள் வெற்றிகரமாக நகர்த்தப்பட்டுள்ளன.</string>
+    <string name="hide_media">மீடியா மறை</string>
+    <string name="hide_item_permission">நீங்கள் மீடியாவை மறைக்க விரும்புகின்றீர்களா?</string>
 </resources>

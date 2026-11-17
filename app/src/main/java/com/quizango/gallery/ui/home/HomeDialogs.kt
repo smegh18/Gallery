@@ -253,6 +253,46 @@ private fun AddingMediaRow(@StringRes label: Int, modifier: Modifier, onClick: (
     )
 }
 
+/**
+ * dialog_hide (S272/oa/n) as Home opens it (HomeActivity.o000Ooo): "Hide Media" / "Are you sure you want to hide
+ * media?", Cancel / Ok. Back and outside taps cancel.
+ */
+@Composable
+internal fun HideMediaDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    val titleColor = colorResource(R.color.titleColor)
+    CommonDialog(onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(R.color.dialogBack), RoundedCornerShape(14.sdp))
+                .padding(vertical = 5.sdp)
+        ) {
+            Text(
+                text = stringResource(R.string.hide_media),
+                style = GalleryText.BodyXLargeSemiBold,
+                color = titleColor,
+                modifier = Modifier.padding(start = 15.sdp, top = 10.sdp)
+            )
+            Text(
+                text = stringResource(R.string.hide_item_permission),
+                style = GalleryText.BodyMediumRegular,
+                color = titleColor,
+                modifier = Modifier.padding(horizontal = 15.sdp).padding(vertical = 15.sdp)
+            )
+            Row(Modifier.fillMaxWidth().padding(horizontal = 15.sdp, vertical = 10.sdp)) {
+                DialogButton(
+                    R.string.cancel, colorResource(R.color.fastScrollerColor), R.drawable.help_delete_cancel_bg,
+                    Modifier.weight(1f).padding(horizontal = 10.sdp), onClick = onDismiss
+                )
+                DialogButton(
+                    R.string.ok, colorResource(R.color.onlyWhite), R.drawable.btn_permission,
+                    Modifier.weight(1f).padding(horizontal = 10.sdp), onClick = onConfirm
+                )
+            }
+        }
+    }
+}
+
 private const val ALBUM_NAME_MAX = 50
 
 /** S272/ua/a: an insertion made only of these symbols is dropped, so "/" or ":" can't be typed into a folder name. */

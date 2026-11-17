@@ -271,4 +271,6 @@
     <string name="copy">Salin</string>
     <string name="media_files_should_not_move_to_same_folder">File media tidak boleh dipindahkan ke folder yang sama.</string>
     <string name="items_moved_successfully">File media berhasil dipindahkan.</string>
+    <string name="hide_media">Sembunyikan Media</string>
+    <string name="hide_item_permission">Apakah Anda yakin ingin menyembunyikan media?</string>
 </resources>

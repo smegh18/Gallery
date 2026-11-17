@@ -255,4 +255,6 @@
     <string name="copy">कॉपी करा</string>
     <string name="media_files_should_not_move_to_same_folder">मिडिया फाइल्स समान फोल्डरमध्ये हलविता येऊ नये.</string>
     <string name="items_moved_successfully">मिडिया फाइल्स सफळतेचे हलविली गेली आहेत.</string>
+    <string name="hide_media">मिडिया लपवा</string>
+    <string name="hide_item_permission">आपल्याला खाजगी असलेल्या मिडिया लपवायचं आहे का?</string>
 </resources>

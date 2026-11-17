@@ -271,4 +271,6 @@
     <string name="copy">Kopiera</string>
     <string name="media_files_should_not_move_to_same_folder">Mediafiler bör inte flyttas till samma mapp.</string>
     <string name="items_moved_successfully">Mediafiler flyttade framgångsrikt.</string>
+    <string name="hide_media">Dölj Media</string>
+    <string name="hide_item_permission">Är du säker på att du vill dölja media?</string>
 </resources>

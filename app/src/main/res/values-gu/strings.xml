@@ -255,4 +255,6 @@
     <string name="copy">નકલ કરો</string>
     <string name="media_files_should_not_move_to_same_folder">મીડિયા ફાઈલો એક સરખાં ફોલ્ડરમાં ન જવી.</string>
     <string name="items_moved_successfully">મીડિયા ફાઈલો સફળતાથી ખસેડવામાં આવ્યા છે.</string>
+    <string name="hide_media">મીડિયા છુપાવો</string>
+    <string name="hide_item_permission">શું તમે ખબરદાર છો કે તમે મીડિયા છુપાવવા માંગો છો?</string>
 </resources>
