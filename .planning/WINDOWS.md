@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 4
+open_count: 7
 waived_count: 0
-fixed_count: 0
-total_count: 4
-last_updated: 2026-11-15T16:29:13.314Z
+fixed_count: 2
+total_count: 9
+last_updated: 2026-11-17T12:00:00.000Z
 ---
 
 # Broken Windows Ledger
@@ -15,7 +15,7 @@ last_updated: 2026-11-15T16:29:13.314Z
 
 | id | phase | kind | file | line | description | status | reason | recorded_at | resolved_at |
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
-| 1 | 03 | deviation | app/src/main/java/com/quizango/gallery/ui/home/PhotosTab.kt |  | Pinch commit threshold is the plan's 1.2 fallback and commit/cancel = 280/200 ms is unconfirmed; check S272/ai/n.smali when the 2.7.2 decode is available | open |  | 2026-11-15T16:13:27.761Z |  |
+| 1 | 03 | deviation | app/src/main/java/com/quizango/gallery/ui/home/PhotosTab.kt |  | Pinch commit threshold is the plan's 1.2 fallback and commit/cancel = 280/200 ms is unconfirmed; check S272/ai/n.smali when the 2.7.2 decode is available | fixed | Resolved in 03-06 follow-up (22bbe4f): S272/z/t steps mid-gesture at span ratio 1.12 / 0.90; z/i OooOOO0 never steps on release, it springs back via ai/n OooOOo0; finish and spring-back take 140 + 60 x remaining ms (ai/n OooO0Oo / OooOOo0); 280 ms is ai/n's commit timeout and 200 ms the elastic return. | 2026-11-15T16:13:27.761Z | 2026-11-17T12:00:00.000Z |
 | 2 | 03 | unrun-verify | app/src/main/java/com/quizango/gallery/ui/home/HomeOverlays.kt |  | 03-04 pinch gesture and tutorial not run on a device (Redmi has a differently signed build); backstop in 03-06 | open |  | 2026-11-15T16:13:28.879Z |  |
 | 3 | 03 | unrun-verify | app/src/main/java/com/quizango/gallery/ui/home/HomeScreen.kt |  | 03-05 device Back check (vault hint closes on Back, 'Tap again to exit' appears) not run: Redmi has a differently signed build; backstop in 03-06 | open |  | 2026-11-15T16:29:12.157Z |  |
 | 4 | 03 | deviation | app/src/main/java/com/quizango/gallery/ui/home/HomeOverlays.kt |  | Vault-hint arrow size (intrinsic 65x71dp) and copy-column bottom alignment guessed: layout_home_vault_hint.xml not on this machine; check against 2.7.2 in 03-06 | open |  | 2026-11-15T16:29:13.314Z |  |
@@ -29,10 +29,10 @@ last_updated: 2026-11-15T16:29:13.314Z
     "file": "app/src/main/java/com/quizango/gallery/ui/home/PhotosTab.kt",
     "line": null,
     "description": "Pinch commit threshold is the plan's 1.2 fallback and commit/cancel = 280/200 ms is unconfirmed; check S272/ai/n.smali when the 2.7.2 decode is available",
-    "status": "open",
-    "reason": "",
+    "status": "fixed",
+    "reason": "Resolved in 03-06 follow-up (22bbe4f): S272/z/t steps mid-gesture at span ratio 1.12 / 0.90; z/i OooOOO0 never steps on release, it springs back via ai/n OooOOo0; finish and spring-back take 140 + 60 x remaining ms (ai/n OooO0Oo / OooOOo0); 280 ms is ai/n's commit timeout and 200 ms the elastic return.",
     "recorded_at": "2026-11-15T16:13:27.761Z",
-    "resolved_at": null
+    "resolved_at": "2026-11-17T12:00:00.000Z"
   },
   {
     "id": 2,
@@ -113,10 +113,10 @@ last_updated: 2026-11-15T16:29:13.314Z
     "file": "app/src/main/java/com/quizango/gallery/ui/home/HomeScreen.kt",
     "line": null,
     "description": "CodeRabbit PR #1 re-review: copying into the selection's own folder (Add-to, or Create album with that folder's name) is a silent no-op that clears the selection; match what decoded 2.7.2 does (message string or hidden folder) in 03-06",
-    "status": "open",
-    "reason": "",
+    "status": "fixed",
+    "reason": "Resolved in 03-06 follow-up (fa8f435): after picking an album, dialog_select_add asks Move or Copy (S272/oa/w). Move into the folder holding every selected item shows 'Media files should not be moved to the same folder.' (ca/br Oooo0O0); Copy uses s9/k.OooOOO naming, so copying into the same folder makes name(1).ext.",
     "recorded_at": "2026-11-17T05:43:18.000Z",
-    "resolved_at": null
+    "resolved_at": "2026-11-17T12:00:00.000Z"
   },
   {
     "id": 9,
