@@ -3,19 +3,40 @@ package com.quizango.gallery.data.local.mediastore
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.media.MediaScannerConnection
 import android.os.Build
 import android.provider.MediaStore
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.resume
 
 class MediaStoreScanner(private val context: Context) {
 
     private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+
+    /**
+     * Indexes files created or deleted through java.io.File; MIUI on Android 11 does not pick them up by itself,
+     * so a copy stayed invisible and a moved photo vanished from every gallery. A missing path drops its row.
+     */
+    suspend fun scanFiles(vararg paths: String) {
+        val left = AtomicInteger(paths.size)
+        // shortcut: gives up after 10 s so a stuck scanner never blocks a copy; the file then shows after a later scan
+        withTimeoutOrNull(10_000) {
+            suspendCancellableCoroutine<Unit> { cont ->
+                MediaScannerConnection.scanFile(context, paths, null) { _, _ ->
+                    if (left.decrementAndGet() == 0 && cont.isActive) cont.resume(Unit)
+                }
+            }
+        }
+    }
 
     suspend fun scanMedia(): List<MediaItem> = withContext(Dispatchers.IO) {
         val items = mutableListOf<MediaItem>()

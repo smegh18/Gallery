@@ -443,7 +443,9 @@ class MediaRepositoryImpl(
     override suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val src = File(filePath)
-            if (!src.exists() || copyIntoFolder(src, File(destFolder)) == null) return@withContext false
+            if (!src.exists()) return@withContext false
+            val copy = copyIntoFolder(src, File(destFolder)) ?: return@withContext false
+            scanner.scanFiles(copy.path)
             syncMediaStore()
             true
         } catch (_: Exception) {
@@ -456,7 +458,10 @@ class MediaRepositoryImpl(
             val src = File(filePath)
             if (!src.exists()) return@withContext false
             val moved = moveIntoFolder(src, File(destFolder)) ?: return@withContext false
-            if (moved != src) dao.deleteByPath(filePath) // the new path comes in with the next sync
+            if (moved != src) {
+                scanner.scanFiles(moved.path, src.path)
+                dao.deleteByPath(filePath) // the new path comes in with the next sync
+            }
             true
         } catch (_: Exception) {
             false
