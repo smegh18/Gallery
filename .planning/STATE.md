@@ -4,17 +4,17 @@ milestone: v2.0
 milestone_name: Reference 2.7.2 parity
 current_phase: 3
 current_phase_name: Home Shell and Photos Tab
-status: ready_to_plan
-stopped_at: Phase 2 complete, ready to plan Phase 3
-last_updated: "2026-11-13T13:25:00.000Z"
-last_activity: 2026-11-13
-last_activity_desc: Phase 2 complete (Onboarding flow verified at 100% parity with 2.7.2)
-state_head: 31ef42d
+status: in_progress
+stopped_at: Plan 03-05 complete, next 03-06
+last_updated: "2026-11-15T12:00:00.000Z"
+last_activity: 2026-11-15
+last_activity_desc: Plan 03-05 complete (vault hint, Home exit popup)
+state_head: 0e769f8
 progress:
   total_phases: 13
   completed_phases: 2
-  total_plans: 10
-  completed_plans: 10
+  total_plans: 16
+  completed_plans: 15
   percent: 15
 ---
 
@@ -30,9 +30,9 @@ See: .planning/PROJECT.md (updated 2026-11-13)
 ## Current Position
 
 Phase: 3 of 13 (Home Shell and Photos Tab)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-11-13 — Phase 2 complete (Onboarding flow verified at 100% parity with 2.7.2)
+Plan: 5 of 6 complete (next 03-06)
+Status: In progress
+Last activity: 2026-11-15 — Plan 03-05 complete (vault hint, exit popup)
 
 Progress: [██░░░░░░░░] 15%
 
@@ -91,6 +91,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-13
-Stopped at: Phase 1 complete, ready to plan Phase 2
+Last session: 2026-11-17
+Stopped at: Plan 03-05 complete; 03-06 in progress (CodeRabbit review fixes on PR #1)
 Resume file: None

@@ -1,293 +1,481 @@
 package com.quizango.gallery.ui.home
 
-import com.quizango.gallery.ui.theme.Inter
-import com.quizango.gallery.ui.theme.isDark
+import android.text.format.DateFormat
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculateCentroid
+import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.ui.geometry.isSpecified
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material3.*
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.foundation.Image
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
-import com.quizango.gallery.ui.theme.GalleryBlue
-import java.io.File
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import kotlin.math.roundToInt
 
-@OptIn(ExperimentalFoundationApi::class)
+/** One line of the Photos grid (2.7.2 PA view types). */
+internal sealed interface PhotoRow {
+    data object Ad : PhotoRow
+    data class Header(val dayStart: Long) : PhotoRow
+    data class Media(val item: MediaItem) : PhotoRow
+}
+
+/** Local midnight of [millis]; MediaStore dates may be seconds, so values up to 10^10 are treated as seconds. */
+internal fun dayStartOf(millis: Long): Long = Calendar.getInstance().apply {
+    timeInMillis = if (millis > 10_000_000_000L) millis else millis * 1000L
+    set(Calendar.HOUR_OF_DAY, 0)
+    set(Calendar.MINUTE, 0)
+    set(Calendar.SECOND, 0)
+    set(Calendar.MILLISECOND, 0)
+}.timeInMillis
+
+/** The ad slot first (PF puts it at index 0), then a header per calendar day in first-seen order, each followed by that day's media. */
+internal fun buildPhotoRows(media: List<MediaItem>): List<PhotoRow> = if (media.isEmpty()) emptyList() else buildList {
+    add(PhotoRow.Ad)
+    media.groupBy { dayStartOf(it.dateAdded) }.forEach { (day, items) ->
+        add(PhotoRow.Header(day))
+        items.forEach { add(PhotoRow.Media(it)) }
+    }
+}
+
+internal enum class HeaderKind { TODAY, YESTERDAY, THIS_YEAR, OTHER_YEAR }
+
+internal fun headerKind(dayStart: Long, now: Long): HeaderKind {
+    val today = dayStartOf(now)
+    val yesterday = Calendar.getInstance().apply { timeInMillis = today; add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
+    val year = { t: Long -> Calendar.getInstance().apply { timeInMillis = t }.get(Calendar.YEAR) }
+    return when {
+        dayStart == today -> HeaderKind.TODAY
+        dayStart == yesterday -> HeaderKind.YESTERDAY
+        year(dayStart) == year(now) -> HeaderKind.THIS_YEAR
+        else -> HeaderKind.OTHER_YEAR
+    }
+}
+
+// R272 values/arrays.xml rawExtensions
+private val RAW_EXTENSIONS = listOf(".dng", ".orf", ".nef", ".arw", ".rw2", ".cr2", ".cr3")
+
+/** GIF / RAW / SVG corner label string for a file name; videos never get one. */
+internal fun fileTypeLabel(fileName: String, isVideo: Boolean): Int? = when {
+    isVideo -> null
+    fileName.endsWith(".gif", ignoreCase = true) -> R.string.GIF
+    RAW_EXTENSIONS.any { fileName.endsWith(it, ignoreCase = true) } -> R.string.RAW
+    fileName.endsWith(".svg", ignoreCase = true) -> R.string.SVG
+    else -> null
+}
+
+/** Fast-scroll thumb position 0..1 for the first visible index; 0 when everything fits. */
+internal fun thumbFraction(firstVisible: Int, visibleCount: Int, total: Int): Float =
+    if (total <= visibleCount) 0f else (firstVisible.toFloat() / (total - visibleCount)).coerceIn(0f, 1f)
+
+/** Grid index the fast-scroll drag at [fraction] jumps to. */
+/** Inverse of [thumbFraction], so the thumb doesn't jump when the drag ends. */
+internal fun indexForThumbFraction(fraction: Float, visibleCount: Int, total: Int): Int =
+    (fraction.coerceIn(0f, 1f) * maxOf(total - visibleCount, 0)).roundToInt()
+
+// Cumulative pinch zoom that commits one column step on release.
+// shortcut: 2.7.2's commit threshold (S272/ai/n.smali) could not be read on this machine, so this is the plan's 1.2 fallback; replace it once the smali is checked.
+private const val PINCH_STEP_ZOOM = 1.2f
+// S272/ai/n.smali: elastic limits 0.95 / 1.05 when already at 3 or 5 columns
+private const val ELASTIC_MIN = 0.95f
+private const val ELASTIC_MAX = 1.05f
+// S272/ai/n.smali constructor PathInterpolator(0.18, 0, 0.08, 1); 280 / 200 ms durations (which is commit vs cancel unconfirmed)
+private val PinchEasing = CubicBezierEasing(0.18f, 0f, 0.08f, 1f)
+private const val PINCH_COMMIT_MS = 280
+private const val PINCH_CANCEL_MS = 200
+
+/** Column count after a pinch with cumulative [zoom]: one step per gesture, spread gives fewer columns, kept in 3..5. */
+internal fun nextColumnCount(current: Int, zoom: Float): Int = clampColumnCount(
+    when {
+        zoom >= PINCH_STEP_ZOOM -> current - 1
+        zoom <= 1f / PINCH_STEP_ZOOM -> current + 1
+        else -> current
+    }
+)
+
+/** Live preview scale: up to the next step's cell size, or the elastic limit when there is no step that way. */
+internal fun pinchPreviewScale(current: Int, zoom: Float): Float = zoom.coerceIn(
+    if (current >= 5) ELASTIC_MIN else current / (current + 1f),
+    if (current <= 3) ELASTIC_MAX else current / (current - 1f)
+)
+
 @Composable
 fun PhotosTab(
     mediaList: List<MediaItem>,
+    isLoading: Boolean,
     columnCount: Int,
     selectedPaths: Set<String>,
     isSelectionMode: Boolean,
     onMediaClick: (MediaItem) -> Unit,
     onMediaLongClick: (MediaItem) -> Unit,
-    onRefresh: () -> Unit
+    onColumnCountChange: (Int) -> Unit
 ) {
-    if (mediaList.isEmpty()) {
+    if (isLoading) {
+        // fragment_all_media progressBar: no empty copy until the first sync has returned
         Box(
             modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(horizontal = 40.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_empty_img),
-                    contentDescription = null,
-                    modifier = Modifier.size(160.dp)
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = stringResource(id = R.string.no_items),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(id = R.string.no_media_file),
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    lineHeight = 18.sp
-                )
-            }
+            CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
         }
+    } else if (mediaList.isEmpty()) {
+        PhotosEmptyState()
     } else {
-        // Group items chronologically (remembered with todayMidnight to invalidate on day change)
-        val todayMidnight = getTodayMidnight()
-        // Grouping thousands of items off the main thread keeps the first frame fast
-        val grouped by androidx.compose.runtime.produceState(emptyMap<String, List<MediaItem>>(), mediaList, todayMidnight) {
-            value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
-                mediaList.groupBy { formatGroupHeader(it.dateAdded) }
-            }
+        // Building rows for thousands of items off the main thread keeps the first frame fast
+        val rows by produceState(emptyList<PhotoRow>(), mediaList) {
+            value = withContext(Dispatchers.Default) { buildPhotoRows(mediaList) }
         }
+        val locale = LocalConfiguration.current.locales[0]
+        val dayFormats = remember(locale) {
+            SimpleDateFormat(DateFormat.getBestDateTimePattern(locale, "dMMM"), locale) to
+                SimpleDateFormat(DateFormat.getBestDateTimePattern(locale, "dMMMyyyy"), locale)
+        }
+        val now = System.currentTimeMillis()
+        val gridState = rememberLazyGridState()
+        // Shown at once on commit; the saved value catches up through the preference flow
+        // one state object: the pointerInput(Unit) gesture below keeps writing to the instance it captured
+        var shownCount by remember { mutableIntStateOf(columnCount) }
+        LaunchedEffect(columnCount) { shownCount = columnCount }
+        val count by rememberUpdatedState(shownCount)
+        val onCount by rememberUpdatedState(onColumnCountChange)
+        val scale = remember { Animatable(1f) }
+        var origin by remember { mutableStateOf(TransformOrigin.Center) }
+        val scope = rememberCoroutineScope()
+        val placement = tween<IntOffset>(PINCH_COMMIT_MS, easing = PinchEasing)
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columnCount),
-            contentPadding = PaddingValues(2.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            grouped.forEach { (header, items) ->
-                item(
-                    span = { GridItemSpan(columnCount) },
-                    key = "header_" + header,
-                    contentType = "header"
-                ) {
-                    Text(
-                        text = header,
-                        // Reference date headers: regular weight, black in light mode
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Black,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 10.dp)
-                    )
-                }
-
-                items(
-                    items = items,
-                    key = { it.id },
-                    contentType = { "photo" }
-                ) { item ->
-                    val isSelected = selectedPaths.contains(item.filePath)
-                    PhotoGridItem(
-                        item = item,
-                        isSelected = isSelected,
-                        isSelectionMode = isSelectionMode,
-                        onClick = {
-                            if (isSelectionMode) {
-                                onMediaLongClick(item)
-                            } else {
-                                onMediaClick(item)
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                // Initial pass, so a pinch is taken before the grid or pager can scroll; one finger is never consumed
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                        var zoom = 1f
+                        var pinching = false
+                        do {
+                            val event = awaitPointerEvent(PointerEventPass.Initial)
+                            if (event.changes.count { it.pressed } >= 2) {
+                                pinching = true
+                                zoom *= event.calculateZoom()
+                                val c = event.calculateCentroid()
+                                if (c.isSpecified && size.width > 0 && size.height > 0) {
+                                    origin = TransformOrigin(c.x / size.width, c.y / size.height)
+                                }
+                                val target = pinchPreviewScale(count, zoom)
+                                scope.launch { scale.snapTo(target) }
+                                event.changes.forEach { it.consume() }
                             }
-                        },
-                        onLongClick = { onMediaLongClick(item) }
-                    )
+                        } while (event.changes.any { it.pressed })
+                        if (pinching) {
+                            val from = count
+                            val next = nextColumnCount(from, zoom)
+                            scope.launch {
+                                if (next != from) {
+                                    // re-express the preview against the new layout, then settle while cells glide (animateItem)
+                                    scale.snapTo(scale.value * next / from)
+                                    shownCount = next
+                                    onCount(next)
+                                    scale.animateTo(1f, tween(PINCH_COMMIT_MS, easing = PinchEasing))
+                                } else {
+                                    scale.animateTo(1f, tween(PINCH_CANCEL_MS, easing = PinchEasing))
+                                }
+                            }
+                        }
+                    }
+                }
+        ) {
+            LazyVerticalGrid(
+                state = gridState,
+                columns = GridCells.Fixed(shownCount),
+                contentPadding = PaddingValues(start = 13.sdp, end = 13.sdp, bottom = 50.sdp),
+                horizontalArrangement = Arrangement.spacedBy(4.sdp),
+                modifier = Modifier.fillMaxSize().graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                    transformOrigin = origin
+                }
+            ) {
+                items(
+                    count = rows.size,
+                    key = { i ->
+                        when (val row = rows[i]) {
+                            PhotoRow.Ad -> "ad"
+                            is PhotoRow.Header -> "header_${row.dayStart}"
+                            is PhotoRow.Media -> row.item.id
+                        }
+                    },
+                    span = { i -> GridItemSpan(if (rows[i] is PhotoRow.Media) 1 else maxLineSpan) },
+                    contentType = { i -> rows[i]::class }
+                ) { i ->
+                    // headers move with the cells so a column change reflows as one piece
+                    Box(Modifier.animateItem(fadeInSpec = null, placementSpec = placement, fadeOutSpec = null)) {
+                        when (val row = rows[i]) {
+                            PhotoRow.Ad -> PhotosAdRow()
+                            is PhotoRow.Header -> PhotosDateHeader(
+                                when (headerKind(row.dayStart, now)) {
+                                    HeaderKind.TODAY -> stringResource(R.string.today)
+                                    HeaderKind.YESTERDAY -> stringResource(R.string.yesterday)
+                                    HeaderKind.THIS_YEAR -> dayFormats.first.format(Date(row.dayStart))
+                                    HeaderKind.OTHER_YEAR -> dayFormats.second.format(Date(row.dayStart))
+                                }
+                            )
+                            is PhotoRow.Media -> {
+                                val item = row.item
+                                PhotosTabGridItem(
+                                    item = item,
+                                    isSelected = selectedPaths.contains(item.filePath),
+                                    isSelectionMode = isSelectionMode,
+                                    onClick = { if (isSelectionMode) onMediaLongClick(item) else onMediaClick(item) },
+                                    onLongClick = { onMediaLongClick(item) }
+                                )
+                            }
+                        }
+                    }
                 }
             }
+            FastScrollThumb(gridState, trackHeightPx = constraints.maxHeight)
         }
     }
 }
 
+/**
+ * RecyclerViewFastScroller thumb on the end edge: follows the scroll, dragging jumps the grid.
+ * Never auto-hides (handleVisibilityDuration -1) and shows no date bubble (2.7.2 never binds one).
+ * The thumb ImageView has no background, so its 8.sdp elevation casts no shadow: none is drawn here.
+ */
+@Composable
+private fun BoxScope.FastScrollThumb(state: LazyGridState, trackHeightPx: Int) {
+    if (!state.canScrollForward && !state.canScrollBackward) return
+    val painter = painterResource(R.drawable.ic_scroll)
+    val range = (trackHeightPx - painter.intrinsicSize.height).coerceAtLeast(0f)
+    val scrollFraction = {
+        val info = state.layoutInfo
+        thumbFraction(state.firstVisibleItemIndex, info.visibleItemsInfo.size, info.totalItemsCount)
+    }
+    var dragFraction by remember { mutableStateOf<Float?>(null) }
+    val scope = rememberCoroutineScope()
+    Image(
+        painter = painter,
+        contentDescription = null,
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .offset { IntOffset(0, ((dragFraction ?: scrollFraction()) * range).roundToInt()) }
+            .pointerInput(state, range) {
+                detectVerticalDragGestures(
+                    onDragStart = { dragFraction = scrollFraction() },
+                    onDragEnd = { dragFraction = null },
+                    onDragCancel = { dragFraction = null }
+                ) { change, dy ->
+                    change.consume()
+                    if (range > 0f) {
+                        val f = ((dragFraction ?: scrollFraction()) + dy / range).coerceIn(0f, 1f)
+                        dragFraction = f
+                        val info = state.layoutInfo
+                        scope.launch { state.scrollToItem(indexForThumbFraction(f, info.visibleItemsInfo.size, info.totalItemsCount)) }
+                    }
+                }
+            }
+    )
+}
+
+/** photos_tab_item_date */
+@Composable
+private fun PhotosDateHeader(label: String) {
+    Text(
+        text = label,
+        style = GalleryText.BodySmallMedium,
+        color = colorResource(R.color.photos_tab_header_text),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.fillMaxWidth().padding(top = 8.sdp, bottom = 6.sdp)
+    )
+}
+
+/** photos_tab_item_grid as bound by 2.7.2 PH: no duration text and no selection tint. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PhotoGridItem(
+fun PhotosTabGridItem(
     item: MediaItem,
     isSelected: Boolean,
     isSelectionMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
-    Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .padding(0.5.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
+    // 2.sdp above and below each card gives the 4.sdp row gap
+    Box(modifier = Modifier.padding(vertical = 2.sdp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(3.sdp))
+                .background(colorResource(R.color.photos_tab_thumb_bg))
+                .then(if (isSelectionMode) Modifier.semantics { selected = isSelected } else Modifier)
+                .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+        ) {
+            AsyncImage(
+                model = item.contentUri,
+                contentDescription = item.fileName,
+                placeholder = painterResource(R.drawable.image_loading_albums),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
-    ) {
-        AsyncImage(
-            model = item.contentUri,
-            contentDescription = item.fileName,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        // Overlay for video badge or duration (Reference item_grid_gallery.xml)
-        if (item.mediaType == MediaType.VIDEO) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 4.dp, bottom = 4.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_media_video),
-                    contentDescription = "Video",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(3.dp))
+            val isVideo = item.mediaType == MediaType.VIDEO
+            Row(modifier = Modifier.align(Alignment.BottomStart).padding(start = 3.sdp, bottom = 5.sdp)) {
+                if (isVideo) {
+                    Image(painterResource(R.drawable.ic_common_video), contentDescription = null, modifier = Modifier.size(17.sdp))
+                }
+                if (item.isFavorite) {
+                    Image(painterResource(R.drawable.ic_common_fav), contentDescription = stringResource(R.string.favorite), modifier = Modifier.size(17.sdp))
+                }
+            }
+            fileTypeLabel(item.fileName, isVideo)?.let { label ->
                 Text(
-                    text = formatDuration(item.durationMs),
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                    style = androidx.compose.ui.text.TextStyle(
-                        fontFamily = Inter,
-                        shadow = androidx.compose.ui.graphics.Shadow(
-                            color = Color.Black,
-                            offset = androidx.compose.ui.geometry.Offset(2f, 2f),
-                            blurRadius = 4f
-                        )
-                    )
+                    text = stringResource(label),
+                    style = GalleryText.BodyXSmallSemiBold.copy(shadow = Shadow(color = Color(0xFF424242), blurRadius = 4f)),
+                    color = colorResource(R.color.onlyWhite),
+                    modifier = Modifier.align(Alignment.TopStart).padding(5.sdp)
+                )
+            }
+            if (isSelectionMode) {
+                Image(
+                    painterResource(if (isSelected) R.drawable.ic_check else R.drawable.ic_un_check),
+                    contentDescription = null,
+                    modifier = Modifier.align(Alignment.TopEnd).padding(2.sdp).size(17.sdp)
                 )
             }
         }
-
-        // Favorite icon badge (Reference item_grid_gallery.xml layout_gravity="end|bottom")
-        if (item.isFavorite) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_common_fav),
-                contentDescription = "Favorite",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .size(20.dp)
-                    .align(Alignment.BottomEnd)
-                    .padding(2.dp)
-            )
-        }
-
-        // Selection overlay and badge (Reference item_grid_gallery.xml layout_gravity="end")
-        if (isSelectionMode) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(if (isSelected) GalleryBlue.copy(alpha = 0.35f) else Color.Transparent)
-            )
-
-            Icon(
-                painter = painterResource(
-                    id = if (isSelected) R.drawable.ic_check else R.drawable.ic_un_check
-                ),
-                contentDescription = if (isSelected) "Selected" else "Not selected",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.TopEnd)
-                    .padding(2.dp)
-            )
-        }
     }
 }
 
-private var cachedTodayMidnight = 0L
-private var cachedYesterdayMidnight = 0L
-private var lastMidnightCalcTime = 0L
-private val headerDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
-
-@Synchronized
-private fun getMidnightBoundaries(): Pair<Long, Long> {
-    val now = System.currentTimeMillis()
-    if (now - lastMidnightCalcTime > 60_000L) {
-        val cal = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
+/** Ad slot (photos_tab_item_ad): the native-ad loading skeleton, drawn static with no text or click (D5: ads stay placeholders). */
+@Composable
+private fun PhotosAdRow() {
+    val edge = 13.sdp
+    Column(
+        // PD gives ad rows no edge inset: widen past the grid's 13.sdp side padding
+        modifier = Modifier.layout { measurable, constraints ->
+            val inset = edge.roundToPx()
+            val width = constraints.maxWidth + 2 * inset
+            val placeable = measurable.measure(constraints.copy(minWidth = width, maxWidth = width))
+            layout(constraints.maxWidth, placeable.height) { placeable.place(-inset, 0) }
         }
-        cachedTodayMidnight = cal.timeInMillis
-        cal.add(Calendar.DAY_OF_YEAR, -1)
-        cachedYesterdayMidnight = cal.timeInMillis
-        lastMidnightCalcTime = now
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(start = 18.sdp, end = 18.sdp, top = 10.sdp, bottom = 8.sdp)) {
+            Box(modifier = Modifier.fillMaxWidth().height(22.sdp)) {
+                DrawableBox(R.drawable.photos_tab_shimmer_block, Modifier.size(22.sdp))
+                // title bar: icon end + 5.sdp to CTA start - 25.sdp, top-aligned with the icon
+                DrawableBox(
+                    R.drawable.photos_tab_shimmer_block,
+                    Modifier.padding(start = 27.sdp, end = 75.sdp).fillMaxWidth().height(8.sdp)
+                )
+                // subtitle bar: title start to CTA start - 7.sdp, bottom-aligned with the icon
+                DrawableBox(
+                    R.drawable.photos_tab_shimmer_block,
+                    Modifier.align(Alignment.BottomStart).padding(start = 27.sdp, end = 57.sdp).fillMaxWidth().height(7.sdp)
+                )
+                DrawableBox(R.drawable.photos_tab_ad_cta_bg, Modifier.align(Alignment.TopEnd).size(width = 50.sdp, height = 22.sdp))
+            }
+            Spacer(modifier = Modifier.height(7.sdp))
+            Box(modifier = Modifier.fillMaxWidth().height(132.sdp).background(colorResource(R.color.photos_tab_shimmer)))
+        }
+        HorizontalDivider(thickness = 1.dp, color = colorResource(R.color.photos_tab_divider))
     }
-    return Pair(cachedTodayMidnight, cachedYesterdayMidnight)
 }
 
-fun getTodayMidnight(): Long = getMidnightBoundaries().first
-
-fun formatGroupHeader(timestamp: Long): String {
-    val millis = if (timestamp > 10_000_000_000L) timestamp else timestamp * 1000L
-    val (todayMidnight, yesterdayMidnight) = getMidnightBoundaries()
-    val tomorrowMidnight = todayMidnight + 86_400_000L
-    return when {
-        millis in todayMidnight until tomorrowMidnight -> "Today"
-        millis in yesterdayMidnight until todayMidnight -> "Yesterday"
-        else -> synchronized(headerDateFormat) { headerDateFormat.format(Date(millis)) }
-    }
+/** Draws an XML shape drawable, which painterResource cannot load. */
+@Composable
+private fun DrawableBox(@DrawableRes id: Int, modifier: Modifier) {
+    val drawable = ContextCompat.getDrawable(LocalContext.current, id) ?: return
+    Box(modifier = modifier.drawBehind {
+        drawIntoCanvas { canvas ->
+            drawable.setBounds(0, 0, size.width.toInt(), size.height.toInt())
+            drawable.draw(canvas.nativeCanvas)
+        }
+    })
 }
 
-fun formatDuration(durationMs: Long): String {
-    if (durationMs <= 0) return "0:00"
-    val totalSec = durationMs / 1000
-    val minutes = totalSec / 60
-    val seconds = totalSec % 60
-    return if (minutes >= 60) {
-        val hours = minutes / 60
-        val remMin = minutes % 60
-        String.format(Locale.US, "%d:%02d:%02d", hours, remMin, seconds)
-    } else {
-        String.format(Locale.US, "%02d:%02d", minutes, seconds)
+/** fragment_all_media emptyLayout */
+@Composable
+private fun PhotosEmptyState() {
+    Column(
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        val titleColor = colorResource(R.color.titleColor)
+        Image(painter = painterResource(R.drawable.ic_empty_img), contentDescription = null)
+        Text(
+            text = stringResource(R.string.no_items),
+            style = GalleryText.BodyLargeSemiBold,
+            color = titleColor,
+            modifier = Modifier.padding(top = 20.sdp, bottom = 10.sdp)
+        )
+        Text(
+            text = stringResource(R.string.no_media_file),
+            style = GalleryText.BodySmallRegular,
+            color = titleColor,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 50.sdp)
+        )
     }
 }

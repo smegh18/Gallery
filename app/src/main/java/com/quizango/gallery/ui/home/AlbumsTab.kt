@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -81,12 +83,23 @@ val MEDIA_TYPES = listOf(
 @Composable
 fun AlbumsTab(
     albumsList: List<Album>,
+    isLoading: Boolean,
     mediaList: List<MediaItem> = emptyList(),
     onAlbumClick: (Album) -> Unit,
     onStoryClick: (path: String, title: String) -> Unit = { _, _ -> },
     onFeatureClick: (String) -> Unit = {},
     onMediaTypeClick: (String) -> Unit = {}
 ) {
+    if (isLoading) {
+        // fragment_album: only a centred progress bar until the first sync has returned
+        Box(
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
+        }
+        return
+    }
     // Reference story rules (HomeViewModel): see StoryBuilder
     val stories = androidx.compose.runtime.remember(mediaList) { StoryBuilder.build(mediaList) }
 
@@ -155,36 +168,7 @@ fun AlbumsTab(
         }
 
         // 2. Albums Grid (3 columns)
-        if (albumsList.isEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Folder,
-                            contentDescription = null,
-                            modifier = Modifier.size(56.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = "No Albums Found",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-        } else {
+        if (albumsList.isNotEmpty()) {
             items(chunkedAlbums, key = { row -> row.firstOrNull()?.id ?: row.hashCode() }, contentType = { "album_row" }) { rowAlbums ->
                 Row(
                     modifier = Modifier

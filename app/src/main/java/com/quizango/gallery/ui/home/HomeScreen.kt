@@ -5,201 +5,175 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Velocity
+import com.quizango.gallery.ui.theme.sdp
+import kotlinx.coroutines.Job
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
-import com.quizango.gallery.ui.components.GalleryBottomNav
-import com.quizango.gallery.ui.components.GalleryDrawer
-import com.quizango.gallery.ui.components.GalleryTopBar
+import com.quizango.gallery.ui.components.AddToAlbumSheet
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.splash.checkStoragePermissions
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.settingsDivider
 import kotlinx.coroutines.launch
 import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
     onNavigate: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showSortDialog by remember { mutableStateOf(false) }
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
-    var showMoreMenu by remember { mutableStateOf(false) }
     var newAlbumName by remember { mutableStateOf("") }
-    
-    BackHandler(enabled = drawerState.isOpen) {
-        scope.launch { drawerState.close() }
-    }
-    
-    BackHandler(enabled = uiState.isSelectionMode) {
-        viewModel.clearSelection()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showAddToSheet by remember { mutableStateOf(false) }
+    val shareTitle = stringResource(R.string.share)
+    val copiedMessage = stringResource(R.string.items_copied_successfully)
+    val onCopied: (Int) -> Unit = { copied ->
+        if (copied > 0) Toast.makeText(context, copiedMessage, Toast.LENGTH_SHORT).show()
     }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            GalleryDrawer(
-                onNavigate = { route ->
-                    when (route) {
-                        "favorites" -> onNavigate(Screen.Favorites.route)
-                        "recycle" -> onNavigate(Screen.RecycleBin.route)
-                        "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
-                        "vault" -> onNavigate(Screen.VaultLock.route)
-                        "cleaner" -> onNavigate(Screen.Cleaner.route)
-                        "editor" -> onNavigate(Screen.Editor.createRoute())
-                        "language" -> onNavigate(Screen.Language.route)
-                        "theme" -> onNavigate(Screen.Theme.route)
-                        "settings" -> onNavigate(Screen.Settings.route)
-                        "about" -> onNavigate(Screen.About.route)
-                        "games", "more_apps" -> {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps"))
-                            try { context.startActivity(intent) } catch (_: Exception) {}
-                        }
-                    }
-                },
-                onCreateAlbumClick = {
-                    showCreateAlbumDialog = true
-                },
-                onCloseDrawer = {
-                    scope.launch { drawerState.close() }
-                }
-            )
+    var titleBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
+    val showVaultHint = !uiState.isSelectionMode && shouldShowVaultHint(
+        uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context)
+    )
+
+    var showExitPopup by remember { mutableStateOf(false) }
+
+    // HA.Oooo0oO order: vault hint, then the ⋮ popup (its focusable window eats Back itself), then selection,
+    // then the exit popup. The pinch tutorial is not checked, so Back opens the exit popup above it.
+    BackHandler {
+        when {
+            showVaultHint -> viewModel.closeVaultHint()
+            uiState.isSelectionMode -> viewModel.clearSelection()
+            else -> showExitPopup = true
         }
-    ) {
-        Scaffold(
-            topBar = {
-                GalleryTopBar(
-                    title = "GALLERY", // reference keeps the GALLERY bar on the Explore tab
-                    onOpenDrawer = {
-                        scope.launch { drawerState.open() }
-                    },
-                    onSearchClick = {
-                        onNavigate(Screen.Search.route)
-                    },
-                    onSortClick = if (uiState.selectedTab == 1) {
-                        { showSortDialog = true }
-                    } else null,
-                    onCameraClick = if (uiState.selectedTab == 0) {
-                        {
-                            val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-                            if (cameraIntent.resolveActivity(context.packageManager) != null) {
-                                context.startActivity(cameraIntent)
-                            }
-                        }
-                    } else null,
-                    onAddAlbumClick = null,
-                    onProClick = { onNavigate(Screen.About.route) },
-                    onLockClick = { onNavigate(Screen.VaultLock.route) },
-                    isSelectionMode = uiState.isSelectionMode,
-                    selectedCount = uiState.selectedPaths.size,
-                    isAllSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty(),
-                    onSelectAllClick = {
-                        if (uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()) {
-                            viewModel.clearSelection()
-                        } else {
-                            viewModel.selectAll()
-                        }
-                    },
-                    onCloseSelection = { viewModel.clearSelection() }
-                )
-            },
-            bottomBar = {
-                if (uiState.isSelectionMode) {
-                    Surface(
-                        shadowElevation = 8.dp,
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .navigationBarsPadding()
-                                .horizontalScroll(rememberScrollState())
-                                .padding(horizontal = 8.dp, vertical = 6.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_share,
-                                label = stringResource(id = R.string.share),
-                                onClick = { shareSelectedMedia(context, uiState.selectedPaths) }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_fav,
-                                label = stringResource(id = R.string.favorite),
-                                onClick = { viewModel.toggleFavoriteSelected() }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_add,
-                                label = stringResource(id = R.string.add_to),
-                                onClick = { showCreateAlbumDialog = true }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_hide,
-                                label = stringResource(id = R.string.ad_to_private),
-                                onClick = { viewModel.moveSelectedToVault() }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_album_select_delete,
-                                label = stringResource(id = R.string.delete),
-                                onClick = { viewModel.moveSelectedToTrash() }
-                            )
-                            SelectionActionItem(
-                                iconRes = R.drawable.ic_home_select_create_album,
-                                label = stringResource(id = R.string.create_albums),
-                                onClick = { showCreateAlbumDialog = true }
-                            )
-                        }
-                    }
-                } else {
-                    GalleryBottomNav(
-                        selectedTab = uiState.selectedTab,
-                        onTabSelected = { viewModel.setTab(it) }
-                    )
-                }
+    }
+
+    // activity_home bottomMainBar under HomeBottomBarBehavior: the tab bar follows the scroll, then settles.
+    val barScope = rememberCoroutineScope()
+    var barHeight by remember { mutableIntStateOf(0) }
+    var barOffset by remember { mutableFloatStateOf(0f) }
+    val settleJob = remember { arrayOfNulls<Job>(1) }
+    fun settleBarTo(target: Float) {
+        settleJob[0]?.cancel()
+        settleJob[0] = barScope.launch {
+            animate(barOffset, target, animationSpec = tween(BAR_SETTLE_MS, easing = Easing(::barSettleEasing))) { v, _ -> barOffset = v }
+        }
+    }
+    val barScroll = remember(uiState.isSelectionMode) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (uiState.isSelectionMode) return Offset.Zero
+                settleJob[0]?.cancel()
+                barOffset = (barOffset - available.y).coerceIn(0f, barHeight.toFloat())
+                return Offset.Zero // the bar moves alongside the content, it never eats the scroll
             }
-        ) { paddingValues ->
+
+            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                if (!uiState.isSelectionMode) settleBarTo(settledBarOffset(barOffset, barHeight.toFloat()))
+                return Velocity.Zero
+            }
+        }
+    }
+    LaunchedEffect(uiState.selectedTab) { settleBarTo(0f) }
+    LaunchedEffect(uiState.isSelectionMode) {
+        if (uiState.isSelectionMode) {
+            settleJob[0]?.cancel()
+            barOffset = 0f
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            if (uiState.isSelectionMode) {
+                val allSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()
+                HomeSelectionTopBar(
+                    count = uiState.selectedPaths.size,
+                    allSelected = allSelected,
+                    onClose = { viewModel.clearSelection() },
+                    onToggleAll = { if (allSelected) viewModel.clearSelection() else viewModel.selectAll() }
+                )
+            } else {
+                HomeTopBar(
+                    page = uiState.selectedTab,
+                    onSearch = { onNavigate(Screen.Search.route) },
+                    onCamera = {
+                        val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                        if (cameraIntent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(cameraIntent)
+                        }
+                    },
+                    onAddAlbum = { showCreateAlbumDialog = true },
+                    onMoreRow = { row ->
+                        when (row) {
+                            MoreMenuRow.SORT -> showSortDialog = true
+                            MoreMenuRow.RECYCLE_BIN -> onNavigate(Screen.RecycleBin.route)
+                            MoreMenuRow.SETTINGS -> onNavigate(Screen.Settings.route)
+                        }
+                    },
+                    onTitleLongPress = {
+                        if (showVaultHint) viewModel.closeVaultHint() // HA.o000OO0o closes the hint first
+                        onNavigate(Screen.VaultLock.route)
+                    },
+                    onTitlePositioned = { titleBounds = it }
+                )
+            }
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .clipToBounds()
+                    .nestedScroll(barScroll)
             ) {
                 // Swipe left/right between tabs; kept in sync with the bottom bar
                 val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = uiState.selectedTab) { 3 }
                 LaunchedEffect(uiState.selectedTab) {
                     if (pagerState.currentPage != uiState.selectedTab) pagerState.animateScrollToPage(uiState.selectedTab)
+                }
+                // Turning swiping off mid-drag (long-press then move) cancels the drag and leaves the pager
+                // between pages, so the grid draws half off-screen; ViewPager2 never rests there. Settle it.
+                LaunchedEffect(uiState.isSelectionMode) {
+                    if (uiState.isSelectionMode && pagerState.currentPageOffsetFraction != 0f) {
+                        pagerState.animateScrollToPage(pagerState.currentPage)
+                    }
                 }
                 LaunchedEffect(pagerState) {
                     androidx.compose.runtime.snapshotFlow { pagerState.settledPage }.collect { viewModel.setTab(it) }
@@ -208,12 +182,13 @@ fun HomeScreen(
                     state = pagerState,
                     // No swiping while selecting, so a drag can't drop the selection
                     userScrollEnabled = !uiState.isSelectionMode,
-                    beyondViewportPageCount = 1,
+                    beyondViewportPageCount = 2, // HA setOffscreenPageLimit(2)
                     modifier = Modifier.fillMaxSize()
                 ) { page ->
                 when (page) {
-                    0 -> AlbumsTab(
+                    PAGE_ALBUMS -> AlbumsTab(
                         albumsList = uiState.albumsList,
+                        isLoading = uiState.albumsList.isEmpty() && !uiState.initialSyncDone,
                         mediaList = uiState.mediaList,
                         onAlbumClick = { album ->
                             onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
@@ -241,12 +216,13 @@ fun HomeScreen(
                                 "high_definition" -> onNavigate(Screen.AlbumDetail.createRoute("filter:hd", "High Definition"))
                                 "burst" -> onNavigate(Screen.BurstPhotos.route)
                                 "animated" -> onNavigate(Screen.AnimatedMedia.route)
-                                else -> viewModel.setTab(1)
+                                else -> viewModel.setTab(PAGE_PHOTOS)
                             }
                         }
                     )
-                    1 -> PhotosTab(
+                    PAGE_PHOTOS -> PhotosTab(
                         mediaList = uiState.mediaList,
+                        isLoading = uiState.mediaList.isEmpty() && !uiState.initialSyncDone,
                         columnCount = uiState.columnCount,
                         selectedPaths = uiState.selectedPaths,
                         isSelectionMode = uiState.isSelectionMode,
@@ -256,24 +232,76 @@ fun HomeScreen(
                         onMediaLongClick = { item ->
                             viewModel.toggleSelection(item.filePath)
                         },
-                        onRefresh = { viewModel.syncMedia() }
+                        onColumnCountChange = viewModel::setColumnCount
                     )
-                    2 -> ExploreTab(
+                    PAGE_EXPLORE -> ExploreTab(
                         onNavigate = onNavigate
                     )
                 }
                 }
 
+                if (uiState.isSelectionMode) {
+                    HomeSelectionBottomBar(
+                        onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
+                        onFavorite = { viewModel.toggleFavoriteSelected() },
+                        onAddTo = { showAddToSheet = true },
+                        onHide = { viewModel.moveSelectedToVault() },
+                        onDelete = { showDeleteDialog = true },
+                        onCreateAlbum = { showCreateAlbumDialog = true },
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
+                } else {
+                    HomeTabBar(
+                        selectedPage = uiState.selectedTab,
+                        onSelect = { viewModel.setTab(it) },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .onSizeChanged { barHeight = it.height }
+                            .graphicsLayer { translationY = barOffset }
+                    )
+                }
+
+                // dataSync: 5.sdp bar pulled up 3.dp so a thin line shows (its -7.dp bottom margin only shrinks a slot nothing sits in here)
                 if (uiState.isSyncing) {
+                    val primary = colorResource(R.color.colorPrimary)
                     LinearProgressIndicator(
                         modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(y = (-3).dp)
                             .fillMaxWidth()
-                            .align(Alignment.TopCenter),
-                        color = GalleryBlue
+                            .height(5.sdp),
+                        color = primary,
+                        trackColor = primary.copy(alpha = 0.3f) // framework indeterminate track: colorControlActivated at disabledAlpha
                     )
                 }
             }
+            // navBarBg: fixed strip behind the system navigation bar
+            Spacer(
+                Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(R.color.home_shell_tab_bg))
+                    .navigationBarsPadding()
+            )
         }
+        if (showVaultHint) {
+            VaultHintOverlay(
+                title = stringResource(HOME_TABS[uiState.selectedTab].title),
+                titleBounds = titleBounds,
+                onClose = { viewModel.closeVaultHint() },
+                onOpenVault = { onNavigate(Screen.VaultLock.route) }
+            )
+        }
+        // Drawn above the vault hint (2.7.2 elevations 10.sdp vs 9.sdp)
+        if (uiState.selectedTab == PAGE_PHOTOS && !uiState.pinchTipSeen && checkStoragePermissions(context)) {
+            PinchTutorialOverlay(onGotIt = { viewModel.dismissPinchTip() })
+        }
+    }
+
+    if (showExitPopup) {
+        HomeExitPopup(
+            onExit = { (context as? Activity)?.finishAffinity() }, // jt/a.Wja3o2vx62
+            onDismiss = { showExitPopup = false }
+        )
     }
 
     if (showSortDialog) {
@@ -284,19 +312,18 @@ fun HomeScreen(
             onDismissRequest = { showSortDialog = false },
             title = {
                 Text(
-                    text = "Sort by",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    text = stringResource(R.string.sort_by),
+                    style = GalleryText.BodyXLargeSemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Column {
                     val fieldOptions = listOf(
-                        "Last Modified" to SortField.DATE_MODIFIED,
-                        "File Name" to SortField.NAME,
-                        "File Size" to SortField.SIZE,
-                        "Created Date" to SortField.DATE_TAKEN
+                        R.string.last_modified to SortField.DATE_MODIFIED,
+                        R.string.filename to SortField.NAME,
+                        R.string.file_size to SortField.SIZE,
+                        R.string.created_date to SortField.DATE_TAKEN
                     )
                     fieldOptions.forEach { (label, field) ->
                         Row(
@@ -312,10 +339,9 @@ fun HomeScreen(
                                 colors = RadioButtonDefaults.colors(selectedColor = GalleryBlue)
                             )
                             Text(
-                                text = label,
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = stringResource(label),
+                                style = GalleryText.BodyMediumMedium,
                                 color = if (tempField == field) GalleryBlue else MaterialTheme.colorScheme.onSurface,
-                                fontWeight = if (tempField == field) FontWeight.SemiBold else FontWeight.Normal,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
@@ -328,8 +354,8 @@ fun HomeScreen(
                     )
 
                     val directionOptions = listOf(
-                        "Ascending Order" to SortDirection.ASCENDING,
-                        "Descending Order" to SortDirection.DESCENDING
+                        R.string.ascending_order to SortDirection.ASCENDING,
+                        R.string.descending_order to SortDirection.DESCENDING
                     )
                     directionOptions.forEach { (label, direction) ->
                         Row(
@@ -345,10 +371,9 @@ fun HomeScreen(
                                 colors = RadioButtonDefaults.colors(selectedColor = GalleryBlue)
                             )
                             Text(
-                                text = label,
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = stringResource(label),
+                                style = GalleryText.BodyMediumMedium,
                                 color = if (tempDirection == direction) GalleryBlue else MaterialTheme.colorScheme.onSurface,
-                                fontWeight = if (tempDirection == direction) FontWeight.SemiBold else FontWeight.Normal,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
@@ -364,18 +389,42 @@ fun HomeScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text("Ok", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.ok), style = GalleryText.BodyMediumSemiBold, color = Color.White)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showSortDialog = false }
                 ) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.cancel), style = GalleryText.BodyMediumSemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(16.dp)
+        )
+    }
+
+    if (showDeleteDialog) {
+        DeleteMediaDialog(
+            count = uiState.selectedPaths.size,
+            onConfirm = { checked ->
+                showDeleteDialog = false
+                viewModel.deleteSelected(deleteActionFor(checked))
+            },
+            onDismiss = { showDeleteDialog = false }
+        )
+    }
+
+    if (showAddToSheet) {
+        AddToAlbumSheet(
+            albums = uiState.albumsList,
+            previewItem = uiState.mediaList.firstOrNull { it.filePath in uiState.selectedPaths },
+            selectedCount = uiState.selectedPaths.size,
+            onAlbumClick = { album ->
+                showAddToSheet = false
+                viewModel.addSelectedToFolder(album.path, onCopied)
+            },
+            onDismiss = { showAddToSheet = false }
         )
     }
 
@@ -387,16 +436,15 @@ fun HomeScreen(
             },
             title = {
                 Text(
-                    text = "Create an album",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    text = stringResource(R.string.create_an_album),
+                    style = GalleryText.BodyXLargeSemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Column {
                     Text(
-                        text = "Album name",
+                        text = stringResource(R.string.album_name),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 6.dp)
@@ -404,7 +452,7 @@ fun HomeScreen(
                     OutlinedTextField(
                         value = newAlbumName,
                         onValueChange = { newAlbumName = it },
-                        placeholder = { Text("Enter album name") },
+                        placeholder = { Text(stringResource(R.string.enter_album_name)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp),
@@ -429,7 +477,9 @@ fun HomeScreen(
                                 if (!newDir.exists()) {
                                     newDir.mkdirs()
                                 }
-                                viewModel.syncMedia()
+                                // Create album from the selection bar copies the selection in; the Albums + makes it empty.
+                                if (uiState.isSelectionMode) viewModel.addSelectedToFolder(newDir.absolutePath, onCopied)
+                                else viewModel.syncMedia()
                             } catch (_: Exception) {}
                         }
                         showCreateAlbumDialog = false
@@ -438,7 +488,7 @@ fun HomeScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text("OK", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.caller_ok), style = GalleryText.BodyMediumSemiBold, color = Color.White)
                 }
             },
             dismissButton = {
@@ -446,7 +496,7 @@ fun HomeScreen(
                     showCreateAlbumDialog = false
                     newAlbumName = ""
                 }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.cancel), style = GalleryText.BodyMediumSemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,
@@ -455,7 +505,7 @@ fun HomeScreen(
     }
 }
 
-private fun shareSelectedMedia(context: Context, paths: Set<String>) {
+private fun shareSelectedMedia(context: Context, paths: Set<String>, chooserTitle: String) {
     if (paths.isEmpty()) return
     try {
         val uris = ArrayList<Uri>()
@@ -484,36 +534,6 @@ private fun shareSelectedMedia(context: Context, paths: Set<String>) {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
         }
-        context.startActivity(Intent.createChooser(shareIntent, "Share Media"))
+        context.startActivity(Intent.createChooser(shareIntent, chooserTitle))
     } catch (_: Exception) {}
-}
-
-@Composable
-private fun SelectionActionItem(
-    iconRes: Int,
-    label: String,
-    onClick: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 6.dp)
-    ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = label,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1
-        )
-    }
 }

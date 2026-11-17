@@ -22,26 +22,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
+import com.quizango.gallery.ui.components.AddToAlbumSheet
 import com.quizango.gallery.ui.components.GalleryTopBar
 import com.quizango.gallery.ui.home.PhotoGridItem
 import com.quizango.gallery.ui.home.formatGroupHeader
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
-import com.quizango.gallery.ui.theme.cardBackground
 import com.quizango.gallery.ui.theme.cardBorder
 import kotlinx.coroutines.launch
 import java.io.File
@@ -436,166 +433,25 @@ fun AlbumDetailScreen(
         )
     }
 
-    // Add to Album Bottom Sheet (matching dialog_select_album.xml)
+    // Add to Album Bottom Sheet (shared; copy logic stays here until Phase 5)
     if (showAddToDialog) {
-        val firstSelectedItem = mediaItems.firstOrNull { it.filePath in selectedPaths }
-        ModalBottomSheet(
-            onDismissRequest = { showAddToDialog = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            dragHandle = {
-                Box(
-                    modifier = Modifier
-                        .padding(vertical = 12.dp)
-                        .width(40.dp)
-                        .height(4.dp)
-                        .background(Color(0xFFD9D9D9), RoundedCornerShape(2.dp))
-                )
-            }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp)
-            ) {
-                // Header with thumbnail preview and count badge + title "Add to"
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                ) {
-                    Box(
-                        modifier = Modifier.size(44.dp)
-                    ) {
-                        if (firstSelectedItem != null) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(File(firstSelectedItem.filePath))
-                                    .size(120, 120)
-                                    .allowRgb565(true)
-                                    .build(),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(38.dp)
-                                    .align(Alignment.BottomStart)
-                                    .background(Color.LightGray, RoundedCornerShape(4.dp))
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .size(38.dp)
-                                    .align(Alignment.BottomStart)
-                                    .background(Color.LightGray, RoundedCornerShape(4.dp))
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .size(20.dp)
-                                .align(Alignment.TopEnd)
-                                .background(GalleryBlue, RoundedCornerShape(10.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "${selectedPaths.size}",
-                                color = Color.White,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+        AddToAlbumSheet(
+            albums = albums,
+            previewItem = mediaItems.firstOrNull { it.filePath in selectedPaths },
+            selectedCount = selectedPaths.size,
+            onAlbumClick = { album ->
+                showAddToDialog = false
+                scope.launch {
+                    selectedPaths.forEach { path ->
+                        mediaRepository.copyMediaToFolder(path, album.path)
                     }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "Add to",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    mediaRepository.syncMediaStore()
+                    Toast.makeText(context, "Added to ${album.name}", Toast.LENGTH_SHORT).show()
+                    selectedPaths = emptySet()
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                if (albums.isEmpty()) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_empty_img),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(56.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = "No albums",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 15.sp
-                        )
-                    }
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        contentPadding = PaddingValues(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 340.dp)
-                    ) {
-                        items(albums, key = { it.id }) { album ->
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(6.dp)
-                                    .clickable {
-                                        showAddToDialog = false
-                                        scope.launch {
-                                            selectedPaths.forEach { path ->
-                                                mediaRepository.copyMediaToFolder(path, album.path)
-                                            }
-                                            mediaRepository.syncMediaStore()
-                                            Toast.makeText(context, "Added to ${album.name}", Toast.LENGTH_SHORT).show()
-                                            selectedPaths = emptySet()
-                                        }
-                                    }
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(72.dp)
-                                        .background(MaterialTheme.colorScheme.cardBackground, RoundedCornerShape(12.dp)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_albums_fill),
-                                        contentDescription = album.name,
-                                        tint = GalleryBlue,
-                                        modifier = Modifier.size(36.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = album.name,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    maxLines = 1
-                                )
-                                Text(
-                                    text = "${album.itemCount} items",
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
+            },
+            onDismiss = { showAddToDialog = false }
+        )
     }
 
     // Create Album Dialog (matching dialog_create_album.xml)

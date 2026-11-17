@@ -126,4 +126,8 @@
     <color name="op_onboarding_ac_prem_desc">#ffaaaaaa</color>
     <color name="op_onboarding_desc_color">#ffaaaaaa</color>
     <color name="per_text_color">#ffffffff</color>
+
+    <!-- 2.7.2 colours (Phase 3) -->
+    <color name="exitViewBackgroundColor">#ff131111</color>
+    <color name="cancel_button_stroke_color">#50ffffff</color>
 </resources>
