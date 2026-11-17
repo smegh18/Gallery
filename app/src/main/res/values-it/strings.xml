@@ -264,4 +264,6 @@
     <string name="add_to_title">Aggiungi a</string>
     <string name="items_copied_successfully">File multimediali copiati con successo.</string>
     <string name="items">elementi</string>
+    <string name="album_name_already_exists">"Il nome dell'album esiste già."</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">"Il nome dell'album non può superare i 50 caratteri"</string>
 </resources>

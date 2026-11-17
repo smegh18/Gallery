@@ -264,4 +264,6 @@
     <string name="add_to_title">သိမ်းဆည်းရန်</string>
     <string name="items_copied_successfully">မီဒီယာ ဖိုင်များကို အောင်မြင်ပြီးဖြစ်သည်။</string>
     <string name="items">ပစ္စည်းများ</string>
+    <string name="album_name_already_exists">အယူအဆင့် နာမည်သည် ရှိပြီးသားဖြစ်သည်။</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">အယ်လ်ဘမ်အမည်မှာ ၅၀ အက္ခရာထက်မပိုရပါ</string>
 </resources>

@@ -264,4 +264,6 @@
     <string name="add_to_title">Adicionar a</string>
     <string name="items_copied_successfully">Ficheiros de média copiados com sucesso.</string>
     <string name="items">itens</string>
+    <string name="album_name_already_exists">O nome do álbum já existe.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">O nome do álbum não pode exceder 50 caracteres</string>
 </resources>

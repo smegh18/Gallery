@@ -37,6 +37,8 @@ import com.quizango.gallery.ui.components.AddToAlbumSheet
 import com.quizango.gallery.ui.components.GalleryTopBar
 import com.quizango.gallery.ui.home.PhotoGridItem
 import com.quizango.gallery.ui.home.formatGroupHeader
+import com.quizango.gallery.ui.home.CreateAlbumDialog
+import com.quizango.gallery.ui.home.albumRoots
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
 import com.quizango.gallery.ui.theme.cardBorder
@@ -63,7 +65,6 @@ fun AlbumDetailScreen(
     var deleteMoveToBin by remember { mutableStateOf(true) }
     var showAddToDialog by remember { mutableStateOf(false) }
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
-    var newAlbumName by remember { mutableStateOf("") }
     val albums by mediaRepository.getAlbumsFlow().collectAsState(initial = emptyList())
 
     Scaffold(
@@ -250,10 +251,7 @@ fun AlbumDetailScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
                                     .width(70.dp)
-                                    .clickable {
-                                        newAlbumName = ""
-                                        showCreateAlbumDialog = true
-                                    }
+                                    .clickable { showCreateAlbumDialog = true }
                                     .padding(vertical = 4.dp)
                             ) {
                                 Icon(
@@ -454,84 +452,22 @@ fun AlbumDetailScreen(
         )
     }
 
-    // Create Album Dialog (matching dialog_create_album.xml)
+    // Create Album Dialog (dialog_create_album, shared with Home)
     if (showCreateAlbumDialog) {
-        AlertDialog(
-            onDismissRequest = { showCreateAlbumDialog = false },
-            shape = RoundedCornerShape(16.dp),
-            title = {
-                Text(
-                    text = "Create an Album",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            },
-            text = {
-                Column {
-                    Text(
-                        text = "Album Name",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    OutlinedTextField(
-                        value = newAlbumName,
-                        onValueChange = { newAlbumName = it },
-                        placeholder = { Text("Enter album name", color = Color(0xFFB0B7C3), fontSize = 14.sp) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = GalleryBlue,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.cardBorder,
-                            cursorColor = GalleryBlue,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                        )
-                    )
+        CreateAlbumDialog(
+            onCreate = { targetName ->
+                showCreateAlbumDialog = false
+                scope.launch {
+                    val newDir = File(albumRoots().first(), targetName).also { if (!it.exists()) it.mkdirs() }
+                    selectedPaths.forEach { path ->
+                        mediaRepository.copyMediaToFolder(path, newDir.absolutePath)
+                    }
+                    mediaRepository.syncMediaStore()
+                    Toast.makeText(context, "Album '$targetName' created", Toast.LENGTH_SHORT).show()
+                    selectedPaths = emptySet()
                 }
             },
-            confirmButton = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = { showCreateAlbumDialog = false },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(24.dp),
-                        border = BorderStroke(1.dp, GalleryBlue)
-                    ) {
-                        Text("Cancel", color = GalleryBlue, fontWeight = FontWeight.SemiBold)
-                    }
-                    Button(
-                        onClick = {
-                            if (newAlbumName.isNotBlank()) {
-                                val targetName = newAlbumName.trim()
-                                showCreateAlbumDialog = false
-                                scope.launch {
-                                    val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                                    val newDir = File(picturesDir, targetName).also { if (!it.exists()) it.mkdirs() }
-                                    selectedPaths.forEach { path ->
-                                        mediaRepository.copyMediaToFolder(path, newDir.absolutePath)
-                                    }
-                                    mediaRepository.syncMediaStore()
-                                    Toast.makeText(context, "Album '$targetName' created", Toast.LENGTH_SHORT).show()
-                                    selectedPaths = emptySet()
-                                }
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(24.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue)
-                    ) {
-                        Text("OK", color = Color.White, fontWeight = FontWeight.SemiBold)
-                    }
-                }
-            },
-            dismissButton = {}
+            onDismiss = { showCreateAlbumDialog = false }
         )
     }
 }

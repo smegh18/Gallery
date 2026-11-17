@@ -256,4 +256,6 @@
     <string name="add_to_title">افزودن به</string>
     <string name="items_copied_successfully">فایل‌های رسانه با موفقیت کپی شدند.</string>
     <string name="items">مورد</string>
+    <string name="album_name_already_exists">نام آلبوم از قبل وجود دارد.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">نام آلبوم نمی‌تواند بیشتر از 50 کاراکتر باشد</string>
 </resources>

@@ -57,7 +57,6 @@ fun HomeScreen(
     val context = LocalContext.current
     var showSortDialog by remember { mutableStateOf(false) }
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
-    var newAlbumName by remember { mutableStateOf("") }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showAddToSheet by remember { mutableStateOf(false) }
     val shareTitle = stringResource(R.string.share)
@@ -340,78 +339,18 @@ fun HomeScreen(
     }
 
     if (showCreateAlbumDialog) {
-        AlertDialog(
-            onDismissRequest = {
+        CreateAlbumDialog(
+            onCreate = { name ->
                 showCreateAlbumDialog = false
-                newAlbumName = ""
+                val newDir = File(albumRoots().first(), name)
+                try {
+                    newDir.mkdirs()
+                } catch (_: Exception) {}
+                // Create album from the selection bar copies the selection in; the Albums + makes it empty.
+                if (uiState.isSelectionMode) viewModel.addSelectedToFolder(newDir.absolutePath, onCopied)
+                else viewModel.syncMedia()
             },
-            title = {
-                Text(
-                    text = stringResource(R.string.create_an_album),
-                    style = GalleryText.BodyXLargeSemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            },
-            text = {
-                Column {
-                    Text(
-                        text = stringResource(R.string.album_name),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-                    OutlinedTextField(
-                        value = newAlbumName,
-                        onValueChange = { newAlbumName = it },
-                        placeholder = { Text(stringResource(R.string.enter_album_name)) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = GalleryBlue,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.settingsDivider,
-                            cursorColor = GalleryBlue,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                        )
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val trimmed = newAlbumName.trim()
-                        if (trimmed.isNotEmpty()) {
-                            try {
-                                val picturesDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_PICTURES)
-                                val newDir = File(picturesDir, trimmed)
-                                if (!newDir.exists()) {
-                                    newDir.mkdirs()
-                                }
-                                // Create album from the selection bar copies the selection in; the Albums + makes it empty.
-                                if (uiState.isSelectionMode) viewModel.addSelectedToFolder(newDir.absolutePath, onCopied)
-                                else viewModel.syncMedia()
-                            } catch (_: Exception) {}
-                        }
-                        showCreateAlbumDialog = false
-                        newAlbumName = ""
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Text(stringResource(R.string.caller_ok), style = GalleryText.BodyMediumSemiBold, color = Color.White)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showCreateAlbumDialog = false
-                    newAlbumName = ""
-                }) {
-                    Text(stringResource(R.string.cancel), style = GalleryText.BodyMediumSemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(16.dp)
+            onDismiss = { showCreateAlbumDialog = false }
         )
     }
 }

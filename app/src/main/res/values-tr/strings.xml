@@ -253,4 +253,6 @@
     <string name="add_to_title">A ekle</string>
     <string name="items_copied_successfully">Medya dosyaları başarıyla kopyalandı.</string>
     <string name="items">öğeler</string>
+    <string name="album_name_already_exists">Albüm adı zaten mevcut.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">Albüm adı 50 karakterden uzun olamaz</string>
 </resources>

@@ -340,4 +340,6 @@
     <string name="add_to_title">Add To</string>
     <string name="items_copied_successfully">Media files copied successfully.</string>
     <string name="items">items</string>
+    <string name="album_name_already_exists">Album name already exists.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">Album name cannot exceed more than 50 characters</string>
 </resources>

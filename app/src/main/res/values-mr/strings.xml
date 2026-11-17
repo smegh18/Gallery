@@ -248,4 +248,6 @@
     <string name="add_to_title">क्रमांकित करा</string>
     <string name="items_copied_successfully">मीडिया फाइल्स सफलतेच कॉपी केली गेली.</string>
     <string name="items">आयटम्स</string>
+    <string name="album_name_already_exists">एल्बमचं नाव आधीपासूनच अस्तित्त्वात आहे.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">अल्बमचे नाव 50 पेक्षा जास्त वर्णांमध्ये असू शकत नाही</string>
 </resources>

@@ -264,4 +264,6 @@
     <string name="add_to_title">Tambah ke</string>
     <string name="items_copied_successfully">Fail media berjaya disalin.</string>
     <string name="items">item</string>
+    <string name="album_name_already_exists">Nama album sudah wujud.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">Nama album tidak boleh melebihi 50 aksara</string>
 </resources>

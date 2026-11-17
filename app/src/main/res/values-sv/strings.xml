@@ -264,4 +264,6 @@
     <string name="add_to_title">Lägg Till</string>
     <string name="items_copied_successfully">Mediefiler kopierade framgångsrikt.</string>
     <string name="items">objekt</string>
+    <string name="album_name_already_exists">Albumnamnet finns redan.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">Albumnamnet får inte överstiga 50 tecken</string>
 </resources>

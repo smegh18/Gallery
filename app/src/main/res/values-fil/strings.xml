@@ -256,4 +256,6 @@
     <string name="add_to_title">Idagdag Sa</string>
     <string name="items_copied_successfully">Matagumpay na kinopya ang mga file ng media.</string>
     <string name="items">mga item</string>
+    <string name="album_name_already_exists">Ang pangalan ng album ay mayroon nangroon.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">Ang pangalan ng album ay hindi maaaring lumampas sa 50 karakter</string>
 </resources>

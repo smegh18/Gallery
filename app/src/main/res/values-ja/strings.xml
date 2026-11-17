@@ -264,4 +264,6 @@
     <string name="add_to_title">追加先</string>
     <string name="items_copied_successfully">メディアファイルが正常にコピーされました。</string>
     <string name="items">アイテム</string>
+    <string name="album_name_already_exists">アルバム名はすでに存在します。</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">アルバム名は50文字を超えることはできません</string>
 </resources>

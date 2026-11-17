@@ -61,6 +61,7 @@
     <color name="actionbarDividerColor">#ffffffff</color>
 
     <!-- Additional Reference Colors -->
+    <color name="album_dialog">#90a0b9</color>
     <color name="dark_blue">#0066ff</color>
     <color name="ic_lock_color">#0066ff</color>
     <color name="lang_unchecked_and_checked_color">#222933</color>

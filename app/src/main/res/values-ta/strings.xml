@@ -265,4 +265,6 @@
     <string name="add_to_title">இணைக்க</string>
     <string name="items_copied_successfully">மீடியா கோப்புகள் வெற்றியாக நகலெடுக்கப்பட்டன.</string>
     <string name="items">உருப்படிகள்</string>
+    <string name="album_name_already_exists">ஆல்பம் பெயர் ஏற்கனவே உள்ளது.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">ஆல்பம் பெயர் 50 எழுத்துக்களை மீறக்கூடாது</string>
 </resources>

@@ -3,9 +3,33 @@ package com.quizango.gallery.ui.home
 import android.graphics.Color as AndroidColor
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
+import android.os.Environment
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
+import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -66,6 +90,7 @@ internal fun CommonDialog(onDismissRequest: () -> Unit, cancelable: Boolean = tr
                 attributes = attributes.apply { y = lift }
                 setBackgroundDrawable(ColorDrawable(AndroidColor.TRANSPARENT))
                 setWindowAnimations(R.style.dialog_window_animation)
+                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE) // bz/e: field stays above the keyboard
             }
         }
         content()
@@ -167,4 +192,154 @@ private fun SortDivider() {
             .height(1.dp)
             .background(colorResource(R.color.dividerColor))
     )
+}
+
+private const val ALBUM_NAME_MAX = 50
+
+/** S272/ua/a: an insertion made only of these symbols is dropped, so "/" or ":" can't be typed into a folder name. */
+private val ALBUM_NAME_REJECT = Regex(
+    "^[@#\\\\\$%/:?\"<|'+!\\[\\]>=×÷*~`;?§✓•√π¶∆£€¢^°{}" +
+        "©®™℅₹؟؛¥]*\$"
+)
+
+internal enum class AlbumNameCheck { EMPTY, TOO_LONG, OK }
+
+/** S272/bz/e OK click on the trimmed name: empty does nothing; `if-lt 0x32`, so exactly 50 characters is refused too. */
+internal fun checkAlbumName(trimmed: String): AlbumNameCheck = when {
+    trimmed.isEmpty() -> AlbumNameCheck.EMPTY
+    trimmed.length >= ALBUM_NAME_MAX -> AlbumNameCheck.TOO_LONG
+    else -> AlbumNameCheck.OK
+}
+
+/** The name field's filters (S272/bz/e): ua/a on the inserted text (trimmed when longer than 1), then LengthFilter(50). */
+internal fun filterAlbumNameEdit(old: String, new: String): String {
+    val start = old.commonPrefixWith(new).length
+    val end = new.length - old.substring(start).commonSuffixWith(new.substring(start)).length
+    val inserted = new.substring(start, end)
+    val chunk = if (inserted.length > 1) inserted.trim() else inserted
+    return if (inserted.isNotEmpty() && ALBUM_NAME_REJECT.matches(chunk)) old else new.take(ALBUM_NAME_MAX)
+}
+
+/** S272/s9/g: a file with exactly that name, or a folder with that name in any case, in one of [roots]. */
+internal fun albumNameExists(name: String, roots: List<File>): Boolean = roots.any { root ->
+    File(root, name).exists() ||
+        root.listFiles()?.any { it.isDirectory && it.name.equals(name, ignoreCase = true) } == true
+}
+
+/** S272/ua/c albumPath and organizerPath; new albums go in the first. */
+internal fun albumRoots(): List<File> {
+    val pictures = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+    return listOf(pictures, File(pictures, "Gallery/Organizer"))
+}
+
+/**
+ * dialog_create_album (S272/bz/e): underlined EditTextTheme field with the keyboard up, word capitals, 50-character limit.
+ * OK is tinted dividerColor until there is text (bz/c), refuses names of 50+ characters or names already taken, and
+ * otherwise hands over the trimmed name; the caller closes the dialog.
+ */
+@Composable
+internal fun CreateAlbumDialog(onCreate: (String) -> Unit, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var name by rememberSaveable { mutableStateOf("") }
+    var checking by remember { mutableStateOf(false) }
+    var focused by remember { mutableStateOf(false) }
+    val focus = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        focus.requestFocus()
+        keyboard?.show()
+    }
+    val titleColor = colorResource(R.color.titleColor)
+    // EditTextTheme: colorControlNormal album_dialog, colorControlActivated dark_blue
+    val lineColor = colorResource(if (focused) R.color.dark_blue else R.color.album_dialog)
+    val tooLong = stringResource(R.string.album_name_cannot_exceed_more_than_50_characters)
+    val taken = stringResource(R.string.album_name_already_exists)
+    CommonDialog(onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(R.color.dialogBack), RoundedCornerShape(16.sdp))
+                .padding(vertical = 5.sdp)
+        ) {
+            Text(
+                text = stringResource(R.string.create_an_album),
+                style = GalleryText.BodyXLargeSemiBold,
+                color = titleColor,
+                modifier = Modifier.padding(start = 19.sdp, top = 15.sdp)
+            )
+            Text(
+                text = stringResource(R.string.album_name),
+                style = GalleryText.BodySmallRegular,
+                color = titleColor,
+                modifier = Modifier.padding(start = 19.sdp, top = 15.sdp)
+            )
+            val textStyle = GalleryText.BodyMediumMedium.copy(color = colorResource(R.color.black))
+            BasicTextField(
+                value = name,
+                onValueChange = { name = filterAlbumNameEdit(name, it) },
+                singleLine = true,
+                textStyle = textStyle,
+                cursorBrush = SolidColor(colorResource(R.color.dark_blue)),
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.sdp)
+                    .focusRequester(focus)
+                    .onFocusChanged { focused = it.isFocused }
+                    // abc_edit_text_material: 4dp inset line, 1dp, 2dp while focused
+                    .drawBehind {
+                        val stroke = (if (focused) 2.dp else 1.dp).toPx()
+                        val y = size.height - stroke / 2
+                        drawLine(lineColor, Offset(4.dp.toPx(), y), Offset(size.width - 4.dp.toPx(), y), stroke)
+                    }
+                    .padding(horizontal = 4.dp, vertical = 10.sdp),
+                decorationBox = { field ->
+                    if (name.isEmpty()) {
+                        Text(stringResource(R.string.enter_album_name), style = textStyle, color = colorResource(R.color.hintLanguageColor))
+                    }
+                    field()
+                }
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.sdp)
+                    .padding(horizontal = 19.sdp, vertical = 10.sdp)
+            ) {
+                DialogButton(
+                    R.string.cancel, colorResource(R.color.fastScrollerColor), R.drawable.help_delete_cancel_bg,
+                    Modifier.weight(1f).padding(end = 10.sdp), onDismiss
+                )
+                Text(
+                    text = stringResource(R.string.caller_ok),
+                    style = GalleryText.BodyMediumSemiBold,
+                    color = colorResource(R.color.onlyWhite),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 10.sdp)
+                        .clip(RoundedCornerShape(50))
+                        // btn_permission under bz/c's background tint
+                        .background(colorResource(if (name.isBlank()) R.color.dividerColor else R.color.colorPrimary))
+                        .clickable {
+                            val trimmed = name.trim()
+                            when (checkAlbumName(trimmed)) {
+                                AlbumNameCheck.EMPTY -> Unit
+                                AlbumNameCheck.TOO_LONG -> Toast.makeText(context, tooLong, Toast.LENGTH_SHORT).show()
+                                AlbumNameCheck.OK -> if (!checking) {
+                                    checking = true
+                                    scope.launch {
+                                        val exists = withContext(Dispatchers.IO) { albumNameExists(trimmed, albumRoots()) }
+                                        checking = false
+                                        if (exists) Toast.makeText(context, taken, Toast.LENGTH_SHORT).show() else onCreate(trimmed)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(vertical = 10.sdp)
+                )
+            }
+        }
+    }
 }

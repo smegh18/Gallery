@@ -216,4 +216,6 @@
     <string name="add_to_title">এ যোগ করুন</string>
     <string name="items_copied_successfully">মিডিয়া ফাইল সফলভাবে অনুলিপি করা হয়েছে.</string>
     <string name="items">আইটেম</string>
+    <string name="album_name_already_exists">অ্যালবামের নাম ইতিমধ্যেই বিদ্যমান৷</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">অ্যালবামের নাম 50 অক্ষরের বেশি হতে পারে না</string>
 </resources>

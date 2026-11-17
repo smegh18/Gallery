@@ -266,4 +266,6 @@
     <string name="add_to_title">Добавить в</string>
     <string name="items_copied_successfully">Медиа файлы успешно скопированы.</string>
     <string name="items">элементы</string>
+    <string name="album_name_already_exists">Название альбома уже существует.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">Название альбома не может превышать 50 символов</string>
 </resources>

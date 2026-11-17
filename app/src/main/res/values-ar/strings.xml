@@ -256,4 +256,6 @@
     <string name="add_to_title">إضافة إلى</string>
     <string name="items_copied_successfully">تم نسخ ملفات الوسائط بنجاح.</string>
     <string name="items">عناصر</string>
+    <string name="album_name_already_exists">اسم الألبوم موجود بالفعل.</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">اسم الألبوم لا يمكن أن يتجاوز 50 حرفًا</string>
 </resources>

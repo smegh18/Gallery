@@ -234,4 +234,6 @@
     <string name="add_to_title">میں شامل کریں</string>
     <string name="items_copied_successfully">رسائی فائلیں کامیابی سے کاپی ہوگئی ہیں۔</string>
     <string name="items">اشیاء</string>
+    <string name="album_name_already_exists">البم کا نام پہلے سے موجود ہے۔</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">ایلبم کا نام 50 حروف سے زیادہ نہیں ہو سکتا</string>
 </resources>

@@ -264,4 +264,6 @@
     <string name="add_to_title">में जोड़ें</string>
     <string name="items_copied_successfully">मीडिया फाइल्स सफलतापूर्वक कॉपी केली गई.</string>
     <string name="items">आइटम</string>
+    <string name="album_name_already_exists">एल्बम का नाम पहले से मौजूद है।</string>
+    <string name="album_name_cannot_exceed_more_than_50_characters">अल्बम का नाम 50 वर्णों से अधिक नहीं हो सकता</string>
 </resources>
