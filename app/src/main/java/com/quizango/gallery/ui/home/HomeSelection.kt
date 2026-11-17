@@ -42,7 +42,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.theme.GalleryText
@@ -204,7 +203,7 @@ internal fun DeleteMediaDialog(
     val accent = colorResource(R.color.fastScrollerColor)
     val title = if (count == 1) stringResource(R.string.delete_dialog_permission)
     else stringResource(R.string.deleted_title) + " " + count + " " + stringResource(R.string.deleted_items)
-    Dialog(onDismissRequest = onDismiss) {
+    CommonDialog(onDismiss) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -260,7 +259,7 @@ internal fun DeleteMediaDialog(
 }
 
 @Composable
-private fun DialogButton(@StringRes label: Int, textColor: androidx.compose.ui.graphics.Color, @DrawableRes background: Int, modifier: Modifier, onClick: () -> Unit) {
+internal fun DialogButton(@StringRes label: Int, textColor: androidx.compose.ui.graphics.Color, @DrawableRes background: Int, modifier: Modifier, onClick: () -> Unit) {
     Text(
         text = stringResource(label),
         style = GalleryText.BodyMediumSemiBold,

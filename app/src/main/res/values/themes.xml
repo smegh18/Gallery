@@ -9,4 +9,9 @@
         <!-- We ship our own dark theme; stop the system (e.g. MIUI) from darkening Day mode -->
         <item name="android:forceDarkAllowed">false</item>
     </style>
+    <!-- 2.7.2 CommonDialog window animation -->
+    <style name="dialog_window_animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/dialog_slide_bottom</item>
+    </style>
 </resources>

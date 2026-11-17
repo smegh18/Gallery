@@ -305,102 +305,13 @@ fun HomeScreen(
     }
 
     if (showSortDialog) {
-        var tempField by remember { mutableStateOf(uiState.sortOrder.field) }
-        var tempDirection by remember { mutableStateOf(uiState.sortOrder.direction) }
-
-        AlertDialog(
-            onDismissRequest = { showSortDialog = false },
-            title = {
-                Text(
-                    text = stringResource(R.string.sort_by),
-                    style = GalleryText.BodyXLargeSemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+        SortDialog(
+            current = uiState.sortOrder,
+            onApply = {
+                viewModel.setSortOrder(it)
+                showSortDialog = false
             },
-            text = {
-                Column {
-                    val fieldOptions = listOf(
-                        R.string.last_modified to SortField.DATE_MODIFIED,
-                        R.string.filename to SortField.NAME,
-                        R.string.file_size to SortField.SIZE,
-                        R.string.created_date to SortField.DATE_TAKEN
-                    )
-                    fieldOptions.forEach { (label, field) ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { tempField = field }
-                                .padding(vertical = 2.dp)
-                        ) {
-                            RadioButton(
-                                selected = tempField == field,
-                                onClick = { tempField = field },
-                                colors = RadioButtonDefaults.colors(selectedColor = GalleryBlue)
-                            )
-                            Text(
-                                text = stringResource(label),
-                                style = GalleryText.BodyMediumMedium,
-                                color = if (tempField == field) GalleryBlue else MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                        }
-                    }
-
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.settingsDivider,
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(vertical = 6.dp)
-                    )
-
-                    val directionOptions = listOf(
-                        R.string.ascending_order to SortDirection.ASCENDING,
-                        R.string.descending_order to SortDirection.DESCENDING
-                    )
-                    directionOptions.forEach { (label, direction) ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { tempDirection = direction }
-                                .padding(vertical = 2.dp)
-                        ) {
-                            RadioButton(
-                                selected = tempDirection == direction,
-                                onClick = { tempDirection = direction },
-                                colors = RadioButtonDefaults.colors(selectedColor = GalleryBlue)
-                            )
-                            Text(
-                                text = stringResource(label),
-                                style = GalleryText.BodyMediumMedium,
-                                color = if (tempDirection == direction) GalleryBlue else MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        viewModel.setSortOrder(SortOrder(tempField, tempDirection))
-                        showSortDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Text(stringResource(R.string.ok), style = GalleryText.BodyMediumSemiBold, color = Color.White)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showSortDialog = false }
-                ) {
-                    Text(stringResource(R.string.cancel), style = GalleryText.BodyMediumSemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(16.dp)
+            onDismiss = { showSortDialog = false }
         )
     }
 
