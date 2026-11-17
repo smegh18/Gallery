@@ -105,6 +105,30 @@ last_updated: 2026-11-15T16:29:13.314Z
     "reason": "",
     "recorded_at": "2026-11-17T05:20:02.000Z",
     "resolved_at": null
+  },
+  {
+    "id": 8,
+    "kind": "deferred",
+    "phase": "03",
+    "file": "app/src/main/java/com/quizango/gallery/ui/home/HomeScreen.kt",
+    "line": null,
+    "description": "CodeRabbit PR #1 re-review: copying into the selection's own folder (Add-to, or Create album with that folder's name) is a silent no-op that clears the selection; match what decoded 2.7.2 does (message string or hidden folder) in 03-06",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-11-17T05:43:18.000Z",
+    "resolved_at": null
+  },
+  {
+    "id": 9,
+    "kind": "deferred",
+    "phase": "03",
+    "file": "app/src/main/java/com/quizango/gallery/ui/splash/SplashScreen.kt",
+    "line": null,
+    "description": "CodeRabbit PR #1 re-review: session count can double-increment if the Activity is recreated during the pending DataStore write in Splash; fix by owning the increment in a retained ViewModel if it shows up",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-11-17T05:43:18.000Z",
+    "resolved_at": null
   }
 ]
 ````
