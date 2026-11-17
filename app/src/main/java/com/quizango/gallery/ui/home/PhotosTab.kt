@@ -133,31 +133,43 @@ internal fun thumbFraction(firstVisible: Int, visibleCount: Int, total: Int): Fl
 internal fun indexForThumbFraction(fraction: Float, visibleCount: Int, total: Int): Int =
     (fraction.coerceIn(0f, 1f) * maxOf(total - visibleCount, 0)).roundToInt()
 
-// Cumulative pinch zoom that commits one column step on release.
-// shortcut: 2.7.2's commit threshold (S272/ai/n.smali) could not be read on this machine, so this is the plan's 1.2 fallback; replace it once the smali is checked.
-private const val PINCH_STEP_ZOOM = 1.2f
-// S272/ai/n.smali: elastic limits 0.95 / 1.05 when already at 3 or 5 columns
+// S272/z/t: the step fires mid-gesture once the span ratio since the last step reaches 1.12 (spread, fewer columns)
+// or 0.90 (pinch, more columns); a release never steps, it springs back.
+private const val PINCH_IN_STEP = 1.12f
+private const val PINCH_OUT_STEP = 0.90f
+// S272/ai/n BsUTWEAMAI: elastic (ratio - 1) * 0.18 + 1, kept in 0.95..1.05, when there is no step that way
+private const val ELASTIC_DAMPING = 0.18f
 private const val ELASTIC_MIN = 0.95f
 private const val ELASTIC_MAX = 1.05f
-// S272/ai/n.smali constructor PathInterpolator(0.18, 0, 0.08, 1); 280 / 200 ms durations (which is commit vs cancel unconfirmed)
+private const val ELASTIC_RETURN_MS = 200 // ai/n OooOOo0 elastic branch
+// S272/ai/n constructor PathInterpolator(0.18, 0, 0.08, 1), used by every pinch animation
 private val PinchEasing = CubicBezierEasing(0.18f, 0f, 0.08f, 1f)
-private const val PINCH_COMMIT_MS = 280
-private const val PINCH_CANCEL_MS = 200
 
-/** Column count after a pinch with cumulative [zoom]: one step per gesture, spread gives fewer columns, kept in 3..5. */
+/** Column count once the span ratio since the last step is [zoom]: spread gives fewer columns, kept in 3..5. */
 internal fun nextColumnCount(current: Int, zoom: Float): Int = clampColumnCount(
     when {
-        zoom >= PINCH_STEP_ZOOM -> current - 1
-        zoom <= 1f / PINCH_STEP_ZOOM -> current + 1
+        zoom >= PINCH_IN_STEP -> current - 1
+        zoom <= PINCH_OUT_STEP -> current + 1
         else -> current
     }
 )
 
-/** Live preview scale: up to the next step's cell size, or the elastic limit when there is no step that way. */
-internal fun pinchPreviewScale(current: Int, zoom: Float): Float = zoom.coerceIn(
-    if (current >= 5) ELASTIC_MIN else current / (current + 1f),
-    if (current <= 3) ELASTIC_MAX else current / (current - 1f)
-)
+/** S272/ai/n: how far the preview is toward the next column count, (ratio - 1) / 0.12 spreading, (1 - ratio) / 0.10 pinching. */
+internal fun pinchProgress(zoom: Float): Float =
+    if (zoom >= 1f) ((zoom - 1f) / (PINCH_IN_STEP - 1f)).coerceIn(0f, 1f)
+    else ((1f - zoom) / (1f - PINCH_OUT_STEP)).coerceIn(0f, 1f)
+
+/** S272/ai/n OooO0Oo (finish) and OooOOo0 (spring back): 140 ms plus 60 ms times the distance still to cover. */
+internal fun pinchSettleMs(remaining: Float): Int = (140f + 60f * remaining.coerceIn(0f, 1f)).toInt()
+
+/** Live preview scale: the cells follow the fingers and reach the next count's cell size at the step; elastic at 3 and 5. */
+internal fun pinchPreviewScale(current: Int, zoom: Float): Float {
+    val target = if (zoom >= 1f) current - 1 else current + 1
+    if (target != clampColumnCount(target)) {
+        return ((zoom - 1f) * ELASTIC_DAMPING + 1f).coerceIn(ELASTIC_MIN, ELASTIC_MAX)
+    }
+    return 1f + pinchProgress(zoom) * (current.toFloat() / target - 1f)
+}
 
 @Composable
 fun PhotosTab(
@@ -201,7 +213,7 @@ fun PhotosTab(
         val scale = remember { Animatable(1f) }
         var origin by remember { mutableStateOf(TransformOrigin.Center) }
         val scope = rememberCoroutineScope()
-        val placement = tween<IntOffset>(PINCH_COMMIT_MS, easing = PinchEasing)
+        val placement = tween<IntOffset>(pinchSettleMs(0f), easing = PinchEasing)
 
         BoxWithConstraints(
             modifier = Modifier
@@ -210,7 +222,8 @@ fun PhotosTab(
                 .pointerInput(Unit) {
                     awaitEachGesture {
                         awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-                        var zoom = 1f
+                        var zoom = 1f // span ratio since the gesture began or since the last step
+                        var cols = count
                         var pinching = false
                         do {
                             val event = awaitPointerEvent(PointerEventPass.Initial)
@@ -221,25 +234,33 @@ fun PhotosTab(
                                 if (c.isSpecified && size.width > 0 && size.height > 0) {
                                     origin = TransformOrigin(c.x / size.width, c.y / size.height)
                                 }
-                                val target = pinchPreviewScale(count, zoom)
-                                scope.launch { scale.snapTo(target) }
+                                val next = nextColumnCount(cols, zoom)
+                                if (next != cols) {
+                                    // ai/n OooOO0O: step now; the new layout takes over at the preview size and settles
+                                    // while cells glide (animateItem). shortcut: no 120 ms / 48 px re-step guard (z/t);
+                                    // re-basing the ratio already needs another 12% / 10% of finger travel.
+                                    val from = cols
+                                    val left = 1f - pinchProgress(zoom)
+                                    cols = next
+                                    zoom = 1f
+                                    shownCount = next
+                                    onCount(next)
+                                    scope.launch {
+                                        scale.snapTo(scale.value * next / from)
+                                        scale.animateTo(1f, tween(pinchSettleMs(left), easing = PinchEasing))
+                                    }
+                                } else {
+                                    val target = pinchPreviewScale(cols, zoom)
+                                    scope.launch { scale.snapTo(target) }
+                                }
                                 event.changes.forEach { it.consume() }
                             }
                         } while (event.changes.any { it.pressed })
                         if (pinching) {
-                            val from = count
-                            val next = nextColumnCount(from, zoom)
-                            scope.launch {
-                                if (next != from) {
-                                    // re-express the preview against the new layout, then settle while cells glide (animateItem)
-                                    scale.snapTo(scale.value * next / from)
-                                    shownCount = next
-                                    onCount(next)
-                                    scale.animateTo(1f, tween(PINCH_COMMIT_MS, easing = PinchEasing))
-                                } else {
-                                    scale.animateTo(1f, tween(PINCH_CANCEL_MS, easing = PinchEasing))
-                                }
-                            }
+                            // z/i OooOOO0 always hands the release to ai/n OooOOo0: spring back, never step
+                            val elastic = nextColumnCount(cols, if (zoom >= 1f) 2f else 0f) == cols
+                            val ms = if (elastic) ELASTIC_RETURN_MS else pinchSettleMs(pinchProgress(zoom))
+                            scope.launch { scale.animateTo(1f, tween(ms, easing = PinchEasing)) }
                         }
                     }
                 }
