@@ -218,4 +218,9 @@
     <string name="items">আইটেম</string>
     <string name="album_name_already_exists">অ্যালবামের নাম ইতিমধ্যেই বিদ্যমান৷</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">অ্যালবামের নাম 50 অক্ষরের বেশি হতে পারে না</string>
+    <string name="adding_media">মিডিয়া যোগ করা হচ্ছে</string>
+    <string name="move">সরান</string>
+    <string name="copy">কপি</string>
+    <string name="media_files_should_not_move_to_same_folder">মিডিয়া ফাইল একই ফোল্ডারে সরানো উচিত নয়।</string>
+    <string name="items_moved_successfully">মিডিয়া ফাইল সফলভাবে সরানো হয়েছে৷</string>
 </resources>

@@ -255,4 +255,9 @@
     <string name="items">öğeler</string>
     <string name="album_name_already_exists">Albüm adı zaten mevcut.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">Albüm adı 50 karakterden uzun olamaz</string>
+    <string name="adding_media">Medya Ekleme</string>
+    <string name="move">Taşınmak</string>
+    <string name="copy">Kopyala</string>
+    <string name="media_files_should_not_move_to_same_folder">Medya dosyaları aynı klasöre taşınmamalıdır.</string>
+    <string name="items_moved_successfully">Medya dosyaları başarıyla taşındı.</string>
 </resources>

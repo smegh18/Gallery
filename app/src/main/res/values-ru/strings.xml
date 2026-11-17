@@ -268,4 +268,9 @@
     <string name="items">элементы</string>
     <string name="album_name_already_exists">Название альбома уже существует.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">Название альбома не может превышать 50 символов</string>
+    <string name="adding_media">Добавление медиа</string>
+    <string name="move">Переместить</string>
+    <string name="copy">Копировать</string>
+    <string name="media_files_should_not_move_to_same_folder">Медиа файлы не должны перемещаться в ту же папку.</string>
+    <string name="items_moved_successfully">Медиа файлы успешно перемещены.</string>
 </resources>

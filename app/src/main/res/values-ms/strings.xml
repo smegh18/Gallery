@@ -266,4 +266,9 @@
     <string name="items">item</string>
     <string name="album_name_already_exists">Nama album sudah wujud.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">Nama album tidak boleh melebihi 50 aksara</string>
+    <string name="adding_media">Menambah Media</string>
+    <string name="move">Pindah</string>
+    <string name="copy">Salin</string>
+    <string name="media_files_should_not_move_to_same_folder">Fail media tidak sepatutnya dipindahkan ke folder yang sama.</string>
+    <string name="items_moved_successfully">Fail media berjaya dipindahkan.</string>
 </resources>

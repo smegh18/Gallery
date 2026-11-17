@@ -250,4 +250,9 @@
     <string name="items">આઇટમ્સ</string>
     <string name="album_name_already_exists">આલ્બમનું નામ પહેલાથી મોજૂદ છે.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">અલ્બમનું નામ 50 અક્ષરો કરતા વધુ ન થઈ શકે</string>
+    <string name="adding_media">મીડિયા ઉમેરવી છે</string>
+    <string name="move">ખસેડો</string>
+    <string name="copy">નકલ કરો</string>
+    <string name="media_files_should_not_move_to_same_folder">મીડિયા ફાઈલો એક સરખાં ફોલ્ડરમાં ન જવી.</string>
+    <string name="items_moved_successfully">મીડિયા ફાઈલો સફળતાથી ખસેડવામાં આવ્યા છે.</string>
 </resources>

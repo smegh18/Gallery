@@ -14,6 +14,7 @@ import com.quizango.gallery.domain.model.SortOrder
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
+import java.io.File
 
 // Pager pages (2.7.2 HOME_TAB_ORDER [1,0,2]): Photos first, and the default.
 const val PAGE_PHOTOS = 0
@@ -22,6 +23,10 @@ const val PAGE_EXPLORE = 2
 
 /** 2.7.2 Photos grid: minSpanCount 3, maxSpanCount 5. */
 internal fun clampColumnCount(n: Int) = n.coerceIn(3, 5)
+
+/** True when every file in [paths] already sits directly in [folder]. */
+internal fun allInFolder(paths: Collection<String>, folder: String): Boolean =
+    paths.all { File(it).parentFile == File(folder) }
 
 data class HomeUiState(
     val selectedTab: Int = PAGE_PHOTOS, // PAGE_PHOTOS (default), PAGE_ALBUMS, PAGE_EXPLORE
@@ -185,15 +190,22 @@ class HomeViewModel(
         }
     }
 
-    /** Copies the selection into [folderPath] and reports how many copies succeeded. */
-    fun addSelectedToFolder(folderPath: String, onDone: (Int) -> Unit) {
+    /**
+     * Copies or moves the selection into [folderPath] and reports how many succeeded. Returns false, doing nothing,
+     * for a move into the folder that already holds every selected item (S272/ca/br Oooo0O0).
+     */
+    fun addSelectedToFolder(folderPath: String, move: Boolean, onDone: (Int) -> Unit): Boolean {
         val paths = _uiState.value.selectedPaths.toList()
+        if (move && allInFolder(paths, folderPath)) return false
         viewModelScope.launch {
-            val copied = paths.count { mediaRepository.copyMediaToFolder(it, folderPath) }
+            val done = paths.count {
+                if (move) mediaRepository.moveMediaToFolder(it, folderPath) else mediaRepository.copyMediaToFolder(it, folderPath)
+            }
             mediaRepository.syncMediaStore()
             clearSelection()
-            onDone(copied)
+            onDone(done)
         }
+        return true
     }
 
     fun moveSelectedToVault() {

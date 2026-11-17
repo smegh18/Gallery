@@ -248,7 +248,7 @@ internal fun DeleteMediaDialog(
                     .padding(top = 15.sdp)
                     .padding(horizontal = 26.sdp, vertical = 10.sdp)
             ) {
-                DialogButton(R.string.no, accent, R.drawable.help_delete_cancel_bg, Modifier.weight(1f).padding(end = 5.sdp), onDismiss)
+                DialogButton(R.string.no, accent, R.drawable.help_delete_cancel_bg, Modifier.weight(1f).padding(end = 5.sdp), onClick = onDismiss)
                 DialogButton(
                     R.string.yes, colorResource(R.color.onlyWhite), R.drawable.btn_permission,
                     Modifier.weight(1f).padding(start = 5.sdp)
@@ -259,7 +259,14 @@ internal fun DeleteMediaDialog(
 }
 
 @Composable
-internal fun DialogButton(@StringRes label: Int, textColor: androidx.compose.ui.graphics.Color, @DrawableRes background: Int, modifier: Modifier, onClick: () -> Unit) {
+internal fun DialogButton(
+    @StringRes label: Int,
+    textColor: androidx.compose.ui.graphics.Color,
+    @DrawableRes background: Int,
+    modifier: Modifier,
+    horizontalPadding: Dp = 0.dp,
+    onClick: () -> Unit
+) {
     Text(
         text = stringResource(label),
         style = GalleryText.BodyMediumSemiBold,
@@ -269,6 +276,6 @@ internal fun DialogButton(@StringRes label: Int, textColor: androidx.compose.ui.
             .clip(RoundedCornerShape(50))
             .drawableBackground(background)
             .clickable(onClick = onClick)
-            .padding(vertical = 10.sdp)
+            .padding(horizontal = horizontalPadding, vertical = 10.sdp)
     )
 }

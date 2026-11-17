@@ -258,4 +258,9 @@
     <string name="items">mga item</string>
     <string name="album_name_already_exists">Ang pangalan ng album ay mayroon nangroon.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">Ang pangalan ng album ay hindi maaaring lumampas sa 50 karakter</string>
+    <string name="adding_media">Pagdaragdag ng Media</string>
+    <string name="move">Ilipat</string>
+    <string name="copy">Kopya</string>
+    <string name="media_files_should_not_move_to_same_folder">Ang mga file ng media ay hindi dapat ilipat sa parehong folder.</string>
+    <string name="items_moved_successfully">Matagumpay na inilipat ang mga file ng media.</string>
 </resources>

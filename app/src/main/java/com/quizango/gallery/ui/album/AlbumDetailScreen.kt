@@ -37,7 +37,9 @@ import com.quizango.gallery.ui.components.AddToAlbumSheet
 import com.quizango.gallery.ui.components.GalleryTopBar
 import com.quizango.gallery.ui.home.PhotoGridItem
 import com.quizango.gallery.ui.home.formatGroupHeader
+import com.quizango.gallery.ui.home.AddingMediaDialog
 import com.quizango.gallery.ui.home.CreateAlbumDialog
+import com.quizango.gallery.ui.home.allInFolder
 import com.quizango.gallery.ui.home.albumRoots
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
@@ -65,6 +67,7 @@ fun AlbumDetailScreen(
     var deleteMoveToBin by remember { mutableStateOf(true) }
     var showAddToDialog by remember { mutableStateOf(false) }
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
+    var addTarget by remember { mutableStateOf<String?>(null) }
     val albums by mediaRepository.getAlbumsFlow().collectAsState(initial = emptyList())
 
     Scaffold(
@@ -439,17 +442,34 @@ fun AlbumDetailScreen(
             selectedCount = selectedPaths.size,
             onAlbumClick = { album ->
                 showAddToDialog = false
-                scope.launch {
-                    selectedPaths.forEach { path ->
-                        mediaRepository.copyMediaToFolder(path, album.path)
-                    }
-                    mediaRepository.syncMediaStore()
-                    Toast.makeText(context, "Added to ${album.name}", Toast.LENGTH_SHORT).show()
-                    selectedPaths = emptySet()
-                }
+                addTarget = album.path
             },
             onDismiss = { showAddToDialog = false }
         )
+    }
+
+    // dialog_select_add after Add to or Create album, as in 2.7.2's MediaListActivity
+    addTarget?.let { target ->
+        fun add(move: Boolean) {
+            addTarget = null
+            val paths = selectedPaths.toList()
+            if (move && allInFolder(paths, target)) {
+                Toast.makeText(context, context.getString(R.string.media_files_should_not_move_to_same_folder), Toast.LENGTH_SHORT).show()
+                return
+            }
+            scope.launch {
+                val done = paths.count {
+                    if (move) mediaRepository.moveMediaToFolder(it, target) else mediaRepository.copyMediaToFolder(it, target)
+                }
+                mediaRepository.syncMediaStore()
+                if (done > 0) {
+                    val message = if (move) R.string.items_moved_successfully else R.string.items_copied_successfully
+                    Toast.makeText(context, context.getString(message), Toast.LENGTH_SHORT).show()
+                }
+                selectedPaths = emptySet()
+            }
+        }
+        AddingMediaDialog(onMove = { add(move = true) }, onCopy = { add(move = false) }, onCancel = { addTarget = null })
     }
 
     // Create Album Dialog (dialog_create_album, shared with Home)
@@ -457,15 +477,11 @@ fun AlbumDetailScreen(
         CreateAlbumDialog(
             onCreate = { targetName ->
                 showCreateAlbumDialog = false
-                scope.launch {
-                    val newDir = File(albumRoots().first(), targetName).also { if (!it.exists()) it.mkdirs() }
-                    selectedPaths.forEach { path ->
-                        mediaRepository.copyMediaToFolder(path, newDir.absolutePath)
-                    }
-                    mediaRepository.syncMediaStore()
-                    Toast.makeText(context, "Album '$targetName' created", Toast.LENGTH_SHORT).show()
-                    selectedPaths = emptySet()
-                }
+                val newDir = File(albumRoots().first(), targetName)
+                try {
+                    newDir.mkdirs()
+                } catch (_: Exception) {}
+                addTarget = newDir.absolutePath
             },
             onDismiss = { showCreateAlbumDialog = false }
         )

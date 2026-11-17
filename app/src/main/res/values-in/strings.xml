@@ -266,4 +266,9 @@
     <string name="items">item</string>
     <string name="album_name_already_exists">Nama album sudah ada.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">Nama album tidak boleh melebihi 50 karakter</string>
+    <string name="adding_media">Menambahkan Media</string>
+    <string name="move">Pindahkan</string>
+    <string name="copy">Salin</string>
+    <string name="media_files_should_not_move_to_same_folder">File media tidak boleh dipindahkan ke folder yang sama.</string>
+    <string name="items_moved_successfully">File media berhasil dipindahkan.</string>
 </resources>

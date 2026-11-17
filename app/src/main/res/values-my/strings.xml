@@ -266,4 +266,9 @@
     <string name="items">ပစ္စည်းများ</string>
     <string name="album_name_already_exists">အယူအဆင့် နာမည်သည် ရှိပြီးသားဖြစ်သည်။</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">အယ်လ်ဘမ်အမည်မှာ ၅၀ အက္ခရာထက်မပိုရပါ</string>
+    <string name="adding_media">မက်ဆေ့ခ်ျကိုထပ်ဖြည့်ပါ</string>
+    <string name="move">မျှမပေးရပါ</string>
+    <string name="copy">ကူးပေးရပါ</string>
+    <string name="media_files_should_not_move_to_same_folder">မီဒီယာ ဖိုင်များသည် တစ်ခုတည်းမှ တည်းဖြတ်ရပါမည်။</string>
+    <string name="items_moved_successfully">မီဒီယာ ဖိုင်များကို အောင်မြင်စွာ သွားသည်။</string>
 </resources>

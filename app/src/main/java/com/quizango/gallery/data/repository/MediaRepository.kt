@@ -33,6 +33,43 @@ interface MediaRepository {
     suspend fun deletePermanently(paths: List<String>)
     suspend fun renameMedia(oldPath: String, newName: String): Boolean
     suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean
+    suspend fun moveMediaToFolder(filePath: String, destFolder: String): Boolean
+}
+
+/** S272/s9/k.OooOOO: [fileName] in [dir], or "name(n).ext" with the first free n. Like 2.7.2 it drops a leading dot. */
+internal fun uniqueTargetFile(dir: File, fileName: String): File {
+    val name = fileName.removePrefix(".")
+    val dot = name.lastIndexOf('.')
+    val base = if (dot > 0) name.substring(0, dot) else name // 2.7.2 loops forever on a name without "."
+    val ext = if (dot > 0) name.substring(dot) else ""
+    var target = File(dir, name)
+    var n = 0
+    while (target.exists()) target = File(dir, "$base(${++n})$ext")
+    return target
+}
+
+/** Copies [src] into [dir] under a free name, so a copy into its own folder makes "name(1).ext". Null on failure. */
+internal fun copyIntoFolder(src: File, dir: File): File? {
+    dir.mkdirs()
+    val dest = uniqueTargetFile(dir, src.name)
+    return try {
+        src.copyTo(dest)
+    } catch (e: Exception) {
+        if (e !is FileAlreadyExistsException) dest.delete() // a partial copy; a file that was already there is kept
+        null
+    }
+}
+
+/**
+ * Moves [src] into [dir]: copy, check the size, then delete the source. On any failure the source stays and the
+ * copy goes, so nothing is lost. A file already in [dir] is left as it is. Null on failure.
+ */
+internal fun moveIntoFolder(src: File, dir: File): File? {
+    if (src.parentFile?.canonicalFile == dir.canonicalFile) return src
+    val dest = copyIntoFolder(src, dir) ?: return null
+    if (dest.length() == src.length() && src.delete()) return dest
+    dest.delete()
+    return null
 }
 
 class MediaRepositoryImpl(
@@ -406,14 +443,20 @@ class MediaRepositoryImpl(
     override suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val src = File(filePath)
-            if (!src.exists()) return@withContext false
-            val destDir = File(destFolder)
-            if (!destDir.exists()) destDir.mkdirs()
-            val destFile = File(destDir, src.name)
-            // copyTo(overwrite = true) deletes the target first, which would delete the source itself
-            if (destFile.canonicalFile == src.canonicalFile) return@withContext false
-            src.copyTo(destFile, overwrite = true)
+            if (!src.exists() || copyIntoFolder(src, File(destFolder)) == null) return@withContext false
             syncMediaStore()
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    override suspend fun moveMediaToFolder(filePath: String, destFolder: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val src = File(filePath)
+            if (!src.exists()) return@withContext false
+            val moved = moveIntoFolder(src, File(destFolder)) ?: return@withContext false
+            if (moved != src) dao.deleteByPath(filePath) // the new path comes in with the next sync
             true
         } catch (_: Exception) {
             false

@@ -266,4 +266,9 @@
     <string name="items">objekt</string>
     <string name="album_name_already_exists">Albumnamnet finns redan.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">Albumnamnet får inte överstiga 50 tecken</string>
+    <string name="adding_media">Lägger till media</string>
+    <string name="move">Flytta</string>
+    <string name="copy">Kopiera</string>
+    <string name="media_files_should_not_move_to_same_folder">Mediafiler bör inte flyttas till samma mapp.</string>
+    <string name="items_moved_successfully">Mediafiler flyttade framgångsrikt.</string>
 </resources>

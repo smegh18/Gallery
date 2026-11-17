@@ -258,4 +258,9 @@
     <string name="items">éléments</string>
     <string name="album_name_already_exists">"Le nom de l'album existe déjà."</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">"Le nom de l'album ne peut pas dépasser 50 caractères"</string>
+    <string name="adding_media">Ajout de médias</string>
+    <string name="move">Déplacer</string>
+    <string name="copy">Copier</string>
+    <string name="media_files_should_not_move_to_same_folder">Les fichiers multimédias ne doivent pas être déplacés vers le même dossier.</string>
+    <string name="items_moved_successfully">Fichiers multimédias déplacés avec succès.</string>
 </resources>

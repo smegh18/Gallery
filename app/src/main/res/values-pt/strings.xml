@@ -266,4 +266,9 @@
     <string name="items">itens</string>
     <string name="album_name_already_exists">O nome do álbum já existe.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">O nome do álbum não pode exceder 50 caracteres</string>
+    <string name="adding_media">Adicionando Mídia</string>
+    <string name="move">Mover</string>
+    <string name="copy">Copiar</string>
+    <string name="media_files_should_not_move_to_same_folder">Os ficheiros de mídia não devem ser movidos para a mesma pasta.</string>
+    <string name="items_moved_successfully">Ficheiros de mídia movidos com sucesso.</string>
 </resources>

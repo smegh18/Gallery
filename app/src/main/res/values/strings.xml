@@ -342,4 +342,9 @@
     <string name="items">items</string>
     <string name="album_name_already_exists">Album name already exists.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">Album name cannot exceed more than 50 characters</string>
+    <string name="adding_media">Adding Media</string>
+    <string name="move">Move</string>
+    <string name="copy">Copy</string>
+    <string name="media_files_should_not_move_to_same_folder">Media files should not be moved to the same folder.</string>
+    <string name="items_moved_successfully">Media files moved successfully.</string>
 </resources>

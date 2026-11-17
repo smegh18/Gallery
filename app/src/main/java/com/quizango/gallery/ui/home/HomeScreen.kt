@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -61,9 +62,10 @@ fun HomeScreen(
     var showAddToSheet by remember { mutableStateOf(false) }
     val shareTitle = stringResource(R.string.share)
     val copiedMessage = stringResource(R.string.items_copied_successfully)
-    val onCopied: (Int) -> Unit = { copied ->
-        if (copied > 0) Toast.makeText(context, copiedMessage, Toast.LENGTH_SHORT).show()
-    }
+    val movedMessage = stringResource(R.string.items_moved_successfully)
+    val sameFolderMessage = stringResource(R.string.media_files_should_not_move_to_same_folder)
+    // Folder picked for the selection (Add to, or a new album from it); dialog_select_add then asks Move or Copy
+    var addTarget by rememberSaveable { mutableStateOf<String?>(null) }
 
     var titleBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     val showVaultHint = !uiState.isSelectionMode && shouldShowVaultHint(
@@ -332,10 +334,22 @@ fun HomeScreen(
             selectedCount = uiState.selectedPaths.size,
             onAlbumClick = { album ->
                 showAddToSheet = false
-                viewModel.addSelectedToFolder(album.path, onCopied)
+                addTarget = album.path
             },
             onDismiss = { showAddToSheet = false }
         )
+    }
+
+    addTarget?.let { target ->
+        fun add(move: Boolean) {
+            addTarget = null
+            val message = if (move) movedMessage else copiedMessage
+            val started = viewModel.addSelectedToFolder(target, move) { done ->
+                if (done > 0) Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+            if (!started) Toast.makeText(context, sameFolderMessage, Toast.LENGTH_SHORT).show()
+        }
+        AddingMediaDialog(onMove = { add(move = true) }, onCopy = { add(move = false) }, onCancel = { addTarget = null })
     }
 
     if (showCreateAlbumDialog) {
@@ -347,7 +361,7 @@ fun HomeScreen(
                     newDir.mkdirs()
                 } catch (_: Exception) {}
                 // Create album from the selection bar copies the selection in; the Albums + makes it empty.
-                if (uiState.isSelectionMode) viewModel.addSelectedToFolder(newDir.absolutePath, onCopied)
+                if (uiState.isSelectionMode) addTarget = newDir.absolutePath
                 else viewModel.syncMedia()
             },
             onDismiss = { showCreateAlbumDialog = false }

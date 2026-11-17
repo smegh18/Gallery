@@ -258,4 +258,9 @@
     <string name="items">مورد</string>
     <string name="album_name_already_exists">نام آلبوم از قبل وجود دارد.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">نام آلبوم نمی‌تواند بیشتر از 50 کاراکتر باشد</string>
+    <string name="adding_media">افزودن رسانه</string>
+    <string name="move">انتقال</string>
+    <string name="copy">کپی</string>
+    <string name="media_files_should_not_move_to_same_folder">فایل‌های رسانه نباید به همان پوشه منتقل شوند.</string>
+    <string name="items_moved_successfully">فایل‌های رسانه با موفقیت منتقل شدند.</string>
 </resources>

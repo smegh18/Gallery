@@ -49,7 +49,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
@@ -142,7 +144,7 @@ internal fun SortDialog(current: SortOrder, onApply: (SortOrder) -> Unit, onDism
             ) {
                 DialogButton(
                     R.string.cancel, colorResource(R.color.fastScrollerColor), R.drawable.help_delete_cancel_bg,
-                    Modifier.weight(1f).padding(horizontal = 8.sdp), onDismiss
+                    Modifier.weight(1f).padding(horizontal = 8.sdp), onClick = onDismiss
                 )
                 DialogButton(
                     R.string.ok, colorResource(R.color.onlyWhite), R.drawable.btn_permission,
@@ -191,6 +193,63 @@ private fun SortDivider() {
             .fillMaxWidth()
             .height(1.dp)
             .background(colorResource(R.color.dividerColor))
+    )
+}
+
+/**
+ * dialog_select_add (S272/oa/w), shown after an album is picked for the selection: "Adding Media", Move, Copy, and a
+ * Cancel pill on the right. Not cancelable: Back and outside taps do nothing (setCancelable(false)).
+ */
+@Composable
+internal fun AddingMediaDialog(onMove: () -> Unit, onCopy: () -> Unit, onCancel: () -> Unit) {
+    val titleColor = colorResource(R.color.titleColor)
+    CommonDialog(onCancel, cancelable = false) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(2.sdp, RoundedCornerShape(14.sdp))
+                .background(colorResource(R.color.dialogBack), RoundedCornerShape(14.sdp))
+                .padding(vertical = 16.sdp)
+        ) {
+            Text(
+                text = stringResource(R.string.adding_media),
+                style = GalleryText.BodyXLargeSemiBold,
+                color = titleColor,
+                modifier = Modifier.padding(start = 16.sdp)
+            )
+            AddingMediaRow(R.string.move, Modifier.padding(top = 10.sdp), onMove)
+            Spacer(
+                Modifier
+                    .padding(horizontal = 12.sdp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(colorResource(R.color.dividerColor))
+            )
+            AddingMediaRow(R.string.copy, Modifier, onCopy)
+            // layout_gravity="right" is absolute, so it stays right in RTL too
+            DialogButton(
+                R.string.cancel, colorResource(R.color.fastScrollerColor), R.drawable.help_delete_cancel_bg,
+                Modifier
+                    .align(AbsoluteAlignment.Right)
+                    .padding(top = 12.sdp, bottom = 2.sdp, end = 20.sdp),
+                horizontalPadding = 40.sdp,
+                onClick = onCancel
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddingMediaRow(@StringRes label: Int, modifier: Modifier, onClick: () -> Unit) {
+    Text(
+        text = stringResource(label),
+        style = GalleryText.BodyLargeMedium,
+        color = colorResource(R.color.titleColor),
+        modifier = modifier
+            .padding(start = 15.sdp)
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.sdp, vertical = 10.sdp)
     )
 }
 
@@ -309,7 +368,7 @@ internal fun CreateAlbumDialog(onCreate: (String) -> Unit, onDismiss: () -> Unit
             ) {
                 DialogButton(
                     R.string.cancel, colorResource(R.color.fastScrollerColor), R.drawable.help_delete_cancel_bg,
-                    Modifier.weight(1f).padding(end = 10.sdp), onDismiss
+                    Modifier.weight(1f).padding(end = 10.sdp), onClick = onDismiss
                 )
                 Text(
                     text = stringResource(R.string.caller_ok),

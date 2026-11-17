@@ -266,4 +266,9 @@
     <string name="items">आइटम</string>
     <string name="album_name_already_exists">एल्बम का नाम पहले से मौजूद है।</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">अल्बम का नाम 50 वर्णों से अधिक नहीं हो सकता</string>
+    <string name="adding_media">मीडिया जोड़ रहा है</string>
+    <string name="move">भेजें</string>
+    <string name="copy">कॉपी करें</string>
+    <string name="media_files_should_not_move_to_same_folder">मीडिया फ़ाइलें एक ही फ़ोल्डर में मूव नहीं होनी चाहिए।</string>
+    <string name="items_moved_successfully">मीडिया फ़ाइलें सफलतापूर्वक मूव हो गईं हैं।</string>
 </resources>

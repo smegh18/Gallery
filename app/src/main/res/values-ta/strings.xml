@@ -267,4 +267,9 @@
     <string name="items">உருப்படிகள்</string>
     <string name="album_name_already_exists">ஆல்பம் பெயர் ஏற்கனவே உள்ளது.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">ஆல்பம் பெயர் 50 எழுத்துக்களை மீறக்கூடாது</string>
+    <string name="adding_media">பதிவுக்கு வாங்கவும்</string>
+    <string name="move">நகலெடு</string>
+    <string name="copy">நகல் செய்</string>
+    <string name="media_files_should_not_move_to_same_folder">மீடியா கோப்புகள் ஒருசேர அநேகமாக செல்லக்கூடாது.</string>
+    <string name="items_moved_successfully">மீடியா கோப்புகள் வெற்றிகரமாக நகர்த்தப்பட்டுள்ளன.</string>
 </resources>

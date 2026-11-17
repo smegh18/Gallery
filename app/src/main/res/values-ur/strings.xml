@@ -236,4 +236,9 @@
     <string name="items">اشیاء</string>
     <string name="album_name_already_exists">البم کا نام پہلے سے موجود ہے۔</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">ایلبم کا نام 50 حروف سے زیادہ نہیں ہو سکتا</string>
+    <string name="adding_media">میڈیا شامل کرنا</string>
+    <string name="move">منتقل کریں</string>
+    <string name="copy">کاپی کریں</string>
+    <string name="media_files_should_not_move_to_same_folder">میڈیا فائلیں ایک ہی فولڈر میں منتقل نہیں کی جانی چاہئیں</string>
+    <string name="items_moved_successfully">میڈیا فائلیں کامیابی سے منتقل ہوگئیں ہیں۔</string>
 </resources>

@@ -266,4 +266,9 @@
     <string name="items">アイテム</string>
     <string name="album_name_already_exists">アルバム名はすでに存在します。</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">アルバム名は50文字を超えることはできません</string>
+    <string name="adding_media">メディアの追加中</string>
+    <string name="move">移動</string>
+    <string name="copy">コピー</string>
+    <string name="media_files_should_not_move_to_same_folder">メディアファイルは同じフォルダに移動してはいけません。</string>
+    <string name="items_moved_successfully">メディアファイルが正常に移動しました</string>
 </resources>

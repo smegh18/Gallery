@@ -258,4 +258,9 @@
     <string name="items">عناصر</string>
     <string name="album_name_already_exists">اسم الألبوم موجود بالفعل.</string>
     <string name="album_name_cannot_exceed_more_than_50_characters">اسم الألبوم لا يمكن أن يتجاوز 50 حرفًا</string>
+    <string name="adding_media">إضافة وسائط</string>
+    <string name="move">نقل</string>
+    <string name="copy">نسخ</string>
+    <string name="media_files_should_not_move_to_same_folder">يجب ألا تتم نقل ملفات الوسائط إلى نفس المجلد.</string>
+    <string name="items_moved_successfully">تم نقل ملفات الوسائط بنجاح.</string>
 </resources>
