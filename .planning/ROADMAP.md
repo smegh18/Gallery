@@ -272,8 +272,8 @@ Phases execute in numeric order: 1 → 2 → 3 → … → 13
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-11-13 |
-| 2. Onboarding | 0/TBD | Not started | - |
-| 3. Home Shell and Photos Tab | 0/6 | Planned | - |
+| 2. Onboarding | 5/5 | Complete    | 2026-11-13 |
+| 3. Home Shell and Photos Tab | 5/6 | In progress | - |
 | 4. Albums, Stories and Explore | 0/TBD | Not started | - |
 | 5. Viewing and Browsing | 0/TBD | Not started | - |
 | 6. Manage and Cleaner | 0/TBD | Not started | - |

@@ -62,7 +62,9 @@ fun HomeScreen(
     var showAddToSheet by remember { mutableStateOf(false) }
     val shareTitle = stringResource(R.string.share)
     val copiedMessage = stringResource(R.string.items_copied_successfully)
-    val onCopied: (Int) -> Unit = { Toast.makeText(context, copiedMessage, Toast.LENGTH_SHORT).show() }
+    val onCopied: (Int) -> Unit = { copied ->
+        if (copied > 0) Toast.makeText(context, copiedMessage, Toast.LENGTH_SHORT).show()
+    }
 
     var titleBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     val showVaultHint = !uiState.isSelectionMode && shouldShowVaultHint(

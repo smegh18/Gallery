@@ -50,8 +50,14 @@ fun SplashScreen(
         isPlaying = true
     )
 
+    // survives Activity recreation (rotation during splash), so one launch counts once
+    var counted by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        appPreferences.incrementSessionCount() // awaited, so Home reads this launch's number
+        // awaited, so Home reads this launch's number; a failed write only skips the hint count
+        if (!counted) {
+            try { appPreferences.incrementSessionCount() } catch (_: java.io.IOException) {}
+            counted = true
+        }
         val hasCompletedOnboarding = appPreferences.hasCompletedOnboarding.first()
         val hasPermissions = checkStoragePermissions(context)
         kotlinx.coroutines.withTimeoutOrNull(2_000) {

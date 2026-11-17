@@ -56,6 +56,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.onLongClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -130,6 +132,7 @@ fun PinchTutorialOverlay(onGotIt: () -> Unit) {
 @Composable
 fun VaultHintOverlay(title: String, titleBounds: Rect?, onClose: () -> Unit, onOpenVault: () -> Unit) {
     val haptic = LocalHapticFeedback.current
+    val vaultLabel = stringResource(R.string.vault_hint_title)
     val white = colorResource(R.color.onlyWhite)
     var origin by remember { mutableStateOf(Offset.Zero) }
     Box(
@@ -165,6 +168,8 @@ fun VaultHintOverlay(title: String, titleBounds: Rect?, onClose: () -> Unit, onO
                 modifier = Modifier
                     .heightIn(min = 24.sdp)
                     .paint(painterResource(R.drawable.ic_hint_home), contentScale = ContentScale.FillBounds)
+                    // the raw long-press below is invisible to TalkBack; expose the same action
+                    .semantics { onLongClick(label = vaultLabel) { onClose(); onOpenVault(); true } }
                     .pointerInput(onOpenVault) {
                         // S272/bw/l: long-press = long-pressing the title; a short tap on the pill does nothing
                         detectTapGestures(onLongPress = {

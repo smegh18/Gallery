@@ -69,6 +69,42 @@ last_updated: 2026-11-15T16:29:13.314Z
     "reason": "",
     "recorded_at": "2026-11-15T16:29:13.314Z",
     "resolved_at": null
+  },
+  {
+    "id": 5,
+    "kind": "deferred",
+    "phase": "03",
+    "file": "app/src/main/java/com/quizango/gallery/ui/home/HomeViewModel.kt",
+    "line": null,
+    "description": "CodeRabbit PR #1: possible one-frame 'No items' flash between the first sync finishing and the first list emission; simple fix can strand the spinner on an empty library. Check on the phone in 03-06",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-11-17T05:20:02.000Z",
+    "resolved_at": null
+  },
+  {
+    "id": 6,
+    "kind": "deferred",
+    "phase": "03",
+    "file": "app/src/main/java/com/quizango/gallery/ui/components/NavigationComponents.kt",
+    "line": null,
+    "description": "CodeRabbit PR #1: hardcoded 'Back' contentDescription has no 2.7.2 string key; handle in Phase 5",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-11-17T05:20:02.000Z",
+    "resolved_at": null
+  },
+  {
+    "id": 7,
+    "kind": "deferred",
+    "phase": "03",
+    "file": "app/src/main/res/",
+    "line": null,
+    "description": "CodeRabbit PR #1: 12 translation findings (bn delete title order + sort labels, fil sort_by, hi copy toast, pt zoom_out in Russian, mr last_modified + add_to_title, my album prompts + change_number, tr/zh RAW, ta got_it) kept as imported 2.7.2 text; confirm each matches the decoded 2.7.2 APK in 03-06",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-11-17T05:20:02.000Z",
+    "resolved_at": null
   }
 ]
 ````

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -128,8 +129,9 @@ internal fun thumbFraction(firstVisible: Int, visibleCount: Int, total: Int): Fl
     if (total <= visibleCount) 0f else (firstVisible.toFloat() / (total - visibleCount)).coerceIn(0f, 1f)
 
 /** Grid index the fast-scroll drag at [fraction] jumps to. */
-internal fun indexForThumbFraction(fraction: Float, total: Int): Int =
-    (fraction * (total - 1)).roundToInt().coerceIn(0, maxOf(total - 1, 0))
+/** Inverse of [thumbFraction], so the thumb doesn't jump when the drag ends. */
+internal fun indexForThumbFraction(fraction: Float, visibleCount: Int, total: Int): Int =
+    (fraction.coerceIn(0f, 1f) * maxOf(total - visibleCount, 0)).roundToInt()
 
 // Cumulative pinch zoom that commits one column step on release.
 // shortcut: 2.7.2's commit threshold (S272/ai/n.smali) could not be read on this machine, so this is the plan's 1.2 fallback; replace it once the smali is checked.
@@ -191,7 +193,9 @@ fun PhotosTab(
         val now = System.currentTimeMillis()
         val gridState = rememberLazyGridState()
         // Shown at once on commit; the saved value catches up through the preference flow
-        var shownCount by remember(columnCount) { mutableIntStateOf(columnCount) }
+        // one state object: the pointerInput(Unit) gesture below keeps writing to the instance it captured
+        var shownCount by remember { mutableIntStateOf(columnCount) }
+        LaunchedEffect(columnCount) { shownCount = columnCount }
         val count by rememberUpdatedState(shownCount)
         val onCount by rememberUpdatedState(onColumnCountChange)
         val scale = remember { Animatable(1f) }
@@ -326,7 +330,8 @@ private fun BoxScope.FastScrollThumb(state: LazyGridState, trackHeightPx: Int) {
                     if (range > 0f) {
                         val f = ((dragFraction ?: scrollFraction()) + dy / range).coerceIn(0f, 1f)
                         dragFraction = f
-                        scope.launch { state.scrollToItem(indexForThumbFraction(f, state.layoutInfo.totalItemsCount)) }
+                        val info = state.layoutInfo
+                        scope.launch { state.scrollToItem(indexForThumbFraction(f, info.visibleItemsInfo.size, info.totalItemsCount)) }
                     }
                 }
             }
@@ -380,7 +385,7 @@ fun PhotosTabGridItem(
                     Image(painterResource(R.drawable.ic_common_video), contentDescription = null, modifier = Modifier.size(17.sdp))
                 }
                 if (item.isFavorite) {
-                    Image(painterResource(R.drawable.ic_common_fav), contentDescription = null, modifier = Modifier.size(17.sdp))
+                    Image(painterResource(R.drawable.ic_common_fav), contentDescription = stringResource(R.string.favorite), modifier = Modifier.size(17.sdp))
                 }
             }
             fileTypeLabel(item.fileName, isVideo)?.let { label ->

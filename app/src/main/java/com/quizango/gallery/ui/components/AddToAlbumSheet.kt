@@ -123,7 +123,9 @@ fun AddToAlbumSheet(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            if (albums.isEmpty()) {
+            // "filter:" albums are browse-only collections, not folders a copy can land in
+            val destinations = albums.filterNot { it.path.startsWith("filter:") }
+            if (destinations.isEmpty()) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -153,7 +155,7 @@ fun AddToAlbumSheet(
                         .fillMaxWidth()
                         .heightIn(max = 340.dp)
                 ) {
-                    items(albums, key = { it.id }) { album ->
+                    items(destinations, key = { it.id }) { album ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier

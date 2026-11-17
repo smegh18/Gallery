@@ -158,10 +158,13 @@ class HomeTest {
         assertEquals(1f, thumbFraction(90, 10, 100), 0f)
         assertEquals(0.5f, thumbFraction(45, 10, 100), 0f)
         assertEquals(0f, thumbFraction(0, 10, 8), 0f) // list fits: no division by zero
-        assertEquals(0, indexForThumbFraction(0f, 100))
-        assertEquals(99, indexForThumbFraction(1f, 100))
-        assertEquals(50, indexForThumbFraction(0.5f, 100))
-        assertEquals(99, indexForThumbFraction(2f, 100))
+        assertEquals(0, indexForThumbFraction(0f, 10, 100))
+        assertEquals(90, indexForThumbFraction(1f, 10, 100))
+        assertEquals(45, indexForThumbFraction(0.5f, 10, 100))
+        assertEquals(90, indexForThumbFraction(2f, 10, 100))
+        assertEquals(0, indexForThumbFraction(0.5f, 10, 8)) // list fits
+        // drag target and resting position agree, so the thumb doesn't jump on release
+        assertEquals(0.3f, thumbFraction(indexForThumbFraction(0.3f, 10, 100), 10, 100), 0f)
     }
 
     @Test

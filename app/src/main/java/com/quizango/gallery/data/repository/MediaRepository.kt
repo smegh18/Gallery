@@ -410,6 +410,8 @@ class MediaRepositoryImpl(
             val destDir = File(destFolder)
             if (!destDir.exists()) destDir.mkdirs()
             val destFile = File(destDir, src.name)
+            // copyTo(overwrite = true) deletes the target first, which would delete the source itself
+            if (destFile.canonicalFile == src.canonicalFile) return@withContext false
             src.copyTo(destFile, overwrite = true)
             syncMediaStore()
             true

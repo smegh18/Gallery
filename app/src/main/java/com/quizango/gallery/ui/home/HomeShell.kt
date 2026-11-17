@@ -121,7 +121,7 @@ internal fun HomeTopBar(
         slots.forEach { slot ->
             when (slot) {
                 // Opens the Pro screen in the reference; Phase 9 builds it, so the tap does nothing until then.
-                TopBarSlot.AD_FREE -> SlotButton(R.drawable.home_shell_ic_ad_free, null) {}
+                TopBarSlot.AD_FREE -> SlotButton(R.drawable.home_shell_ic_ad_free, stringResource(R.string.go_ads_free)) {}
                 TopBarSlot.ADD_ALBUM -> SlotButton(R.drawable.home_shell_ic_add, stringResource(R.string.create_album), onAddAlbum)
                 TopBarSlot.SEARCH -> SlotButton(R.drawable.home_shell_ic_search, stringResource(R.string.search), onSearch)
                 TopBarSlot.CAMERA -> SlotButton(R.drawable.home_shell_ic_camera, stringResource(R.string.camera), onCamera)
