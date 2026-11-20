@@ -11,12 +11,12 @@
     {
       "number": "2",
       "name": "Onboarding",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "3",
       "name": "Home Shell and Photos Tab",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "4",
@@ -71,8 +71,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Advance to the next step (plan phase 2)",
-    "reason": "Phase 2 of 13 — needs a plan"
+    "label": "Advance to the next step (verify)",
+    "reason": "Phase 2 of 13 · 23% · ready to verify"
   },
-  "updated_at": "2026-11-13T12:08:26.133Z"
+  "updated_at": "2026-11-20T06:04:16.234Z"
 }

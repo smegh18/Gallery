@@ -28,7 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Shared 2.7.2 drawables, strings, theme and Lottie assets (completed 2026-11-13)
 - [ ] **Phase 2: Onboarding** - Splash, Language, Permission and the new Feature-promo step; Welcome removed
-- [ ] **Phase 3: Home Shell and Photos Tab** - 2.7.2 home shell, popup menu, vault hint, exit popup and Photos tab
+- [x] **Phase 3: Home Shell and Photos Tab** - 2.7.2 home shell, popup menu, vault hint, exit popup and Photos tab (completed 2026-11-20)
 - [ ] **Phase 4: Albums, Stories and Explore** - New Albums tab and story row, stories viewer, and the Explore tab
 - [ ] **Phase 5: Viewing and Browsing** - Full-screen viewer, video player and the album, discovery and search lists
 - [ ] **Phase 6: Manage and Cleaner** - System cleaner, duplicate flow, Recycle Bin and Quick Organize
@@ -96,10 +96,10 @@ Plans:
   1. Home shows the tabs in 2.7.2 order (Photos / Album / Explore) with the 2.7.2 top bars, and switching tabs by tap or swipe works with the same titles and default tab.
   2. The ⋮ popup menu (Sort and the other entries) and the ad-free button match 2.7.2, and each menu entry does what it does in 2.7.2.
   3. The vault hint appears in the same situations and place as in 2.7.2.
-  4. Pressing Back on Home shows the 2.7.2 exit popup.
+  4. Pressing Back on Home behaves like 2.7.2: it closes the vault hint, then clears selection, then exits directly (2.7.2 ships app_exit=direct; the user decided this on 2026-11-20).
   5. The Photos tab shows 2.7.2's date headers, grid items and ad-placeholder rows; pinching changes the column count; long-press enters selection mode with the 2.7.2 actions.
 
-**Plans**: 6 plans
+**Plans**: 6/6 plans complete
 
 Plans:
 - [x] 03-01-PLAN.md — Tracer: Home opens on Photos with the 2.7.2 tab bar and titles (all Phase 3 strings, colours, drawables imported); loading spinner, 3..5 columns, half-width bug; per-tab top bars, ⋮ popup, title long-press (wave 1)
@@ -107,7 +107,8 @@ Plans:
 - [x] 03-03-PLAN.md — Selection mode bars, delete confirmation, Add to / Create album, hide-on-scroll tab bar and sync line (wave 2)
 - [x] 03-04-PLAN.md — Pinch to change columns with live preview, first-run pinch tutorial (wave 3)
 - [x] 03-05-PLAN.md — Vault hint (sessions 4/8/12) and the Home exit popup with Back order (wave 4)
-- [ ] 03-06-PLAN.md — Quality gates: CodeRabbit, unslop, parity scripts, checklist ticks, on-device side-by-side check (wave 5, checkpoint)
+- [x] 03-06-PLAN.md — Quality gates: CodeRabbit, unslop, parity scripts, checklist ticks, on-device side-by-side check (wave 5, checkpoint)
+
 **UI hint**: yes
 
 ### Phase 4: Albums, Stories and Explore
@@ -273,7 +274,7 @@ Phases execute in numeric order: 1 → 2 → 3 → … → 13
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-11-13 |
 | 2. Onboarding | 5/5 | Complete    | 2026-11-13 |
-| 3. Home Shell and Photos Tab | 5/6 | In progress | - |
+| 3. Home Shell and Photos Tab | 6/6 | Complete    | 2026-11-20 |
 | 4. Albums, Stories and Explore | 0/TBD | Not started | - |
 | 5. Viewing and Browsing | 0/TBD | Not started | - |
 | 6. Manage and Cleaner | 0/TBD | Not started | - |

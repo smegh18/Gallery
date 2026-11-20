@@ -25,13 +25,13 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 
 ### Home shell
 
-- [ ] **HOME-01**: The home shell matches 2.7.2's `activity_home`: tab order Photos / Album / Explore, top bars, the ⋮ popup menu (Sort, …) and the ad-free button (#6).
-- [ ] **HOME-02**: The user sees the vault hint when 2.7.2 shows it (#6).
-- [ ] **HOME-03**: The exit popup matches 2.7.2 (#10).
+- [x] **HOME-01**: The home shell matches 2.7.2's `activity_home`: tab order Photos / Album / Explore, top bars, the ⋮ popup menu (Sort, …) and the ad-free button (#6).
+- [x] **HOME-02**: The user sees the vault hint when 2.7.2 shows it (#6).
+- [x] **HOME-03**: Back on Home exits like 2.7.2: directly, with no popup (#10; decided 2026-11-20).
 
 ### Photos tab
 
-- [ ] **PHO-01**: The Photos tab matches 2.7.2: date headers, grid items, ad rows, column pinch and selection actions (#7).
+- [x] **PHO-01**: The Photos tab matches 2.7.2: date headers, grid items, ad rows, column pinch and selection actions (#7).
 
 ### Albums tab
 
@@ -134,10 +134,10 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 | ONB-03 | Phase 2: Onboarding | Pending |
 | ONB-04 | Phase 2: Onboarding | Pending |
 | ONB-05 | Phase 2: Onboarding | Pending |
-| HOME-01 | Phase 3: Home Shell and Photos Tab | Pending |
-| HOME-02 | Phase 3: Home Shell and Photos Tab | Pending |
-| HOME-03 | Phase 3: Home Shell and Photos Tab | Pending |
-| PHO-01 | Phase 3: Home Shell and Photos Tab | Pending |
+| HOME-01 | Phase 3: Home Shell and Photos Tab | Complete |
+| HOME-02 | Phase 3: Home Shell and Photos Tab | Complete |
+| HOME-03 | Phase 3: Home Shell and Photos Tab | Complete |
+| PHO-01 | Phase 3: Home Shell and Photos Tab | Complete |
 | ALB-01 | Phase 4: Albums, Stories and Explore | Pending |
 | ALB-02 | Phase 4: Albums, Stories and Explore | Pending |
 | EXP-01 | Phase 4: Albums, Stories and Explore | Pending |

@@ -2,7 +2,7 @@
 phase: 03-home-shell-and-photos-tab
 plan: 06
 type: verification
-status: in_progress
+status: complete
 last_updated: 2026-11-19
 ---
 
@@ -36,3 +36,22 @@ last_updated: 2026-11-19
 - Latest DataStore readback after the session-4 verification was `sessionCount=4 isPinchInOutToolTip=true isVaultHintToolTip=true vaultHintClosedSession=4`. The phone is restored to light mode and English, with the app on Photos at the grid top and no selection active. Phase 3 remains in progress: live checkpoint requirements (including selection/delete confirmation, pinch, fast-scroller, exit behavior, and dialog/picker parity) are not all verified; ARTEMIS task execution stalled despite diagnostics/probe passing. No checklist Verified boxes were ticked. Do not test favorite/delete/move/Add to Private outcomes on personal media; use a disposable synthetic item.
 
 - Direct ADB/UIAutomator follow-up: our Home Back shows the exit sheet; reference Home Back exits directly (handoff to Phase 13 per plan). Reference grid swipe hid bottom tabs; no date bubble/thumb was visually present in the saved scroll screenshot. Added pinch instrumentation test compiles, but execution is blocked by MIUI INSTALL_FAILED_USER_RESTRICTED; raw sendevent is denied by Android. Current user 0 has reference installed, debug package absent; temporary test package removed. No media modified.
+
+## Device check closed (2026-11-20)
+- **Artemis Pro run b48563a6** (read-only, nothing deleted or moved):
+  - grid: 3 columns across the full width, date headers, video badge;
+  - the tab bar hides on scroll and returns;
+  - the fast-scroll handle shows with no date bubble;
+  - selection bar: ✕ / "1 item(s) selected" / Select all, and Share, Favorite, Add to, Add to Private, Delete, Create album;
+  - Add to shows the album sheet;
+  - Add to Private asks "Hide Media / Are you sure you want to hide media?".
+- **Fixed after the run:**
+  - The delete prompt now reads 2.7.2's "Are you sure you want to delete 1 item?" (8465f2f).
+  - Back on Home exits directly, as 2.7.2 does; the user decided, and the exit sheet is removed (db1fe85).
+  - Pinch: recorded 2.7.2 side by side. It steps the column count with a ~200 ms cell glide and no whole-grid zoom. Ours now matches, and the user approved it (18193d5).
+- **Open questions answered:**
+  - exit popup → direct exit;
+  - fast-scroll bubble → none, as in 2.7.2;
+  - Add to Private → confirms first, as in 2.7.2;
+  - Add to → album sheet.
+- **Approved** by the user on the device.

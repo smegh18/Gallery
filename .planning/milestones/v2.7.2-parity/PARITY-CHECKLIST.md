@@ -47,7 +47,7 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 | 7 | Photos tab | fragment_all_media CHANGED; photos_tab_item_date/grid/ad NEW | home/PhotosTab.kt | [x] | [ ] |
 | 8 | Albums tab | fragment_album CHANGED; item_home_album_card NEW; item_stories, item_folder, item_grid_gallery CHANGED | home/AlbumsTab.kt | [ ] | [ ] |
 | 9 | Explore tab | fragment_explore CHANGED; explore_tab_hero/item_feature/item_row/item_tile NEW | home/ExploreTab.kt | [ ] | [ ] |
-| 10 | Exit popup | dialog_exit_popup CHANGED (note: Home exit uses dialog_exit through S272/jt/a; dialog_exit_popup is the photo editor's "Exit without saving?" dialog, ported in Phase 8; Phase 13 confirms popup versus direct exit) | HomeScreen back handling (home/HomeOverlays.kt HomeExitPopup) | [x] | [ ] |
+| 10 | Exit popup | dialog_exit_popup CHANGED (note: Home exit uses dialog_exit through S272/jt/a; dialog_exit_popup is the photo editor's "Exit without saving?" dialog, ported in Phase 8; Phase 13 confirms popup versus direct exit) | HomeScreen BackHandler: direct exit like 2.7.2 (popup removed 2026-11-20) | [x] | [ ] |
 | 11 | Floating button and sidebar | layout_floating_button, layout_floating_popup_menu, dialog_floating_button_popup CHANGED; item_floating_sidebar_action, layout_floating_sidebar_intro NEW | none: **decision D2** | [ ] | [ ] |
 | 12 | FloatingSettingActivity | (settings for 11) | none: **D2** | [ ] | [ ] |
 
