@@ -73,15 +73,13 @@ fun HomeScreen(
         uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context)
     )
 
-    var showExitPopup by remember { mutableStateOf(false) }
-
     // HA.Oooo0oO order: vault hint, then the ⋮ popup (its focusable window eats Back itself), then selection,
-    // then the exit popup. The pinch tutorial is not checked, so Back opens the exit popup above it.
+    // then exit. 2.7.2 ships app_exit = "direct" and was seen exiting straight away on the device.
     BackHandler {
         when {
             showVaultHint -> viewModel.closeVaultHint()
             uiState.isSelectionMode -> viewModel.clearSelection()
-            else -> showExitPopup = true
+            else -> (context as? Activity)?.finishAffinity()
         }
     }
 
@@ -297,13 +295,6 @@ fun HomeScreen(
         if (uiState.selectedTab == PAGE_PHOTOS && !uiState.pinchTipSeen && checkStoragePermissions(context)) {
             PinchTutorialOverlay(onGotIt = { viewModel.dismissPinchTip() })
         }
-    }
-
-    if (showExitPopup) {
-        HomeExitPopup(
-            onExit = { (context as? Activity)?.finishAffinity() }, // jt/a.Wja3o2vx62
-            onDismiss = { showExitPopup = false }
-        )
     }
 
     if (showSortDialog) {
