@@ -157,7 +157,7 @@
     <string name="str_home_collage">Collage</string>
     <string name="explore_collage_desc">Combina tus fotos</string>
     <string name="vault">Bóveda</string>
-    <string name="str_home_favourite">\tFavoritos</string>
+    <string name="str_home_favourite">\u0009Favoritos</string>
     <string name="str_home_Moments">Momentos</string>
     <string name="str_home_place">Lugar</string>
     <string name="str_home_Recycle_bin">Papelera de reciclaje</string>

@@ -57,7 +57,7 @@
  அனைத்து கோப்புகளும் அணுகல் என்பது கூகுளுக்கு மிகவும் முக்கியத்துவம் வாய்ந்தது. இந்த அனுமதி தேவைப்படும் எல்லா ஆப்ஸும் வெளியிடப்படுவதற்கு முன் கூகுள் கண்டிப்பான மதிப்பாய்வுக்கு உட்படுத்தப்பட வேண்டும். எந்த தீங்கிழைக்கும் பயன்பாடும் இந்த அனுமதியைப் பெற முடியாது.
 
  தெரிந்து கொள்ள பின்வரும் URL ஐ கிளிக் செய்யவும் மேலும் அறிய: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\tஅமைப்புகளைத் திறக்கவும்</string>
+    <string name="open_settings">\u0009அமைப்புகளைத் திறக்கவும்</string>
     <string name="select_app_language">பயன்பாட்டு மொழியைத் தேர்ந்தெடு</string>
     <string name="album_collage_new">புது</string>
     <string name="collage_maker_explore_title">கோலாஜ் தயாரிப்பாளர்</string>

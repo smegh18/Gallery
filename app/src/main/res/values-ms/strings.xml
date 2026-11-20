@@ -57,7 +57,7 @@
  Akses Semua Fail juga amat penting untuk Google. Semua apl yang memerlukan kebenaran ini mesti menjalani semakan ketat oleh Google sebelum diterbitkan. Tiada apl berniat jahat boleh mendapat kebenaran ini.
 
  Klik URL berikut untuk mengetahui untuk lebih lanjut: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\tBuka Tetapan</string>
+    <string name="open_settings">\u0009Buka Tetapan</string>
     <string name="select_app_language">Pilih Bahasa Aplikasi</string>
     <string name="album_collage_new">Baru</string>
     <string name="collage_maker_explore_title">Pembuat Kolaj</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Kolaj</string>
     <string name="explore_collage_desc">Gabungkan foto anda</string>
     <string name="vault">Peti Simpanan</string>
-    <string name="str_home_favourite">\tKegemaran</string>
+    <string name="str_home_favourite">\u0009Kegemaran</string>
     <string name="str_home_Moments">Saat</string>
     <string name="str_home_place">Tempat</string>
     <string name="str_home_Recycle_bin">Tong Kitar Semula</string>

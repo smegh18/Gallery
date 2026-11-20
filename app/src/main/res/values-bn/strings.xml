@@ -49,7 +49,7 @@
     <string name="allow_access_to_manage_all_files">সমস্ত ফাইল পরিচালনা করতে অ্যাক্সেসের অনুমতি দিন</string>
     <string name="about_permission_title">কেন আমরা এই অনুমতি প্রয়োজন?</string>
     <string name="about_permission_description">পূর্বে, আপনার ডিভাইসে ফটো এবং ভিডিও স্ক্যান করতে এবং দেখতে গ্যালারির আপনার স্টোরেজ অ্যাক্সেসের প্রয়োজন ছিল। কিন্তু অ্যান্ড্রয়েড 11 এবং তার বেশির জন্য নিরাপত্তা নীতি আপডেটের ফলস্বরূপ, এখন এটি করতে সমস্ত ফাইল অ্যাক্সেসের প্রয়োজন। আমরা আপনাকে প্রতিশ্রুতি দিচ্ছি যে এই অনুমতিটি শুধুমাত্র আপনার ডিভাইসে ফটো এবং ভিডিও অ্যাক্সেস করতে ব্যবহার করা হবে এবং অন্য কোন উদ্দেশ্যে ব্যবহার করা হবে না। সমস্ত ফাইল অ্যাক্সেস গুগলের জন্যও অত্যন্ত গুরুত্বপূর্ণ। যে সমস্ত অ্যাপের জন্য এই অনুমতির প্রয়োজন হয় সেগুলিকে প্রকাশ করার আগে Google দ্বারা কঠোর পর্যালোচনা করতে হবে৷ কোনো ক্ষতিকারক অ্যাপ এই অনুমতি পেতে পারে না। আরও জানতে নিম্নলিখিত URL এ ক্লিক করুন: https://support.google.com/googleplay/android-developer/answer/10467955</string>
-    <string name="open_settings">\tসেটিংস খুলুন</string>
+    <string name="open_settings">\u0009সেটিংস খুলুন</string>
     <string name="select_app_language">অ্যাপের ভাষা নির্বাচন করুন</string>
     <string name="album_collage_new">নতুন</string>
     <string name="collage_maker_explore_title">কোলাজ মেকার</string>
@@ -148,7 +148,7 @@
     <string name="tiktok">টিকটক</string>
     <string name="str_home_collage">কোলাজ</string>
     <string name="vault">ভল্ট</string>
-    <string name="str_home_favourite">\tপ্রিয়</string>
+    <string name="str_home_favourite">\u0009প্রিয়</string>
     <string name="str_home_Moments">মুহূর্ত</string>
     <string name="str_home_place">স্থান</string>
     <string name="str_home_Recycle_bin">রিসাইকেল বিন</string>

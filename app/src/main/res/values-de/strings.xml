@@ -49,7 +49,7 @@
     <string name="allow_access_to_manage_all_files">Zugriff zum Verwalten aller Dateien erlauben</string>
     <string name="about_permission_title">Warum benötigen wir diese Berechtigung?</string>
     <string name="about_permission_description">Früher benötigte die Galerie den Zugriff auf Ihren Speicher, um Fotos und Videos auf Ihrem Gerät zu scannen und anzuzeigen. Aufgrund der Sicherheitsrichtlinien für Android 11 und höher ist nun der Zugriff auf Alle Dateien für dieselben Aufgaben erforderlich. Wir versichern Ihnen, dass diese Berechtigung nur zum Zugriff auf Fotos und Videos auf Ihrem Gerät verwendet wird und nicht zu anderen Zwecken. Alle Dateien ist auch für Google von großer Bedeutung. Alle Apps, die diese Berechtigung benötigen, müssen vor der Veröffentlichung einer strengen Überprüfung durch Google unterzogen werden. Keine bösartige App kann diese Berechtigung erhalten. Klicken Sie auf folgenden Link, um mehr zu erfahren: https://support.google.com/googleplay/android-developer/answer/10467955</string>
-    <string name="open_settings">\tEinstellungen öffnen</string>
+    <string name="open_settings">\u0009Einstellungen öffnen</string>
     <string name="select_app_language">App-Sprache auswählen</string>
     <string name="album_collage_new">Neu</string>
     <string name="collage_maker_explore_title">Collage Maker</string>
