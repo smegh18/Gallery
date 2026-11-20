@@ -270,4 +270,5 @@
     <string name="change_cover">कवर बदला</string>
     <string name="total_files">एकूण फाइल्स</string>
     <string name="modifying_items">%s आयटम संपादित करत आहे...</string>
+    <string name="something_went_wrong">काही तंत्रधन होतंय!</string>
 </resources>

@@ -276,4 +276,5 @@
     <string name="change_cover">更换封面</string>
     <string name="total_files">文件总数</string>
     <string name="modifying_items">正在修改 %s 个项目...</string>
+    <string name="something_went_wrong">出現了問題！</string>
 </resources>

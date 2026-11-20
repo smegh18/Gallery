@@ -286,4 +286,5 @@
     <string name="change_cover">표지 변경</string>
     <string name="total_files">총 파일 수</string>
     <string name="modifying_items">%s개의 항목 수정 중...</string>
+    <string name="something_went_wrong">문제가 발생했습니다!</string>
 </resources>

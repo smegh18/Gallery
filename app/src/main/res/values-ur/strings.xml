@@ -257,4 +257,5 @@
     <string name="change_cover">کور میں تبدیلی کریں</string>
     <string name="total_files">کل فائلیں</string>
     <string name="modifying_items">%s اشیاء میں ترمیم کی جا رہی ہیں۔..</string>
+    <string name="something_went_wrong">ایک مسئلہ پیش آیا!</string>
 </resources>

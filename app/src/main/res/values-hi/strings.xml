@@ -286,4 +286,5 @@
     <string name="change_cover">कवर बदलें</string>
     <string name="total_files">कुल फ़ाइलें</string>
     <string name="modifying_items">%s आइटमों को संशोधित किया जा रहा है...</string>
+    <string name="something_went_wrong">एक समस्या उत्पन्न हुई!</string>
 </resources>

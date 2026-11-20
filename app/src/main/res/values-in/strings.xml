@@ -286,4 +286,5 @@
     <string name="change_cover">Ubah Sampul</string>
     <string name="total_files">Total file</string>
     <string name="modifying_items">Mengubah %s item...</string>
+    <string name="something_went_wrong">Terjadi masalah!</string>
 </resources>

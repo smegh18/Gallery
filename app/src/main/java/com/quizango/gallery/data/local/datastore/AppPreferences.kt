@@ -3,6 +3,7 @@ package com.quizango.gallery.data.local.datastore
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.quizango.gallery.data.repository.movedPath
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -134,6 +135,18 @@ class AppPreferences(private val context: Context) {
         context.dataStore.edit { prefs ->
             val now = prefs[Keys.ALBUM_COVER] ?: emptySet()
             prefs[Keys.ALBUM_COVER] = now.filterNot { parseAlbumCovers(setOf(it)).containsKey(folder) }.toSet() + albumCoverEntry(folder, coverPath)
+        }
+    }
+
+    /** A renamed folder keeps its pin and cover: every entry at or under [oldFolder] follows it to [newFolder]. */
+    suspend fun moveAlbumKeys(oldFolder: String, newFolder: String) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.PIN_ALBUM]?.let { pins -> prefs[Keys.PIN_ALBUM] = pins.map { movedPath(it, oldFolder, newFolder) }.toSet() }
+            prefs[Keys.ALBUM_COVER]?.let { covers ->
+                prefs[Keys.ALBUM_COVER] = parseAlbumCovers(covers)
+                    .map { (folder, cover) -> albumCoverEntry(movedPath(folder, oldFolder, newFolder), movedPath(cover, oldFolder, newFolder)) }
+                    .toSet()
+            }
         }
     }
 

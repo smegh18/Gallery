@@ -24,7 +24,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.text.style.TextAlign
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +39,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -439,6 +443,123 @@ internal fun CreateAlbumDialog(onCreate: (String) -> Unit, onDismiss: () -> Unit
                         .padding(vertical = 10.sdp)
                 )
             }
+        }
+    }
+}
+
+/**
+ * dialog_rename (S272/ci/h): the same underlined field as the create dialog, prefilled with [current] and hinted
+ * enter_name, Cancel / Save. Save as ci/h does it: empty does nothing, 50+ characters or a name taken in [parent]
+ * (ignoring case, so an unchanged or case-only name too) gets a toast, otherwise [onSave] with the trimmed name.
+ */
+@Composable
+internal fun RenameAlbumDialog(current: String, parent: File, onSave: (String) -> Unit, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var field by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(current, TextRange(current.length))) }
+    var checking by remember { mutableStateOf(false) }
+    var focused by remember { mutableStateOf(false) }
+    val focus = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        focus.requestFocus()
+        keyboard?.show()
+    }
+    val titleColor = colorResource(R.color.titleColor)
+    val lineColor = colorResource(if (focused) R.color.dark_blue else R.color.album_dialog)
+    val tooLong = stringResource(R.string.album_name_cannot_exceed_more_than_50_characters)
+    val taken = stringResource(R.string.album_name_already_exists)
+    CommonDialog(onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(R.color.dialogBack), RoundedCornerShape(14.sdp))
+                .padding(vertical = 5.sdp)
+        ) {
+            Text(
+                text = stringResource(R.string.rename),
+                style = GalleryText.BodyXLargeSemiBold,
+                color = titleColor,
+                modifier = Modifier.padding(start = 16.sdp, top = 15.sdp)
+            )
+            val textStyle = GalleryText.BodyMediumMedium.copy(color = colorResource(R.color.black))
+            BasicTextField(
+                value = field,
+                onValueChange = { new -> field = new.copy(text = filterAlbumNameEdit(field.text, new.text)) },
+                singleLine = true,
+                textStyle = textStyle,
+                cursorBrush = SolidColor(colorResource(R.color.dark_blue)),
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.sdp)
+                    .padding(top = 10.sdp)
+                    .focusRequester(focus)
+                    .onFocusChanged { focused = it.isFocused }
+                    .drawBehind {
+                        val stroke = (if (focused) 2.dp else 1.dp).toPx()
+                        val y = size.height - stroke / 2
+                        drawLine(lineColor, Offset(4.dp.toPx(), y), Offset(size.width - 4.dp.toPx(), y), stroke)
+                    }
+                    .padding(horizontal = 4.dp, vertical = 15.sdp),
+                decorationBox = { inner ->
+                    if (field.text.isEmpty()) {
+                        Text(stringResource(R.string.enter_name), style = textStyle, color = colorResource(R.color.hintLanguageColor))
+                    }
+                    inner()
+                }
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.sdp)
+                    .padding(horizontal = 15.sdp, vertical = 10.sdp)
+            ) {
+                DialogButton(
+                    R.string.cancel, colorResource(R.color.fastScrollerColor), R.drawable.help_delete_cancel_bg,
+                    Modifier.weight(1f).padding(horizontal = 10.sdp), onClick = onDismiss
+                )
+                DialogButton(
+                    R.string.save, colorResource(R.color.onlyWhite), R.drawable.btn_permission,
+                    Modifier.weight(1f).padding(horizontal = 10.sdp)
+                ) {
+                    val trimmed = field.text.trim()
+                    when (checkAlbumName(trimmed)) {
+                        AlbumNameCheck.EMPTY -> Unit
+                        AlbumNameCheck.TOO_LONG -> Toast.makeText(context, tooLong, Toast.LENGTH_SHORT).show()
+                        AlbumNameCheck.OK -> if (!checking) {
+                            checking = true
+                            scope.launch {
+                                val exists = withContext(Dispatchers.IO) { albumNameExists(trimmed, listOf(parent)) }
+                                checking = false
+                                if (exists) Toast.makeText(context, taken, Toast.LENGTH_SHORT).show() else onSave(trimmed)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** dialog_album_rename_progress (S272/bz/a): spinner and "Modifying N items…"; not cancelable. */
+@Composable
+internal fun RenameProgressDialog(count: Int) {
+    CommonDialog({}, cancelable = false) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(R.color.dialogBack), RoundedCornerShape(16.sdp))
+                .padding(15.sdp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CircularProgressIndicator(color = colorResource(R.color.colorPrimary), modifier = Modifier.size(40.dp))
+            Text(
+                text = stringResource(R.string.modifying_items, count),
+                style = GalleryText.BodyXLargeMedium,
+                color = colorResource(R.color.titleColor),
+                modifier = Modifier.padding(start = 15.sdp)
+            )
         }
     }
 }

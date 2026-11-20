@@ -66,6 +66,9 @@ fun HomeScreen(
     var showAddToSheet by remember { mutableStateOf(false) }
     var showHideDialog by remember { mutableStateOf(false) }
     var showCoverPicker by remember { mutableStateOf(false) }
+    var showRename by remember { mutableStateOf(false) }
+    var renaming by remember { mutableStateOf<Int?>(null) } // item count while the rename runs
+    val renameFailed = stringResource(R.string.something_went_wrong)
     val shareTitle = stringResource(R.string.share)
     val copiedMessage = stringResource(R.string.items_copied_successfully)
     val movedMessage = stringResource(R.string.items_moved_successfully)
@@ -245,7 +248,7 @@ fun HomeScreen(
                         onAddTo = { showAddToSheet = true },
                         onDelete = { showDeleteDialog = true },
                         onChangeCover = { if (viewModel.changeCoverTarget() != null) showCoverPicker = true },
-                        onRename = {}, // 04-05
+                        onRename = { if (viewModel.changeCoverTarget() != null) showRename = true },
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
                 } else if (uiState.isSelectionMode) {
@@ -321,6 +324,25 @@ fun HomeScreen(
             )
         }
     }
+
+    if (showRename) {
+        val target = viewModel.changeCoverTarget()
+        if (target == null) showRename = false
+        else RenameAlbumDialog(
+            current = target.name,
+            parent = File(target.path).parentFile ?: File("/"),
+            onSave = { name ->
+                showRename = false
+                renaming = target.itemCount
+                viewModel.renameSelectedAlbum(name) { ok ->
+                    renaming = null
+                    if (!ok) Toast.makeText(context, renameFailed, Toast.LENGTH_SHORT).show()
+                }
+            },
+            onDismiss = { showRename = false }
+        )
+    }
+    renaming?.let { RenameProgressDialog(it) }
 
     if (showSortDialog) {
         SortDialog(

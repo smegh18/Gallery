@@ -278,4 +278,5 @@
     <string name="change_cover">Cambiar portada</string>
     <string name="total_files">Total de archivos</string>
     <string name="modifying_items">Modificando %s elementos...</string>
+    <string name="something_went_wrong">¡Se ha producido un problema!</string>
 </resources>

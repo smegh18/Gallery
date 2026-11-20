@@ -235,6 +235,19 @@ class HomeViewModel(
         clearAlbumSelection()
     }
 
+    /** Rename acts only when exactly one album is selected (2.7.2 AF returns for more). Keys follow the folder on success. */
+    fun renameSelectedAlbum(newName: String, onResult: (Boolean) -> Unit) {
+        val album = changeCoverTarget() ?: return onResult(false)
+        viewModelScope.launch {
+            val newPath = mediaRepository.renameFolder(album.path, newName)
+            if (newPath != null) {
+                preferences.moveAlbumKeys(album.path, newPath)
+                clearAlbumSelection()
+            }
+            onResult(newPath != null)
+        }
+    }
+
     fun toggleFavorite(item: MediaItem) {
         viewModelScope.launch {
             mediaRepository.setFavorite(item.filePath, !item.isFavorite)

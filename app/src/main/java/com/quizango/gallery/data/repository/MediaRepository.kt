@@ -35,6 +35,62 @@ interface MediaRepository {
     suspend fun renameMedia(oldPath: String, newName: String): Boolean
     suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean
     suspend fun moveMediaToFolder(filePath: String, destFolder: String): Boolean
+
+    /** Renames the folder on disk and moves its rows to the new paths; the new folder path, or null when refused or failed. */
+    suspend fun renameFolder(folderPath: String, newName: String): String?
+}
+
+/** [path] after [oldFolder] became [newFolder]: the folder itself and everything under it move, any other path stays. */
+internal fun movedPath(path: String, oldFolder: String, newFolder: String): String = when {
+    path == oldFolder -> newFolder
+    path.startsWith("$oldFolder/") -> newFolder + path.substring(oldFolder.length)
+    else -> path
+}
+
+/**
+ * Renames [folder] to [newName] and rewrites the rows of its whole tree (active and Recycle Bin, subfolders included)
+ * under the new paths with every other field kept. The rows are read before the rename and replaced in ONE
+ * [inTransaction] call after it succeeds, so a media sync running meanwhile sees all old or all new rows. Returns the
+ * old and new file paths for the MediaStore scan, or null with nothing touched when the folder is missing, a sibling
+ * already has the name (ignoring case, so also an unchanged or case-only rename) or [renameDir] fails.
+ */
+internal suspend fun renameFolderRows(
+    dao: GalleryDao,
+    folder: File,
+    newName: String,
+    inTransaction: suspend (suspend () -> Unit) -> Unit,
+    renameDir: (File, File) -> Boolean = { from, to -> from.renameTo(to) }
+): Pair<List<String>, List<String>>? {
+    val parent = folder.parentFile ?: return null
+    if (!folder.isDirectory || newName.isBlank()) return null
+    if (parent.listFiles()?.any { it.name.equals(newName, ignoreCase = true) } != false) return null // taken, or unreadable
+    val oldFolder = folder.path.replace(File.separatorChar, '/')
+    val newFolder = File(parent, newName).path.replace(File.separatorChar, '/')
+    val tree = dao.getAllMedia().filter { it.filePath.startsWith("$oldFolder/") }
+    if (!renameDir(folder, File(parent, newName))) return null
+    val moved = tree.map { row ->
+        val tail = row.folderPath.removePrefix(oldFolder) // "" for a direct file, "/sub" below it
+        val rel = row.relativePath.trimEnd('/')
+        row.copy(
+            filePath = movedPath(row.filePath, oldFolder, newFolder),
+            folderPath = movedPath(row.folderPath, oldFolder, newFolder),
+            folderName = if (tail.isEmpty()) newName else row.folderName,
+            relativePath = if (rel.endsWith(folder.name + tail)) {
+                rel.removeSuffix(folder.name + tail) + newName + tail + row.relativePath.substring(rel.length)
+            } else row.relativePath
+        )
+    }
+    val oldPaths = tree.map { it.filePath }
+    try {
+        inTransaction {
+            dao.insertAll(moved)
+            oldPaths.chunked(500).forEach { dao.deleteByPaths(it) } // SQLite caps the variables of one IN list
+        }
+    } catch (e: Exception) {
+        renameDir(File(parent, newName), folder) // the transaction rolled back, so put the folder back to match the rows
+        throw e
+    }
+    return oldPaths to moved.map { it.filePath }
 }
 
 /** S272/s9/k.OooOOO: [fileName] in [dir], or "name(n).ext" with the first free n. Like 2.7.2 it drops a leading dot. */
@@ -76,7 +132,8 @@ internal fun moveIntoFolder(src: File, dir: File): File? {
 class MediaRepositoryImpl(
     private val dao: GalleryDao,
     private val scanner: MediaStoreScanner,
-    private val momentLabels: Flow<Map<String, String>>
+    private val momentLabels: Flow<Map<String, String>>,
+    private val inTransaction: suspend (suspend () -> Unit) -> Unit = { it() }
 ) : MediaRepository {
 
     // One shared Room subscription for the whole app, kept for 5 s after the last collector.
@@ -470,6 +527,17 @@ class MediaRepositoryImpl(
             true
         } catch (_: Exception) {
             false
+        }
+    }
+
+    override suspend fun renameFolder(folderPath: String, newName: String): String? = withContext(Dispatchers.IO) {
+        try {
+            val folder = File(folderPath)
+            val (oldPaths, newPaths) = renameFolderRows(dao, folder, newName, inTransaction) ?: return@withContext null
+            scanner.scanFiles(*(newPaths + oldPaths).toTypedArray())
+            File(folder.parentFile, newName).path
+        } catch (_: Exception) {
+            null
         }
     }
 }

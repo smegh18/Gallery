@@ -278,4 +278,5 @@
     <string name="change_cover">تغییر جلد</string>
     <string name="total_files">تعداد کل فایل‌ها</string>
     <string name="modifying_items">در حال ویرایش %s مورد...</string>
+    <string name="something_went_wrong">یک مشکل پیش آمد!</string>
 </resources>
