@@ -39,6 +39,8 @@ data class HomeUiState(
     val sessionCount: Int = 0,
     val vaultHintSeen: Boolean = true, // true until the preference loads, so the hint never flashes
     val vaultHintClosedSession: Int = 0,
+    val junkCleanedToday: Boolean = false,
+    val collageNewSeen: Boolean = true, // true until the preference loads, so the badge never flashes
     val selectedPaths: Set<String> = emptySet(),
     val isSelectionMode: Boolean = false,
     val isSyncing: Boolean = false,
@@ -73,6 +75,10 @@ class HomeViewModel(
             _uiState.update { it.copy(sessionCount = session, vaultHintSeen = seen, vaultHintClosedSession = closed) }
         }.launchIn(viewModelScope)
 
+        combine(preferences.isJunkCleanedForToday, preferences.collageMakerNewButtonExplore) { junk, seen ->
+            _uiState.update { it.copy(junkCleanedToday = junk, collageNewSeen = seen) }
+        }.launchIn(viewModelScope)
+
         combine(
             mediaRepository.getActiveMediaFlow(),
             _uiState.map { it.searchQuery }.distinctUntilChanged(),
@@ -103,6 +109,10 @@ class HomeViewModel(
         }
 
         syncMedia()
+    }
+
+    fun markCollageNewSeen() {
+        viewModelScope.launch { preferences.setCollageMakerNewButtonExplore(true) }
     }
 
     fun syncMedia() {

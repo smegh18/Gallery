@@ -210,7 +210,10 @@ fun HomeScreen(
                         onColumnCountChange = viewModel::setColumnCount
                     )
                     PAGE_EXPLORE -> ExploreTab(
-                        onNavigate = onNavigate
+                        junkCleanedToday = uiState.junkCleanedToday,
+                        showCollageNew = showsCollageNew(uiState.collageNewSeen, uiState.sessionCount),
+                        onNavigate = onNavigate,
+                        onCollageOpened = viewModel::markCollageNewSeen
                     )
                 }
                 }
