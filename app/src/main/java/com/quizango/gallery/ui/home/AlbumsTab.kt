@@ -1,7 +1,10 @@
 package com.quizango.gallery.ui.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,11 +17,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -27,11 +34,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.request.ImageRequest
 import coil.compose.AsyncImage
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.discovery.Story
 import com.quizango.gallery.ui.discovery.StoryBuilder
 import com.quizango.gallery.ui.discovery.StoryQueue
 import com.quizango.gallery.domain.model.Album
@@ -42,7 +48,6 @@ import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
 import java.text.NumberFormat
 import java.util.Locale
-import com.quizango.gallery.ui.theme.topContainerBg
 
 internal const val ALBUM_FAVORITES = "filter:favorites" // the id getMediaByFolderFlow already knows
 internal const val ALBUM_DELETED = "filter:deleted"
@@ -109,7 +114,7 @@ fun AlbumsTab(
     isLoading: Boolean,
     mediaList: List<MediaItem> = emptyList(),
     onAlbumClick: (Album, String) -> Unit,
-    onStoryClick: (path: String, title: String) -> Unit = { _, _ -> }
+    onStoryClick: (id: String) -> Unit = {}
 ) {
     if (isLoading) {
         // fragment_album: only a centred progress bar until the first sync has returned
@@ -123,6 +128,7 @@ fun AlbumsTab(
     }
     // Reference story rules (HomeViewModel): see StoryBuilder
     val stories = androidx.compose.runtime.remember(mediaList) { StoryBuilder.build(mediaList) }
+    val row = androidx.compose.runtime.remember(stories) { storyRow(stories) }
     val rows = androidx.compose.runtime.remember(albumsList, favoriteAlbum, deletedAlbum) {
         albumGrid(albumsList, favoriteAlbum, deletedAlbum).chunked(3)
     }
@@ -132,27 +138,12 @@ fun AlbumsTab(
             .fillMaxSize()
             .background(colorResource(R.color.album_tab_bg))
     ) {
-        // Stories strip (Reference: storyRecycler in fragment_album.xml)
+        // Stories strip (storyRecycler): padding 7/9/7/10.sdp, no item spacing, no background
         item {
-            StoryQueue.stories = stories
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 2.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(stories, key = { "story_${it.id}" }) { story ->
-                    StoryCircleItem(
-                        title = story.title,
-                        imageModel = story.items.first().contentUri,
-                        gradientColors = when (story.id) {
-                            "recent" -> listOf(Color(0xFFFF3093), Color(0xFFFF5252), Color(0xFFFFC701), Color(0xFFFF3093))
-                            "random" -> listOf(Color(0xFF0072FF), Color(0xFF00C6FF), Color(0xFF0072FF))
-                            "favorite" -> listOf(Color(0xFFFF416C), Color(0xFFFF4B2B), Color(0xFFFF416C))
-                            else -> listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2))
-                        },
-                        onClick = { onStoryClick(story.id, story.title) }
-                    )
+            StoryQueue.stories = stories // without the ad circle, so the viewer never plays it
+            LazyRow(contentPadding = PaddingValues(start = 7.sdp, top = 9.sdp, end = 7.sdp, bottom = 10.sdp)) {
+                items(row, key = { it?.id ?: "playzen" }) { story ->
+                    StoryItem(story, onClick = { story?.let { onStoryClick(it.id) } })
                 }
             }
             Spacer(Modifier.height(7.sdp)) // albumRecycler marginTop
@@ -252,66 +243,71 @@ private fun HomeAlbumCard(album: Album, title: String, onClick: () -> Unit) {
     }
 }
 
+/** The story row: the Playzen ad circle goes in at index 2 (clamped), only into a non-empty row (AF.OooOo). */
+internal fun storyRow(stories: List<Story>): List<Story?> {
+    if (stories.isEmpty()) return emptyList()
+    return ArrayList<Story?>(stories).apply { add(minOf(2, size), null) }
+}
+
+/** item_stories: [story] null is the Playzen ad circle. */
 @Composable
-private fun StoryCircleItem(
-    title: String,
-    imageModel: Any?,
-    placeholderRes: Int = 0,
-    gradientColors: List<Color>,
-    onClick: () -> Unit
-) {
+private fun StoryItem(story: Story?, onClick: () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (pressed) 0.9f else 1f, label = "storyRingPress") // InsLoadingView.onTouchEvent
+    val ring = colorResource(R.color.album_tab_story_ring)
     Column(
-        modifier = Modifier
-            .width(76.dp)
-            .clickable(onClick = onClick)
-            .padding(vertical = 2.dp),
+        modifier = Modifier.width(64.sdp).clickable(interactionSource = interaction, indication = null, onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .size(66.dp)
-                .clip(CircleShape)
-                .background(Brush.sweepGradient(gradientColors))
-                .padding(2.5.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.topContainerBg)
-                .padding(2.dp)
-                .clip(CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            if (imageModel != null) {
-                AsyncImage(
-                    model = imageModel,
-                    contentDescription = title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else if (placeholderRes != 0) {
+        Box(Modifier.size(61.sdp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer { scaleX = scale; scaleY = scale }
+                    .drawBehind {
+                        // InsLoadingView "unclicked": one solid ring, diameter 0.9, stroke 0.025 of the view
+                        drawCircle(ring, radius = size.minDimension * 0.45f, style = Stroke(width = size.minDimension * 0.025f))
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Box(Modifier.fillMaxSize(0.865f).clip(CircleShape)) {
+                    if (story != null) {
+                        AsyncImage(
+                            model = story.items.first().contentUri,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.ic_story_playzen),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+            }
+            if (story == null) {
                 Image(
-                    painter = painterResource(id = placeholderRes),
-                    contentDescription = title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                    painter = painterResource(R.drawable.ad_bg),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize().padding(8.sdp)
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
         Text(
-            text = title,
-            fontSize = 11.5.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onBackground,
+            text = stringResource(story?.titleRes ?: R.string.playzen),
+            fontFamily = Inter,
+            fontWeight = FontWeight.Normal,
+            fontSize = 8.ssp,
+            lineHeight = 10.ssp,
+            color = colorResource(R.color.album_tab_story_label),
+            textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 2.sdp).padding(top = 1.sdp)
         )
     }
 }

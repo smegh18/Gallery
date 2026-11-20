@@ -193,9 +193,7 @@ fun HomeScreen(
                         favoriteAlbum = uiState.favoriteAlbum,
                         deletedAlbum = uiState.deletedAlbum,
                         onAlbumClick = { album, title -> onNavigate(albumRoute(album, title)) },
-                        onStoryClick = { path, title ->
-                            onNavigate(Screen.StoryView.createRoute(path, title))
-                        }
+                        onStoryClick = { id -> onNavigate(Screen.StoryView.createRoute(id, "")) }
                     )
                     PAGE_PHOTOS -> PhotosTab(
                         mediaList = uiState.mediaList,

@@ -11,6 +11,8 @@ import com.quizango.gallery.ui.home.albumGrid
 import com.quizango.gallery.ui.home.albumRoute
 import com.quizango.gallery.ui.home.deletedCard
 import com.quizango.gallery.ui.home.favoritesCard
+import com.quizango.gallery.ui.home.storyRow
+import com.quizango.gallery.ui.discovery.Story
 import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -80,6 +82,16 @@ class AlbumsTabTest {
         assertEquals("1,234", albumCountText(1234, Locale.US))
         assertEquals("0", albumCountText(0, Locale.US))
         assertEquals("1.234", albumCountText(1234, Locale.GERMANY))
+    }
+
+    private fun story(id: String) = Story(id, R.string.recent, emptyList())
+
+    @Test
+    fun adCircleSitsAtIndexTwoOfANonEmptyRow() {
+        val (recent, memories, random) = listOf(story("recent"), story("memories"), story("random"))
+        assertEquals(listOf(recent, memories, null, random), storyRow(listOf(recent, memories, random)))
+        assertEquals(listOf(recent, null), storyRow(listOf(recent))) // index clamped to size
+        assertEquals(emptyList<Story?>(), storyRow(emptyList())) // no ad circle in an empty row
     }
 
     @Test

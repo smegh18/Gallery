@@ -20,10 +20,16 @@ class StoryQueueTest {
 
     @Test
     fun nextStoryUntilTheLast() {
-        StoryQueue.stories = listOf(Story("recent", "Recent", emptyList()), Story("random", "Random", emptyList()))
+        StoryQueue.stories = listOf(Story("recent", R.string.recent, emptyList()), Story("random", R.string.random, emptyList()))
         assertEquals("random", StoryQueue.next("recent")?.id)
         assertNull(StoryQueue.next("random")) // last story closes
         assertNull(StoryQueue.next("vault")) // not from the row
+    }
+
+    @Test
+    fun threeYearsBackIsFlashback() {
+        val stories = StoryBuilder.build(listOf(photo("y3", 1095 * day)), now)
+        assertEquals(R.string.flash_back, stories.single { it.id == "flashback" }.titleRes)
     }
 
     @Test
@@ -37,6 +43,10 @@ class StoryQueueTest {
             )
         val stories = StoryBuilder.build(media, now)
         assertEquals(listOf("recent", "memories", "random", "favorite"), stories.map { it.id })
+        assertEquals(
+            listOf(R.string.recent, R.string.album_tab_memories, R.string.random, R.string.favorite),
+            stories.map { it.titleRes }
+        )
         val recent = stories[0].items.map { it.filePath }
         assertEquals(listOf("new1", "new2"), recent) // last 10 days, newest first, no screenshots or videos
         assertTrue(stories.all { it.items.size <= 15 })

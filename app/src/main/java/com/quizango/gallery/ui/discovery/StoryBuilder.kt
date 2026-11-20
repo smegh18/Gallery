@@ -1,10 +1,12 @@
 package com.quizango.gallery.ui.discovery
 
+import androidx.annotation.StringRes
+import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import java.util.Calendar
 
-data class Story(val id: String, val title: String, val items: List<MediaItem>)
+data class Story(val id: String, @StringRes val titleRes: Int, val items: List<MediaItem>)
 
 /**
  * Home stories, as the reference HomeViewModel builds them: photos only (no video, GIF or
@@ -27,8 +29,8 @@ object StoryBuilder {
         val favorite = photos.filter { it.isFavorite }.shuffled().take(MAX).sortedWith(newestFirst)
 
         // (sort value, story) in the reference's insertion order; the sort is stable
-        val stories = mutableListOf(0 to Story("recent", "Recent", recent))
-        for ((n, id, title) in listOf(Triple(1, "memories", "Memories"), Triple(3, "flashback", "Flashback"))) {
+        val stories = mutableListOf(0 to Story("recent", R.string.recent, recent))
+        for ((n, id, title) in listOf(Triple(1, "memories", R.string.album_tab_memories), Triple(3, "flashback", R.string.flash_back))) {
             val years = window(photos, now, n, Calendar.YEAR)
             stories += if (years.isNotEmpty()) {
                 (if (n == 1) 4 else 5) to Story(id, title, years.take(MAX))
@@ -36,8 +38,8 @@ object StoryBuilder {
                 (if (n == 1) 2 else 3) to Story(id, title, window(photos, now, n, Calendar.MONTH).take(MAX))
             }
         }
-        stories += 5 to Story("random", "Random", random)
-        stories += 6 to Story("favorite", "Favorite", favorite)
+        stories += 5 to Story("random", R.string.random, random)
+        stories += 6 to Story("favorite", R.string.favorite, favorite)
         return stories.filter { it.second.items.isNotEmpty() }.sortedBy { it.first }.map { it.second }
     }
 
