@@ -1,6 +1,8 @@
 package com.quizango.gallery
 
 import com.quizango.gallery.domain.model.Album
+import com.quizango.gallery.domain.model.MediaItem
+import com.quizango.gallery.ui.home.albumMediaPaths
 import com.quizango.gallery.ui.home.ALBUM_DELETED
 import com.quizango.gallery.ui.home.ALBUM_FAVORITES
 import com.quizango.gallery.ui.home.albumGrid
@@ -53,5 +55,17 @@ class AlbumSelectionTest {
     fun withPinsMarksOnlyFolders() {
         val marked = withPins(listOf(album("filter:camera"), album("/c"), album("/d")), pinned = setOf("/c", "filter:camera"))
         assertEquals(listOf(false, true, false), marked.map { it.isPinned })
+    }
+
+    private fun item(path: String, folder: String) = MediaItem(
+        id = 0, filePath = path, fileName = path, fileSize = 0, folderName = "", folderPath = folder,
+        dateModified = 0, dateTaken = 0
+    )
+
+    @Test
+    fun albumMediaPathsCollectsEveryFileOfTheSelectedFolders() {
+        val media = listOf(item("/a/1.jpg", "/a"), item("/a/2.jpg", "/a"), item("/b/3.jpg", "/b"))
+        assertEquals(listOf("/a/1.jpg", "/a/2.jpg"), albumMediaPaths(setOf("/a"), media))
+        assertEquals(emptyList<String>(), albumMediaPaths(emptySet(), media))
     }
 }

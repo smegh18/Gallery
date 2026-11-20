@@ -32,6 +32,10 @@ internal fun allInFolder(paths: Collection<String>, folder: String): Boolean =
 internal fun withPins(albums: List<Album>, pinned: Set<String>): List<Album> =
     albums.map { it.copy(isPinned = albumIsSelectable(it) && it.path in pinned) }
 
+/** Every file whose folder is one of the selected albums. */
+internal fun albumMediaPaths(selected: Set<String>, media: List<MediaItem>): List<String> =
+    media.filter { it.folderPath in selected }.map { it.filePath }
+
 data class HomeUiState(
     val selectedTab: Int = PAGE_PHOTOS, // PAGE_PHOTOS (default), PAGE_ALBUMS, PAGE_EXPLORE
     val mediaList: List<MediaItem> = emptyList(),
@@ -247,15 +251,41 @@ class HomeViewModel(
     fun addSelectedToFolder(folderPath: String, move: Boolean, onDone: (Int) -> Unit): Boolean {
         val paths = _uiState.value.selectedPaths.toList()
         if (move && allInFolder(paths, folderPath)) return false
+        viewModelScope.launch { copyOrMove(paths, folderPath, move, onDone) }
+        return true
+    }
+
+    /** Same for every file of the selected albums; refuses a move when the only selected album is the target. */
+    fun addSelectedAlbumsToFolder(folderPath: String, move: Boolean, onDone: (Int) -> Unit): Boolean {
+        val albums = _uiState.value.selectedAlbums
+        if (move && albums.all { it == folderPath }) return false
         viewModelScope.launch {
-            val done = paths.count {
-                if (move) mediaRepository.moveMediaToFolder(it, folderPath) else mediaRepository.copyMediaToFolder(it, folderPath)
-            }
-            mediaRepository.syncMediaStore()
-            clearSelection()
-            onDone(done)
+            copyOrMove(albumMediaPaths(albums, mediaRepository.getActiveMediaFlow().first()), folderPath, move, onDone)
         }
         return true
+    }
+
+    private suspend fun copyOrMove(paths: List<String>, folderPath: String, move: Boolean, onDone: (Int) -> Unit) {
+        val done = paths.count {
+            if (move) mediaRepository.moveMediaToFolder(it, folderPath) else mediaRepository.copyMediaToFolder(it, folderPath)
+        }
+        mediaRepository.syncMediaStore()
+        clearSelection()
+        clearAlbumSelection()
+        onDone(done)
+    }
+
+    /** Album Delete, after the confirmation: every file of the selected folders, to the Recycle Bin or for good. */
+    internal fun deleteSelectedAlbums(action: DeleteAction) {
+        val albums = _uiState.value.selectedAlbums
+        viewModelScope.launch {
+            val paths = albumMediaPaths(albums, mediaRepository.getActiveMediaFlow().first())
+            when (action) {
+                DeleteAction.MOVE_TO_RECYCLE_BIN -> paths.forEach { mediaRepository.moveToTrash(it) }
+                DeleteAction.DELETE_PERMANENTLY -> mediaRepository.deletePermanently(paths)
+            }
+            clearAlbumSelection()
+        }
     }
 
     fun moveSelectedToVault() {

@@ -237,8 +237,8 @@ fun HomeScreen(
                         pinLabel = pinLabel(uiState.selectedAlbums, uiState.albumsList.filter { it.isPinned }.map { it.path }.toSet()),
                         singleActionAlpha = singleAlbumActionAlpha(uiState.selectedAlbums.size),
                         onPin = viewModel::pinSelectedAlbum,
-                        onAddTo = {},
-                        onDelete = {},
+                        onAddTo = { showAddToSheet = true },
+                        onDelete = { showDeleteDialog = true },
                         onChangeCover = {}, // 04-05
                         onRename = {}, // 04-05
                         modifier = Modifier.align(Alignment.BottomCenter)
@@ -323,10 +323,12 @@ fun HomeScreen(
 
     if (showDeleteDialog) {
         DeleteMediaDialog(
-            count = uiState.selectedPaths.size,
+            // Album Delete counts albums, as the top bar does (HA.count of the selection event)
+            count = if (albumSelecting) uiState.selectedAlbums.size else uiState.selectedPaths.size,
             onConfirm = { checked ->
                 showDeleteDialog = false
-                viewModel.deleteSelected(deleteActionFor(checked))
+                if (albumSelecting) viewModel.deleteSelectedAlbums(deleteActionFor(checked))
+                else viewModel.deleteSelected(deleteActionFor(checked))
             },
             onDismiss = { showDeleteDialog = false }
         )
@@ -335,8 +337,11 @@ fun HomeScreen(
     if (showAddToSheet) {
         AddToAlbumSheet(
             albums = uiState.albumsList,
-            previewItem = uiState.mediaList.firstOrNull { it.filePath in uiState.selectedPaths },
-            selectedCount = uiState.selectedPaths.size,
+            previewItem = uiState.mediaList.firstOrNull {
+                if (albumSelecting) it.folderPath in uiState.selectedAlbums else it.filePath in uiState.selectedPaths
+            },
+            selectedCount = if (albumSelecting) uiState.albumsList.filter { it.path in uiState.selectedAlbums }.sumOf { it.itemCount }
+            else uiState.selectedPaths.size,
             onAlbumClick = { album ->
                 showAddToSheet = false
                 addTarget = album.path
@@ -349,9 +354,9 @@ fun HomeScreen(
         fun add(move: Boolean) {
             addTarget = null
             val message = if (move) movedMessage else copiedMessage
-            val started = viewModel.addSelectedToFolder(target, move) { done ->
-                if (done > 0) Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
+            val onDone = { done: Int -> if (done > 0) Toast.makeText(context, message, Toast.LENGTH_SHORT).show() }
+            val started = if (albumSelecting) viewModel.addSelectedAlbumsToFolder(target, move, onDone)
+            else viewModel.addSelectedToFolder(target, move, onDone)
             if (!started) Toast.makeText(context, sameFolderMessage, Toast.LENGTH_SHORT).show()
         }
         AddingMediaDialog(onMove = { add(move = true) }, onCopy = { add(move = false) }, onCancel = { addTarget = null })
