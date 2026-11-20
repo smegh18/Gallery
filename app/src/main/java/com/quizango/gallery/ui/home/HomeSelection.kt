@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
@@ -137,33 +138,35 @@ internal fun HomeSelectionBottomBar(
                 .height(IntrinsicSize.Min)
                 .padding(horizontal = 5.sdp)
         ) {
-            SelectionAction(50.sdp, R.drawable.ic_home_select_share, R.string.share, onShare)
-            SelectionAction(55.sdp, R.drawable.ic_home_select_fav, R.string.favorite, onFavorite)
-            SelectionAction(55.sdp, R.drawable.ic_home_select_add, R.string.add_to, onAddTo)
-            SelectionAction(63.sdp, R.drawable.ic_home_select_hide, R.string.ad_to_private, onHide)
-            SelectionAction(50.sdp, R.drawable.ic_album_select_delete, R.string.delete, onDelete)
-            SelectionAction(60.sdp, R.drawable.ic_home_select_create_album, R.string.create_albums, onCreateAlbum)
+            SelectionAction(Modifier.width(50.sdp), R.drawable.ic_home_select_share, R.string.share, onShare)
+            SelectionAction(Modifier.width(55.sdp), R.drawable.ic_home_select_fav, R.string.favorite, onFavorite)
+            SelectionAction(Modifier.width(55.sdp), R.drawable.ic_home_select_add, R.string.add_to, onAddTo)
+            SelectionAction(Modifier.width(63.sdp), R.drawable.ic_home_select_hide, R.string.ad_to_private, onHide)
+            SelectionAction(Modifier.width(50.sdp), R.drawable.ic_album_select_delete, R.string.delete, onDelete)
+            SelectionAction(Modifier.width(60.sdp), R.drawable.ic_home_select_create_album, R.string.create_albums, onCreateAlbum)
         }
     }
 }
 
 @Composable
 private fun SelectionAction(
-    width: Dp,
+    size: Modifier,
     @DrawableRes icon: Int,
     @StringRes label: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    alpha: Float = 1f,
+    albumBar: Boolean = false // layout_select_album_bottom pads 4.sdp sideways and puts the label 2.sdp below, not 4
 ) {
     Column(
-        modifier = Modifier
-            .width(width)
+        modifier = size
+            .alpha(alpha)
             .fillMaxHeight()
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(bounded = false),
                 onClick = onClick
             )
-            .padding(vertical = 10.sdp),
+            .padding(horizontal = if (albumBar) 4.sdp else 0.sdp, vertical = 10.sdp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -173,8 +176,36 @@ private fun SelectionAction(
             text = stringResource(label),
             style = GalleryText.BodyXSmallMedium,
             color = colorResource(R.color.titleColor),
-            modifier = Modifier.padding(top = 4.sdp)
+            modifier = Modifier.padding(top = if (albumBar) 2.sdp else 4.sdp)
         )
+    }
+}
+
+/** layout_select_album_bottom: replaces the tab bar while albums are selected; 5 equal-weight actions. */
+@Composable
+internal fun AlbumSelectionBottomBar(
+    @StringRes pinLabel: Int,
+    singleActionAlpha: Float,
+    onPin: () -> Unit,
+    onAddTo: () -> Unit,
+    onDelete: () -> Unit,
+    onChangeCover: () -> Unit,
+    onRename: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .shadow(10.sdp, RoundedCornerShape(topStart = 16.sdp, topEnd = 16.sdp))
+            .drawableBackground(R.drawable.select_album_bg)
+            .height(IntrinsicSize.Min)
+    ) {
+        val each = Modifier.weight(1f)
+        SelectionAction(each, R.drawable.ic_album_select_pinned, pinLabel, onPin, singleActionAlpha, albumBar = true)
+        SelectionAction(each, R.drawable.ic_add, R.string.add_to, onAddTo, albumBar = true)
+        SelectionAction(each, R.drawable.ic_album_select_delete, R.string.delete, onDelete, albumBar = true)
+        SelectionAction(each, R.drawable.ic_album_select_cover, R.string.change_cover, onChangeCover, singleActionAlpha, albumBar = true)
+        SelectionAction(each, R.drawable.ic_rename, R.string.rename, onRename, singleActionAlpha, albumBar = true)
     }
 }
 

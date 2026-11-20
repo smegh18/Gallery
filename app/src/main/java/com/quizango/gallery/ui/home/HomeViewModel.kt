@@ -43,6 +43,7 @@ data class HomeUiState(
     val collageNewSeen: Boolean = true, // true until the preference loads, so the badge never flashes
     val selectedPaths: Set<String> = emptySet(),
     val isSelectionMode: Boolean = false,
+    val selectedAlbums: Set<String> = emptySet(), // folder paths of the selected device folders
     val isSyncing: Boolean = false,
     val initialSyncDone: Boolean = false, // stays true once the first MediaStore sync returns
     val sortOrder: SortOrder = SortOrder.DATE_DESC,
@@ -127,7 +128,7 @@ class HomeViewModel(
     }
 
     fun setTab(index: Int) {
-        _uiState.update { it.copy(selectedTab = index, isSelectionMode = false, selectedPaths = emptySet()) }
+        _uiState.update { it.copy(selectedTab = index, isSelectionMode = false, selectedPaths = emptySet(), selectedAlbums = emptySet()) }
     }
 
     fun setSearchQuery(query: String) {
@@ -182,6 +183,18 @@ class HomeViewModel(
 
     fun clearSelection() {
         _uiState.update { it.copy(selectedPaths = emptySet(), isSelectionMode = false) }
+    }
+
+    fun toggleAlbum(path: String) {
+        _uiState.update { it.copy(selectedAlbums = if (path in it.selectedAlbums) it.selectedAlbums - path else it.selectedAlbums + path) }
+    }
+
+    fun selectAllAlbums() {
+        _uiState.update { state -> state.copy(selectedAlbums = state.albumsList.filter(::albumIsSelectable).map { it.path }.toSet()) }
+    }
+
+    fun clearAlbumSelection() {
+        _uiState.update { it.copy(selectedAlbums = emptySet()) }
     }
 
     fun toggleFavorite(item: MediaItem) {
