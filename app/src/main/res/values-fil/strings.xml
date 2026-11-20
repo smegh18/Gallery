@@ -49,7 +49,7 @@
     <string name="allow_access_to_manage_all_files">Pahintulutan ang Access upang pamahalaan ang lahat ng mga file</string>
     <string name="about_permission_title">Bakit namin kailangan ang pahintulot na ito?</string>
     <string name="about_permission_description">Sa nakaraan, kinakailangan ng Gallery ang pag-access sa iyong imbakan upang mag-scan at tingnan ang mga larawan at mga video sa iyong aparato. Subalit bilang resulta ng update sa patakaran ng seguridad para sa Android 11 pataas, kinakailangan na ngayon ang Pag-access sa Lahat ng mga File para gawin ang parehong bagay. Iniuusap ka namin na ang pahintulot na ito ay gagamitin lamang upang mag-access sa mga larawan at mga video sa iyong aparato at hindi ito gagamitin para sa anumang ibang layunin. Ang Pag-access sa Lahat ng mga File ay napakahalaga rin para sa Google. Lahat ng mga app na nangangailangan ng pahintulot na ito ay dadaan sa isang mahigpit na pagsusuri ng Google bago mailathala. Walang masamang app ang makakakuha ng pahintulot na ito. I-click ang sumusunod na URL para sa karagdagang impormasyon: https://support.google.com/googleplay/android-developer/answer/10467955</string>
-    <string name="open_settings">\u0009Buksan ang Mga Setting</string>
+    <string name="open_settings">\tBuksan ang Mga Setting</string>
     <string name="select_app_language">Pumili ng Wika ng App</string>
     <string name="album_collage_new">Bago</string>
     <string name="collage_maker_explore_title">Tagagawa ng Collage</string>

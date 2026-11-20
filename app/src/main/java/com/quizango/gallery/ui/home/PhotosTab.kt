@@ -128,10 +128,12 @@ internal fun fileTypeLabel(fileName: String, isVideo: Boolean): Int? = when {
 internal fun thumbFraction(firstVisible: Int, visibleCount: Int, total: Int): Float =
     if (total <= visibleCount) 0f else (firstVisible.toFloat() / (total - visibleCount)).coerceIn(0f, 1f)
 
-/** Grid index the fast-scroll drag at [fraction] jumps to. */
 /** Inverse of [thumbFraction], so the thumb doesn't jump when the drag ends. */
-internal fun indexForThumbFraction(fraction: Float, visibleCount: Int, total: Int): Int =
-    (fraction.coerceIn(0f, 1f) * maxOf(total - visibleCount, 0)).roundToInt()
+internal fun indexForThumbFraction(fraction: Float, visibleCount: Int, total: Int): Int = when {
+    total <= visibleCount -> 0
+    fraction >= 1f -> total - 1
+    else -> (fraction.coerceIn(0f, 1f) * (total - visibleCount)).roundToInt()
+}
 
 // S272/z/t: the step fires mid-gesture once the span ratio since the last step reaches 1.12 (spread, fewer columns)
 // or 0.90 (pinch, more columns); a release never steps, it springs back.

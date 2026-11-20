@@ -49,7 +49,7 @@
     <string name="allow_access_to_manage_all_files">تمام فائلوں کو منظم کرنے کی اجازت دیں</string>
     <string name="about_permission_title">ہمیں اس اجازت کی کیوں ضرورت ہے؟</string>
     <string name="about_permission_description">پیشتر، گیلری کو آپ کی میموری تک پہنچنے اور آپ کے ڈیوائس پر فوٹو اور ویڈیوز کی تلاش کرنے کی اجازت کی ضرورت تھی۔ لیکن Android 11 اور اس کے بعد کی سیکیورٹی پالیسی کی اپ ڈیٹ کے نتیجے میں اب یہی کام کرنے کیلئے تمام فائلز کا دسترس کی ضرورت ہوتی ہے۔ ہم آپ کو یقین دلاتے ہیں کہ یہ اجازت صرف آپ کی میموری کی فوٹو اور ویڈیوز تک پہنچنے کے لئے استعمال کی جائے گی اور کسی دوسرے مقصد کے لئے استعمال نہیں ہوتی۔ تمام فائلز کا دسترس Google کیلئے بھی اہم ہے۔ جو بھی ایپز اس اجازت کی ضرورت ہوتی ہے، وہ پبلش کرنے سے پہلے Google کی طرف سے سخت جائزہ کاری کے ذریعے گزرنا ہوتا ہے۔ کوئی برائی انٹرنیٹ ایپ یہ اجازت حاصل نہیں کرسکتا۔ مزید جاننے کے لئے مندرجہ ذیل یو آر ایل پر کلک کریں: https://support.google.com/googleplay/android-developer/answer/10467955</string>
-    <string name="open_settings">\u0009سیٹنگز کھولیں</string>
+    <string name="open_settings">\tسیٹنگز کھولیں</string>
     <string name="select_app_language">ایپ کی زبان منتخب کریں</string>
     <string name="album_collage_new">نیا</string>
     <string name="collage_maker_explore_title">کولاج میکر</string>
@@ -157,7 +157,7 @@
     <string name="str_home_collage">کولاژ</string>
     <string name="explore_collage_desc">اپنی تصاویر ملائیں</string>
     <string name="vault">والٹ</string>
-    <string name="str_home_favourite">\u0009پسندیدہ</string>
+    <string name="str_home_favourite">\tپسندیدہ</string>
     <string name="str_home_Moments">لحظات</string>
     <string name="str_home_place">جگہ</string>
     <string name="str_home_Recycle_bin">ریسائیکل بن</string>

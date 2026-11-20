@@ -3,7 +3,9 @@ package com.quizango.gallery
 import com.quizango.gallery.data.repository.copyIntoFolder
 import com.quizango.gallery.data.repository.moveIntoFolder
 import com.quizango.gallery.data.repository.uniqueTargetFile
+import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.ui.home.allInFolder
+import com.quizango.gallery.ui.components.addToAlbumDestinations
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -71,5 +73,20 @@ class AddMediaTest {
         assertTrue(allInFolder(listOf("/s/DCIM/Camera/a.jpg", "/s/DCIM/Camera/b.jpg"), "/s/DCIM/Camera"))
         assertTrue(allInFolder(listOf("/s/DCIM/Camera/a.jpg"), "/s/DCIM/Camera/"))
         assertFalse(allInFolder(listOf("/s/DCIM/Camera/a.jpg", "/s/Pictures/X/b.jpg"), "/s/DCIM/Camera"))
+    }
+
+    @Test
+    fun addToDestinationsIncludesPhysicalCameraAndScreenshotsFolders() {
+        val albums = listOf(
+            Album("filter:camera", "Camera", "filter:camera", "/s/DCIM/Camera/a.jpg", 2),
+            Album("filter:screenshots", "Screenshots", "filter:screenshots", "/s/Pictures/Screenshots/a.jpg", 1),
+            Album("filter:videos", "Videos", "filter:videos", "/s/Movies/a.mp4", 1),
+            Album("/s/Pictures/Trips", "Trips", "/s/Pictures/Trips", "/s/Pictures/Trips/a.jpg", 1)
+        )
+
+        assertEquals(
+            setOf("/s/DCIM/Camera", "/s/Pictures/Screenshots", "/s/Pictures/Trips"),
+            addToAlbumDestinations(albums).map { it.path }.toSet()
+        )
     }
 }

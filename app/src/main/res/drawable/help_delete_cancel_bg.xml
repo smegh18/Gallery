@@ -3,9 +3,9 @@
   xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <stroke android:width="1.5dip" android:color="@color/cancel_button_stroke_color" />
-            <padding android:left="2.0dip" android:top="2.0dip" android:right="2.0dip" android:bottom="2.0dip" />
-            <corners android:radius="50.0dip" />
+            <stroke android:width="1.5dp" android:color="@color/cancel_button_stroke_color" />
+            <padding android:left="2.0dp" android:top="2.0dp" android:right="2.0dp" android:bottom="2.0dp" />
+            <corners android:radius="50.0dp" />
         </shape>
     </item>
 </ripple>

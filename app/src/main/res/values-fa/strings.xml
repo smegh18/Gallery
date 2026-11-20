@@ -49,7 +49,7 @@
     <string name="allow_access_to_manage_all_files">اجازه دسترسی برای مدیریت تمامی فایل‌ها</string>
     <string name="about_permission_title">چرا ما نیاز به این مجوز داریم؟</string>
     <string name="about_permission_description">قبلاً گالری برای اسکن و مشاهده عکس‌ها و ویدیوها در دستگاه شما نیاز به دسترسی به حافظه داشت. اما به دلیل به‌روزرسانی سیاست امنیتی برای Android نسخه 11 و بالاتر، اکنون نیاز به دسترسی به تمامی فایل‌ها برای انجام همان کارها وظیفه شده است. ما به شما قول می‌دهیم که این مجوز تنها برای دسترسی به عکس‌ها و ویدیوها در دستگاه شما استفاده می‌شود و برای هیچ هدف دیگری استفاده نخواهد شد. تمامی فایل‌ها همچنین برای گوگل اهمیت دارد. تمامی برنامه‌هایی که به این مجوز نیاز دارند، قبل از انتشار توسط گوگل مورد بررسی سختی قرار می‌گیرند. هیچ برنامه خبیثی نمی‌تواند این مجوز را بگیرد. برای کسب اطلاعات بیشتر، روی لینک زیر کلیک کنید: https://support.google.com/googleplay/android-developer/answer/10467955</string>
-    <string name="open_settings">\u0009باز کردن تنظیمات</string>
+    <string name="open_settings">\tباز کردن تنظیمات</string>
     <string name="select_app_language">انتخاب زبان برنامه</string>
     <string name="album_collage_new">جدید</string>
     <string name="collage_maker_explore_title">کلاژ ساز</string>

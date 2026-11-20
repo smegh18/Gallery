@@ -49,7 +49,7 @@
     <string name="allow_access_to_manage_all_files">السماح بالوصول لإدارة جميع الملفات</string>
     <string name="about_permission_title">لماذا نحتاج إلى هذا الإذن؟</string>
     <string name="about_permission_description">من قبل، كان التطبيق Gallery يتطلب الوصول إلى تخزين الجهاز لفحص الصور ومقاطع الفيديو على جهازك. ومع تحديث سياسة الأمان لنظام Android 11 والإصدارات الأحدث، أصبح يتطلب الوصول إلى جميع الملفات للقيام بنفس الأمر. نعدكم بأن هذا الإذن سيُستخدم فقط للوصول إلى الصور ومقاطع الفيديو على جهازك ولن يُستخدم لأي غرض آخر. جميع الملفات مهم أيضًا بالنسبة لشركة Google. يجب على جميع التطبيقات التي تحتاج إلى هذا الإذن أن تخضع لمراجعة صارمة من قبل Google قبل نشرها. لن يتمكن أي تطبيق ضار من الحصول على هذا الإذن. انقر على الرابط التالي لمعرفة المزيد: https://support.google.com/googleplay/android-developer/answer/10467955</string>
-    <string name="open_settings">\u0009افتح الإعدادات</string>
+    <string name="open_settings">\tافتح الإعدادات</string>
     <string name="select_app_language">اختر لغة التطبيق</string>
     <string name="album_collage_new">جديد</string>
     <string name="collage_maker_explore_title">صانع الكولاج</string>

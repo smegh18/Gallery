@@ -49,7 +49,7 @@
     <string name="allow_access_to_manage_all_files">Tüm dosyaları yönetmek için Erişime İzin Ver</string>
     <string name="about_permission_title">Bu izne neden ihtiyacımız var?</string>
     <string name="about_permission_description">"Daha önce, Galeri cihazınızdaki fotoğrafları ve videoları tarayıp görüntülemek için depolama alanınıza erişim gerektiriyordu. Ancak Android 11 ve üzeri için güvenlik politikası güncellemesinin bir sonucu olarak, artık aynısını yapmak için Tüm Dosyalara Erişim gerekiyor. Bu iznin yalnızca cihazınızdaki fotoğraflara ve videolara erişmek için kullanılacağını ve başka hiçbir amaçla kullanılmayacağını taahhüt ediyoruz. Tüm Dosyalara Erişim Google için de büyük önem taşıyor. Bu izne ihtiyaç duyan tüm uygulamalar yayınlanmadan önce Google tarafından sıkı bir incelemeden geçmelidir. Hiçbir kötü amaçlı uygulama bu izni elde edemez. Daha fazla bilgi edinmek için aşağıdaki URL'ye tıklayın: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Ayarları aç</string>
+    <string name="open_settings">\tAyarları aç</string>
     <string name="select_app_language">Uygulama Dilini Seçin</string>
     <string name="album_collage_new">Yeni</string>
     <string name="collage_maker_explore_title">Kolaj Yapıcı</string>

@@ -57,7 +57,7 @@
  「すべてのファイルへのアクセス」も Google にとって非常に重要です。この許可を必要とするすべてのアプリは、公開前に Google による厳格な審査を受ける必要があります。悪意のあるアプリはこの権限を取得できません。
 
  以下のURLをクリックしてご覧ください 詳細: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009設定を開く</string>
+    <string name="open_settings">\t設定を開く</string>
     <string name="select_app_language">アプリの言語を選択</string>
     <string name="album_collage_new">新規</string>
     <string name="collage_maker_explore_title">コラージュメーカー</string>

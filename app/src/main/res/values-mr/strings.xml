@@ -57,7 +57,7 @@
  ऑल फाईल्स ऍक्सेस हे गुगलसाठीही खूप महत्त्वाचं आहे. या परवानगीची आवश्यकता असलेल्या सर्व अॅप्सना प्रकाशित होण्यापूर्वी Google द्वारे कठोर पुनरावलोकन करणे आवश्यक आहे. कोणताही दुर्भावनापूर्ण अॅप ही परवानगी मिळवू शकत नाही.
 
  जाणून घेण्यासाठी खालील URL वर क्लिक करा अधिकसाठी: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009सेटिंग्ज उघडा</string>
+    <string name="open_settings">\tसेटिंग्ज उघडा</string>
     <string name="select_app_language">भाषा निवडा</string>
     <string name="album_collage_new">नवीन</string>
     <string name="collage_maker_explore_title">कोलाज मेकर</string>

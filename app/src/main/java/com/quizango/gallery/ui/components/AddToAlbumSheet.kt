@@ -33,6 +33,18 @@ import com.quizango.gallery.ui.theme.GalleryBlue
 import com.quizango.gallery.ui.theme.cardBackground
 import java.io.File
 
+internal fun addToAlbumDestinations(albums: List<Album>): List<Album> {
+    val destinations = albums.filterNot { it.path.startsWith("filter:") }.toMutableList()
+    albums.filter { it.path == "filter:camera" || it.path == "filter:screenshots" }.forEach { album ->
+        if (album.coverPath.isBlank()) return@forEach
+        val folderPath = album.coverPath.substringBeforeLast('/')
+        if (folderPath.isNotBlank() && destinations.none { it.path == folderPath }) {
+            destinations += album.copy(id = folderPath, path = folderPath)
+        }
+    }
+    return destinations
+}
+
 /** Add-to-album sheet (dialog_select_album.xml), shared by Home and AlbumDetail. The caller does the copy. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,7 +136,7 @@ fun AddToAlbumSheet(
             Spacer(modifier = Modifier.height(8.dp))
 
             // "filter:" albums are browse-only collections, not folders a copy can land in
-            val destinations = albums.filterNot { it.path.startsWith("filter:") }
+            val destinations = addToAlbumDestinations(albums)
             if (destinations.isEmpty()) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

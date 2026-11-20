@@ -57,7 +57,7 @@
  Anche All Files Access è di grande importanza per Google. Tutte le app che richiedono questa autorizzazione devono essere sottoposte a una rigorosa revisione da parte di Google prima di essere pubblicate. Nessuna app dannosa può ottenere questa autorizzazione.
 
  Fare clic sul seguente URL per saperlo per ulteriori informazioni: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Apri impostazioni</string>
+    <string name="open_settings">\tApri impostazioni</string>
     <string name="select_app_language">Seleziona Lingua App</string>
     <string name="album_collage_new">Nuovo</string>
     <string name="collage_maker_explore_title">Creatore di Collage</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Collage</string>
     <string name="explore_collage_desc">Combina le tue foto</string>
     <string name="vault">Cassaforte</string>
-    <string name="str_home_favourite">\u0009Preferiti</string>
+    <string name="str_home_favourite">\tPreferiti</string>
     <string name="str_home_Moments">Momenti</string>
     <string name="str_home_place">Luogo</string>
     <string name="str_home_Recycle_bin">Cestino</string>

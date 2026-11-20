@@ -27,6 +27,7 @@ class MediaStoreScanner(private val context: Context) {
      * so a copy stayed invisible and a moved photo vanished from every gallery. A missing path drops its row.
      */
     suspend fun scanFiles(vararg paths: String) {
+        if (paths.isEmpty()) return
         val left = AtomicInteger(paths.size)
         // shortcut: gives up after 10 s so a stuck scanner never blocks a copy; the file then shows after a later scan
         withTimeoutOrNull(10_000) {

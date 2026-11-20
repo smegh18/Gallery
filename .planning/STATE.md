@@ -5,10 +5,10 @@ milestone_name: Reference 2.7.2 parity
 current_phase: 3
 current_phase_name: Home Shell and Photos Tab
 status: in_progress
-stopped_at: Plan 03-05 complete, next 03-06
-last_updated: "2026-11-15T12:00:00.000Z"
-last_activity: 2026-11-15
-last_activity_desc: Plan 03-05 complete (vault hint, Home exit popup)
+stopped_at: Plan 03-06 live device checkpoint incomplete
+last_updated: "2026-11-19T00:00:00.000Z"
+last_activity: 2026-11-19
+last_activity_desc: Plan 03-06 static gates pass; Artemis device tasks stalled before verification
 state_head: 0e769f8
 progress:
   total_phases: 13
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-11-13)
 ## Current Position
 
 Phase: 3 of 13 (Home Shell and Photos Tab)
-Plan: 5 of 6 complete (next 03-06)
+Plan: 5 of 6 complete (03-06 in progress)
 Status: In progress
 Last activity: 2026-11-15 — Plan 03-05 complete (vault hint, exit popup)
 
@@ -79,7 +79,7 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
-None yet.
+03-06 static gates pass; the debug APK had previously been installed preserving app data. Live 2.7.2 comparison and safe UI checks are recorded in 03-06-LIVE-COMPARISON.md. German, Russian, Tamil and Arabic layout checks pass. The new ADB comparison confirmed reference Home Back exits directly while our app shows the exit popup (handed to Phase 13); a reference Photos swipe showed no date bubble/thumb and hid the bottom tabs. UI Automator test source compiles, but MIUI rejected installing both the test APK and a subsequent debug APK (`INSTALL_FAILED_USER_RESTRICTED`). Current phone is on the launcher; reference app is installed, debug package is absent for user 0, and the temporary test package was removed. The last DataStore readback (`sessionCount=4`, tutorial flags true, vault hint closed for session 4) predates this setup; do not assume it is still present. ARTEMIS Pro/Flash runs have been unreliable. Required live checkpoint remains incomplete: pinch, fast-scroller drag, selection/delete confirmation, Add to Private and picker parity remain open. No VERIFIED checklist boxes were ticked.
 
 ## Deferred Items
 
@@ -91,6 +91,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-17
-Stopped at: Plan 03-05 complete; 03-06 in progress (CodeRabbit review fixes on PR #1)
+Last session: 2026-11-19
+Stopped at: Plan 03-06 in progress (static gates and earlier safe comparisons pass; ARTEMIS runs stalled before completing remaining live checkpoint)
 Resume file: None
