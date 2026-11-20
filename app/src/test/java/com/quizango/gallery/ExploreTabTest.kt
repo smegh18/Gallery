@@ -2,8 +2,13 @@ package com.quizango.gallery
 
 import com.quizango.gallery.ui.home.ExploreItem
 import com.quizango.gallery.ui.home.exploreRoute
+import com.quizango.gallery.ui.home.manageRows
+import com.quizango.gallery.ui.home.showsCollageNew
+import com.quizango.gallery.ui.home.showsDuplicateFinder
 import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ExploreTabTest {
@@ -34,5 +39,32 @@ class ExploreTabTest {
     fun allElevenItemsAreCovered() {
         assertEquals(11, ExploreItem.values().size)
         ExploreItem.values().forEach { route(it) }
+    }
+
+    @Test
+    fun collageBadgeShowsUntilOpenedOrFourthLaunch() {
+        assertTrue(showsCollageNew(seen = false, session = 1))
+        assertTrue(showsCollageNew(seen = false, session = 3))
+        assertFalse(showsCollageNew(seen = false, session = 4))
+        assertFalse(showsCollageNew(seen = true, session = 1))
+    }
+
+    @Test
+    fun duplicateFinderNeedsAndroid10AndThreeGbRam() {
+        assertTrue(showsDuplicateFinder(sdkInt = 29, totalMemBytes = 3L shl 30))
+        assertFalse(showsDuplicateFinder(sdkInt = 28, totalMemBytes = 4L shl 30))
+        assertFalse(showsDuplicateFinder(sdkInt = 33, totalMemBytes = 3L * 1024 * 1024 * 1024 - 1))
+    }
+
+    @Test
+    fun manageRowsDropDuplicateFinderWhenHidden() {
+        assertEquals(
+            listOf(ExploreItem.DUPLICATE_FINDER, ExploreItem.QUICK_ORGANIZE, ExploreItem.RECYCLE_BIN, ExploreItem.SETTINGS),
+            manageRows(showDuplicate = true)
+        )
+        assertEquals(
+            listOf(ExploreItem.QUICK_ORGANIZE, ExploreItem.RECYCLE_BIN, ExploreItem.SETTINGS),
+            manageRows(showDuplicate = false)
+        )
     }
 }

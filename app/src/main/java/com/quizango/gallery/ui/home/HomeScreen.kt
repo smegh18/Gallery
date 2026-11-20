@@ -211,7 +211,7 @@ fun HomeScreen(
                     )
                     PAGE_EXPLORE -> ExploreTab(
                         junkCleanedToday = uiState.junkCleanedToday,
-                        showCollageNew = false,
+                        showCollageNew = showsCollageNew(uiState.collageNewSeen, uiState.sessionCount),
                         onNavigate = onNavigate,
                         onCollageOpened = viewModel::markCollageNewSeen
                     )

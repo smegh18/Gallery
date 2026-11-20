@@ -1,5 +1,8 @@
 package com.quizango.gallery.ui.home
 
+import android.app.ActivityManager
+import android.content.Context
+import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -15,10 +18,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -29,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
@@ -53,6 +59,18 @@ internal fun exploreRoute(item: ExploreItem, junkCleanedToday: Boolean, placeTit
     ExploreItem.SETTINGS -> Screen.Settings.route
 }
 
+/** EF.onViewCreated: the "New" badge stays until Collage was opened or the app was launched 4 times. */
+internal fun showsCollageNew(seen: Boolean, session: Int) = !seen && session < 4
+
+/** s9/k.OooOo0o: Duplicate Finder needs Android 10+ and at least 3 GB of RAM. */
+internal fun showsDuplicateFinder(sdkInt: Int, totalMemBytes: Long) = sdkInt >= 29 && totalMemBytes / 1024 / 1024 / 1024 >= 3
+
+internal fun manageRows(showDuplicate: Boolean): List<ExploreItem> =
+    listOfNotNull(
+        ExploreItem.DUPLICATE_FINDER.takeIf { showDuplicate },
+        ExploreItem.QUICK_ORGANIZE, ExploreItem.RECYCLE_BIN, ExploreItem.SETTINGS
+    )
+
 @Composable
 private fun exploreText(size: Int, weight: FontWeight, color: Color, align: TextAlign = TextAlign.Unspecified) =
     TextStyle(fontFamily = Inter, fontWeight = weight, fontSize = size.ssp, color = color, textAlign = align)
@@ -66,6 +84,12 @@ fun ExploreTab(
     onCollageOpened: () -> Unit
 ) {
     val placeTitle = stringResource(R.string.str_home_place)
+    val context = LocalContext.current
+    val showDuplicate = remember {
+        val info = ActivityManager.MemoryInfo()
+        (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(info)
+        showsDuplicateFinder(Build.VERSION.SDK_INT, info.totalMem)
+    }
     fun open(item: ExploreItem) = onNavigate(exploreRoute(item, junkCleanedToday, placeTitle))
 
     // Reference scrollView has overScrollMode=never.
@@ -89,7 +113,7 @@ fun ExploreTab(
                 FeatureCard(
                     icon = R.drawable.explore_tab_ic_collage, chipBg = R.color.explore_chip_collage_bg, chipFg = R.color.explore_chip_collage_fg,
                     title = R.string.str_home_collage, desc = R.string.explore_collage_desc,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f), showNewBadge = showCollageNew,
                     onClick = { onCollageOpened(); open(ExploreItem.COLLAGE) }
                 )
             }
@@ -102,6 +126,8 @@ fun ExploreTab(
                 RoundTile(R.drawable.explore_tab_ic_place, R.color.explore_chip_place_bg, R.color.explore_chip_place_fg, R.string.str_home_place, Modifier.weight(1f)) { open(ExploreItem.PLACE) }
             }
 
+            NativeAdSkeleton()
+
             SectionLabel(R.string.explore_section_manage)
             Column(
                 Modifier
@@ -109,21 +135,22 @@ fun ExploreTab(
                     .drawableBackground(R.drawable.explore_ad_card_bg)
                     .padding(vertical = 2.sdp)
             ) {
-                MANAGE_ROWS.forEachIndexed { index, row ->
-                    ManageRow(row.icon, row.label, showDivider = index > 0) { open(row.item) }
+                manageRows(showDuplicate).forEachIndexed { index, item ->
+                    val row = MANAGE_ROW_SPECS.getValue(item)
+                    ManageRow(row.icon, row.label, showDivider = index > 0) { open(item) }
                 }
             }
         }
     }
 }
 
-private class ManageRowSpec(val item: ExploreItem, @DrawableRes val icon: Int, @StringRes val label: Int)
+private class ManageRowSpec(@DrawableRes val icon: Int, @StringRes val label: Int)
 
-private val MANAGE_ROWS = listOf(
-    ManageRowSpec(ExploreItem.DUPLICATE_FINDER, R.drawable.explore_tab_ic_duplicate, R.string.duplicate_finder),
-    ManageRowSpec(ExploreItem.QUICK_ORGANIZE, R.drawable.explore_tab_ic_organize, R.string.organizer_explore_title),
-    ManageRowSpec(ExploreItem.RECYCLE_BIN, R.drawable.explore_tab_ic_recycle_bin, R.string.str_home_Recycle_bin),
-    ManageRowSpec(ExploreItem.SETTINGS, R.drawable.explore_tab_ic_settings, R.string.settings)
+private val MANAGE_ROW_SPECS = mapOf(
+    ExploreItem.DUPLICATE_FINDER to ManageRowSpec(R.drawable.explore_tab_ic_duplicate, R.string.duplicate_finder),
+    ExploreItem.QUICK_ORGANIZE to ManageRowSpec(R.drawable.explore_tab_ic_organize, R.string.organizer_explore_title),
+    ExploreItem.RECYCLE_BIN to ManageRowSpec(R.drawable.explore_tab_ic_recycle_bin, R.string.str_home_Recycle_bin),
+    ExploreItem.SETTINGS to ManageRowSpec(R.drawable.explore_tab_ic_settings, R.string.settings)
 )
 
 @Composable
@@ -170,29 +197,75 @@ private fun SectionLabel(@StringRes text: Int) {
 private fun FeatureCard(
     @DrawableRes icon: Int, @androidx.annotation.ColorRes chipBg: Int, @androidx.annotation.ColorRes chipFg: Int,
     @StringRes title: Int, @StringRes desc: Int,
-    modifier: Modifier, onClick: () -> Unit
+    modifier: Modifier, showNewBadge: Boolean = false, onClick: () -> Unit
 ) {
-    Column(
+    Box(
         modifier
             .drawableBackground(R.drawable.explore_card_bg)
             .clickable(onClick = onClick)
-            .padding(11.sdp)
+    ) {
+        Column(Modifier.padding(11.sdp)) {
+            Box(
+                Modifier.size(30.sdp).background(colorResource(chipBg), RoundedCornerShape(9.sdp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(painterResource(icon), contentDescription = null, modifier = Modifier.size(17.sdp), colorFilter = ColorFilter.tint(colorResource(chipFg)))
+            }
+            Text(
+                stringResource(title), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                style = exploreText(11, FontWeight.W600, colorResource(R.color.explore_text)),
+                modifier = Modifier.padding(top = 8.sdp)
+            )
+            Text(
+                stringResource(desc), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                style = exploreText(9, FontWeight.W400, colorResource(R.color.explore_subtext)),
+                modifier = Modifier.padding(top = 3.sdp)
+            )
+        }
+        if (showNewBadge) {
+            // Tapping the badge acts as tapping the card (EF.OooO0o).
+            Text(
+                stringResource(R.string.album_collage_new),
+                style = GalleryText.BodyXSmallSemiBold.copy(color = colorResource(R.color.onlyWhite)),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.sdp, end = 8.sdp)
+                    .background(colorResource(R.color.home_collage_new_btn), CircleShape)
+                    .padding(horizontal = 4.sdp, vertical = 2.sdp)
+            )
+        }
+    }
+}
+
+/** Static outline of the native ad slot (D5: no ads, but the 2.7.2 card keeps its size). */
+@Composable
+private fun NativeAdSkeleton() {
+    Box(
+        Modifier
+            .padding(top = 14.sdp)
+            .fillMaxWidth()
+            .heightIn(min = 113.sdp)
+            .drawableBackground(R.drawable.explore_ad_card_bg)
     ) {
         Box(
-            Modifier.size(30.sdp).background(colorResource(chipBg), RoundedCornerShape(9.sdp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(painterResource(icon), contentDescription = null, modifier = Modifier.size(17.sdp), colorFilter = ColorFilter.tint(colorResource(chipFg)))
-        }
-        Text(
-            stringResource(title), maxLines = 1, overflow = TextOverflow.Ellipsis,
-            style = exploreText(11, FontWeight.W600, colorResource(R.color.explore_text)),
-            modifier = Modifier.padding(top = 8.sdp)
+            Modifier
+                .padding(start = 11.sdp, top = 11.sdp)
+                .size(width = 167.sdp, height = 91.sdp)
+                .drawableBackground(R.drawable.explore_ad_shimmer_media)
         )
-        Text(
-            stringResource(desc), maxLines = 1, overflow = TextOverflow.Ellipsis,
-            style = exploreText(9, FontWeight.W400, colorResource(R.color.explore_subtext)),
-            modifier = Modifier.padding(top = 3.sdp)
+        Column(Modifier.padding(start = 191.sdp, top = 15.sdp)) {
+            Box(Modifier.padding(end = 53.sdp).fillMaxWidth().height(9.sdp).drawableBackground(R.drawable.explore_ad_shimmer_block))
+            Box(Modifier.padding(top = 7.sdp).size(width = 16.sdp, height = 13.sdp).drawableBackground(R.drawable.explore_ad_shimmer_block))
+            Box(Modifier.padding(top = 7.sdp, end = 13.sdp).fillMaxWidth().height(6.sdp).drawableBackground(R.drawable.explore_ad_shimmer_block))
+            Box(Modifier.padding(top = 3.sdp, end = 48.sdp).fillMaxWidth().height(6.sdp).drawableBackground(R.drawable.explore_ad_shimmer_block))
+        }
+        Box(
+            Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 191.sdp, end = 23.sdp, bottom = 14.sdp)
+                .fillMaxWidth()
+                .height(26.sdp)
+                .drawableBackground(R.drawable.explore_ad_shimmer_cta)
         )
     }
 }
