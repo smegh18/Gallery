@@ -257,4 +257,17 @@
     <string name="items_moved_successfully">મીડિયા ફાઈલો સફળતાથી ખસેડવામાં આવ્યા છે.</string>
     <string name="hide_media">મીડિયા છુપાવો</string>
     <string name="hide_item_permission">શું તમે ખબરદાર છો કે તમે મીડિયા છુપાવવા માંગો છો?</string>
+    <string name="stories">કથાઓ</string>
+    <string name="edit_your_photo">તમારી ફોટો સંપાદિત કરો</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">ફ્લેશબેક</string>
+    <string name="recent">તાજેતરની</string>
+    <string name="screenshot">સ્ક્રીનશોટ</string>
+    <string name="all_photos">બધી છબીઓ</string>
+    <string name="videos">વિડિઓઝ</string>
+    <string name="pin_to_top">ટોચ પર પિન કરો</string>
+    <string name="unpin_to_top">અનપિન કરો</string>
+    <string name="change_cover">કવર બદલો</string>
+    <string name="total_files">કુલ ફાઇલો</string>
+    <string name="modifying_items">%s આઇટમ્સ ફેરફાર કરાઈ રહ્યા છે...</string>
 </resources>

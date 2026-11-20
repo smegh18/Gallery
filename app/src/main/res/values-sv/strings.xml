@@ -273,4 +273,17 @@
     <string name="items_moved_successfully">Mediafiler flyttade framgångsrikt.</string>
     <string name="hide_media">Dölj Media</string>
     <string name="hide_item_permission">Är du säker på att du vill dölja media?</string>
+    <string name="stories">Berättelser</string>
+    <string name="edit_your_photo">Redigera din bild</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">Återblick</string>
+    <string name="recent">Senaste</string>
+    <string name="screenshot">Skärmdump</string>
+    <string name="all_photos">Alla foton</string>
+    <string name="videos">Videor</string>
+    <string name="pin_to_top">Nåla fast högst upp</string>
+    <string name="unpin_to_top">Släpp fastnål</string>
+    <string name="change_cover">Byt omslag</string>
+    <string name="total_files">Totalt antal filer</string>
+    <string name="modifying_items">Ändrar %s objekt...</string>
 </resources>

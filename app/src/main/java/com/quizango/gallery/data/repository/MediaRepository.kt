@@ -1,5 +1,6 @@
 package com.quizango.gallery.data.repository
 
+import com.quizango.gallery.R
 import com.quizango.gallery.data.local.database.dao.GalleryDao
 import com.quizango.gallery.data.local.database.entity.MediaEntity
 import com.quizango.gallery.data.local.mediastore.MediaStoreScanner
@@ -108,12 +109,13 @@ class MediaRepositoryImpl(
             result.add(
                 Album(
                     id = "filter:all_photos",
-                    name = "All Photos",
+                    name = "", // titleRes is resolved by the UI
                     path = "filter:all_photos",
                     coverPath = photos.firstOrNull()?.filePath ?: "",
                     itemCount = photos.size,
                     coverId = photos.firstOrNull()?.id ?: 0L,
-                    isVideoCover = false
+                    isVideoCover = false,
+                    titleRes = R.string.all_photos
                 )
             )
 
@@ -122,12 +124,13 @@ class MediaRepositoryImpl(
             result.add(
                 Album(
                     id = "filter:videos",
-                    name = "Videos",
+                    name = "",
                     path = "filter:videos",
                     coverPath = videos.firstOrNull()?.filePath ?: "",
                     itemCount = videos.size,
                     coverId = videos.firstOrNull()?.id ?: 0L,
-                    isVideoCover = true
+                    isVideoCover = true,
+                    titleRes = R.string.videos
                 )
             )
 
@@ -140,12 +143,13 @@ class MediaRepositoryImpl(
             result.add(
                 Album(
                     id = "filter:camera",
-                    name = "Camera",
+                    name = "",
                     path = "filter:camera",
                     coverPath = cameraItems.firstOrNull()?.filePath ?: "",
                     itemCount = cameraItems.size,
                     coverId = cameraItems.firstOrNull()?.id ?: 0L,
-                    isVideoCover = cameraItems.firstOrNull()?.mediaType == 2
+                    isVideoCover = cameraItems.firstOrNull()?.mediaType == 2,
+                    titleRes = R.string.camera
                 )
             )
 
@@ -154,17 +158,18 @@ class MediaRepositoryImpl(
                 it.folderPath.contains("screenshot", ignoreCase = true) ||
                 it.folderName.contains("screenshot", ignoreCase = true)
             }
-            // Reference always shows Screenshots, even when empty.
+            // The Albums tab drops empty virtual cards (UI-SPEC 1.4); other lists still see this album.
             val firstShot = screenshotItems.firstOrNull()
             result.add(
                 Album(
                     id = "filter:screenshots",
-                    name = "Screenshots",
+                    name = "",
                     path = "filter:screenshots",
                     coverPath = firstShot?.filePath ?: "",
                     itemCount = screenshotItems.size,
                     coverId = firstShot?.id ?: 0L,
-                    isVideoCover = firstShot?.mediaType == 2
+                    isVideoCover = firstShot?.mediaType == 2,
+                    titleRes = R.string.screenshot
                 )
             )
 

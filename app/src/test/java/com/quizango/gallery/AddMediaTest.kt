@@ -89,4 +89,12 @@ class AddMediaTest {
             addToAlbumDestinations(albums).map { it.path }.toSet()
         )
     }
+
+    @Test
+    fun mappedVirtualFolderIsNamedAfterItsRealFolder() {
+        val camera = Album("filter:camera", "", "filter:camera", "/s/DCIM/Camera/a.jpg", 2, titleRes = R.string.camera)
+        val dest = addToAlbumDestinations(listOf(camera)).single()
+        assertEquals("Camera", dest.name)
+        assertEquals(0, dest.titleRes)
+    }
 }

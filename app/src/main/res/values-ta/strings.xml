@@ -274,4 +274,17 @@
     <string name="items_moved_successfully">மீடியா கோப்புகள் வெற்றிகரமாக நகர்த்தப்பட்டுள்ளன.</string>
     <string name="hide_media">மீடியா மறை</string>
     <string name="hide_item_permission">நீங்கள் மீடியாவை மறைக்க விரும்புகின்றீர்களா?</string>
+    <string name="stories">கதைகள்</string>
+    <string name="edit_your_photo">உங்கள் புகைப்படத்தை திருத்தவும்</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">பிளாஷ்பேக்</string>
+    <string name="recent">சமீபத்திய</string>
+    <string name="screenshot">திருக்குதல் படம்</string>
+    <string name="all_photos">எல்லா புகைப்படங்களும்</string>
+    <string name="videos">காணொளிகள்</string>
+    <string name="pin_to_top">மேலே சொடு</string>
+    <string name="unpin_to_top">மேலே பின் விளக்கு</string>
+    <string name="change_cover">முதல் படத்தை மாற்று</string>
+    <string name="total_files">மொத்த கோப்புகள்</string>
+    <string name="modifying_items">%s பொருட்களை மாற்றுகிறது...</string>
 </resources>

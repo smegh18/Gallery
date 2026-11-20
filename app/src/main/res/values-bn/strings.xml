@@ -225,4 +225,17 @@
     <string name="items_moved_successfully">মিডিয়া ফাইল সফলভাবে সরানো হয়েছে৷</string>
     <string name="hide_media">মিডিয়া লুকান</string>
     <string name="hide_item_permission">আপনি কি নিশ্চিত মিডিয়া লুকাতে চান?</string>
+    <string name="stories">গল্প</string>
+    <string name="edit_your_photo">আপনার ছবি সম্পাদনা করুন</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">ফ্ল্যাশব্যাক</string>
+    <string name="recent">সাম্প্রতিক</string>
+    <string name="screenshot">স্ক্রিনশট</string>
+    <string name="all_photos">সমস্ত ফটো</string>
+    <string name="videos">ভিডিও</string>
+    <string name="pin_to_top">উপরে পিন করুন</string>
+    <string name="unpin_to_top">আনপিন করুন</string>
+    <string name="change_cover">কভার পরিবর্তন করুন</string>
+    <string name="total_files">মোট ফাইল</string>
+    <string name="modifying_items">%s আইটেম সংশোধন করা হচ্ছে...</string>
 </resources>

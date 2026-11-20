@@ -273,4 +273,17 @@
     <string name="items_moved_successfully">Pliki multimedialne przeniesione pomyślnie.</string>
     <string name="hide_media">Ukryj Media</string>
     <string name="hide_item_permission">Czy jesteś pewien, że chcesz ukryć media?</string>
+    <string name="stories">Historie</string>
+    <string name="edit_your_photo">Edytuj swoje zdjęcie</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">Powrót w czasie</string>
+    <string name="recent">Ostatnie</string>
+    <string name="screenshot">Zrzut ekranu</string>
+    <string name="all_photos">Wszystkie zdjęcia</string>
+    <string name="videos">Filmy</string>
+    <string name="pin_to_top">Przypnij na górę</string>
+    <string name="unpin_to_top">Odepnij</string>
+    <string name="change_cover">Zmień okładkę</string>
+    <string name="total_files">Łączna liczba plików</string>
+    <string name="modifying_items">Modyfikowanie %s elementów...</string>
 </resources>

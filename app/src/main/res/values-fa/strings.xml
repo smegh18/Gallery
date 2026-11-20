@@ -265,4 +265,17 @@
     <string name="items_moved_successfully">فایل‌های رسانه با موفقیت منتقل شدند.</string>
     <string name="hide_media">مخفی کردن رسانه</string>
     <string name="hide_item_permission">آیا مطمئن هستید که می‌خواهید رسانه‌ها را مخفی کنید؟</string>
+    <string name="stories">داستان‌ها</string>
+    <string name="edit_your_photo">" ویرایش عکس خود ر"</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">فلش‌بک</string>
+    <string name="recent">تازه</string>
+    <string name="screenshot">عکس‌های از صفحه</string>
+    <string name="all_photos">تمام عکس‌ها</string>
+    <string name="videos">ویدئوها</string>
+    <string name="pin_to_top">سنجاق به بالا</string>
+    <string name="unpin_to_top">حذف از بالا</string>
+    <string name="change_cover">تغییر جلد</string>
+    <string name="total_files">تعداد کل فایل‌ها</string>
+    <string name="modifying_items">در حال ویرایش %s مورد...</string>
 </resources>

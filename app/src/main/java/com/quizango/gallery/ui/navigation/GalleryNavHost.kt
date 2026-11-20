@@ -502,7 +502,7 @@ fun GalleryNavHost(
                 onFinished = {
                     val next = com.quizango.gallery.ui.discovery.StoryQueue.next(path)
                     if (next == null) navController.popBackStack()
-                    else navController.navigate(Screen.StoryView.createRoute(next.id, next.title)) {
+                    else navController.navigate(Screen.StoryView.createRoute(next.id, "")) {
                         popUpTo(Screen.StoryView.route) { inclusive = true }
                     }
                 }

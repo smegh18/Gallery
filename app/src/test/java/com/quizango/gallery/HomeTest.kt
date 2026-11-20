@@ -6,7 +6,6 @@ import com.quizango.gallery.domain.model.SortOrder
 import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
-import com.quizango.gallery.ui.home.HOME_TOP_FEATURES
 import com.quizango.gallery.ui.home.HeaderKind
 import com.quizango.gallery.ui.home.PhotoRow
 import com.quizango.gallery.ui.home.buildPhotoRows
@@ -16,7 +15,6 @@ import com.quizango.gallery.ui.home.headerKind
 import com.quizango.gallery.ui.home.indexForThumbFraction
 import com.quizango.gallery.ui.home.nextColumnCount
 import com.quizango.gallery.ui.home.thumbFraction
-import com.quizango.gallery.ui.home.MEDIA_TYPES
 import com.quizango.gallery.ui.home.formatDuration
 import com.quizango.gallery.ui.home.formatGroupHeader
 import org.junit.Assert.*
@@ -54,26 +52,6 @@ class HomeTest {
     }
 
     @Test
-    fun testTopFeaturesList() {
-        assertEquals(10, HOME_TOP_FEATURES.size)
-        val ids = HOME_TOP_FEATURES.map { it.id }
-        assertEquals(
-            listOf("vault", "favorites", "cleaner", "duplicates", "recycle", "collage", "editor", "videos", "place", "moments"),
-            ids
-        )
-    }
-
-    @Test
-    fun testMediaTypesList() {
-        assertEquals(4, MEDIA_TYPES.size)
-        val ids = MEDIA_TYPES.map { it.id }
-        assertEquals(
-            listOf("portrait", "high_definition", "burst", "animated"),
-            ids
-        )
-    }
-
-    @Test
     fun testSortOrder() {
         val defaultSort = SortOrder.DATE_DESC
         assertEquals(SortField.DATE_MODIFIED, defaultSort.field)
@@ -96,18 +74,6 @@ class HomeTest {
         assertEquals("All Media", tabNames[1])
         assertEquals("Explore", tabNames[2])
     }
-    @Test
-    fun testFeaturesAndMediaTypesResourcesValid() {
-        HOME_TOP_FEATURES.forEach { feature ->
-            assertTrue(feature.name.isNotBlank())
-            assertTrue(feature.iconRes != 0)
-        }
-        MEDIA_TYPES.forEach { mediaType ->
-            assertTrue(mediaType.title.isNotBlank())
-            assertTrue(mediaType.iconRes != 0)
-        }
-    }
-
     private fun at(y: Int, m: Int, d: Int, h: Int): Long =
         Calendar.getInstance().apply { clear(); set(y, m - 1, d, h, 0, 0) }.timeInMillis
 

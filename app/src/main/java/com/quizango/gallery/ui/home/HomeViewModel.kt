@@ -32,6 +32,8 @@ data class HomeUiState(
     val selectedTab: Int = PAGE_PHOTOS, // PAGE_PHOTOS (default), PAGE_ALBUMS, PAGE_EXPLORE
     val mediaList: List<MediaItem> = emptyList(),
     val albumsList: List<Album> = emptyList(),
+    val favoriteAlbum: Album = favoritesCard(emptyList()),
+    val deletedAlbum: Album = deletedCard(emptyList()),
     val columnCount: Int = 3,
     val pinchTipSeen: Boolean = true, // true until the preference loads, so the tutorial never flashes
     val sessionCount: Int = 0,
@@ -85,6 +87,18 @@ class HomeViewModel(
         viewModelScope.launch {
             mediaRepository.getAlbumsFlow().collect { albums ->
                 _uiState.update { it.copy(albumsList = albums) }
+            }
+        }
+
+        viewModelScope.launch {
+            mediaRepository.getFavoritesFlow().collect { items ->
+                _uiState.update { it.copy(favoriteAlbum = favoritesCard(items)) }
+            }
+        }
+
+        viewModelScope.launch {
+            mediaRepository.getRecycleBinFlow().collect { items ->
+                _uiState.update { it.copy(deletedAlbum = deletedCard(items)) }
             }
         }
 

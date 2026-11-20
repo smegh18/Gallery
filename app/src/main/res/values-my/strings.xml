@@ -273,4 +273,17 @@
     <string name="items_moved_successfully">မီဒီယာ ဖိုင်များကို အောင်မြင်စွာ သွားသည်။</string>
     <string name="hide_media">မီဒီယာ ကိုရုတ်ရန်</string>
     <string name="hide_item_permission">သင့်နှင့်အပြင် မီဒီယာကို ရုတ်ပုံသိမ်းနိုင်ပါသလဲ?</string>
+    <string name="stories">စာရုံးများ</string>
+    <string name="edit_your_photo">သင့်ပြောင်းလဲသည်တွင်ဖြင့်ပါ</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">ဖလော့နေသည့်</string>
+    <string name="recent">လက်ရှိပြီး</string>
+    <string name="screenshot">တံခါးတိုင်းပုံ</string>
+    <string name="all_photos">ဓာတ်ပုံအားလုံး</string>
+    <string name="videos">ဗီဒီယိုများ</string>
+    <string name="pin_to_top">အပိတ်ကြိုက်ရှင်းသိမ်းမည်</string>
+    <string name="unpin_to_top">အပေါ်ကိုအဆွဲဖြင့် ဖြတ်ပါ</string>
+    <string name="change_cover">ကြိုက်နှာကို ပြောင်းမည်</string>
+    <string name="total_files">စုစုပေါင်းဖိုင်များ</string>
+    <string name="modifying_items">%s ကိုယ်ပိုင်မှု ကိုက်ညီသည်...</string>
 </resources>

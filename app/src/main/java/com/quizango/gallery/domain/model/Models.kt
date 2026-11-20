@@ -2,6 +2,7 @@ package com.quizango.gallery.domain.model
 
 import android.content.ContentUris
 import android.net.Uri
+import androidx.annotation.StringRes
 import android.provider.MediaStore
 import java.io.File
 
@@ -89,7 +90,8 @@ data class Album(
     val itemCount: Int,
     val isPinned: Boolean = false,
     val coverId: Long = 0L,
-    val isVideoCover: Boolean = false
+    val isVideoCover: Boolean = false,
+    @StringRes val titleRes: Int = 0 // list title of a virtual album; 0 for device folders
 ) {
     val coverUri: Any
         get() = if (coverId > 0) {
