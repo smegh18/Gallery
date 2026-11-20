@@ -2,7 +2,6 @@ package com.quizango.gallery.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,10 +10,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,75 +22,95 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.discovery.StoryBuilder
 import com.quizango.gallery.ui.discovery.StoryQueue
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
-import com.quizango.gallery.domain.model.MediaType
-import com.quizango.gallery.ui.theme.albumOptionBg
-import com.quizango.gallery.ui.theme.mediaTypeCardBg
-import com.quizango.gallery.ui.theme.cardBorder
-import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.topContainerBg
-import java.io.File
 
-data class TopFeatureItem(
-    val id: String,
-    val name: String,
-    val iconRes: Int
-)
+internal const val ALBUM_FAVORITES = "filter:favorites" // the id getMediaByFolderFlow already knows
+internal const val ALBUM_DELETED = "filter:deleted"
 
-val HOME_TOP_FEATURES = listOf(
-    TopFeatureItem("vault", "Vault", R.drawable.ic_home_top_lock),
-    TopFeatureItem("favorites", "Favorites", R.drawable.ic_home_top_favorite),
-    TopFeatureItem("cleaner", "Cleaner", R.drawable.ic_home_top_cleaner),
-    TopFeatureItem("duplicates", "Duplicate", R.drawable.ic_home_top_duplicate),
-    TopFeatureItem("recycle", "Recycle Bin", R.drawable.ic_home_top_recyclebin),
-    TopFeatureItem("collage", "Collage", R.drawable.ic_home_top_collage),
-    TopFeatureItem("editor", "Editor", R.drawable.ic_home_top_editor),
-    TopFeatureItem("videos", "Videos", R.drawable.ic_home_top_videos),
-    TopFeatureItem("place", "Place", R.drawable.ic_home_top_map),
-    TopFeatureItem("moments", "Moments", R.drawable.ic_home_top_moment)
-)
+/** Favorite card (2.7.2 type 8): always shown, count 0 and card colour only when empty. */
+internal fun favoritesCard(items: List<MediaItem>): Album {
+    val cover = items.firstOrNull()
+    return Album(
+        id = ALBUM_FAVORITES, name = "", path = ALBUM_FAVORITES,
+        coverPath = cover?.filePath ?: "", itemCount = items.size,
+        coverId = cover?.id ?: 0L, isVideoCover = cover?.isVideo == true,
+        titleRes = R.string.favorite
+    )
+}
 
-data class MediaTypeItem(
-    val id: String,
-    val title: String,
-    val iconRes: Int
-)
+/** Deleted card (2.7.2 type -2001): newest Recycle Bin item as cover. */
+internal fun deletedCard(items: List<MediaItem>): Album {
+    val cover = items.maxByOrNull { it.deletedDate }
+    return Album(
+        id = ALBUM_DELETED, name = "", path = ALBUM_DELETED,
+        coverPath = cover?.filePath ?: "", itemCount = items.size,
+        coverId = cover?.id ?: 0L, isVideoCover = cover?.isVideo == true,
+        titleRes = R.string.album_tab_deleted
+    )
+}
 
-val MEDIA_TYPES = listOf(
-    MediaTypeItem("portrait", "Portrait", R.drawable.ic_image_portrait),
-    MediaTypeItem("high_definition", "High Definition", R.drawable.ic_image_high_definition),
-    MediaTypeItem("burst", "Burst", R.drawable.ic_image_burst),
-    MediaTypeItem("animated", "Animated", R.drawable.ic_image_animated)
-)
+/** 2.7.2 grid order (AA.OooO0oo): Recent, Favorite, All Video, Camera, Screenshots (when not empty), folders, Deleted. */
+internal fun albumGrid(albums: List<Album>, favorite: Album, deleted: Album): List<Album> {
+    fun virtual(id: String) = albums.firstOrNull { it.id == id }
+    return listOfNotNull(virtual("filter:all_photos"), favorite) +
+        listOf("filter:videos", "filter:camera", "filter:screenshots").mapNotNull { id -> virtual(id)?.takeIf { it.itemCount > 0 } } +
+        albums.filter { !it.id.startsWith("filter:") } +
+        deleted
+}
+
+/** Title string of a card; null for device folders, which show their folder name. */
+internal fun albumCardTitle(album: Album): Int? = when (album.id) {
+    "filter:all_photos" -> R.string.recent
+    ALBUM_FAVORITES -> R.string.favorite
+    "filter:videos" -> R.string.album_tab_all_video
+    "filter:camera" -> R.string.camera
+    "filter:screenshots" -> R.string.screenshot
+    ALBUM_DELETED -> R.string.album_tab_deleted
+    else -> null
+}
+
+/** Favorite and Deleted open their own screens; every other card opens the album media list. */
+internal fun albumRoute(album: Album, listTitle: String): String = when (album.id) {
+    ALBUM_FAVORITES -> Screen.Favorites.route
+    ALBUM_DELETED -> Screen.RecycleBin.route
+    else -> Screen.AlbumDetail.createRoute(album.id, listTitle)
+}
+
+/** List title of an album: the reference string for a virtual album, else the folder name. */
+@Composable
+internal fun albumTitle(album: Album): String =
+    if (album.titleRes != 0) stringResource(album.titleRes) else album.name
 
 @Composable
 fun AlbumsTab(
     albumsList: List<Album>,
+    favoriteAlbum: Album,
+    deletedAlbum: Album,
     isLoading: Boolean,
     mediaList: List<MediaItem> = emptyList(),
-    onAlbumClick: (Album) -> Unit,
-    onStoryClick: (path: String, title: String) -> Unit = { _, _ -> },
-    onFeatureClick: (String) -> Unit = {},
-    onMediaTypeClick: (String) -> Unit = {}
+    onAlbumClick: (Album, String) -> Unit,
+    onStoryClick: (path: String, title: String) -> Unit = { _, _ -> }
 ) {
     if (isLoading) {
         // fragment_album: only a centred progress bar until the first sync has returned
         Box(
-            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+            modifier = Modifier.fillMaxSize().background(colorResource(R.color.album_tab_bg)),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
@@ -102,197 +119,56 @@ fun AlbumsTab(
     }
     // Reference story rules (HomeViewModel): see StoryBuilder
     val stories = androidx.compose.runtime.remember(mediaList) { StoryBuilder.build(mediaList) }
-
-    val chunkedAlbums = androidx.compose.runtime.remember(albumsList) { albumsList.chunked(3) }
+    val rows = androidx.compose.runtime.remember(albumsList, favoriteAlbum, deletedAlbum) {
+        albumGrid(albumsList, favoriteAlbum, deletedAlbum).chunked(3)
+    }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(bottom = 24.dp)
+            .background(colorResource(R.color.album_tab_bg))
     ) {
-        // 1. Top Section (Features Carousel + Stories Strip with dynamic topContainerBg)
+        // Stories strip (Reference: storyRecycler in fragment_album.xml)
         item {
-            Column(
+            StoryQueue.stories = stories
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.topContainerBg)
-                    .padding(vertical = 4.dp)
+                    .padding(horizontal = 8.dp, vertical = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Features Carousel (Reference rvFeaturesLists)
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    items(HOME_TOP_FEATURES) { feature ->
-                        FeatureItemView(
-                            feature = feature,
-                            onClick = { onFeatureClick(feature.id) }
-                        )
-                    }
+                items(stories, key = { "story_${it.id}" }) { story ->
+                    StoryCircleItem(
+                        title = story.title,
+                        imageModel = story.items.first().contentUri,
+                        gradientColors = when (story.id) {
+                            "recent" -> listOf(Color(0xFFFF3093), Color(0xFFFF5252), Color(0xFFFFC701), Color(0xFFFF3093))
+                            "random" -> listOf(Color(0xFF0072FF), Color(0xFF00C6FF), Color(0xFF0072FF))
+                            "favorite" -> listOf(Color(0xFFFF416C), Color(0xFFFF4B2B), Color(0xFFFF416C))
+                            else -> listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2))
+                        },
+                        onClick = { onStoryClick(story.id, story.title) }
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                // Stories Strip (Reference: llStoryView / storyRecycler in fragment_album.xml)
-                StoryQueue.stories = stories
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(stories, key = { "story_${it.id}" }) { story ->
-                        StoryCircleItem(
-                            title = story.title,
-                            imageModel = story.items.first().contentUri,
-                            gradientColors = when (story.id) {
-                                "recent" -> listOf(Color(0xFFFF3093), Color(0xFFFF5252), Color(0xFFFFC701), Color(0xFFFF3093))
-                                "random" -> listOf(Color(0xFF0072FF), Color(0xFF00C6FF), Color(0xFF0072FF))
-                                "favorite" -> listOf(Color(0xFFFF416C), Color(0xFFFF4B2B), Color(0xFFFF416C))
-                                else -> listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2))
-                            },
-                            onClick = { onStoryClick(story.id, story.title) }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
             }
+            Spacer(Modifier.height(7.sdp)) // albumRecycler marginTop
         }
 
-        // Reference has no divider below the top container, only the colour change
-        item {
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-
-        // 2. Albums Grid (3 columns)
-        if (albumsList.isNotEmpty()) {
-            items(chunkedAlbums, key = { row -> row.firstOrNull()?.id ?: row.hashCode() }, contentType = { "album_row" }) { rowAlbums ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    for (i in 0 until 3) {
-                        if (i < rowAlbums.size) {
-                            val album = rowAlbums[i]
-                            Box(modifier = Modifier.weight(1f)) {
-                                AlbumCard(album = album, onClick = { onAlbumClick(album) })
-                            }
-                        } else {
-                            Spacer(modifier = Modifier.weight(1f))
+        // Album grid (3 columns): list padding 9.sdp, cards 4.sdp side and 20.sdp bottom margins
+        items(rows, key = { row -> row.first().id }, contentType = { "album_row" }) { rowAlbums ->
+            Row(Modifier.fillMaxWidth().padding(horizontal = 9.sdp)) {
+                for (i in 0 until 3) {
+                    val album = rowAlbums.getOrNull(i)
+                    Box(Modifier.weight(1f).padding(start = 4.sdp, end = 4.sdp, bottom = 20.sdp)) {
+                        if (album != null) {
+                            val shown = albumCardTitle(album)?.let { stringResource(it) } ?: album.name
+                            val listTitle = albumTitle(album)
+                            AlbumCard(album = album.copy(name = shown), onClick = { onAlbumClick(album, listTitle) })
                         }
                     }
                 }
             }
         }
-
-        // 3. Media Types Header & List (Reference mediaTitle & media_type_bg)
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Media Types",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Black, // reference: black heading
-                fontSize = 18.sp,
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.mediaTypeCardBg)
-            ) {
-                MEDIA_TYPES.forEachIndexed { index, mediaType ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onMediaTypeClick(mediaType.id) }
-                            .padding(horizontal = 14.dp, vertical = 13.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Reference draws each icon on a rounded tile (media_type_bg)
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.albumOptionBg),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = mediaType.iconRes),
-                                contentDescription = mediaType.title,
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Text(
-                            text = mediaType.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 16.sp,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_right_arrow),
-                            contentDescription = null,
-                            tint = if (MaterialTheme.colorScheme.isDark) Color.White else Color(0xFF354052) /* reference chevron */,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-
-                    if (index < MEDIA_TYPES.size - 1) {
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline,
-                            thickness = 0.5.dp,
-                            modifier = Modifier.padding(horizontal = 14.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun FeatureItemView(
-    feature: TopFeatureItem,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .width(64.dp)
-            .clickable(onClick = onClick)
-            .padding(vertical = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            painter = painterResource(id = feature.iconRes),
-            contentDescription = feature.name,
-            tint = Color.Unspecified,
-            // Pill vectors are 51x34dp; reference draws them at intrinsic size.
-            modifier = Modifier.size(width = 51.dp, height = 34.dp)
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = feature.name,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
-            fontSize = 10.5.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground
-        )
     }
 }
 
@@ -301,8 +177,6 @@ fun AlbumCard(
     album: Album,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

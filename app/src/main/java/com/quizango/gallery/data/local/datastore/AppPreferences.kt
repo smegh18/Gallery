@@ -27,6 +27,9 @@ class AppPreferences(private val context: Context) {
         val VAULT_PATTERN = stringPreferencesKey("vault_pattern")
         val IS_PATTERN_MODE = booleanPreferencesKey("is_vault_pattern_mode")
         val IS_FINGERPRINT_ENABLED = booleanPreferencesKey("is_fingerprint_enabled")
+        val STORIES_EDIT_TOOLTIP = booleanPreferencesKey("isStoriesEditToolTip") // 2.7.2 key names (Phase 4)
+        val COLLAGE_NEW_EXPLORE = booleanPreferencesKey("collageMakerNewButtonExplore")
+        val JUNK_CLEANED_TODAY = booleanPreferencesKey("isJunkCleanedForToday")
         val VAULT_QUESTION = stringPreferencesKey("vault_recovery_question")
         val VAULT_ANSWER = stringPreferencesKey("vault_recovery_answer")
         val VAULT_QUESTION_2 = stringPreferencesKey("vault_recovery_question_2")
@@ -46,6 +49,10 @@ class AppPreferences(private val context: Context) {
     val isPinchInOutToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.PINCH_TIP_SEEN] ?: false }
     val sessionCount: Flow<Int> = context.dataStore.data.map { it[Keys.SESSION_COUNT] ?: 0 }
     val isVaultHintToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.VAULT_HINT_SEEN] ?: false }
+    val isStoriesEditToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.STORIES_EDIT_TOOLTIP] ?: false }
+    val collageMakerNewButtonExplore: Flow<Boolean> = context.dataStore.data.map { it[Keys.COLLAGE_NEW_EXPLORE] ?: false }
+    // Read-only in Phase 4; Phase 6 writes it from the junk-cleared screen.
+    val isJunkCleanedForToday: Flow<Boolean> = context.dataStore.data.map { it[Keys.JUNK_CLEANED_TODAY] ?: false }
     val vaultHintClosedSession: Flow<Int> = context.dataStore.data.map { it[Keys.VAULT_HINT_CLOSED_SESSION] ?: 0 }
     val autoDeleteTrash: Flow<Boolean> = context.dataStore.data.map { it[Keys.AUTO_DELETE_TRASH] ?: true }
     val vaultPin: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PIN] }
@@ -120,6 +127,14 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setVaultHintClosedSession(session: Int) {
         context.dataStore.edit { it[Keys.VAULT_HINT_CLOSED_SESSION] = session }
+    }
+
+    suspend fun setStoriesEditToolTip(seen: Boolean) {
+        context.dataStore.edit { it[Keys.STORIES_EDIT_TOOLTIP] = seen }
+    }
+
+    suspend fun setCollageMakerNewButtonExplore(seen: Boolean) {
+        context.dataStore.edit { it[Keys.COLLAGE_NEW_EXPLORE] = seen }
     }
 
     suspend fun setAutoDeleteTrash(enabled: Boolean) {

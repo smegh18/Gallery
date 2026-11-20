@@ -231,4 +231,16 @@
     <color name="tooltip_bg">#cc202331</color>
     <color name="exitViewBackgroundColor">#ffffffff</color>
     <color name="cancel_button_stroke_color">#ff0066ff</color>
+
+    <!-- 2.7.2 colours (Phase 4) -->
+    <color name="grayTitle">#ff585758</color>
+    <color name="blackTran3">#dd000000</color>
+    <color name="cropIconColor">#ff1e3354</color>
+    <color name="shimmer_color">#fff2f2f2</color>
+    <color name="shimmerColorCTAButton">#ffcdcfd2</color>
+    <color name="adsBgColor">#fffafafa</color>
+    <color name="adsBgBorderColor">#ffe4e6e9</color>
+    <color name="shimmerColorDark">#ffc7cacd</color>
+    <color name="shimmerColorMedium">#ffe4e5e7</color>
+    <color name="text_sticker_input_bg">#ffe3eff8</color>
 </resources>

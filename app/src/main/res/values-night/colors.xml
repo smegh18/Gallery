@@ -130,4 +130,11 @@
     <!-- 2.7.2 colours (Phase 3) -->
     <color name="exitViewBackgroundColor">#ff131111</color>
     <color name="cancel_button_stroke_color">#50ffffff</color>
+
+    <!-- 2.7.2 colours (Phase 4) -->
+    <color name="grayTitle">#ff7a8389</color>
+    <color name="shimmer_color">#ff262424</color>
+    <color name="adsBgColor">#ff1e1e1e</color>
+    <color name="adsBgBorderColor">#ff303030</color>
+    <color name="text_sticker_input_bg">#ff1e1e1e</color>
 </resources>

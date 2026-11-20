@@ -275,4 +275,17 @@
     <string name="items_moved_successfully">Медиа файлы успешно перемещены.</string>
     <string name="hide_media">Скрыть медиа</string>
     <string name="hide_item_permission">Вы уверены, что хотите скрыть медиа?</string>
+    <string name="stories">Истории</string>
+    <string name="edit_your_photo">Редактировать фото</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">Воспоминание</string>
+    <string name="recent">Недавние</string>
+    <string name="screenshot">Скриншоты</string>
+    <string name="all_photos">Все фотографии</string>
+    <string name="videos">Видео</string>
+    <string name="pin_to_top">Закрепить наверху</string>
+    <string name="unpin_to_top">Открепить</string>
+    <string name="change_cover">Изменить обложку</string>
+    <string name="total_files">Всего файлов</string>
+    <string name="modifying_items">Изменение %s элементов…</string>
 </resources>

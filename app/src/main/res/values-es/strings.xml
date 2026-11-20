@@ -265,4 +265,17 @@
     <string name="items_moved_successfully">Archivos multimedia movidos con éxito.</string>
     <string name="hide_media">Ocultar medios</string>
     <string name="hide_item_permission">¿Está seguro de que desea ocultar los medios?</string>
+    <string name="stories">Historias</string>
+    <string name="edit_your_photo">Edita tu foto</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">Retroceso</string>
+    <string name="recent">Reciente</string>
+    <string name="screenshot">Captura de Pantalla</string>
+    <string name="all_photos">Todas las fotos</string>
+    <string name="videos">Videos</string>
+    <string name="pin_to_top">Anclar en la parte superior</string>
+    <string name="unpin_to_top">Desanclar</string>
+    <string name="change_cover">Cambiar portada</string>
+    <string name="total_files">Total de archivos</string>
+    <string name="modifying_items">Modificando %s elementos...</string>
 </resources>

@@ -265,4 +265,17 @@
     <string name="items_moved_successfully">Mediendateien erfolgreich verschoben.</string>
     <string name="hide_media">Medien ausblenden</string>
     <string name="hide_item_permission">Sind Sie sicher, dass Sie Medien ausblenden möchten?</string>
+    <string name="stories">Geschichten</string>
+    <string name="edit_your_photo">" Bearbeiten Sie Ihr Foto"</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">Rückblende</string>
+    <string name="recent">Kürzlich</string>
+    <string name="screenshot">Screenshot</string>
+    <string name="all_photos">Alle Fotos</string>
+    <string name="videos">Videos</string>
+    <string name="pin_to_top">Oben anheften</string>
+    <string name="unpin_to_top">Lösen</string>
+    <string name="change_cover">Cover ändern</string>
+    <string name="total_files">Gesamtanzahl der Dateien</string>
+    <string name="modifying_items">Ändere %s Elemente...</string>
 </resources>

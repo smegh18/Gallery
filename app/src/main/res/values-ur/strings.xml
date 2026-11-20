@@ -243,4 +243,18 @@
     <string name="items_moved_successfully">میڈیا فائلیں کامیابی سے منتقل ہوگئیں ہیں۔</string>
     <string name="hide_media">میڈیا چھپائیں</string>
     <string name="hide_item_permission">کیا آپ میڈیا چھپانا چاہتے ہیں؟</string>
+    <string name="stories">کہانیاں</string>
+    <string name="edit_your_photo">اپنی تصویر میں ترتیب دیں</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">فلیش بیک</string>
+    <string name="random">"بے "</string>
+    <string name="recent">حالیہ</string>
+    <string name="screenshot">اسکرین شارٹ</string>
+    <string name="all_photos">تمام تصاویر</string>
+    <string name="videos">ویڈیوز</string>
+    <string name="pin_to_top">اوپر پن کریں</string>
+    <string name="unpin_to_top">اوپر سے نکالیں</string>
+    <string name="change_cover">کور میں تبدیلی کریں</string>
+    <string name="total_files">کل فائلیں</string>
+    <string name="modifying_items">%s اشیاء میں ترمیم کی جا رہی ہیں۔..</string>
 </resources>

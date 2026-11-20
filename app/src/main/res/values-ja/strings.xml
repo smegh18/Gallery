@@ -273,4 +273,17 @@
     <string name="items_moved_successfully">メディアファイルが正常に移動しました</string>
     <string name="hide_media">メディアを非表示</string>
     <string name="hide_item_permission">メディアを非表示にしますか？</string>
+    <string name="stories">ストーリーズ</string>
+    <string name="edit_your_photo">あなたの写真を編集</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">フラッシュバック</string>
+    <string name="recent">出口</string>
+    <string name="screenshot">スクリーンショット</string>
+    <string name="all_photos">すべての写真</string>
+    <string name="videos">動画</string>
+    <string name="pin_to_top">トップに固定</string>
+    <string name="unpin_to_top">解除</string>
+    <string name="change_cover">表紙を変更</string>
+    <string name="total_files">合計ファイル数</string>
+    <string name="modifying_items">%s 個のアイテムを変更中...</string>
 </resources>

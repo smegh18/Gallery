@@ -190,34 +190,11 @@ fun HomeScreen(
                         albumsList = uiState.albumsList,
                         isLoading = uiState.albumsList.isEmpty() && !uiState.initialSyncDone,
                         mediaList = uiState.mediaList,
-                        onAlbumClick = { album ->
-                            onNavigate(Screen.AlbumDetail.createRoute(album.id, album.name))
-                        },
+                        favoriteAlbum = uiState.favoriteAlbum,
+                        deletedAlbum = uiState.deletedAlbum,
+                        onAlbumClick = { album, title -> onNavigate(albumRoute(album, title)) },
                         onStoryClick = { path, title ->
                             onNavigate(Screen.StoryView.createRoute(path, title))
-                        },
-                        onFeatureClick = { featureId ->
-                            when (featureId) {
-                                "vault" -> onNavigate(Screen.VaultLock.route)
-                                "favorites" -> onNavigate(Screen.Favorites.route)
-                                "cleaner" -> onNavigate(Screen.RemoveJunk.route)
-                                "duplicates" -> onNavigate(Screen.DuplicateWaiting.route) // reference scans first
-                                "recycle" -> onNavigate(Screen.RecycleBin.route)
-                                "collage" -> onNavigate(Screen.CollageMaker.route)
-                                "editor" -> onNavigate(Screen.Editor.createRoute())
-                                "videos" -> onNavigate(Screen.AlbumDetail.createRoute("filter:videos", "Videos"))
-                                "place" -> onNavigate(Screen.AlbumDetail.createRoute("filter:place", "Geographic photo"))
-                                "moments" -> onNavigate(Screen.Moments.route)
-                            }
-                        },
-                        onMediaTypeClick = { typeId ->
-                            when (typeId) {
-                                "portrait" -> onNavigate(Screen.AlbumDetail.createRoute("filter:portrait", "Portraits"))
-                                "high_definition" -> onNavigate(Screen.AlbumDetail.createRoute("filter:hd", "High Definition"))
-                                "burst" -> onNavigate(Screen.BurstPhotos.route)
-                                "animated" -> onNavigate(Screen.AnimatedMedia.route)
-                                else -> viewModel.setTab(PAGE_PHOTOS)
-                            }
                         }
                     )
                     PAGE_PHOTOS -> PhotosTab(
@@ -371,7 +348,8 @@ fun HomeScreen(
     }
 }
 
-private fun shareSelectedMedia(context: Context, paths: Set<String>, chooserTitle: String) {
+// internal: the story viewer reuses it for its Share button
+internal fun shareSelectedMedia(context: Context, paths: Set<String>, chooserTitle: String) {
     if (paths.isEmpty()) return
     try {
         val uris = ArrayList<Uri>()

@@ -273,4 +273,17 @@
     <string name="items_moved_successfully">Fail media berjaya dipindahkan.</string>
     <string name="hide_media">Sembunyi Media</string>
     <string name="hide_item_permission">Adakah anda pasti mahu menyembunyikan media?</string>
+    <string name="stories">Cerita</string>
+    <string name="edit_your_photo">Edit gambar anda</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">Flashback</string>
+    <string name="recent">Baru-baru ini</string>
+    <string name="screenshot">Tangkapan skrin</string>
+    <string name="all_photos">Semua Foto</string>
+    <string name="videos">Video</string>
+    <string name="pin_to_top">Tampal di atas</string>
+    <string name="unpin_to_top">Lepaskan</string>
+    <string name="change_cover">Tukar kulit</string>
+    <string name="total_files">Jumlah fail</string>
+    <string name="modifying_items">Menukar %s item...</string>
 </resources>

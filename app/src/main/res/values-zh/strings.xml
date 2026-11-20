@@ -263,4 +263,17 @@
     <string name="items_moved_successfully">媒体文件移动成功。</string>
     <string name="hide_media">隐藏媒体</string>
     <string name="hide_item_permission">您确定要隐藏媒体吗？</string>
+    <string name="stories">故事</string>
+    <string name="edit_your_photo">编辑您的照片</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">倒叙</string>
+    <string name="recent">最近的</string>
+    <string name="screenshot">截图</string>
+    <string name="all_photos">所有照片</string>
+    <string name="videos">视频</string>
+    <string name="pin_to_top">置顶</string>
+    <string name="unpin_to_top">取消固定</string>
+    <string name="change_cover">更换封面</string>
+    <string name="total_files">文件总数</string>
+    <string name="modifying_items">正在修改 %s 个项目...</string>
 </resources>

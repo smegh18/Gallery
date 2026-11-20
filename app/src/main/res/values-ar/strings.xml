@@ -265,4 +265,17 @@
     <string name="items_moved_successfully">تم نقل ملفات الوسائط بنجاح.</string>
     <string name="hide_media">إخفاء الوسائط</string>
     <string name="hide_item_permission">هل أنت متأكد أنك تريد إخفاء الوسائط؟</string>
+    <string name="stories">قصص</string>
+    <string name="edit_your_photo">تعديل صورتك</string>
+    <string name="playzen">Playzen</string>
+    <string name="flash_back">فلاش باك</string>
+    <string name="recent">حديث</string>
+    <string name="screenshot">لقطة الشاشة</string>
+    <string name="all_photos">جميع الصور</string>
+    <string name="videos">فيديوهات</string>
+    <string name="pin_to_top">تثبيت في الأعلى</string>
+    <string name="unpin_to_top">إلغاء التثبيت</string>
+    <string name="change_cover">تغيير الغلاف</string>
+    <string name="total_files">مجموع الملفات</string>
+    <string name="modifying_items">تعديل %s عناصر...</string>
 </resources>
