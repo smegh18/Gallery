@@ -365,6 +365,7 @@
     <string name="change_cover">Change cover</string>
     <string name="total_files">Total files</string>
     <string name="modifying_items">Modifying %s items…</string>
+    <string name="something_went_wrong">An issue occurred!</string>
     <!-- no reference key: hard-coded English in S272/bx/c.smali:333, stays English in every language -->
     <string name="cannot_select_system_folders" translatable="false">You can not select system folders</string>
 </resources>

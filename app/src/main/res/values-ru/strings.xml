@@ -288,4 +288,5 @@
     <string name="change_cover">Изменить обложку</string>
     <string name="total_files">Всего файлов</string>
     <string name="modifying_items">Изменение %s элементов…</string>
+    <string name="something_went_wrong">Произошла ошибка!</string>
 </resources>

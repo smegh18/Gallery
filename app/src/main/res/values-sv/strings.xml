@@ -286,4 +286,5 @@
     <string name="change_cover">Byt omslag</string>
     <string name="total_files">Totalt antal filer</string>
     <string name="modifying_items">Ändrar %s objekt...</string>
+    <string name="something_went_wrong">Ett problem uppstod!</string>
 </resources>

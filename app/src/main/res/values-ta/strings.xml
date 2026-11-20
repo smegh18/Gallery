@@ -287,4 +287,5 @@
     <string name="change_cover">முதல் படத்தை மாற்று</string>
     <string name="total_files">மொத்த கோப்புகள்</string>
     <string name="modifying_items">%s பொருட்களை மாற்றுகிறது...</string>
+    <string name="something_went_wrong">ஒரு சிக்கல் ஏற்பட்டது!</string>
 </resources>

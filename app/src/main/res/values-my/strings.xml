@@ -286,4 +286,5 @@
     <string name="change_cover">ကြိုက်နှာကို ပြောင်းမည်</string>
     <string name="total_files">စုစုပေါင်းဖိုင်များ</string>
     <string name="modifying_items">%s ကိုယ်ပိုင်မှု ကိုက်ညီသည်...</string>
+    <string name="something_went_wrong">အနားမြှောင်ခြင်းတစ်ခုရှိပြီးသွားပါတယ်!</string>
 </resources>

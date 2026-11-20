@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.MediaRepository
+import com.quizango.gallery.ui.components.MediaPicker
 import com.quizango.gallery.ui.editor.crop.CropGeometry
 import com.quizango.gallery.ui.editor.crop.ImageCropView
 import com.quizango.gallery.ui.navigation.Screen
@@ -275,7 +276,9 @@ fun PhotoEditorScreen(
 
     // Reference opens an in-app photo picker (InternalSelectMediaActivity) when no photo is given.
     if (currentPath.isNullOrEmpty()) {
-        EditorPhotoPicker(mediaRepository, onNavigateBack) { currentPath = it }
+        val media by mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
+        val photos = remember(media) { media.filter { it.mediaType != com.quizango.gallery.domain.model.MediaType.VIDEO } }
+        MediaPicker(stringResource(R.string.all_photos), photos, onNavigateBack) { currentPath = it.filePath }
         return
     }
 
@@ -1766,65 +1769,6 @@ private suspend fun saveEditedBitmap(
         true
     } catch (_: Exception) {
         false
-    }
-}
-
-
-@Composable
-private fun EditorPhotoPicker(
-    mediaRepository: MediaRepository,
-    onNavigateBack: () -> Unit,
-    onPick: (String) -> Unit
-) {
-    val media by mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
-    val photos = remember(media) { media.filter { it.mediaType != com.quizango.gallery.domain.model.MediaType.VIDEO } }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-            Text(
-                text = "All Photos",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        if (photos.isEmpty()) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("No items", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        } else {
-            androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
-                columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(3),
-                contentPadding = PaddingValues(2.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(photos.size, key = { photos[it].id }) { i ->
-                    coil.compose.AsyncImage(
-                        model = photos[i].contentUri,
-                        contentDescription = photos[i].fileName,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .aspectRatio(1f)
-                            .clickable { onPick(photos[i].filePath) }
-                    )
-                }
-            }
-        }
     }
 }
 

@@ -286,4 +286,5 @@
     <string name="change_cover">Tukar kulit</string>
     <string name="total_files">Jumlah fail</string>
     <string name="modifying_items">Menukar %s item...</string>
+    <string name="something_went_wrong">Satu isu telah berlaku!</string>
 </resources>

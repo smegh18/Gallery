@@ -275,4 +275,5 @@
     <string name="change_cover">Kapağı değiştir</string>
     <string name="total_files">Toplam dosya sayısı</string>
     <string name="modifying_items">%s öğe değiştiriliyor…</string>
+    <string name="something_went_wrong">Bir sorun oluştu!</string>
 </resources>

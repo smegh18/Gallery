@@ -16,6 +16,7 @@ import com.quizango.gallery.data.repository.MediaRepositoryImpl
 import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.data.repository.VaultRepositoryImpl
 import com.quizango.gallery.ui.theme.applyNightMode
+import androidx.room.withTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -28,7 +29,7 @@ class GalleryApplication : Application(), ImageLoaderFactory {
     val scanner by lazy { MediaStoreScanner(this) }
 
     val mediaRepository: MediaRepository by lazy {
-        MediaRepositoryImpl(database.galleryDao(), scanner, moments.labels)
+        MediaRepositoryImpl(database.galleryDao(), scanner, moments.labels) { block -> database.withTransaction { block() } }
     }
 
     val duplicates by lazy { com.quizango.gallery.data.local.DuplicateFinder(this) }
