@@ -1,7 +1,8 @@
 ---
 phase: "4"
 slug: "albums-stories-and-explore"
-status: draft
+status: approved
+reviewed_at: 2026-11-20
 shadcn_initialized: false
 preset: none
 created: "2026-11-20"
@@ -507,3 +508,8 @@ Asset provenance gate (Phase 1 rule): copy only from `R272/res`; no ad-SDK resou
 - [ ] Dimension 7 Inventory Provenance: PASS
 
 **Approval:** pending
+
+## Checker notes (2026-11-20, approved, non-blocking)
+- **Album selection dialogs:** before the album-selection plan runs, read `AF`/`HomeActivity` and the rename, cover and add-to dialog layouts in the reference. Bind their string keys first. Settle when Change cover / Rename are enabled with several albums selected, and when Pin reads "Unpin".
+- **Colours:** add light and dark hex values for `cropIconColor`, `adsBgColor` and `adsBgBorderColor` from R272 `values(-night)/colors.xml`.
+- **Drawables:** check that `ic_album_select_pinned`, `ic_album_select_cover`, `ic_rename` and `ic_add` exist. Import any that are missing from R272.
