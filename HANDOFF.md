@@ -7,35 +7,29 @@ Written 2026-11-13 by Claude Code for Antigravity to continue this work.
 - It is a rebuild of a reference app, `albums.gallery.photo.folder.picasa.app.web.gallery`. Our app matched reference **2.6.7**. The current goal is **100% parity with reference 2.7.2**: every screen, flow, animation and behaviour.
 
 ## Where things stand
-- Main is ahead of origin with Phase 2 complete. Working tree is clean.
+- Main is ahead of origin with Phase 3 complete and Phase 4 implemented through Plan 04-06 (quality gates passed, device checkpoint prepped).
 - Planning is done with GSD (get-shit-done) in `.planning/`:
   - `PROJECT.md`: milestone goal and approach.
   - `REQUIREMENTS.md`: 46 requirement IDs with traceability.
   - `ROADMAP.md`: 13 phases.
   - `STATE.md`: current position.
-  - `milestones/v2.7.2-parity/PARITY-CHECKLIST.md`: **the master list of 53 screens**, each with Ported and Verified boxes, plus the decisions and flows to verify. Rows #1-#5 are now marked **Ported**.
+  - `milestones/v2.7.2-parity/PARITY-CHECKLIST.md`: **the master list of 53 screens**, each with Ported and Verified boxes, plus the decisions and flows to verify. Rows #1-#10 and #15 are marked **Ported**.
   - `phases/01-foundation/`: Complete and verified.
-  - `phases/02-onboarding/`: UI-SPEC, 5 PLANs, 5 SUMMARYs, and 02-VERIFICATION. Complete and verified.
-- **Phase 1 (Foundation) is complete and verified.**
-- **Phase 2 (Onboarding) is complete and verified.** Reconstructed Splash (140.sdp card, M3 progress indicator), Language onboarding mode (50.sdp x 28.sdp tick button, 55.sdp hand Lottie), Permission (activity_permission.xml match, dialog_permission_needed.xml), and FeaturePromo ("Get more from your Gallery" with Phone + Overlay permissions and 2s delayed skip). WelcomeScreen is completely removed. Quality gates pass: 107 unit tests pass, assembleDebug passes, 24 languages synced, 183 light/118 night colors match, CodeRabbit review completed with findings fixed, and unslop audit passes.
+  - `phases/02-onboarding/`: Complete and verified.
+  - `phases/03-home-shell-and-photos-tab/`: Complete and verified.
+  - `phases/04-albums-stories-and-explore/`: Plans 04-01 to 04-06 implemented. Automated gates, CodeRabbit review, unslop audit, and device harness (`ZZPhase4Test` with 6 images, reset first-run states) are ready. Task 3 on-device human verification pending.
+- **Phase 4 Summary:**
+  - Plan 04-01: Removed legacy carousel/media-type lists, imported 2.7.2 drawables and colors, rebuilt `HomeAlbumCard`.
+  - Plan 04-02: 2.7.2 story row with blue rings, press-scale animation, and Playzen cross-promo circle.
+  - Plan 04-03: Fullscreen Stories viewer with slow zoom (3000 ms), split-tap navigation, hold-to-pause, Edit tooltip, and ad outline placeholder.
+  - Plan 04-04: Rebuilt Explore tab matching 2.7.2 sections; album selection mode with 5-action bottom bar and pin to top.
+  - Plan 04-05: Change cover via shared `MediaPicker`, on-disk folder rename with progress dialog and atomic Room row migration, and `AlbumPropertyDialog`.
+  - Plan 04-06: CodeRabbit review fixes (atomicity, accessibility semantics, localized cancel, selection generation tracking), unslop audit, checklist ticks (rows #8, #9, #15), Playzen brand-art listing, and on-device test album setup.
 
 ## Next step
-**Phase 3: Home Shell and Photos Tab (HOME-01, HOME-02, HOME-03, PHO-01).**
-- Checklist rows: #6 (HomeActivity shell), #7 (Photos tab / fragment_all_media), #10 (Exit popup).
-- Goals:
-  1. Home tabs in 2.7.2 order (Photos / Album / Explore) with 2.7.2 top bars.
-  2. ⋮ popup menu and ad-free button matching 2.7.2.
-  3. Vault hint banner appearing per 2.7.2 logic.
-  4. Exit popup on Back press matching dialog_exit_popup.xml.
-  5. Photos tab showing 2.7.2 date headers, grid items, ad-placeholder rows, pinch-to-zoom column scaling, and multi-select.
-- Follow the same cycle:
-  1. Write Phase 3 UI-SPEC (`03-UI-SPEC.md`).
-  2. Run UI checker subagent.
-  3. Plan Phase 3 (`/gsd-plan-phase 3`).
-  4. Run Plan checker subagent.
-  5. Execute plans in small atomic commits.
-  6. Quality gates (unit tests, assembleDebug, CodeRabbit review, unslop audit).
-  7. Verification report and update checklist/state/handoff.
+- Complete Task 3 on-device verification for Phase 4 on Redmi M2006C3MII.
+- Remove disposable test album `ZZPhase4Test` from `/sdcard/Pictures/` via ADB.
+- Mark Phase 4 complete and kick off **Phase 5: Full-Screen Media Viewer and Video Player (VIE-01, VIE-02, VIE-03)**.
 
 ## How to read the reference app (source of truth)
 See `tooling-setup.md`.
