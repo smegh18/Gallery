@@ -8,6 +8,7 @@ import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
+import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortOrder
@@ -31,6 +32,14 @@ internal fun allInFolder(paths: Collection<String>, folder: String): Boolean =
 /** Marks the pinned device folders; virtual albums are never pinned. */
 internal fun withPins(albums: List<Album>, pinned: Set<String>): List<Album> =
     albums.map { it.copy(isPinned = albumIsSelectable(it) && it.path in pinned) }
+
+/** The picked cover of a folder, applied only while that file is still in the folder (a stale entry shows the default). */
+internal fun withCovers(albums: List<Album>, covers: Map<String, String>, media: List<MediaItem>): List<Album> =
+    albums.map { album ->
+        val picked = covers[album.path]?.let { path -> media.firstOrNull { it.filePath == path && it.folderPath == album.path } }
+        if (picked == null) album
+        else album.copy(coverPath = picked.filePath, coverId = picked.id, isVideoCover = picked.mediaType == MediaType.VIDEO)
+    }
 
 /** Every file whose folder is one of the selected albums. */
 internal fun albumMediaPaths(selected: Set<String>, media: List<MediaItem>): List<String> =
@@ -100,7 +109,9 @@ class HomeViewModel(
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
-            combine(mediaRepository.getAlbumsFlow(), preferences.pinnedAlbums, ::withPins).collect { albums ->
+            combine(
+                mediaRepository.getAlbumsFlow(), preferences.pinnedAlbums, preferences.albumCovers, mediaRepository.getActiveMediaFlow()
+            ) { albums, pinned, covers, media -> withCovers(withPins(albums, pinned), covers, media) }.collect { albums ->
                 _uiState.update { it.copy(albumsList = albums) }
             }
         }
@@ -211,6 +222,16 @@ class HomeViewModel(
         val path = state.selectedAlbums.singleOrNull() ?: return
         val pinned = state.albumsList.firstOrNull { it.path == path }?.isPinned == true
         viewModelScope.launch { preferences.setAlbumsPinned(setOf(path), !pinned) }
+        clearAlbumSelection()
+    }
+
+    /** Change cover acts on the first selected album, and only when exactly one is selected. */
+    fun changeCoverTarget(): Album? =
+        _uiState.value.let { st -> st.selectedAlbums.singleOrNull()?.let { path -> st.albumsList.firstOrNull { it.path == path } } }
+
+    fun setSelectedAlbumCover(item: MediaItem) {
+        val folder = changeCoverTarget()?.path ?: return
+        viewModelScope.launch { preferences.setAlbumCover(folder, item.filePath) }
         clearAlbumSelection()
     }
 

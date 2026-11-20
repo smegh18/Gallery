@@ -41,6 +41,10 @@ import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
 import com.quizango.gallery.ui.components.AddToAlbumSheet
+import com.quizango.gallery.ui.components.MediaPicker
+import com.quizango.gallery.domain.model.MediaType
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.splash.checkStoragePermissions
 import com.quizango.gallery.ui.theme.GalleryBlue
@@ -61,6 +65,7 @@ fun HomeScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showAddToSheet by remember { mutableStateOf(false) }
     var showHideDialog by remember { mutableStateOf(false) }
+    var showCoverPicker by remember { mutableStateOf(false) }
     val shareTitle = stringResource(R.string.share)
     val copiedMessage = stringResource(R.string.items_copied_successfully)
     val movedMessage = stringResource(R.string.items_moved_successfully)
@@ -239,7 +244,7 @@ fun HomeScreen(
                         onPin = viewModel::pinSelectedAlbum,
                         onAddTo = { showAddToSheet = true },
                         onDelete = { showDeleteDialog = true },
-                        onChangeCover = {}, // 04-05
+                        onChangeCover = { if (viewModel.changeCoverTarget() != null) showCoverPicker = true },
                         onRename = {}, // 04-05
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
@@ -297,6 +302,23 @@ fun HomeScreen(
         // Drawn above the vault hint (2.7.2 elevations 10.sdp vs 9.sdp)
         if (uiState.selectedTab == PAGE_PHOTOS && !uiState.pinchTipSeen && checkStoragePermissions(context)) {
             PinchTutorialOverlay(onGotIt = { viewModel.dismissPinchTip() })
+        }
+    }
+
+    // Change cover: 2.7.2 opens its in-app picker (InternalSelectMediaActivity, photos only) over the album's media
+    if (showCoverPicker) {
+        val target = viewModel.changeCoverTarget()
+        if (target == null) showCoverPicker = false
+        else Dialog(onDismissRequest = { showCoverPicker = false }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+            MediaPicker(
+                title = target.name,
+                items = uiState.mediaList.filter { it.folderPath == target.path && it.mediaType != MediaType.VIDEO },
+                onBack = { showCoverPicker = false },
+                onPick = { item ->
+                    showCoverPicker = false
+                    viewModel.setSelectedAlbumCover(item)
+                }
+            )
         }
     }
 

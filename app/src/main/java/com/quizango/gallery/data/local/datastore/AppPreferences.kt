@@ -8,6 +8,12 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore(name = "gallery_preferences")
 
+/** One albumCover entry: folder and cover path joined by NUL, which cannot occur in a path, so the split is exact. */
+internal fun albumCoverEntry(folder: String, coverPath: String) = folder + '\u0000' + coverPath
+
+internal fun parseAlbumCovers(entries: Set<String>): Map<String, String> =
+    entries.mapNotNull { e -> e.indexOf('\u0000').takeIf { it >= 0 }?.let { e.substring(0, it) to e.substring(it + 1) } }.toMap()
+
 class AppPreferences(private val context: Context) {
 
     private object Keys {
@@ -31,6 +37,7 @@ class AppPreferences(private val context: Context) {
         val COLLAGE_NEW_EXPLORE = booleanPreferencesKey("collageMakerNewButtonExplore")
         val JUNK_CLEANED_TODAY = booleanPreferencesKey("isJunkCleanedForToday")
         val PIN_ALBUM = stringSetPreferencesKey("pinAlbum") // 2.7.2 key name: folder paths pinned to the top
+        val ALBUM_COVER = stringSetPreferencesKey("albumCover") // 2.7.2 key name: folder + cover path entries
         val VAULT_QUESTION = stringPreferencesKey("vault_recovery_question")
         val VAULT_ANSWER = stringPreferencesKey("vault_recovery_answer")
         val VAULT_QUESTION_2 = stringPreferencesKey("vault_recovery_question_2")
@@ -55,6 +62,7 @@ class AppPreferences(private val context: Context) {
     // Read-only in Phase 4; Phase 6 writes it from the junk-cleared screen.
     val isJunkCleanedForToday: Flow<Boolean> = context.dataStore.data.map { it[Keys.JUNK_CLEANED_TODAY] ?: false }
     val pinnedAlbums: Flow<Set<String>> = context.dataStore.data.map { it[Keys.PIN_ALBUM] ?: emptySet() }
+    val albumCovers: Flow<Map<String, String>> = context.dataStore.data.map { parseAlbumCovers(it[Keys.ALBUM_COVER] ?: emptySet()) }
     val vaultHintClosedSession: Flow<Int> = context.dataStore.data.map { it[Keys.VAULT_HINT_CLOSED_SESSION] ?: 0 }
     val autoDeleteTrash: Flow<Boolean> = context.dataStore.data.map { it[Keys.AUTO_DELETE_TRASH] ?: true }
     val vaultPin: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PIN] }
@@ -118,6 +126,14 @@ class AppPreferences(private val context: Context) {
         context.dataStore.edit { prefs ->
             val now = prefs[Keys.PIN_ALBUM] ?: emptySet()
             prefs[Keys.PIN_ALBUM] = if (pinned) now + paths else now - paths
+        }
+    }
+
+    /** Replaces [folder]'s cover entry. */
+    suspend fun setAlbumCover(folder: String, coverPath: String) {
+        context.dataStore.edit { prefs ->
+            val now = prefs[Keys.ALBUM_COVER] ?: emptySet()
+            prefs[Keys.ALBUM_COVER] = now.filterNot { parseAlbumCovers(setOf(it)).containsKey(folder) }.toSet() + albumCoverEntry(folder, coverPath)
         }
     }
 
