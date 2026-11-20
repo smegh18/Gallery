@@ -6,6 +6,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.fadeIn
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -427,7 +428,12 @@ fun GalleryNavHost(
             arguments = listOf(
                 navArgument("path") { type = NavType.StringType; defaultValue = "" },
                 navArgument("title") { type = NavType.StringType; defaultValue = "Story" }
-            )
+            ),
+            // Theme.NewGallery.Story: fade_in_screen / fade_out_screen, 500 ms
+            enterTransition = { fadeIn(tween(500)) },
+            exitTransition = { fadeOut(tween(500)) },
+            popEnterTransition = { fadeIn(tween(500)) },
+            popExitTransition = { fadeOut(tween(500)) }
         ) { backStackEntry ->
             val rawTitle = backStackEntry.arguments?.getString("title") ?: "Story"
             val title = URLDecoder.decode(rawTitle, StandardCharsets.UTF_8.toString())
@@ -493,12 +499,18 @@ fun GalleryNavHost(
                 }
             }
 
+            val editTipSeen by app.preferences.isStoriesEditToolTip.collectAsState(initial = true)
+            val tipScope = androidx.compose.runtime.rememberCoroutineScope()
+
             StoryViewScreen(
                 storyTitle = title,
                 mediaItems = if (path == "vault") vaultStory.orEmpty() else storyItems,
                 // No editing from the vault: edits would write the decrypted copy out
                 onEditClick = if (path == "vault") null else { editPath -> navController.navigateOnce(Screen.Editor.createRoute(editPath)) },
                 onNavigateBack = { navController.popBackStack() },
+                fromStoryRow = com.quizango.gallery.ui.discovery.StoryQueue.find(path) != null,
+                editTipSeen = editTipSeen,
+                onEditTipSeen = { tipScope.launch { app.preferences.setStoriesEditToolTip(true) } },
                 onFinished = {
                     val next = com.quizango.gallery.ui.discovery.StoryQueue.next(path)
                     if (next == null) navController.popBackStack()
