@@ -146,7 +146,12 @@ class HomeViewModel(
         }
     }
 
+    private var mediaSelectionGen = 0
+    private var albumSelectionGen = 0
+
     fun setTab(index: Int) {
+        mediaSelectionGen++
+        albumSelectionGen++
         _uiState.update { it.copy(selectedTab = index, isSelectionMode = false, selectedPaths = emptySet(), selectedAlbums = emptySet()) }
     }
 
@@ -180,6 +185,7 @@ class HomeViewModel(
     }
 
     fun toggleSelection(filePath: String) {
+        mediaSelectionGen++
         _uiState.update { state ->
             val updated = if (state.selectedPaths.contains(filePath)) {
                 state.selectedPaths - filePath
@@ -193,10 +199,8 @@ class HomeViewModel(
         }
     }
 
-    private var mediaSelectionGen = 0
-    private var albumSelectionGen = 0
-
     fun selectAll() {
+        mediaSelectionGen++
         _uiState.update { state ->
             val allPaths = state.mediaList.map { it.filePath }.toSet()
             state.copy(selectedPaths = allPaths, isSelectionMode = true)
@@ -209,10 +213,12 @@ class HomeViewModel(
     }
 
     fun toggleAlbum(path: String) {
+        albumSelectionGen++
         _uiState.update { it.copy(selectedAlbums = if (path in it.selectedAlbums) it.selectedAlbums - path else it.selectedAlbums + path) }
     }
 
     fun selectAllAlbums() {
+        albumSelectionGen++
         _uiState.update { state -> state.copy(selectedAlbums = state.albumsList.filter(::albumIsSelectable).map { it.path }.toSet()) }
     }
 
