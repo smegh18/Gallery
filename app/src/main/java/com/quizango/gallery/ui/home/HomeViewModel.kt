@@ -28,6 +28,10 @@ internal fun clampColumnCount(n: Int) = n.coerceIn(3, 5)
 internal fun allInFolder(paths: Collection<String>, folder: String): Boolean =
     paths.all { File(it).parentFile == File(folder) }
 
+/** Marks the pinned device folders; virtual albums are never pinned. */
+internal fun withPins(albums: List<Album>, pinned: Set<String>): List<Album> =
+    albums.map { it.copy(isPinned = albumIsSelectable(it) && it.path in pinned) }
+
 data class HomeUiState(
     val selectedTab: Int = PAGE_PHOTOS, // PAGE_PHOTOS (default), PAGE_ALBUMS, PAGE_EXPLORE
     val mediaList: List<MediaItem> = emptyList(),
@@ -92,7 +96,7 @@ class HomeViewModel(
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
-            mediaRepository.getAlbumsFlow().collect { albums ->
+            combine(mediaRepository.getAlbumsFlow(), preferences.pinnedAlbums, ::withPins).collect { albums ->
                 _uiState.update { it.copy(albumsList = albums) }
             }
         }
@@ -195,6 +199,15 @@ class HomeViewModel(
 
     fun clearAlbumSelection() {
         _uiState.update { it.copy(selectedAlbums = emptySet()) }
+    }
+
+    /** Pin to top / Unpin (HA.o0OO00O): acts for exactly one album, then leaves selection (AF.OooOOoo). */
+    fun pinSelectedAlbum() {
+        val state = _uiState.value
+        val path = state.selectedAlbums.singleOrNull() ?: return
+        val pinned = state.albumsList.firstOrNull { it.path == path }?.isPinned == true
+        viewModelScope.launch { preferences.setAlbumsPinned(setOf(path), !pinned) }
+        clearAlbumSelection()
     }
 
     fun toggleFavorite(item: MediaItem) {

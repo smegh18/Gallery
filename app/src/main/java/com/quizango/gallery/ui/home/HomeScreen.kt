@@ -236,7 +236,7 @@ fun HomeScreen(
                     AlbumSelectionBottomBar(
                         pinLabel = pinLabel(uiState.selectedAlbums, uiState.albumsList.filter { it.isPinned }.map { it.path }.toSet()),
                         singleActionAlpha = singleAlbumActionAlpha(uiState.selectedAlbums.size),
-                        onPin = {},
+                        onPin = viewModel::pinSelectedAlbum,
                         onAddTo = {},
                         onDelete = {},
                         onChangeCover = {}, // 04-05

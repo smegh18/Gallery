@@ -3,9 +3,13 @@ package com.quizango.gallery
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.ui.home.ALBUM_DELETED
 import com.quizango.gallery.ui.home.ALBUM_FAVORITES
+import com.quizango.gallery.ui.home.albumGrid
 import com.quizango.gallery.ui.home.albumIsSelectable
+import com.quizango.gallery.ui.home.deletedCard
+import com.quizango.gallery.ui.home.favoritesCard
 import com.quizango.gallery.ui.home.pinLabel
 import com.quizango.gallery.ui.home.singleAlbumActionAlpha
+import com.quizango.gallery.ui.home.withPins
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -33,5 +37,21 @@ class AlbumSelectionTest {
     fun severalSelectedAlbumsDimTheSingleAlbumActions() {
         assertEquals(1f, singleAlbumActionAlpha(1), 0f)
         assertEquals(0.6f, singleAlbumActionAlpha(2), 0f)
+    }
+
+    @Test
+    fun pinnedFoldersSortFirstAmongFolders() {
+        val albums = withPins(
+            listOf(album("filter:all_photos"), album("/a"), album("/b"), album("/c")),
+            pinned = setOf("/c")
+        )
+        val grid = albumGrid(albums, favoritesCard(emptyList()), deletedCard(emptyList())).map { it.id }
+        assertEquals(listOf("filter:all_photos", ALBUM_FAVORITES, "/c", "/a", "/b", ALBUM_DELETED), grid)
+    }
+
+    @Test
+    fun withPinsMarksOnlyFolders() {
+        val marked = withPins(listOf(album("filter:camera"), album("/c"), album("/d")), pinned = setOf("/c", "filter:camera"))
+        assertEquals(listOf(false, true, false), marked.map { it.isPinned })
     }
 }

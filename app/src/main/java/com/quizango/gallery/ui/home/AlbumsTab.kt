@@ -83,7 +83,7 @@ internal fun albumGrid(albums: List<Album>, favorite: Album, deleted: Album): Li
     fun virtual(id: String) = albums.firstOrNull { it.id == id }
     return listOfNotNull(virtual("filter:all_photos"), favorite) +
         listOf("filter:videos", "filter:camera", "filter:screenshots").mapNotNull { id -> virtual(id)?.takeIf { it.itemCount > 0 } } +
-        albums.filter { !it.id.startsWith("filter:") } +
+        albums.filter { !it.id.startsWith("filter:") }.sortedByDescending { it.isPinned } + // stable: pinned keep list order
         deleted
 }
 
