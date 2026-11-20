@@ -15,9 +15,6 @@ import com.quizango.gallery.ui.home.fileTypeLabel
 import com.quizango.gallery.ui.home.headerKind
 import com.quizango.gallery.ui.home.indexForThumbFraction
 import com.quizango.gallery.ui.home.nextColumnCount
-import com.quizango.gallery.ui.home.pinchPreviewScale
-import com.quizango.gallery.ui.home.pinchProgress
-import com.quizango.gallery.ui.home.pinchSettleMs
 import com.quizango.gallery.ui.home.thumbFraction
 import com.quizango.gallery.ui.home.MEDIA_TYPES
 import com.quizango.gallery.ui.home.formatDuration
@@ -180,26 +177,5 @@ class HomeTest {
         assertEquals(4, nextColumnCount(4, 1.11f))
         assertEquals(5, nextColumnCount(4, 0.90f))
         assertEquals(4, nextColumnCount(4, 0.91f))
-        assertEquals(1.05f, pinchPreviewScale(3, 2f), 0f) // elastic at the fewest columns
-        assertEquals(0.95f, pinchPreviewScale(5, 0.5f), 0f) // elastic at the most
-        assertEquals(1.009f, pinchPreviewScale(3, 1.05f), 1e-6f) // elastic: (ratio - 1) * 0.18 + 1
-        assertEquals(4f / 3f, pinchPreviewScale(4, 1.12f), 1e-6f) // fully the 3-column cell size at the step
-        assertEquals(4f / 3f, pinchPreviewScale(4, 2f), 1e-6f)
-        assertEquals(1f + 0.5f * (4f / 3f - 1f), pinchPreviewScale(4, 1.06f), 1e-5f) // half way
-        assertEquals(1f - 0.5f * (1f - 4f / 5f), pinchPreviewScale(4, 0.95f), 1e-5f)
-    }
-
-    @Test
-    fun testPinchProgressAndTimings() { // S272/ai/n
-        assertEquals(0f, pinchProgress(1f), 0f)
-        assertEquals(0.5f, pinchProgress(1.06f), 1e-5f)
-        assertEquals(1f, pinchProgress(1.3f), 0f)
-        assertEquals(0.5f, pinchProgress(0.95f), 1e-5f)
-        assertEquals(1f, pinchProgress(0.8f), 0f)
-        // OooO0Oo (finish) and OooOOo0 (spring back): 140 ms plus 60 ms times the distance still to cover
-        assertEquals(140, pinchSettleMs(0f))
-        assertEquals(170, pinchSettleMs(0.5f))
-        assertEquals(200, pinchSettleMs(1f))
-        assertEquals(200, pinchSettleMs(3f))
     }
 }
