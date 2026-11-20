@@ -75,6 +75,7 @@ import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.domain.model.VaultItem
+import com.quizango.gallery.ui.home.albumTitle
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.*
 import kotlinx.coroutines.Dispatchers
@@ -1254,6 +1255,7 @@ fun MediaViewerScreen(
                             .heightIn(max = 340.dp)
                     ) {
                         items(albums) { album ->
+                            val albumName = albumTitle(album)
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
@@ -1264,7 +1266,7 @@ fun MediaViewerScreen(
                                         scope.launch {
                                             val ok = mediaRepository.copyMediaToFolder(currentItem.filePath, album.path)
                                             if (ok) {
-                                                Toast.makeText(context, "Added to ${album.name}", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "Added to $albumName", Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                     }
@@ -1295,7 +1297,7 @@ fun MediaViewerScreen(
                                 }
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = album.name,
+                                    text = albumName,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.bodySmall,

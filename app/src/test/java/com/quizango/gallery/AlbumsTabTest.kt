@@ -4,7 +4,9 @@ import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.home.ALBUM_DELETED
 import com.quizango.gallery.ui.home.ALBUM_FAVORITES
+import com.quizango.gallery.ui.home.albumBadge
 import com.quizango.gallery.ui.home.albumCardTitle
+import com.quizango.gallery.ui.home.albumCountText
 import com.quizango.gallery.ui.home.albumGrid
 import com.quizango.gallery.ui.home.albumRoute
 import com.quizango.gallery.ui.home.deletedCard
@@ -13,6 +15,7 @@ import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.util.Locale
 
 class AlbumsTabTest {
     private fun album(id: String, count: Int = 5) =
@@ -60,6 +63,23 @@ class AlbumsTabTest {
         assertEquals(R.string.screenshot, albumCardTitle(album("filter:screenshots")))
         assertEquals(R.string.album_tab_deleted, albumCardTitle(deleted))
         assertNull(albumCardTitle(album("/storage/emulated/0/Download")))
+    }
+
+    @Test
+    fun badges() {
+        assertEquals(R.drawable.album_tab_ic_favorite, albumBadge(favorite))
+        assertEquals(R.drawable.album_tab_ic_video, albumBadge(album("filter:videos")))
+        assertEquals(R.drawable.ic_pin, albumBadge(album("/a").copy(isPinned = true)))
+        assertNull(albumBadge(album("/a")))
+        assertNull(albumBadge(album("filter:all_photos")))
+        assertNull(albumBadge(deleted))
+    }
+
+    @Test
+    fun countIsABareLocaleFormattedNumber() {
+        assertEquals("1,234", albumCountText(1234, Locale.US))
+        assertEquals("0", albumCountText(0, Locale.US))
+        assertEquals("1.234", albumCountText(1234, Locale.GERMANY))
     }
 
     @Test

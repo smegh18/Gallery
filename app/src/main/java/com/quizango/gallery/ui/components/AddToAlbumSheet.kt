@@ -39,7 +39,7 @@ internal fun addToAlbumDestinations(albums: List<Album>): List<Album> {
         if (album.coverPath.isBlank()) return@forEach
         val folderPath = album.coverPath.substringBeforeLast('/')
         if (folderPath.isNotBlank() && destinations.none { it.path == folderPath }) {
-            destinations += album.copy(id = folderPath, path = folderPath)
+            destinations += album.copy(id = folderPath, path = folderPath, name = File(folderPath).name, titleRes = 0)
         }
     }
     return destinations

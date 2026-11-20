@@ -30,6 +30,7 @@ import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.domain.model.MediaType
+import com.quizango.gallery.ui.home.albumTitle
 import com.quizango.gallery.ui.theme.GalleryBlue
 import kotlinx.coroutines.launch
 
@@ -51,7 +52,7 @@ fun VaultAddMediaScreen(
     var selected by remember { mutableStateOf(setOf<String>()) }
     var menuOpen by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
-    val title = albums.firstOrNull { it.path == albumPath }?.name ?: "All Photos"
+    val title = albums.firstOrNull { it.path == albumPath }?.let { albumTitle(it) } ?: "All Photos"
 
     Scaffold(
         topBar = {
@@ -69,7 +70,7 @@ fun VaultAddMediaScreen(
                             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                                 DropdownMenuItem(text = { Text("All Photos") }, onClick = { albumPath = null; menuOpen = false })
                                 albums.filter { !it.path.startsWith("filter:") || it.path == "filter:videos" }.forEach { a ->
-                                    DropdownMenuItem(text = { Text(a.name) }, onClick = { albumPath = a.path; menuOpen = false })
+                                    DropdownMenuItem(text = { Text(albumTitle(a)) }, onClick = { albumPath = a.path; menuOpen = false })
                                 }
                             }
                         }

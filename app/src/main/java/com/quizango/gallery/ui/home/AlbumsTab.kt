@@ -9,12 +9,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.request.ImageRequest
 import coil.compose.AsyncImage
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.discovery.StoryBuilder
@@ -37,7 +37,11 @@ import com.quizango.gallery.ui.discovery.StoryQueue
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
+import com.quizango.gallery.ui.theme.ssp
+import java.text.NumberFormat
+import java.util.Locale
 import com.quizango.gallery.ui.theme.topContainerBg
 
 internal const val ALBUM_FAVORITES = "filter:favorites" // the id getMediaByFolderFlow already knows
@@ -163,7 +167,7 @@ fun AlbumsTab(
                         if (album != null) {
                             val shown = albumCardTitle(album)?.let { stringResource(it) } ?: album.name
                             val listTitle = albumTitle(album)
-                            AlbumCard(album = album.copy(name = shown), onClick = { onAlbumClick(album, listTitle) })
+                            HomeAlbumCard(album = album, title = shown, onClick = { onAlbumClick(album, listTitle) })
                         }
                     }
                 }
@@ -172,71 +176,78 @@ fun AlbumsTab(
     }
 }
 
+/** Corner badge of a card (bx/c.eyd3OXAZgV): Favorite, All Video, a pinned device folder; none otherwise. */
+@DrawableRes
+internal fun albumBadge(album: Album): Int? = when {
+    album.id == ALBUM_FAVORITES -> R.drawable.album_tab_ic_favorite
+    album.id == "filter:videos" -> R.drawable.album_tab_ic_video
+    album.isPinned && !album.id.startsWith("filter:") -> R.drawable.ic_pin
+    else -> null
+}
+
+/** AA.countFormat: the bare number with locale grouping, no unit word. */
+internal fun albumCountText(count: Int, locale: Locale = Locale.getDefault()): String =
+    NumberFormat.getIntegerInstance(locale).format(count)
+
+/** item_home_album_card. */
 @Composable
-fun AlbumCard(
-    album: Album,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    ) {
+private fun HomeAlbumCard(album: Album, title: String, onClick: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .clip(RoundedCornerShape(10.sdp))
+                .background(colorResource(R.color.album_tab_card_placeholder))
         ) {
-            if (album.coverPath.isNotEmpty()) {
+            // An album with no media shows only the card colour
+            if (album.itemCount > 0 && album.coverPath.isNotEmpty()) {
                 AsyncImage(
-                    model = album.coverUri,
-                    contentDescription = album.name,
+                    model = ImageRequest.Builder(LocalContext.current).data(album.coverUri).size(200, 200).build(),
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-                if (album.isVideoCover) {
-                    Icon(
-                        imageVector = Icons.Filled.Videocam,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(10.dp)
-                            .size(22.dp)
-                    )
-                }
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.image_loading_albums),
-                    contentDescription = album.name,
-                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.image_loading_albums),
+                    error = painterResource(R.drawable.image_loading_albums),
                     modifier = Modifier.fillMaxSize()
                 )
             }
+            if (album.id == ALBUM_DELETED) {
+                Box(Modifier.fillMaxSize().background(colorResource(R.color.album_tab_deleted_dim)))
+                Image(
+                    painter = painterResource(R.drawable.album_tab_ic_trash),
+                    contentDescription = null,
+                    modifier = Modifier.align(Alignment.Center).size(width = 17.sdp, height = 22.sdp)
+                )
+            }
+            albumBadge(album)?.let {
+                Image(
+                    painter = painterResource(it),
+                    contentDescription = null,
+                    modifier = Modifier.align(Alignment.BottomStart).padding(start = 6.sdp, bottom = 6.sdp).size(12.sdp)
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.height(6.dp))
-
         Text(
-            text = album.name,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 13.5.sp,
-            maxLines = 2, // reference wraps long names
+            text = title,
+            fontFamily = Inter,
+            fontWeight = FontWeight.Medium,
+            fontSize = 9.ssp,
+            lineHeight = 11.ssp, // natural line box (includeFontPadding=false in the reference)
+            color = colorResource(R.color.album_tab_name),
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onBackground
+            modifier = Modifier.padding(top = 6.sdp)
         )
-
-        Spacer(modifier = Modifier.height(2.dp))
-
         Text(
-            text = "${album.itemCount}",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium
+            text = albumCountText(album.itemCount),
+            fontFamily = Inter,
+            fontWeight = FontWeight.Normal,
+            fontSize = 9.ssp,
+            lineHeight = 11.ssp,
+            color = colorResource(R.color.album_tab_count),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 2.sdp)
         )
     }
 }

@@ -1,6 +1,8 @@
 package com.quizango.gallery.ui.discovery
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -8,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,17 +18,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.MomentScanner
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaType
-import com.quizango.gallery.ui.home.AlbumCard
 import com.quizango.gallery.ui.theme.GalleryBlue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -205,6 +210,76 @@ private fun EmptyMoments() {
             text = "No moment files here.",
             style = MaterialTheme.typography.bodySmall,
             color = Color(0xFF8C9BAE)
+        )
+    }
+}
+
+// Moments keeps the 2.6.7 card until Phase 5 restyles it.
+@Composable
+private fun AlbumCard(
+    album: Album,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            if (album.coverPath.isNotEmpty()) {
+                AsyncImage(
+                    model = album.coverUri,
+                    contentDescription = album.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                if (album.isVideoCover) {
+                    Icon(
+                        imageVector = Icons.Filled.Videocam,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(10.dp)
+                            .size(22.dp)
+                    )
+                }
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.image_loading_albums),
+                    contentDescription = album.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Text(
+            text = album.name,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 13.5.sp,
+            maxLines = 2, // reference wraps long names
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Spacer(modifier = Modifier.height(2.dp))
+
+        Text(
+            text = "${album.itemCount}",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium
         )
     }
 }
