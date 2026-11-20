@@ -76,7 +76,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Pre-release: replace the reference brand art (launcher icons, app_icon_splash, about_gallery_logo, app_icon_lottie, anime_overlay, img_feature_promo_top light/night, ic_gs2_default_app, ic_gs2_success) with our own before any store build (user decision 2026-11-13, Phase 1).
+- Pre-release: replace the reference brand art (launcher icons, app_icon_splash, about_gallery_logo, app_icon_lottie, anime_overlay, img_feature_promo_top light/night, ic_gs2_default_app, ic_gs2_success, ic_story_playzen, and the "Playzen" story label) with our own before any store build (user decision 2026-11-13, Phase 1; Phase 4).
 
 ### Blockers/Concerns
 

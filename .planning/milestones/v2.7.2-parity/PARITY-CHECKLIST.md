@@ -45,8 +45,8 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 |---|---|---|---|---|---|
 | 6 | HomeActivity shell | activity_home CHANGED; home_shell_popup_menu NEW; layout_home_vault_hint NEW | home/HomeScreen.kt | [x] | [ ] |
 | 7 | Photos tab | fragment_all_media CHANGED; photos_tab_item_date/grid/ad NEW | home/PhotosTab.kt | [x] | [ ] |
-| 8 | Albums tab | fragment_album CHANGED; item_home_album_card NEW; item_stories, item_folder, item_grid_gallery CHANGED | home/AlbumsTab.kt | [ ] | [ ] |
-| 9 | Explore tab | fragment_explore CHANGED; explore_tab_hero/item_feature/item_row/item_tile NEW | home/ExploreTab.kt | [ ] | [ ] |
+| 8 | Albums tab | fragment_album CHANGED; item_home_album_card NEW; item_stories, item_folder, item_grid_gallery CHANGED (album selection: layout_select_album_bottom, album info, rename, change cover ported) | home/AlbumsTab.kt | [x] | [ ] |
+| 9 | Explore tab | fragment_explore CHANGED; explore_tab_hero/item_feature/item_row/item_tile NEW | home/ExploreTab.kt | [x] | [ ] |
 | 10 | Exit popup | dialog_exit_popup CHANGED (note: Home exit uses dialog_exit through S272/jt/a; dialog_exit_popup is the photo editor's "Exit without saving?" dialog, ported in Phase 8; Phase 13 confirms popup versus direct exit) | HomeScreen BackHandler: direct exit like 2.7.2 (popup removed 2026-11-20) | [x] | [ ] |
 | 11 | Floating button and sidebar | layout_floating_button, layout_floating_popup_menu, dialog_floating_button_popup CHANGED; item_floating_sidebar_action, layout_floating_sidebar_intro NEW | none: **decision D2** | [ ] | [ ] |
 | 12 | FloatingSettingActivity | (settings for 11) | none: **D2** | [ ] | [ ] |
@@ -56,7 +56,7 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 |---|---|---|---|---|---|
 | 13 | MediaFullScreenActivity | activity_media_full_screen CHANGED; item_bottom_option_layout CHANGED | viewer/MediaViewerScreen.kt | [ ] | [ ] |
 | 14 | VideoPlayerActivity | same | viewer/MediaViewerScreen.kt | [ ] | [ ] |
-| 15 | StoryViewPhotoActivity | activity_story_view_photo CHANGED; dialog_usage_access_story NEW | discovery/StoryViewScreen.kt | [ ] | [ ] |
+| 15 | StoryViewPhotoActivity | activity_story_view_photo CHANGED; dialog_usage_access_story NEW (dialog_usage_access_story is a no-op hook until Phase 12) | discovery/StoryViewScreen.kt | [x] | [ ] |
 | 16 | MediaListActivity | same | album/AlbumDetailScreen.kt | [ ] | [ ] |
 | 17 | AllAlbumActivity | same | home/AlbumsTab.kt / album | [ ] | [ ] |
 | 18 | MomentsActivity | same; moment_lottie removed | discovery/MomentsScreen.kt | [ ] | [ ] |
