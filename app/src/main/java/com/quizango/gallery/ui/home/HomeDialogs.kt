@@ -33,6 +33,7 @@ import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +41,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.ui.text.style.TextOverflow
+import com.quizango.gallery.domain.model.Album
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -561,5 +566,110 @@ internal fun RenameProgressDialog(count: Int) {
                 modifier = Modifier.padding(start = 15.sdp)
             )
         }
+    }
+}
+
+/** dialog_album_property (S272/oa/e): details title; name, path, size, total files, last modified rows; ok button. */
+@Composable
+internal fun AlbumPropertyDialog(
+    album: Album,
+    sizeBytes: Long,
+    lastModified: Long,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val formattedDate = remember(lastModified, album.path) {
+        val millis = if (lastModified > 100000000000L) {
+            lastModified
+        } else if (lastModified > 0) {
+            lastModified * 1000L
+        } else {
+            File(album.path).lastModified()
+        }
+        java.text.SimpleDateFormat("dd/MM/yyyy hh:mm a", java.util.Locale.ENGLISH).format(java.util.Date(millis))
+    }
+    val formattedSize = remember(sizeBytes) {
+        android.text.format.Formatter.formatFileSize(context, sizeBytes)
+    }
+
+    CommonDialog(onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(R.color.dialogBack), RoundedCornerShape(topStart = 16.sdp, topEnd = 16.sdp))
+                .padding(top = 10.sdp, bottom = 15.sdp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.sdp),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(width = 40.sdp, height = 4.sdp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(colorResource(R.color.bottomDialogHeaderColor))
+                )
+            }
+            Text(
+                text = stringResource(R.string.details),
+                style = GalleryText.BodyXXLargeSemiBold,
+                color = colorResource(R.color.titleColor),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 15.sdp, top = 8.sdp, bottom = 5.sdp)
+            )
+
+            AlbumPropertyRow(R.string.name, album.name)
+            AlbumPropertyRow(R.string.path, album.path)
+            AlbumPropertyRow(R.string.size, formattedSize)
+            AlbumPropertyRow(R.string.total_files, album.itemCount.toString())
+            AlbumPropertyRow(R.string.last_modified, formattedDate)
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.sdp, bottom = 15.sdp, end = 25.sdp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                DialogButton(
+                    label = R.string.ok,
+                    textColor = colorResource(R.color.onlyWhite),
+                    background = R.drawable.btn_permission,
+                    modifier = Modifier.wrapContentWidth(),
+                    horizontalPadding = 50.sdp,
+                    onClick = onDismiss
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AlbumPropertyRow(
+    @StringRes labelRes: Int,
+    value: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.sdp, vertical = 10.sdp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(labelRes),
+            style = GalleryText.BodyMediumMedium,
+            color = colorResource(R.color.property_text),
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = value,
+            style = GalleryText.BodyMediumMedium,
+            color = colorResource(R.color.titleColor),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(2f)
+        )
     }
 }

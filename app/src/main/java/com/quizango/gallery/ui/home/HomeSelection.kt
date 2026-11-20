@@ -59,13 +59,15 @@ internal fun deleteActionFor(moveToRecycleBinChecked: Boolean): DeleteAction =
 /** S272/oa/j.smali onCreate checks the box. */
 internal const val MOVE_TO_RECYCLE_BIN_DEFAULT = true
 
-/** activity_home in selection mode (HA.o0000o0): backBtn, selectTitle, mediaSelectAllBtn. */
+/** activity_home in selection mode (HA.o0000o0): backBtn, selectTitle, mediaSelectAllBtn, albumInfoBtn. */
 @Composable
 internal fun HomeSelectionTopBar(
     count: Int,
     allSelected: Boolean,
     onClose: () -> Unit,
-    onToggleAll: () -> Unit
+    onToggleAll: () -> Unit,
+    onInfo: (() -> Unit)? = null,
+    infoAlpha: Float = 1f
 ) {
     Row(
         modifier = Modifier
@@ -111,6 +113,26 @@ internal fun HomeSelectionTopBar(
                 .clickable(onClick = onToggleAll)
                 .padding(3.sdp)
         )
+        if (onInfo != null) {
+            Box(
+                modifier = Modifier
+                    .alpha(infoAlpha)
+                    .size(32.sdp)
+                    .clickable(
+                        enabled = infoAlpha > 0f,
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = false),
+                        onClick = onInfo
+                    )
+                    .padding(7.sdp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_property),
+                    contentDescription = stringResource(R.string.details),
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
     }
 }
 

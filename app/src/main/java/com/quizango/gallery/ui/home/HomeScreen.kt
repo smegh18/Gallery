@@ -67,6 +67,7 @@ fun HomeScreen(
     var showHideDialog by remember { mutableStateOf(false) }
     var showCoverPicker by remember { mutableStateOf(false) }
     var showRename by remember { mutableStateOf(false) }
+    var showAlbumProperty by remember { mutableStateOf(false) }
     var renaming by remember { mutableStateOf<Int?>(null) } // item count while the rename runs
     val renameFailed = stringResource(R.string.something_went_wrong)
     val shareTitle = stringResource(R.string.share)
@@ -141,7 +142,9 @@ fun HomeScreen(
                     count = uiState.selectedAlbums.size,
                     allSelected = allSelected,
                     onClose = { viewModel.clearAlbumSelection() },
-                    onToggleAll = { if (allSelected) viewModel.clearAlbumSelection() else viewModel.selectAllAlbums() }
+                    onToggleAll = { if (allSelected) viewModel.clearAlbumSelection() else viewModel.selectAllAlbums() },
+                    onInfo = { showAlbumProperty = true },
+                    infoAlpha = if (uiState.selectedAlbums.size > 1) 0f else 1f
                 )
             } else if (uiState.isSelectionMode) {
                 val allSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()
@@ -343,6 +346,29 @@ fun HomeScreen(
         )
     }
     renaming?.let { RenameProgressDialog(it) }
+
+    if (showAlbumProperty) {
+        val target = viewModel.changeCoverTarget()
+        if (target == null) {
+            showAlbumProperty = false
+        } else {
+            val albumMedia = remember(target.path, uiState.mediaList) {
+                uiState.mediaList.filter { it.folderPath == target.path }
+            }
+            val sizeBytes = remember(albumMedia) {
+                albumMedia.sumOf { it.fileSize }
+            }
+            val lastModified = remember(albumMedia, target.path) {
+                albumMedia.maxOfOrNull { it.dateModified } ?: 0L
+            }
+            AlbumPropertyDialog(
+                album = target,
+                sizeBytes = sizeBytes,
+                lastModified = lastModified,
+                onDismiss = { showAlbumProperty = false }
+            )
+        }
+    }
 
     if (showSortDialog) {
         SortDialog(
