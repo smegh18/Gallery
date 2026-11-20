@@ -123,7 +123,16 @@ Plans:
   3. The Explore tab shows the Free up space hero with Scan now, Create (AI Editor, Collage), Library (Vault, Favorites, Moments, Place) and Manage (Duplicate Finder, Quick Organize, Recycle Bin, Settings), laid out as in 2.7.2.
   4. Every Explore item opens the same screen it opens in 2.7.2.
 
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Tracer: Albums tab opens on the 2.7.2 grid with working taps (all Phase 4 strings, colours, drawables and wave-2 DataStore keys imported; carousel and media types removed); item_home_album_card look and virtual names on keys; story row with the Playzen circle (wave 1)
+- [ ] 04-02-PLAN.md — Stories viewer: 3000 ms zoom steps, half-screen taps and hold, ad steps every 3rd photo, 2.7.2 header/progress/Edit pill, 500 ms fade, Edit tooltip, usage-access hook no-op (wave 2)
+- [ ] 04-03-PLAN.md — Explore rebuilt: hero with Scan now rule, Create, Library, ad card, Manage with RAM gate, Collage "New" badge, 2.7.2 routing (wave 2)
+- [ ] 04-04-PLAN.md — Album selection: enter/exit, selection bars, Pin/Unpin (pinAlbum), Delete and Add to for whole albums (wave 3)
+- [ ] 04-05-PLAN.md — Album selection: Change cover (shared MediaPicker, albumCover), Rename with on-disk folder rename, album info dialog (wave 4)
+- [ ] 04-06-PLAN.md — Quality gates: CodeRabbit, unslop, parity scripts, checklist ticks #8 #9 #15, on-device side-by-side check (wave 5, checkpoint)
+
 **UI hint**: yes
 
 ### Phase 5: Viewing and Browsing
