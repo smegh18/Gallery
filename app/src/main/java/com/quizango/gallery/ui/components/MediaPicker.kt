@@ -47,7 +47,7 @@ fun MediaPicker(title: String, items: List<MediaItem>, onBack: () -> Unit, onPic
             IconButton(onClick = onBack) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.cancel),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }

@@ -66,23 +66,26 @@ internal suspend fun renameFolderRows(
     if (parent.listFiles()?.any { it.name.equals(newName, ignoreCase = true) } != false) return null // taken, or unreadable
     val oldFolder = folder.path.replace(File.separatorChar, '/')
     val newFolder = File(parent, newName).path.replace(File.separatorChar, '/')
-    val tree = dao.getAllMedia().filter { it.filePath.startsWith("$oldFolder/") }
     if (!renameDir(folder, File(parent, newName))) return null
-    val moved = tree.map { row ->
-        val tail = row.folderPath.removePrefix(oldFolder) // "" for a direct file, "/sub" below it
-        val rel = row.relativePath.trimEnd('/')
-        row.copy(
-            filePath = movedPath(row.filePath, oldFolder, newFolder),
-            folderPath = movedPath(row.folderPath, oldFolder, newFolder),
-            folderName = if (tail.isEmpty()) newName else row.folderName,
-            relativePath = if (rel.endsWith(folder.name + tail)) {
-                rel.removeSuffix(folder.name + tail) + newName + tail + row.relativePath.substring(rel.length)
-            } else row.relativePath
-        )
-    }
-    val oldPaths = tree.map { it.filePath }
+    var oldPaths: List<String> = emptyList()
+    var newPaths: List<String> = emptyList()
     try {
         inTransaction {
+            val tree = dao.getAllMedia().filter { it.filePath.startsWith("$oldFolder/") }
+            val moved = tree.map { row ->
+                val tail = row.folderPath.removePrefix(oldFolder) // "" for a direct file, "/sub" below it
+                val rel = row.relativePath.trimEnd('/')
+                row.copy(
+                    filePath = movedPath(row.filePath, oldFolder, newFolder),
+                    folderPath = movedPath(row.folderPath, oldFolder, newFolder),
+                    folderName = if (tail.isEmpty()) newName else row.folderName,
+                    relativePath = if (rel.endsWith(folder.name + tail)) {
+                        rel.removeSuffix(folder.name + tail) + newName + tail + row.relativePath.substring(rel.length)
+                    } else row.relativePath
+                )
+            }
+            oldPaths = tree.map { it.filePath }
+            newPaths = moved.map { it.filePath }
             dao.insertAll(moved)
             oldPaths.chunked(500).forEach { dao.deleteByPaths(it) } // SQLite caps the variables of one IN list
         }
@@ -90,7 +93,7 @@ internal suspend fun renameFolderRows(
         renameDir(File(parent, newName), folder) // the transaction rolled back, so put the folder back to match the rows
         throw e
     }
-    return oldPaths to moved.map { it.filePath }
+    return oldPaths to newPaths
 }
 
 /** S272/s9/k.OooOOO: [fileName] in [dir], or "name(n).ext" with the first free n. Like 2.7.2 it drops a leading dot. */

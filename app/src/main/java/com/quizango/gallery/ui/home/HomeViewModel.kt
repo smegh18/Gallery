@@ -193,6 +193,9 @@ class HomeViewModel(
         }
     }
 
+    private var mediaSelectionGen = 0
+    private var albumSelectionGen = 0
+
     fun selectAll() {
         _uiState.update { state ->
             val allPaths = state.mediaList.map { it.filePath }.toSet()
@@ -201,6 +204,7 @@ class HomeViewModel(
     }
 
     fun clearSelection() {
+        mediaSelectionGen++
         _uiState.update { it.copy(selectedPaths = emptySet(), isSelectionMode = false) }
     }
 
@@ -213,6 +217,7 @@ class HomeViewModel(
     }
 
     fun clearAlbumSelection() {
+        albumSelectionGen++
         _uiState.update { it.copy(selectedAlbums = emptySet()) }
     }
 
@@ -258,23 +263,25 @@ class HomeViewModel(
         val paths = _uiState.value.selectedPaths
         val items = _uiState.value.mediaList.filter { it.filePath in paths }
         val targetFav = items.any { !it.isFavorite }
+        val mediaGen = mediaSelectionGen
         viewModelScope.launch {
             items.forEach { item ->
                 mediaRepository.setFavorite(item.filePath, targetFav)
             }
-            clearSelection()
+            if (mediaGen == mediaSelectionGen) clearSelection()
         }
     }
 
     /** Runs after the delete confirmation; the checkbox state reaches here only through deleteActionFor. */
     internal fun deleteSelected(action: DeleteAction) {
         val paths = _uiState.value.selectedPaths.toList()
+        val mediaGen = mediaSelectionGen
         viewModelScope.launch {
             when (action) {
                 DeleteAction.MOVE_TO_RECYCLE_BIN -> paths.forEach { mediaRepository.moveToTrash(it) }
                 DeleteAction.DELETE_PERMANENTLY -> mediaRepository.deletePermanently(paths)
             }
-            clearSelection()
+            if (mediaGen == mediaSelectionGen) clearSelection()
         }
     }
 
@@ -285,7 +292,9 @@ class HomeViewModel(
     fun addSelectedToFolder(folderPath: String, move: Boolean, onDone: (Int) -> Unit): Boolean {
         val paths = _uiState.value.selectedPaths.toList()
         if (move && allInFolder(paths, folderPath)) return false
-        viewModelScope.launch { copyOrMove(paths, folderPath, move, onDone) }
+        val mediaGen = mediaSelectionGen
+        val albumGen = albumSelectionGen
+        viewModelScope.launch { copyOrMove(paths, folderPath, move, mediaGen, albumGen, onDone) }
         return true
     }
 
@@ -293,43 +302,54 @@ class HomeViewModel(
     fun addSelectedAlbumsToFolder(folderPath: String, move: Boolean, onDone: (Int) -> Unit): Boolean {
         val albums = _uiState.value.selectedAlbums
         if (move && albums.all { it == folderPath }) return false
+        val mediaGen = mediaSelectionGen
+        val albumGen = albumSelectionGen
         viewModelScope.launch {
-            copyOrMove(albumMediaPaths(albums, mediaRepository.getActiveMediaFlow().first()), folderPath, move, onDone)
+            copyOrMove(albumMediaPaths(albums, mediaRepository.getActiveMediaFlow().first()), folderPath, move, mediaGen, albumGen, onDone)
         }
         return true
     }
 
-    private suspend fun copyOrMove(paths: List<String>, folderPath: String, move: Boolean, onDone: (Int) -> Unit) {
+    private suspend fun copyOrMove(
+        paths: List<String>,
+        folderPath: String,
+        move: Boolean,
+        mediaGen: Int,
+        albumGen: Int,
+        onDone: (Int) -> Unit
+    ) {
         val done = paths.count {
             if (move) mediaRepository.moveMediaToFolder(it, folderPath) else mediaRepository.copyMediaToFolder(it, folderPath)
         }
         mediaRepository.syncMediaStore()
-        clearSelection()
-        clearAlbumSelection()
+        if (mediaGen == mediaSelectionGen) clearSelection()
+        if (albumGen == albumSelectionGen) clearAlbumSelection()
         onDone(done)
     }
 
     /** Album Delete, after the confirmation: every file of the selected folders, to the Recycle Bin or for good. */
     internal fun deleteSelectedAlbums(action: DeleteAction) {
         val albums = _uiState.value.selectedAlbums
+        val albumGen = albumSelectionGen
         viewModelScope.launch {
             val paths = albumMediaPaths(albums, mediaRepository.getActiveMediaFlow().first())
             when (action) {
                 DeleteAction.MOVE_TO_RECYCLE_BIN -> paths.forEach { mediaRepository.moveToTrash(it) }
                 DeleteAction.DELETE_PERMANENTLY -> mediaRepository.deletePermanently(paths)
             }
-            clearAlbumSelection()
+            if (albumGen == albumSelectionGen) clearAlbumSelection()
         }
     }
 
     fun moveSelectedToVault() {
         val paths = _uiState.value.selectedPaths
         val items = _uiState.value.mediaList.filter { it.filePath in paths }
+        val mediaGen = mediaSelectionGen
         viewModelScope.launch {
             items.forEach { item ->
                 vaultRepository.moveToVault(item)
             }
-            clearSelection()
+            if (mediaGen == mediaSelectionGen) clearSelection()
         }
     }
 

@@ -35,6 +35,8 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -212,7 +214,15 @@ internal fun albumCountText(count: Int, locale: Locale = Locale.getDefault()): S
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeAlbumCard(album: Album, title: String, selectionMark: Boolean?, onClick: () -> Unit, onLongClick: () -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth().combinedClickable(onClick = onClick, onLongClick = onLongClick)) {
+    val selectionMod = if (selectionMark != null) {
+        Modifier.semantics { selected = selectionMark }
+    } else Modifier
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(selectionMod)
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
