@@ -30,6 +30,7 @@ class AppPreferences(private val context: Context) {
         val STORIES_EDIT_TOOLTIP = booleanPreferencesKey("isStoriesEditToolTip") // 2.7.2 key names (Phase 4)
         val COLLAGE_NEW_EXPLORE = booleanPreferencesKey("collageMakerNewButtonExplore")
         val JUNK_CLEANED_TODAY = booleanPreferencesKey("isJunkCleanedForToday")
+        val PIN_ALBUM = stringSetPreferencesKey("pinAlbum") // 2.7.2 key name: folder paths pinned to the top
         val VAULT_QUESTION = stringPreferencesKey("vault_recovery_question")
         val VAULT_ANSWER = stringPreferencesKey("vault_recovery_answer")
         val VAULT_QUESTION_2 = stringPreferencesKey("vault_recovery_question_2")
@@ -53,6 +54,7 @@ class AppPreferences(private val context: Context) {
     val collageMakerNewButtonExplore: Flow<Boolean> = context.dataStore.data.map { it[Keys.COLLAGE_NEW_EXPLORE] ?: false }
     // Read-only in Phase 4; Phase 6 writes it from the junk-cleared screen.
     val isJunkCleanedForToday: Flow<Boolean> = context.dataStore.data.map { it[Keys.JUNK_CLEANED_TODAY] ?: false }
+    val pinnedAlbums: Flow<Set<String>> = context.dataStore.data.map { it[Keys.PIN_ALBUM] ?: emptySet() }
     val vaultHintClosedSession: Flow<Int> = context.dataStore.data.map { it[Keys.VAULT_HINT_CLOSED_SESSION] ?: 0 }
     val autoDeleteTrash: Flow<Boolean> = context.dataStore.data.map { it[Keys.AUTO_DELETE_TRASH] ?: true }
     val vaultPin: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PIN] }
@@ -110,6 +112,13 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setMediaColCount(count: Int) {
         context.dataStore.edit { it[Keys.MEDIA_COL_COUNT] = count }
+    }
+
+    suspend fun setAlbumsPinned(paths: Set<String>, pinned: Boolean) {
+        context.dataStore.edit { prefs ->
+            val now = prefs[Keys.PIN_ALBUM] ?: emptySet()
+            prefs[Keys.PIN_ALBUM] = if (pinned) now + paths else now - paths
+        }
     }
 
     suspend fun setPinchInOutToolTip(seen: Boolean) {

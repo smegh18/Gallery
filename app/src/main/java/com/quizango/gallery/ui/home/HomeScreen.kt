@@ -69,7 +69,9 @@ fun HomeScreen(
     var addTarget by rememberSaveable { mutableStateOf<String?>(null) }
 
     var titleBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
-    val showVaultHint = !uiState.isSelectionMode && shouldShowVaultHint(
+    val albumSelecting = uiState.selectedAlbums.isNotEmpty()
+    val anySelecting = uiState.isSelectionMode || albumSelecting
+    val showVaultHint = !anySelecting && shouldShowVaultHint(
         uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context)
     )
 
@@ -79,6 +81,7 @@ fun HomeScreen(
         when {
             showVaultHint -> viewModel.closeVaultHint()
             uiState.isSelectionMode -> viewModel.clearSelection()
+            albumSelecting -> viewModel.clearAlbumSelection()
             else -> (context as? Activity)?.finishAffinity()
         }
     }
@@ -94,24 +97,24 @@ fun HomeScreen(
             animate(barOffset, target, animationSpec = tween(BAR_SETTLE_MS, easing = Easing(::barSettleEasing))) { v, _ -> barOffset = v }
         }
     }
-    val barScroll = remember(uiState.isSelectionMode) {
+    val barScroll = remember(anySelecting) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                if (uiState.isSelectionMode) return Offset.Zero
+                if (anySelecting) return Offset.Zero
                 settleJob[0]?.cancel()
                 barOffset = (barOffset - available.y).coerceIn(0f, barHeight.toFloat())
                 return Offset.Zero // the bar moves alongside the content, it never eats the scroll
             }
 
             override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-                if (!uiState.isSelectionMode) settleBarTo(settledBarOffset(barOffset, barHeight.toFloat()))
+                if (!anySelecting) settleBarTo(settledBarOffset(barOffset, barHeight.toFloat()))
                 return Velocity.Zero
             }
         }
     }
     LaunchedEffect(uiState.selectedTab) { settleBarTo(0f) }
-    LaunchedEffect(uiState.isSelectionMode) {
-        if (uiState.isSelectionMode) {
+    LaunchedEffect(anySelecting) {
+        if (anySelecting) {
             settleJob[0]?.cancel()
             barOffset = 0f
         }
@@ -123,7 +126,16 @@ fun HomeScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            if (uiState.isSelectionMode) {
+            if (albumSelecting) {
+                val folders = uiState.albumsList.filter(::albumIsSelectable)
+                val allSelected = folders.isNotEmpty() && uiState.selectedAlbums.size == folders.size
+                HomeSelectionTopBar(
+                    count = uiState.selectedAlbums.size,
+                    allSelected = allSelected,
+                    onClose = { viewModel.clearAlbumSelection() },
+                    onToggleAll = { if (allSelected) viewModel.clearAlbumSelection() else viewModel.selectAllAlbums() }
+                )
+            } else if (uiState.isSelectionMode) {
                 val allSelected = uiState.selectedPaths.size == uiState.mediaList.size && uiState.mediaList.isNotEmpty()
                 HomeSelectionTopBar(
                     count = uiState.selectedPaths.size,
@@ -170,8 +182,8 @@ fun HomeScreen(
                 }
                 // Turning swiping off mid-drag (long-press then move) cancels the drag and leaves the pager
                 // between pages, so the grid draws half off-screen; ViewPager2 never rests there. Settle it.
-                LaunchedEffect(uiState.isSelectionMode) {
-                    if (uiState.isSelectionMode && pagerState.currentPageOffsetFraction != 0f) {
+                LaunchedEffect(anySelecting) {
+                    if (anySelecting && pagerState.currentPageOffsetFraction != 0f) {
                         pagerState.animateScrollToPage(pagerState.currentPage)
                     }
                 }
@@ -181,7 +193,7 @@ fun HomeScreen(
                 androidx.compose.foundation.pager.HorizontalPager(
                     state = pagerState,
                     // No swiping while selecting, so a drag can't drop the selection
-                    userScrollEnabled = !uiState.isSelectionMode,
+                    userScrollEnabled = !anySelecting,
                     beyondViewportPageCount = 2, // HA setOffscreenPageLimit(2)
                     modifier = Modifier.fillMaxSize()
                 ) { page ->
@@ -192,7 +204,9 @@ fun HomeScreen(
                         mediaList = uiState.mediaList,
                         favoriteAlbum = uiState.favoriteAlbum,
                         deletedAlbum = uiState.deletedAlbum,
+                        selectedAlbums = uiState.selectedAlbums,
                         onAlbumClick = { album, title -> onNavigate(albumRoute(album, title)) },
+                        onAlbumToggle = { viewModel.toggleAlbum(it.path) },
                         onStoryClick = { id -> onNavigate(Screen.StoryView.createRoute(id, "")) }
                     )
                     PAGE_PHOTOS -> PhotosTab(
@@ -218,7 +232,18 @@ fun HomeScreen(
                 }
                 }
 
-                if (uiState.isSelectionMode) {
+                if (albumSelecting) {
+                    AlbumSelectionBottomBar(
+                        pinLabel = pinLabel(uiState.selectedAlbums, uiState.albumsList.filter { it.isPinned }.map { it.path }.toSet()),
+                        singleActionAlpha = singleAlbumActionAlpha(uiState.selectedAlbums.size),
+                        onPin = viewModel::pinSelectedAlbum,
+                        onAddTo = { showAddToSheet = true },
+                        onDelete = { showDeleteDialog = true },
+                        onChangeCover = {}, // 04-05
+                        onRename = {}, // 04-05
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
+                } else if (uiState.isSelectionMode) {
                     HomeSelectionBottomBar(
                         onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
                         onFavorite = { viewModel.toggleFavoriteSelected() },
@@ -298,10 +323,12 @@ fun HomeScreen(
 
     if (showDeleteDialog) {
         DeleteMediaDialog(
-            count = uiState.selectedPaths.size,
+            // Album Delete counts albums, as the top bar does (HA.count of the selection event)
+            count = if (albumSelecting) uiState.selectedAlbums.size else uiState.selectedPaths.size,
             onConfirm = { checked ->
                 showDeleteDialog = false
-                viewModel.deleteSelected(deleteActionFor(checked))
+                if (albumSelecting) viewModel.deleteSelectedAlbums(deleteActionFor(checked))
+                else viewModel.deleteSelected(deleteActionFor(checked))
             },
             onDismiss = { showDeleteDialog = false }
         )
@@ -310,8 +337,11 @@ fun HomeScreen(
     if (showAddToSheet) {
         AddToAlbumSheet(
             albums = uiState.albumsList,
-            previewItem = uiState.mediaList.firstOrNull { it.filePath in uiState.selectedPaths },
-            selectedCount = uiState.selectedPaths.size,
+            previewItem = uiState.mediaList.firstOrNull {
+                if (albumSelecting) it.folderPath in uiState.selectedAlbums else it.filePath in uiState.selectedPaths
+            },
+            selectedCount = if (albumSelecting) uiState.albumsList.filter { it.path in uiState.selectedAlbums }.sumOf { it.itemCount }
+            else uiState.selectedPaths.size,
             onAlbumClick = { album ->
                 showAddToSheet = false
                 addTarget = album.path
@@ -324,9 +354,9 @@ fun HomeScreen(
         fun add(move: Boolean) {
             addTarget = null
             val message = if (move) movedMessage else copiedMessage
-            val started = viewModel.addSelectedToFolder(target, move) { done ->
-                if (done > 0) Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
+            val onDone = { done: Int -> if (done > 0) Toast.makeText(context, message, Toast.LENGTH_SHORT).show() }
+            val started = if (albumSelecting) viewModel.addSelectedAlbumsToFolder(target, move, onDone)
+            else viewModel.addSelectedToFolder(target, move, onDone)
             if (!started) Toast.makeText(context, sameFolderMessage, Toast.LENGTH_SHORT).show()
         }
         AddingMediaDialog(onMove = { add(move = true) }, onCopy = { add(move = false) }, onCancel = { addTarget = null })

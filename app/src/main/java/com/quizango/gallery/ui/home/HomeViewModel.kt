@@ -28,6 +28,14 @@ internal fun clampColumnCount(n: Int) = n.coerceIn(3, 5)
 internal fun allInFolder(paths: Collection<String>, folder: String): Boolean =
     paths.all { File(it).parentFile == File(folder) }
 
+/** Marks the pinned device folders; virtual albums are never pinned. */
+internal fun withPins(albums: List<Album>, pinned: Set<String>): List<Album> =
+    albums.map { it.copy(isPinned = albumIsSelectable(it) && it.path in pinned) }
+
+/** Every file whose folder is one of the selected albums. */
+internal fun albumMediaPaths(selected: Set<String>, media: List<MediaItem>): List<String> =
+    media.filter { it.folderPath in selected }.map { it.filePath }
+
 data class HomeUiState(
     val selectedTab: Int = PAGE_PHOTOS, // PAGE_PHOTOS (default), PAGE_ALBUMS, PAGE_EXPLORE
     val mediaList: List<MediaItem> = emptyList(),
@@ -43,6 +51,7 @@ data class HomeUiState(
     val collageNewSeen: Boolean = true, // true until the preference loads, so the badge never flashes
     val selectedPaths: Set<String> = emptySet(),
     val isSelectionMode: Boolean = false,
+    val selectedAlbums: Set<String> = emptySet(), // folder paths of the selected device folders
     val isSyncing: Boolean = false,
     val initialSyncDone: Boolean = false, // stays true once the first MediaStore sync returns
     val sortOrder: SortOrder = SortOrder.DATE_DESC,
@@ -91,7 +100,7 @@ class HomeViewModel(
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
-            mediaRepository.getAlbumsFlow().collect { albums ->
+            combine(mediaRepository.getAlbumsFlow(), preferences.pinnedAlbums, ::withPins).collect { albums ->
                 _uiState.update { it.copy(albumsList = albums) }
             }
         }
@@ -127,7 +136,7 @@ class HomeViewModel(
     }
 
     fun setTab(index: Int) {
-        _uiState.update { it.copy(selectedTab = index, isSelectionMode = false, selectedPaths = emptySet()) }
+        _uiState.update { it.copy(selectedTab = index, isSelectionMode = false, selectedPaths = emptySet(), selectedAlbums = emptySet()) }
     }
 
     fun setSearchQuery(query: String) {
@@ -184,6 +193,27 @@ class HomeViewModel(
         _uiState.update { it.copy(selectedPaths = emptySet(), isSelectionMode = false) }
     }
 
+    fun toggleAlbum(path: String) {
+        _uiState.update { it.copy(selectedAlbums = if (path in it.selectedAlbums) it.selectedAlbums - path else it.selectedAlbums + path) }
+    }
+
+    fun selectAllAlbums() {
+        _uiState.update { state -> state.copy(selectedAlbums = state.albumsList.filter(::albumIsSelectable).map { it.path }.toSet()) }
+    }
+
+    fun clearAlbumSelection() {
+        _uiState.update { it.copy(selectedAlbums = emptySet()) }
+    }
+
+    /** Pin to top / Unpin (HA.o0OO00O): acts for exactly one album, then leaves selection (AF.OooOOoo). */
+    fun pinSelectedAlbum() {
+        val state = _uiState.value
+        val path = state.selectedAlbums.singleOrNull() ?: return
+        val pinned = state.albumsList.firstOrNull { it.path == path }?.isPinned == true
+        viewModelScope.launch { preferences.setAlbumsPinned(setOf(path), !pinned) }
+        clearAlbumSelection()
+    }
+
     fun toggleFavorite(item: MediaItem) {
         viewModelScope.launch {
             mediaRepository.setFavorite(item.filePath, !item.isFavorite)
@@ -221,15 +251,41 @@ class HomeViewModel(
     fun addSelectedToFolder(folderPath: String, move: Boolean, onDone: (Int) -> Unit): Boolean {
         val paths = _uiState.value.selectedPaths.toList()
         if (move && allInFolder(paths, folderPath)) return false
+        viewModelScope.launch { copyOrMove(paths, folderPath, move, onDone) }
+        return true
+    }
+
+    /** Same for every file of the selected albums; refuses a move when the only selected album is the target. */
+    fun addSelectedAlbumsToFolder(folderPath: String, move: Boolean, onDone: (Int) -> Unit): Boolean {
+        val albums = _uiState.value.selectedAlbums
+        if (move && albums.all { it == folderPath }) return false
         viewModelScope.launch {
-            val done = paths.count {
-                if (move) mediaRepository.moveMediaToFolder(it, folderPath) else mediaRepository.copyMediaToFolder(it, folderPath)
-            }
-            mediaRepository.syncMediaStore()
-            clearSelection()
-            onDone(done)
+            copyOrMove(albumMediaPaths(albums, mediaRepository.getActiveMediaFlow().first()), folderPath, move, onDone)
         }
         return true
+    }
+
+    private suspend fun copyOrMove(paths: List<String>, folderPath: String, move: Boolean, onDone: (Int) -> Unit) {
+        val done = paths.count {
+            if (move) mediaRepository.moveMediaToFolder(it, folderPath) else mediaRepository.copyMediaToFolder(it, folderPath)
+        }
+        mediaRepository.syncMediaStore()
+        clearSelection()
+        clearAlbumSelection()
+        onDone(done)
+    }
+
+    /** Album Delete, after the confirmation: every file of the selected folders, to the Recycle Bin or for good. */
+    internal fun deleteSelectedAlbums(action: DeleteAction) {
+        val albums = _uiState.value.selectedAlbums
+        viewModelScope.launch {
+            val paths = albumMediaPaths(albums, mediaRepository.getActiveMediaFlow().first())
+            when (action) {
+                DeleteAction.MOVE_TO_RECYCLE_BIN -> paths.forEach { mediaRepository.moveToTrash(it) }
+                DeleteAction.DELETE_PERMANENTLY -> mediaRepository.deletePermanently(paths)
+            }
+            clearAlbumSelection()
+        }
     }
 
     fun moveSelectedToVault() {

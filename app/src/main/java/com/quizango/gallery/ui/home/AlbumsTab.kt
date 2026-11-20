@@ -5,7 +5,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -28,6 +30,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -79,7 +83,7 @@ internal fun albumGrid(albums: List<Album>, favorite: Album, deleted: Album): Li
     fun virtual(id: String) = albums.firstOrNull { it.id == id }
     return listOfNotNull(virtual("filter:all_photos"), favorite) +
         listOf("filter:videos", "filter:camera", "filter:screenshots").mapNotNull { id -> virtual(id)?.takeIf { it.itemCount > 0 } } +
-        albums.filter { !it.id.startsWith("filter:") } +
+        albums.filter { !it.id.startsWith("filter:") }.sortedByDescending { it.isPinned } + // stable: pinned keep list order
         deleted
 }
 
@@ -101,6 +105,17 @@ internal fun albumRoute(album: Album, listTitle: String): String = when (album.i
     else -> Screen.AlbumDetail.createRoute(album.id, listTitle)
 }
 
+/** Only device folders can be selected; the virtual cards (Recent, Favorite, All Video, ..., Deleted) all use "filter:" ids. */
+internal fun albumIsSelectable(album: Album): Boolean = !album.id.startsWith("filter:")
+
+/** Pin button label: "Unpin" only when the single selected album is pinned (AF.OooOo0O pinType 1). */
+@StringRes
+internal fun pinLabel(selected: Set<String>, pinned: Set<String>): Int =
+    if (selected.size == 1 && selected.first() in pinned) R.string.unpin_to_top else R.string.pin_to_top
+
+/** Pin, Change cover and Rename are dimmed once more than one album is selected (HA.handleEvents). */
+internal fun singleAlbumActionAlpha(count: Int): Float = if (count > 1) 0.6f else 1f
+
 /** List title of an album: the reference string for a virtual album, else the folder name. */
 @Composable
 internal fun albumTitle(album: Album): String =
@@ -113,9 +128,16 @@ fun AlbumsTab(
     deletedAlbum: Album,
     isLoading: Boolean,
     mediaList: List<MediaItem> = emptyList(),
+    selectedAlbums: Set<String> = emptySet(),
     onAlbumClick: (Album, String) -> Unit,
+    onAlbumToggle: (Album) -> Unit = {},
     onStoryClick: (id: String) -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val selecting = selectedAlbums.isNotEmpty()
+    fun toggleOrRefuse(album: Album) =
+        if (albumIsSelectable(album)) onAlbumToggle(album)
+        else Toast.makeText(context, R.string.cannot_select_system_folders, Toast.LENGTH_SHORT).show()
     if (isLoading) {
         // fragment_album: only a centred progress bar until the first sync has returned
         Box(
@@ -158,7 +180,13 @@ fun AlbumsTab(
                         if (album != null) {
                             val shown = albumCardTitle(album)?.let { stringResource(it) } ?: album.name
                             val listTitle = albumTitle(album)
-                            HomeAlbumCard(album = album, title = shown, onClick = { onAlbumClick(album, listTitle) })
+                            HomeAlbumCard(
+                                album = album,
+                                title = shown,
+                                selectionMark = if (selecting) album.path in selectedAlbums else null,
+                                onClick = { if (selecting) toggleOrRefuse(album) else onAlbumClick(album, listTitle) },
+                                onLongClick = { toggleOrRefuse(album) }
+                            )
                         }
                     }
                 }
@@ -180,10 +208,11 @@ internal fun albumBadge(album: Album): Int? = when {
 internal fun albumCountText(count: Int, locale: Locale = Locale.getDefault()): String =
     NumberFormat.getIntegerInstance(locale).format(count)
 
-/** item_home_album_card. */
+/** item_home_album_card. [selectionMark] is null outside album selection, else whether this card is ticked. */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun HomeAlbumCard(album: Album, title: String, onClick: () -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
+private fun HomeAlbumCard(album: Album, title: String, selectionMark: Boolean?, onClick: () -> Unit, onLongClick: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth().combinedClickable(onClick = onClick, onLongClick = onLongClick)) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -215,6 +244,13 @@ private fun HomeAlbumCard(album: Album, title: String, onClick: () -> Unit) {
                     painter = painterResource(it),
                     contentDescription = null,
                     modifier = Modifier.align(Alignment.BottomStart).padding(start = 6.sdp, bottom = 6.sdp).size(12.sdp)
+                )
+            }
+            if (selectionMark != null) { // bx/c.DxDJysLV5r: top-end, 18.sdp, margin 5.sdp
+                Image(
+                    painter = painterResource(if (selectionMark) R.drawable.ic_check else R.drawable.ic_un_check),
+                    contentDescription = null,
+                    modifier = Modifier.align(Alignment.TopEnd).padding(5.sdp).size(18.sdp)
                 )
             }
         }
