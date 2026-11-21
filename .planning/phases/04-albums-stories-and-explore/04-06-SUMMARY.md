@@ -37,7 +37,7 @@ metrics:
   completed: 2026-11-20
 status: in-progress
 actuals:
-  tasks: 2 of 3 complete (Task 3 human checkpoint pending)
+  tasks: 3 of 3 complete
   commits: 3
 ---
 
@@ -157,3 +157,18 @@ Please launch the app on the connected test phone and verify against reference 2
    - Dark mode: progress bar `#7A8389`, hero `#1F4FD6`.
    - German, Russian, Tamil: one-line ellipsis.
    - Arabic: RTL mirrored layouts.
+
+## Device check approved (2026-11-21)
+- Antigravity's merge of 04-05 read the rename rows after `renameTo`. Fixed in 5f1f66c by taking the snapshot first; a test simulates a sync in that gap.
+- Device: an Artemis run (a2464607) plus adb checks, all read-only:
+  - Albums story row Recent / Memories / Playzen (AD) / Random. Playzen is inert.
+  - The carousel and Media Types are gone.
+  - Grid order is Recent, Favorite, All Video, Screenshots, folders, Deleted. Each card opens the right screen.
+  - The story header and Edit pill appear, with a step after photo 3.
+  - All 11 Explore items open the 2.7.2 screens.
+  - Selection bars, info, Delete and Rename dialogs on ZZPhase4Test match (all cancelled).
+- The user approved. The test folders ZZPhase4Test, ZZ0306Move, ZZ0306Test and ZZDupTest are removed from the phone and from MediaStore.
+- Deferred to Phase 13:
+  - dark mode and languages;
+  - the story ad step after photo 3 (it looked like a real screenshot, not the placeholder);
+  - Camera card matching on a standard DCIM/Camera phone.

@@ -35,12 +35,12 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 
 ### Albums tab
 
-- [ ] **ALB-01**: The Albums tab matches 2.7.2: the story row (Recent / Memories / Flashback / Random / Favorite plus an ad slot), the new album cards, and the Recent / Favorite / All Video / Camera / Screenshots / folders / Deleted grid, with no feature carousel (#8).
-- [ ] **ALB-02**: Stories match 2.7.2: header, ad slots, the usage-access prompt afterwards, and auto-advance (#15).
+- [x] **ALB-01**: The Albums tab matches 2.7.2: the story row (Recent / Memories / Flashback / Random / Favorite plus an ad slot), the new album cards, and the Recent / Favorite / All Video / Camera / Screenshots / folders / Deleted grid, with no feature carousel (#8).
+- [x] **ALB-02**: Stories match 2.7.2: header, ad slots, the usage-access prompt afterwards, and auto-advance (#15).
 
 ### Explore tab
 
-- [ ] **EXP-01**: The Explore tab matches 2.7.2:
+- [x] **EXP-01**: The Explore tab matches 2.7.2:
   - Free up space hero with Scan now;
   - Create (AI Editor, Collage);
   - Library (Vault, Favorites, Moments, Place);
@@ -138,9 +138,9 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 | HOME-02 | Phase 3: Home Shell and Photos Tab | Complete |
 | HOME-03 | Phase 3: Home Shell and Photos Tab | Complete |
 | PHO-01 | Phase 3: Home Shell and Photos Tab | Complete |
-| ALB-01 | Phase 4: Albums, Stories and Explore | Pending |
-| ALB-02 | Phase 4: Albums, Stories and Explore | Pending |
-| EXP-01 | Phase 4: Albums, Stories and Explore | Pending |
+| ALB-01 | Phase 4: Albums, Stories and Explore | Complete |
+| ALB-02 | Phase 4: Albums, Stories and Explore | Complete |
+| EXP-01 | Phase 4: Albums, Stories and Explore | Complete |
 | VIEW-01 | Phase 5: Viewing and Browsing | Pending |
 | VIEW-02 | Phase 5: Viewing and Browsing | Pending |
 | VIEW-03 | Phase 5: Viewing and Browsing | Pending |

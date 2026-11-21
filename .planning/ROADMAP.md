@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Shared 2.7.2 drawables, strings, theme and Lottie assets (completed 2026-11-13)
 - [ ] **Phase 2: Onboarding** - Splash, Language, Permission and the new Feature-promo step; Welcome removed
 - [x] **Phase 3: Home Shell and Photos Tab** - 2.7.2 home shell, popup menu, vault hint, exit popup and Photos tab (completed 2026-11-20)
-- [ ] **Phase 4: Albums, Stories and Explore** - New Albums tab and story row, stories viewer, and the Explore tab
+- [x] **Phase 4: Albums, Stories and Explore** - New Albums tab and story row, stories viewer, and the Explore tab (completed 2026-11-21)
 - [ ] **Phase 5: Viewing and Browsing** - Full-screen viewer, video player and the album, discovery and search lists
 - [ ] **Phase 6: Manage and Cleaner** - System cleaner, duplicate flow, Recycle Bin and Quick Organize
 - [ ] **Phase 7: Private Vault** - Vault lock, media, settings, recovery and the media picker
@@ -123,15 +123,15 @@ Plans:
   3. The Explore tab shows the Free up space hero with Scan now, Create (AI Editor, Collage), Library (Vault, Favorites, Moments, Place) and Manage (Duplicate Finder, Quick Organize, Recycle Bin, Settings), laid out as in 2.7.2.
   4. Every Explore item opens the same screen it opens in 2.7.2.
 
-**Plans**: 6 plans
+**Plans**: 6/6 plans complete
 
 Plans:
-- [ ] 04-01-PLAN.md — Tracer: Albums tab opens on the 2.7.2 grid with working taps (all Phase 4 strings, colours, drawables and wave-2 DataStore keys imported; carousel and media types removed); item_home_album_card look and virtual names on keys; story row with the Playzen circle (wave 1)
-- [ ] 04-02-PLAN.md — Stories viewer: 3000 ms zoom steps, half-screen taps and hold, ad steps every 3rd photo, 2.7.2 header/progress/Edit pill, 500 ms fade, Edit tooltip, usage-access hook no-op (wave 2)
-- [ ] 04-03-PLAN.md — Explore rebuilt: hero with Scan now rule, Create, Library, ad card, Manage with RAM gate, Collage "New" badge, 2.7.2 routing (wave 2)
-- [ ] 04-04-PLAN.md — Album selection: enter/exit, selection bars, Pin/Unpin (pinAlbum), Delete and Add to for whole albums (wave 3)
-- [ ] 04-05-PLAN.md — Album selection: Change cover (shared MediaPicker, albumCover), Rename with on-disk folder rename, album info dialog (wave 4)
-- [ ] 04-06-PLAN.md — Quality gates: CodeRabbit, unslop, parity scripts, checklist ticks #8 #9 #15, on-device side-by-side check (wave 5, checkpoint)
+- [x] 04-01-PLAN.md — Tracer: Albums tab opens on the 2.7.2 grid with working taps (all Phase 4 strings, colours, drawables and wave-2 DataStore keys imported; carousel and media types removed); item_home_album_card look and virtual names on keys; story row with the Playzen circle (wave 1)
+- [x] 04-02-PLAN.md — Stories viewer: 3000 ms zoom steps, half-screen taps and hold, ad steps every 3rd photo, 2.7.2 header/progress/Edit pill, 500 ms fade, Edit tooltip, usage-access hook no-op (wave 2)
+- [x] 04-03-PLAN.md — Explore rebuilt: hero with Scan now rule, Create, Library, ad card, Manage with RAM gate, Collage "New" badge, 2.7.2 routing (wave 2)
+- [x] 04-04-PLAN.md — Album selection: enter/exit, selection bars, Pin/Unpin (pinAlbum), Delete and Add to for whole albums (wave 3)
+- [x] 04-05-PLAN.md — Album selection: Change cover (shared MediaPicker, albumCover), Rename with on-disk folder rename, album info dialog (wave 4)
+- [x] 04-06-PLAN.md — Quality gates: CodeRabbit, unslop, parity scripts, checklist ticks #8 #9 #15, on-device side-by-side check (wave 5, checkpoint)
 
 **UI hint**: yes
 
@@ -284,7 +284,7 @@ Phases execute in numeric order: 1 → 2 → 3 → … → 13
 | 1. Foundation | 5/5 | Complete    | 2026-11-13 |
 | 2. Onboarding | 5/5 | Complete    | 2026-11-13 |
 | 3. Home Shell and Photos Tab | 6/6 | Complete    | 2026-11-20 |
-| 4. Albums, Stories and Explore | 0/TBD | Not started | - |
+| 4. Albums, Stories and Explore | 6/6 | Complete    | 2026-11-21 |
 | 5. Viewing and Browsing | 0/TBD | Not started | - |
 | 6. Manage and Cleaner | 0/TBD | Not started | - |
 | 7. Private Vault | 0/TBD | Not started | - |
