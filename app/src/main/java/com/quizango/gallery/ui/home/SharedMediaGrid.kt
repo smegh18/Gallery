@@ -24,7 +24,7 @@ import com.quizango.gallery.ui.theme.Inter
 import java.text.SimpleDateFormat
 import java.util.*
 
-/** Pre-2.7.2 grid item, header and duration helpers, used by AlbumDetail, Search by colour and Recycle Bin until their phases port them. */
+/** Pre-2.7.2 grid item, header and duration helpers, used by Search by colour and Recycle Bin until their phases port them. */
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
