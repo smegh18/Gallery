@@ -271,4 +271,10 @@
     <string name="this_video_format_not_supported">অসমর্থিত ভিডিও বিন্যাস</string>
     <string name="subtitle">সাবটাইটেল</string>
     <string name="audio_track">অডিও ট্র্যাক</string>
+    <string name="unfavorite">অপছন্দ</string>
+    <string name="no_favorites">কোন প্রিয়</string>
+    <string name="no_favorites_empty">আপনার প্রিয় মিডিয়া দ্রুত সনাক্ত করতে হার্ট আইকনে আলতো চাপুন।</string>
+    <string name="selected_media_files_successfully_hide">মিডিয়া ফাইলগুলি সফলভাবে লুকানো হয়েছে৷</string>
+    <string name="selected_media_files_successfully_copied">মিডিয়া ফাইল সফলভাবে অনুলিপি করা হয়েছে.</string>
+    <string name="selected_media_files_successfully_moved">মিডিয়া ফাইল সফলভাবে সরানো হয়েছে৷</string>
 </resources>

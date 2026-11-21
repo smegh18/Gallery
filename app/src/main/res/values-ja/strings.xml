@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">サポートされていないビデオ形式</string>
     <string name="subtitle">字幕</string>
     <string name="audio_track">オーディオトラック</string>
+    <string name="unfavorite">お気に入り解除</string>
+    <string name="no_favorites">お気に入りはありません</string>
+    <string name="no_favorites_empty">お気に入りのメディアを保存して素早く見つけるには、ハートアイコンをタップしてください。</string>
+    <string name="selected_media_files_successfully_hide">選択したメディアファイルを正常に非表示にしました。</string>
+    <string name="selected_media_files_successfully_copied">選択したメディアファイルを正常にコピーしました。</string>
+    <string name="selected_media_files_successfully_moved">メディアファイルが正常に移動しました。</string>
 </resources>

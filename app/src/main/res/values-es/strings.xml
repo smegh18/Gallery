@@ -312,4 +312,10 @@
     <string name="this_video_format_not_supported">Formato de video no compatible</string>
     <string name="subtitle">Subtítulo</string>
     <string name="audio_track">Pista de Audio</string>
+    <string name="unfavorite">Quitar de favoritos</string>
+    <string name="no_favorites">Sin favoritos</string>
+    <string name="no_favorites_empty">Toque el icono del corazón para guardar sus medios favoritos y encontrarlos rápidamente.</string>
+    <string name="selected_media_files_successfully_hide">Los archivos multimedia seleccionados se han ocultado correctamente.</string>
+    <string name="selected_media_files_successfully_copied">Los archivos multimedia seleccionados se han copiado correctamente.</string>
+    <string name="selected_media_files_successfully_moved">Archivos multimedia movidos con éxito.</string>
 </resources>

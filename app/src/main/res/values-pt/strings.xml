@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">Formato de vídeo não suportado</string>
     <string name="subtitle">Legenda</string>
     <string name="audio_track">Faixa de Áudio</string>
+    <string name="unfavorite">Remover dos Favoritos</string>
+    <string name="no_favorites">Sem Favoritos</string>
+    <string name="no_favorites_empty">Toque no ícone do coração para salvar os seus meios favoritos e encontrá-los rapidamente.</string>
+    <string name="selected_media_files_successfully_hide">Ficheiros de media selecionados ocultados com sucesso.</string>
+    <string name="selected_media_files_successfully_copied">Ficheiros de media selecionados copiados com sucesso.</string>
+    <string name="selected_media_files_successfully_moved">Ficheiros de média movidos com sucesso.</string>
 </resources>

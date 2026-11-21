@@ -312,4 +312,10 @@
     <string name="this_video_format_not_supported">تنسيق الفيديو غير معتمد</string>
     <string name="subtitle">ترجمة</string>
     <string name="audio_track">المسار الصوتي</string>
+    <string name="unfavorite">إلغاء الإعجاب</string>
+    <string name="no_favorites">لا يوجد مفضلة</string>
+    <string name="no_favorites_empty">اضغط على أيقونة القلب لحفظ الوسائط المفضلة والعثور عليها بسرعة.</string>
+    <string name="selected_media_files_successfully_hide">تم إخفاء ملفات الوسائط المحددة بنجاح.</string>
+    <string name="selected_media_files_successfully_copied">تم نسخ ملفات الوسائط المحددة بنجاح.</string>
+    <string name="selected_media_files_successfully_moved">تم نقل ملفات الوسائط بنجاح.</string>
 </resources>

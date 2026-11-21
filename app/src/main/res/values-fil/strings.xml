@@ -312,4 +312,10 @@
     <string name="this_video_format_not_supported">Hindi suportadong format ng video</string>
     <string name="subtitle">Subtitle</string>
     <string name="audio_track">Track ng Audio</string>
+    <string name="unfavorite">Huwag Paborito</string>
+    <string name="no_favorites">Walang Mga Paborito</string>
+    <string name="no_favorites_empty">I-tap ang piktograma ng puso upang i-save ang iyong mga paboritong midya at madaling makita ang mga ito.</string>
+    <string name="selected_media_files_successfully_hide">Matagumpay na itinago ang napiling mga media file.</string>
+    <string name="selected_media_files_successfully_copied">Matagumpay na inikopya ang napiling mga media file.</string>
+    <string name="selected_media_files_successfully_moved">Matagumpay na inilipat ang mga file ng media.</string>
 </resources>

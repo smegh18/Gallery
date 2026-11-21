@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">Nieobsługiwany format wideo</string>
     <string name="subtitle">Napisy</string>
     <string name="audio_track">Ścieżka dźwiękowa</string>
+    <string name="unfavorite">Usuń z ulubionych</string>
+    <string name="no_favorites">Brak ulubionych</string>
+    <string name="no_favorites_empty">Kliknij ikonę serca, aby zapisać ulubione media i szybko je odnaleźć.</string>
+    <string name="selected_media_files_successfully_hide">Wybrane pliki multimedialne zostały pomyślnie ukryte.</string>
+    <string name="selected_media_files_successfully_copied">Wybrane pliki multimedialne zostały pomyślnie skopiowane.</string>
+    <string name="selected_media_files_successfully_moved">Pliki multimedialne przeniesione pomyślnie.</string>
 </resources>

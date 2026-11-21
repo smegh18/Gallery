@@ -304,4 +304,10 @@
     <string name="this_video_format_not_supported">અસમર્થિત વિડિઓ ફોર્મેટ</string>
     <string name="subtitle">સબટાઈટલ</string>
     <string name="audio_track">ઓડિયો ટ્રેક</string>
+    <string name="unfavorite">મનપસંદ રદ કરો</string>
+    <string name="no_favorites">મનપસંદ નથી</string>
+    <string name="no_favorites_empty">તમારા મનપસંદ મીડિયાને સંગ્રહવા માટે હૃદય આકારનું ચિહ્ન ટેપ કરો અને તેમને ઝડપી શોધવાની સહાયક થવું.</string>
+    <string name="selected_media_files_successfully_hide">પસંદગીના મીડિયા ફાઇલો સફળતાપૂર્વક છુપાવેલી.</string>
+    <string name="selected_media_files_successfully_copied">પસંદગીના મીડિયા ફાઇલો સફળતાપૂર્વક કૉપિ કરી દીધી.</string>
+    <string name="selected_media_files_successfully_moved">મિડિયા ફાઇલો સફળતાથી ખસેડવામાં આવતા.</string>
 </resources>

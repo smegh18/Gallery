@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">असमर्थित वीडियो फ़ॉर्मेट</string>
     <string name="subtitle">उपशीर्षक</string>
     <string name="audio_track">ऑडियो ट्रैक</string>
+    <string name="unfavorite">नापसंद करो</string>
+    <string name="no_favorites">कोई पसंदीदा नहीं</string>
+    <string name="no_favorites_empty">अपने पसंदीदा मीडिया को तेजी से ढूंढने के लिए हार्ट आइकन पर टैप करें।</string>
+    <string name="selected_media_files_successfully_hide">चयनित मीडिया फ़ाइलें सफलतापूर्वक छुपाई गईं।</string>
+    <string name="selected_media_files_successfully_copied">चयनित मीडिया फ़ाइलें सफलतापूर्वक कॉपी की गईं।</string>
+    <string name="selected_media_files_successfully_moved">मीडिया फाइल्स सफलतापूर्वक हलवी गई.</string>
 </resources>

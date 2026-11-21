@@ -304,4 +304,10 @@
     <string name="this_video_format_not_supported">असमर्थित व्हिडिओ फॉर्मॅट</string>
     <string name="subtitle">उपशीर्षक</string>
     <string name="audio_track">ऑडिओ ट्रॅक</string>
+    <string name="unfavorite">आवडते</string>
+    <string name="no_favorites">कोणताही आवडते नसलेले</string>
+    <string name="no_favorites_empty">तुमच्या आवडत्या मिडिया लक्षात घेण्यासाठी हार्ट आयकनवर टॅप करा.</string>
+    <string name="selected_media_files_successfully_hide">निवडलेली मीडिया फाइले सफलतेने लपवली गेली.</string>
+    <string name="selected_media_files_successfully_copied">निवडलेली मीडिया फाइले सफलतेने कॉपी केली गेली.</string>
+    <string name="selected_media_files_successfully_moved">मीडिया फाइल्स सफलतेच हलवी गेली.</string>
 </resources>

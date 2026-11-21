@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">지원되지 않는 비디오 형식</string>
     <string name="subtitle">자막</string>
     <string name="audio_track">오디오 트랙</string>
+    <string name="unfavorite">즐겨찾기 해제</string>
+    <string name="no_favorites">즐겨찾기 없음</string>
+    <string name="no_favorites_empty">즐겨찾기한 미디어를 빠르게 찾으려면 하트 아이콘을 탭하세요.</string>
+    <string name="selected_media_files_successfully_hide">선택한 미디어 파일이 성공적으로 숨겨졌습니다.</string>
+    <string name="selected_media_files_successfully_copied">선택한 미디어 파일이 성공적으로 복사되었습니다.</string>
+    <string name="selected_media_files_successfully_moved">미디어 파일이 성공적으로 이동되었습니다.</string>
 </resources>

@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">Format video tidak disokong</string>
     <string name="subtitle">Subtajuk</string>
     <string name="audio_track">Trek Audio</string>
+    <string name="unfavorite">Batal Kegemaran</string>
+    <string name="no_favorites">Tiada Kegemaran</string>
+    <string name="no_favorites_empty">Ketik pada ikon hati untuk menyimpan media kegemaran anda untuk cepat mencarinya.</string>
+    <string name="selected_media_files_successfully_hide">Fail media yang dipilih berjaya disembunyikan.</string>
+    <string name="selected_media_files_successfully_copied">Fail media yang dipilih berjaya disalin.</string>
+    <string name="selected_media_files_successfully_moved">Fail media berjaya dipindahkan.</string>
 </resources>

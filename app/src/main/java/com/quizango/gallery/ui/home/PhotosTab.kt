@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
@@ -85,8 +86,8 @@ internal fun dayStartOf(millis: Long): Long = Calendar.getInstance().apply {
 }.timeInMillis
 
 /** The ad slot first (PF puts it at index 0), then a header per calendar day in first-seen order, each followed by that day's media. */
-internal fun buildPhotoRows(media: List<MediaItem>): List<PhotoRow> = if (media.isEmpty()) emptyList() else buildList {
-    add(PhotoRow.Ad)
+internal fun buildPhotoRows(media: List<MediaItem>, withAd: Boolean = true): List<PhotoRow> = if (media.isEmpty()) emptyList() else buildList {
+    if (withAd) add(PhotoRow.Ad)
     media.groupBy { dayStartOf(it.dateAdded) }.forEach { (day, items) ->
         add(PhotoRow.Header(day))
         items.forEach { add(PhotoRow.Media(it)) }
@@ -136,9 +137,36 @@ private const val PINCH_IN_STEP = 1.12f
 private const val PINCH_OUT_STEP = 0.90f
 // Recorded on 2.7.2: the grid never zooms as a whole; at the step the cells re-lay out and glide to
 // their new places in about 0.2 s while headers and the ad row keep their size.
-private const val PINCH_MORPH_MS = 200
+internal const val PINCH_MORPH_MS = 200
 // S272/ai/n constructor PathInterpolator(0.18, 0, 0.08, 1), used by every pinch animation
-private val PinchEasing = CubicBezierEasing(0.18f, 0f, 0.08f, 1f)
+internal val PinchEasing = CubicBezierEasing(0.18f, 0f, 0.08f, 1f)
+
+/**
+ * Steps the column count mid-pinch (S272/z/t). Initial pass, so a pinch is taken before the grid or pager can
+ * scroll; one finger is never consumed. [current] is read when a gesture starts.
+ */
+internal fun Modifier.pinchColumnSteps(current: () -> Int, onStep: (Int) -> Unit): Modifier = pointerInput(Unit) {
+    awaitEachGesture {
+        awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+        var zoom = 1f // span ratio since the gesture began or since the last step
+        var cols = current()
+        do {
+            val event = awaitPointerEvent(PointerEventPass.Initial)
+            if (event.changes.count { it.pressed } >= 2) {
+                zoom *= event.calculateZoom()
+                val next = nextColumnCount(cols, zoom)
+                if (next != cols) {
+                    // shortcut: no 120 ms / 48 px re-step guard (z/t); re-basing the ratio already
+                    // needs another 12% / 10% of finger travel
+                    cols = next
+                    zoom = 1f
+                    onStep(next)
+                }
+                event.changes.forEach { it.consume() }
+            }
+        } while (event.changes.any { it.pressed })
+    }
+}
 
 /** Column count once the span ratio since the last step is [zoom]: spread gives fewer columns, kept in 3..5. */
 internal fun nextColumnCount(current: Int, zoom: Float): Int = clampColumnCount(
@@ -193,29 +221,9 @@ fun PhotosTab(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                // Initial pass, so a pinch is taken before the grid or pager can scroll; one finger is never consumed
-                .pointerInput(Unit) {
-                    awaitEachGesture {
-                        awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-                        var zoom = 1f // span ratio since the gesture began or since the last step
-                        var cols = count
-                        do {
-                            val event = awaitPointerEvent(PointerEventPass.Initial)
-                            if (event.changes.count { it.pressed } >= 2) {
-                                zoom *= event.calculateZoom()
-                                val next = nextColumnCount(cols, zoom)
-                                if (next != cols) {
-                                    // shortcut: no 120 ms / 48 px re-step guard (z/t); re-basing the ratio already
-                                    // needs another 12% / 10% of finger travel
-                                    cols = next
-                                    zoom = 1f
-                                    shownCount = next
-                                    onCount(next)
-                                }
-                                event.changes.forEach { it.consume() }
-                            }
-                        } while (event.changes.any { it.pressed })
-                    }
+                .pinchColumnSteps({ count }) { next ->
+                    shownCount = next
+                    onCount(next)
                 }
         ) {
             LazyVerticalGrid(
@@ -274,7 +282,7 @@ fun PhotosTab(
  * The thumb ImageView has no background, so its 8.sdp elevation casts no shadow: none is drawn here.
  */
 @Composable
-private fun BoxScope.FastScrollThumb(state: LazyGridState, trackHeightPx: Int) {
+internal fun BoxScope.FastScrollThumb(state: LazyGridState, trackHeightPx: Int) {
     if (!state.canScrollForward && !state.canScrollBackward) return
     val painter = painterResource(R.drawable.ic_scroll)
     val range = (trackHeightPx - painter.intrinsicSize.height).coerceAtLeast(0f)
@@ -424,9 +432,9 @@ private fun DrawableBox(@DrawableRes id: Int, modifier: Modifier) {
     })
 }
 
-/** fragment_all_media emptyLayout */
+/** fragment_all_media emptyLayout; the shared list frame passes its per-screen copy. */
 @Composable
-private fun PhotosEmptyState() {
+internal fun PhotosEmptyState(@StringRes title: Int = R.string.no_items, @StringRes body: Int = R.string.no_media_file) {
     Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -435,13 +443,13 @@ private fun PhotosEmptyState() {
         val titleColor = colorResource(R.color.titleColor)
         Image(painter = painterResource(R.drawable.ic_empty_img), contentDescription = null)
         Text(
-            text = stringResource(R.string.no_items),
+            text = stringResource(title),
             style = GalleryText.BodyLargeSemiBold,
             color = titleColor,
             modifier = Modifier.padding(top = 20.sdp, bottom = 10.sdp)
         )
         Text(
-            text = stringResource(R.string.no_media_file),
+            text = stringResource(body),
             style = GalleryText.BodySmallRegular,
             color = titleColor,
             textAlign = TextAlign.Center,

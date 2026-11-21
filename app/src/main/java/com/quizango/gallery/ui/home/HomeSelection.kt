@@ -5,10 +5,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
@@ -45,6 +43,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.browse.MediaAction
+import com.quizango.gallery.ui.browse.MediaSelectionBar
+import com.quizango.gallery.ui.browse.mediaListActions
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
@@ -147,31 +148,20 @@ internal fun HomeSelectionBottomBar(
     onCreateAlbum: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .shadow(10.sdp, RoundedCornerShape(topStart = 16.sdp, topEnd = 16.sdp))
-            .drawableBackground(R.drawable.select_album_bg),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Row(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState())
-                .height(IntrinsicSize.Min)
-                .padding(horizontal = 5.sdp)
-        ) {
-            SelectionAction(Modifier.width(50.sdp), R.drawable.ic_home_select_share, R.string.share, onShare)
-            SelectionAction(Modifier.width(55.sdp), R.drawable.ic_home_select_fav, R.string.favorite, onFavorite)
-            SelectionAction(Modifier.width(55.sdp), R.drawable.ic_home_select_add, R.string.add_to, onAddTo)
-            SelectionAction(Modifier.width(63.sdp), R.drawable.ic_home_select_hide, R.string.ad_to_private, onHide)
-            SelectionAction(Modifier.width(50.sdp), R.drawable.ic_album_select_delete, R.string.delete, onDelete)
-            SelectionAction(Modifier.width(60.sdp), R.drawable.ic_home_select_create_album, R.string.create_albums, onCreateAlbum)
+    MediaSelectionBar(mediaListActions(allFavorite = false), modifier = modifier, onAction = {
+        when (it) {
+            MediaAction.SHARE -> onShare()
+            MediaAction.FAVORITE, MediaAction.UNFAVORITE -> onFavorite()
+            MediaAction.ADD_TO -> onAddTo()
+            MediaAction.PRIVATE -> onHide()
+            MediaAction.DELETE -> onDelete()
+            MediaAction.CREATE_ALBUM -> onCreateAlbum()
         }
-    }
+    })
 }
 
 @Composable
-private fun SelectionAction(
+internal fun SelectionAction(
     size: Modifier,
     @DrawableRes icon: Int,
     @StringRes label: Int,

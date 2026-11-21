@@ -312,4 +312,10 @@
     <string name="this_video_format_not_supported">فرمت ویدئو پشتیبانی نمی‌شود</string>
     <string name="subtitle">زیرنویس</string>
     <string name="audio_track">پیگیری صدا</string>
+    <string name="unfavorite">حذف از علاقه‌مندی‌ها</string>
+    <string name="no_favorites">بدون علاقه‌مندی</string>
+    <string name="no_favorites_empty">روی نماد قلب کلیک کنید تا رسانه‌های مورد علاقه خود را ذخیره کرده و به سرعت آن‌ها را پیدا کنید.</string>
+    <string name="selected_media_files_successfully_hide">فایل‌های رسانه‌ای انتخابی با موفقیت مخفی شدند.</string>
+    <string name="selected_media_files_successfully_copied">فایل‌های رسانه‌ای انتخابی با موفقیت کپی شدند.</string>
+    <string name="selected_media_files_successfully_moved">فایل‌های رسانه با موفقیت منتقل شدند.</string>
 </resources>

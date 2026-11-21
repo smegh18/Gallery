@@ -309,4 +309,10 @@
     <string name="this_video_format_not_supported">不支持的视频格式</string>
     <string name="subtitle">字幕</string>
     <string name="audio_track">音轨</string>
+    <string name="unfavorite">取消收藏</string>
+    <string name="no_favorites">没有收藏</string>
+    <string name="no_favorites_empty">点击心形图标保存您喜欢的媒体，以便快速找到它们。</string>
+    <string name="selected_media_files_successfully_hide">媒体文件隐藏成功。</string>
+    <string name="selected_media_files_successfully_copied">媒体文件复制成功。</string>
+    <string name="selected_media_files_successfully_moved">媒体文件移动成功。</string>
 </resources>

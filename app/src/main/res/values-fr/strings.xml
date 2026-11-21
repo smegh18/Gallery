@@ -312,4 +312,10 @@
     <string name="this_video_format_not_supported">Format vidéo non pris en charge</string>
     <string name="subtitle">Sous-titre</string>
     <string name="audio_track">Piste audio</string>
+    <string name="unfavorite">Retirer des favoris</string>
+    <string name="no_favorites">Pas de favoris</string>
+    <string name="no_favorites_empty">"Appuyez sur l'icône en forme de cœur pour enregistrer vos médias préférés et les retrouver rapidement."</string>
+    <string name="selected_media_files_successfully_hide">Fichiers multimédias sélectionnés masqués avec succès.</string>
+    <string name="selected_media_files_successfully_copied">Fichiers multimédias sélectionnés copiés avec succès.</string>
+    <string name="selected_media_files_successfully_moved">Fichiers multimédias déplacés avec succès.</string>
 </resources>

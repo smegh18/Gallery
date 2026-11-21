@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">Formato video non supportato</string>
     <string name="subtitle">Sottotitoli</string>
     <string name="audio_track">Traccia audio</string>
+    <string name="unfavorite">Rimuovi dai preferiti</string>
+    <string name="no_favorites">Nessun preferito</string>
+    <string name="no_favorites_empty">"Tocca l'icona a forma di cuore per salvare i tuoi media preferiti e trovarli rapidamente."</string>
+    <string name="selected_media_files_successfully_hide">File multimediali selezionati nascosti con successo.</string>
+    <string name="selected_media_files_successfully_copied">File multimediali selezionati copiati con successo.</string>
+    <string name="selected_media_files_successfully_moved">File multimediali spostati con successo.</string>
 </resources>

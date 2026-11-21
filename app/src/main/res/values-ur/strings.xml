@@ -291,4 +291,10 @@
     <string name="this_video_format_not_supported">غیر معتبر ویڈیو فارمیٹ</string>
     <string name="subtitle">ذیلی سرخی</string>
     <string name="audio_track">آڈیو ٹریک</string>
+    <string name="unfavorite">پسند نہیں</string>
+    <string name="no_favorites">کوئی پسندیدہ نہیں</string>
+    <string name="no_favorites_empty">اپنے پسندیدہ میڈیا کو تلاش کرنے کے لئے دل کے آئیکن پر ٹیپ کریں۔</string>
+    <string name="selected_media_files_successfully_hide">منتخب شدہ میڈیا فائلیں کامیابی سے چھپی ہوئیں۔</string>
+    <string name="selected_media_files_successfully_copied">منتخب شدہ میڈیا فائلیں کامیابی سے نقل کر دی گئیں۔</string>
+    <string name="selected_media_files_successfully_moved">رسائی فائلیں کامیابی سے ہٹا دی گئی ہیں۔</string>
 </resources>

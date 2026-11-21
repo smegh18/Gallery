@@ -308,4 +308,10 @@
     <string name="this_video_format_not_supported">Desteklenmeyen video biçimi</string>
     <string name="subtitle">Altyazı</string>
     <string name="audio_track">Ses parçası</string>
+    <string name="unfavorite">Favorilerden çıkar</string>
+    <string name="no_favorites">Favori Yok</string>
+    <string name="no_favorites_empty">Favori medyanızı kaydetmek ve onlara hızlıca ulaşmak için kalp simgesine dokunun.</string>
+    <string name="selected_media_files_successfully_hide">Medya dosyaları başarıyla gizlendi.</string>
+    <string name="selected_media_files_successfully_copied">Medya dosyaları başarıyla kopyalandı.</string>
+    <string name="selected_media_files_successfully_moved">Medya dosyaları başarıyla taşındı.</string>
 </resources>

@@ -169,7 +169,7 @@
     <string name="permanent_delete_Image_title">Want to delete the screenshot?</string>
     <string name="permanent_delete_Image_sub_title">Once deleted, the screenshot can’t be restored.</string>
     <string name="permanently_delete">Permanently Delete</string>
-    <string name="selected_media_files_successfully_deleted">Selected files successfully deleted</string>
+    <string name="selected_media_files_successfully_deleted">Media files deleted successfully.</string>
 
     <!-- Duplicate Finder Suite Strings -->
     <string name="cleaner_duplicate_empty_layout_text">No duplicate photos found</string>
@@ -406,4 +406,11 @@
     <string name="this_video_format_not_supported">Unsupported video format</string>
     <string name="subtitle">Subtitle</string>
     <string name="audio_track">Audio track</string>
+    <!-- Phase 5 shared media list (§3.4, §10) -->
+    <string name="unfavorite">Unfavorite</string>
+    <string name="no_favorites">No Favorites</string>
+    <string name="no_favorites_empty">Tap on the heart icon to save your favorite media to quickly locate them.</string>
+    <string name="selected_media_files_successfully_hide">Media files hidden successfully.</string>
+    <string name="selected_media_files_successfully_copied">Media files copied successfully.</string>
+    <string name="selected_media_files_successfully_moved">Media files moved successfully.</string>
 </resources>

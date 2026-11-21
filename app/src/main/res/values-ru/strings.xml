@@ -322,4 +322,10 @@
     <string name="this_video_format_not_supported">Формат видео не поддерживается</string>
     <string name="subtitle">Субтитры</string>
     <string name="audio_track">Аудиодорожка</string>
+    <string name="unfavorite">Убрать из избранного</string>
+    <string name="no_favorites">Нет избранного</string>
+    <string name="no_favorites_empty">Нажмите на значок сердца, чтобы сохранить избранные медиа для быстрого доступа к ним.</string>
+    <string name="selected_media_files_successfully_hide">Медиа файлы успешно скрыты.</string>
+    <string name="selected_media_files_successfully_copied">Медиа файлы успешно скопированы.</string>
+    <string name="selected_media_files_successfully_moved">Медиа файлы успешно перемещены.</string>
 </resources>

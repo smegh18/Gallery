@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">Ogiltigt videoformat</string>
     <string name="subtitle">Undertext</string>
     <string name="audio_track">Ljudspår</string>
+    <string name="unfavorite">Ta bort som favorit</string>
+    <string name="no_favorites">Inga favoriter</string>
+    <string name="no_favorites_empty">Tryck på hjärtikonen för att spara dina favoritmedier och hitta dem snabbt.</string>
+    <string name="selected_media_files_successfully_hide">Valda mediefiler har doldats framgångsrikt.</string>
+    <string name="selected_media_files_successfully_copied">Valda mediefiler har kopierats framgångsrikt.</string>
+    <string name="selected_media_files_successfully_moved">Mediefiler flyttade framgångsrikt.</string>
 </resources>

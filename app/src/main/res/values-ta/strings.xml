@@ -321,4 +321,10 @@
     <string name="this_video_format_not_supported">ஆதரிக்கப்படாத காணொளி வடிவம்</string>
     <string name="subtitle">உபத்திரவு</string>
     <string name="audio_track">ஆடியோ ட்ரேக்</string>
+    <string name="unfavorite">பிடித்தமில்லாதிருக்க</string>
+    <string name="no_favorites">பிடித்தங்கள் இல்லை</string>
+    <string name="no_favorites_empty">உங்கள் பிடித்த மீடியாவை விரைவில் கண்டுபிடிக்க உங்கள் இதய ஐகானை தட்டவும்.</string>
+    <string name="selected_media_files_successfully_hide">தேர்ந்தெடுக்கப்பட்ட உலா கோப்புகள் வெற்றியாக மறைக்கப்பட்டன.</string>
+    <string name="selected_media_files_successfully_copied">தேர்ந்தெடுக்கப்பட்ட உலா கோப்புகள் வெற்றியாக நகல் எடுக்கப்பட்டன.</string>
+    <string name="selected_media_files_successfully_moved">மீடியா கோப்புகள் வெற்றியாக நகலெடுக்கப்பட்டன.</string>
 </resources>

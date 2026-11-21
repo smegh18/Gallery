@@ -320,4 +320,10 @@
     <string name="this_video_format_not_supported">မီဒီယာ ဗီဒီယို ပုံစံမပြုရပါ</string>
     <string name="subtitle">စာတမ်းအမည်</string>
     <string name="audio_track">အသံဖွင့်ရန်</string>
+    <string name="unfavorite">မအကြိုက်ဆုံးဖယ်ပေးပါ</string>
+    <string name="no_favorites">အကြိုက်ဆုံးများ မရှိသေးပါ</string>
+    <string name="no_favorites_empty">အခွန်များကို အသက်တင်ပြပါစေ ကိုယ်သို့သွားရန် ခြေခံအီးစိန်းတွင် အကြယ်လို့ထည့်သွင်းပါ။</string>
+    <string name="selected_media_files_successfully_hide">ရွေးချယ်ထားသော မီဒီယာ ဖိုင်များကို အောင်မြင်စွာ ကျောက်လွှားသည်။</string>
+    <string name="selected_media_files_successfully_copied">ရွေးချယ်ထားသော မီဒီယာ ဖိုင်များကို အဆင်မြင်စွာ ကော်လံသုံးထားသည်။</string>
+    <string name="selected_media_files_successfully_moved">မီဒီယာ ဖိုင်များကို အောင်မြင်ပြီးခြင်း။</string>
 </resources>
