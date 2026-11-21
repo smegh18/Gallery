@@ -9,7 +9,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
@@ -17,6 +16,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -24,7 +24,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,19 +32,12 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -60,9 +52,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,14 +70,11 @@ import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.domain.model.VaultItem
-import com.quizango.gallery.ui.home.albumTitle
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -108,15 +95,9 @@ fun MediaViewerScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showControls by remember { mutableStateOf(true) }
-    var showSuggestionStrip by remember { mutableStateOf(!isRecycle && !isVault) }
-    var showInfoDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var showPermanentDeleteDialog by remember { mutableStateOf(false) }
-    var deleteMoveToBin by remember { mutableStateOf(true) }
-    var showAddToDialog by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
-    var vaultConfirm by remember { mutableStateOf<String?>(null) } // "hide" | "unhide"
-    var rotationAngle by remember { mutableFloatStateOf(0f) }
+    // Bumped after Rotate rewrites the file, so the page reloads it
+    var imageVersion by remember { mutableIntStateOf(0) }
 
     // Video Playback State
     var currentExoPlayer by remember { mutableStateOf<ExoPlayer?>(null) }
@@ -185,11 +166,9 @@ fun MediaViewerScreen(
 
     var isCurrentPageZoomed by remember { mutableStateOf(false) }
 
-    // Reset rotation, zoom and suggestions when swiping to another item
+    // Reset zoom when swiping to another item
     LaunchedEffect(pagerState.currentPage) {
-        rotationAngle = 0f
         isCurrentPageZoomed = false
-        showSuggestionStrip = !isRecycle && !isVault
     }
 
     // Vault files are encrypted: show/share decrypted cache copies, keyed by the encrypted path
@@ -262,11 +241,53 @@ fun MediaViewerScreen(
         showMoreMenu = false
     }
 
+    fun open(kind: ViewerDialogKind) {
+        dialog = ViewerDialog(kind, currentItem.filePath)
+    }
+
+    // Runs a confirmed action on the page its dialog was opened for, or not at all
+    fun confirm(opened: ViewerDialog, action: suspend (MediaItem) -> Unit) {
+        dialog = null
+        val item = currentItem.takeIf { opened.targetIfCurrent(it.filePath) != null } ?: return
+        scope.launch {
+            busy = true
+            try {
+                action(item)
+            } finally {
+                busy = false
+            }
+        }
+    }
+
+    fun toast(@StringRes message: Int) = Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+
+    fun onDockAction(action: DockAction) {
+        when (action) {
+            DockAction.SHARE -> currentViewPath?.let { shareMedia(context, it, currentItem.isVideo) }
+            DockAction.PRIVATE -> open(ViewerDialogKind.HIDE)
+            DockAction.EDIT -> {
+                val blocked = editBlockedMessage(currentItem.isAnimatedMedia, isDecodable(currentItem.filePath))
+                if (blocked != null) toast(blocked) else onNavigate(Screen.Editor.createRoute(currentItem.filePath))
+            }
+            DockAction.ADD_TO -> open(ViewerDialogKind.ADD_TO)
+            DockAction.DELETE -> open(
+                when {
+                    isRecycle -> ViewerDialogKind.RECYCLE_DELETE
+                    isVault -> ViewerDialogKind.VAULT_DELETE
+                    else -> ViewerDialogKind.DELETE
+                }
+            )
+            DockAction.MORE -> showMoreMenu = true
+            DockAction.RESTORE -> open(ViewerDialogKind.RESTORE)
+            DockAction.UNHIDE -> open(ViewerDialogKind.UNHIDE)
+        }
+    }
+
     fun onMoreAction(action: MoreAction) {
         showMoreMenu = false
         when (action) {
-            MoreAction.ADD_TO -> showAddToDialog = true
-            MoreAction.RENAME -> dialog = ViewerDialog(ViewerDialogKind.RENAME, currentItem.filePath)
+            MoreAction.ADD_TO -> open(ViewerDialogKind.ADD_TO)
+            MoreAction.RENAME -> open(ViewerDialogKind.RENAME)
             MoreAction.SLIDE_SHOW -> onNavigate(Screen.StoryView.createRoute(if (isVault) "vault" else folderPath.ifEmpty { "all" }, "Slide show"))
             MoreAction.WALLPAPER -> onNavigate(Screen.Wallpaper.createRoute(currentViewPath ?: currentItem.filePath))
             MoreAction.PRINT -> try {
@@ -275,7 +296,7 @@ fun MediaViewerScreen(
                 // The Uri overload decodes off the main thread
                 printHelper.printBitmap(currentItem.fileName, Uri.fromFile(File(currentViewPath ?: currentItem.filePath)))
             } catch (_: Exception) {
-                Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+                toast(R.string.something_went_wrong)
             }
             MoreAction.SHOW_ON_MAP -> showOnMapRoute(currentItem)?.let(onNavigate)
         }
@@ -289,6 +310,18 @@ fun MediaViewerScreen(
                 onAction = ::onMoreAction,
                 onDismiss = { showMoreMenu = false }
             )
+        }
+    }
+
+    // Edit suggestions: 1500 ms after a still page settles, hidden with the chrome, ✕ closes them for this page
+    var suggestionsClosed by remember(currentItem.filePath) { mutableStateOf(false) }
+    var suggestionsShown by remember { mutableStateOf(false) }
+    val suggestionsAllowed = showControls && !suggestionsClosed && suggestionsEligible(currentItem, isRecycle, isVault)
+    LaunchedEffect(currentItem.filePath, suggestionsAllowed, pagerState.isScrollInProgress) {
+        suggestionsShown = false
+        if (suggestionsAllowed && !pagerState.isScrollInProgress) {
+            delay(SUGGESTION_DELAY_MS)
+            suggestionsShown = true
         }
     }
 
@@ -324,7 +357,7 @@ fun MediaViewerScreen(
             PagerMediaItemView(
                 item = item,
                 displayPath = viewPath(item),
-                rotationAngle = if (page == pagerState.currentPage) rotationAngle else 0f,
+                version = if (page == pagerState.currentPage) imageVersion else 0,
                 exoPlayer = if (page == pagerState.currentPage) currentExoPlayer else null,
                 onToggleControls = { showControls = !showControls },
                 onDismiss = onNavigateBack,
@@ -336,93 +369,47 @@ fun MediaViewerScreen(
             )
         }
 
-        if (busy) {
-            CircularProgressIndicator(color = colorResource(R.color.colorPrimary), modifier = Modifier.align(Alignment.Center))
-        }
-
         ViewerTopChrome(
             visible = showControls,
             controls = viewerChromeControls(
                 isVideo = currentItem.isVideo,
                 isRecycle = isRecycle,
                 isVault = isVault,
-                isAnimated = currentItem.isAnimated || currentItem.mediaType == MediaType.ANIMATED,
+                isAnimated = currentItem.isAnimatedMedia,
                 isHeif = currentItem.fileName.endsWith(".heif", ignoreCase = true),
                 isShortVideoPlaying = currentItem.isVideo && isVideoPlaying && videoDurationMs in 1..60_000L
             ),
             isFavorite = currentItem.isFavorite,
             onBack = onNavigateBack,
-            onRotate = { rotationAngle = (rotationAngle + 90f) % 360f },
+            onRotate = {
+                val item = currentItem
+                if (!busy) scope.launch {
+                    busy = true
+                    val ok = mediaRepository.rotateImage(item.filePath)
+                    busy = false
+                    if (ok) imageVersion++ else toast(R.string.couldn_t_rotate_image)
+                }
+            },
             onFavorite = { scope.launch { mediaRepository.setFavorite(currentItem.filePath, !currentItem.isFavorite) } },
             onCapture = { },
-            onDetails = { showInfoDialog = true },
+            onDetails = { open(ViewerDialogKind.DETAILS) },
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
-        // Bottom Overlays (Suggestion Pill Strip + Video Scrubber / Controls + Bottom Action Bar)
-        AnimatedVisibility(
-            visible = showControls,
-            enter = slideInVertically(animationSpec = tween(CHROME_ANIMATION_MS)) { it } + fadeIn(tween(CHROME_ANIMATION_MS)),
-            exit = slideOutVertically(animationSpec = tween(CHROME_ANIMATION_MS)) { it } + fadeOut(tween(CHROME_ANIMATION_MS)),
-            modifier = Modifier.align(Alignment.BottomCenter)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
+        // Bottom overlays: suggestion pills (hide at once), then the short-video controls and the dock (slide with the chrome)
+        Column(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {
+            if (suggestionsShown) {
+                SuggestionStrip(
+                    onClose = { suggestionsClosed = true },
+                    onPick = { onNavigate(suggestionRoute(it, currentItem.filePath)) }
+                )
+            }
+            AnimatedVisibility(
+                visible = showControls,
+                enter = slideInVertically(animationSpec = tween(CHROME_ANIMATION_MS)) { it } + fadeIn(tween(CHROME_ANIMATION_MS)),
+                exit = slideOutVertically(animationSpec = tween(CHROME_ANIMATION_MS)) { it } + fadeOut(tween(CHROME_ANIMATION_MS))
             ) {
-                // Floating Suggestion Pill Strip (Matches item_suggestion_layout.xml)
-                if (showSuggestionStrip && currentItem.mediaType.isImage && !isRecycle && !isVault) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Close button pill
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF242730))
-                                .clickable { showSuggestionStrip = false },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_close),
-                                contentDescription = "Close suggestions",
-                                tint = Color.White,
-                                modifier = Modifier.size(12.dp)
-                            )
-                        }
-
-                        // Edit suggestions
-                        // Reference order: background tools first
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_remove_bg, label = stringResource(R.string.remove_background)) {
-                            onNavigate(Screen.RemoveBg.createRoute(currentItem.filePath))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_blur_bg, label = stringResource(R.string.blur_background)) {
-                            onNavigate(Screen.BlurBg.createRoute(currentItem.filePath))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_color_splash, label = stringResource(R.string.color_splash)) {
-                            onNavigate(Screen.ColorSplash.createRoute(currentItem.filePath))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_crop, label = stringResource(R.string.crop)) {
-                            onNavigate(Screen.Editor.createRoute(currentItem.filePath, initialTab = "crop"))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_draw, label = stringResource(R.string.markup)) {
-                            onNavigate(Screen.Editor.createRoute(currentItem.filePath, initialTab = "brush"))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_adjust, label = stringResource(R.string.adjust)) {
-                            onNavigate(Screen.Editor.createRoute(currentItem.filePath, initialTab = "adjust"))
-                        }
-                        SuggestionPill(iconRes = R.drawable.ic_edit_small_filter, label = stringResource(R.string.filter)) {
-                            onNavigate(Screen.Editor.createRoute(currentItem.filePath, initialTab = "filter"))
-                        }
-                    }
-                }
-
-                // Video Scrubber & Playback Controls (Matches activity_media_full_screen.xml progressLay & videoControlBottom)
+                Column(modifier = Modifier.fillMaxWidth()) {
                 if (currentItem.mediaType == MediaType.VIDEO) {
                     Column(
                         modifier = Modifier
@@ -585,623 +572,66 @@ fun MediaViewerScreen(
                         }
                     }
                 }
+                    ViewerDock(
+                        actions = dockActions(isRecycle = isRecycle, isVault = isVault, isVideo = currentItem.isVideo),
+                        onAction = ::onDockAction,
+                        moreMenu = moreMenu
+                    )
+                }
+            }
+        }
 
-                // Bottom Action Bar (Matches item_bottom_option_layout.xml: normal, recycler, or hidden action)
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.surface,
-                    shadowElevation = 8.dp
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        HorizontalDivider(color = MaterialTheme.colorScheme.settingsDivider, thickness = 1.dp)
+        if (busy) {
+            CircularProgressIndicator(color = colorResource(R.color.colorPrimary), modifier = Modifier.align(Alignment.Center))
+        }
+    }
 
-                        when {
-                            isRecycle -> {
-                                // Mode B: Recycle Bin (recyclerBottomAction)
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .navigationBarsPadding()
-                                        .padding(vertical = 10.dp),
-                                    horizontalArrangement = Arrangement.SpaceAround,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    BottomActionButton(
-                                        iconRes = R.drawable.ic_restore,
-                                        label = stringResource(R.string.restore)
-                                    ) {
-                                        scope.launch {
-                                            mediaRepository.restoreFromTrash(currentItem.filePath)
-                                            Toast.makeText(context, "Restored to Gallery", Toast.LENGTH_SHORT).show()
-                                            onNavigateBack()
-                                        }
-                                    }
-                                    BottomActionButton(
-                                        iconRes = R.drawable.ic_delete,
-                                        label = stringResource(R.string.delete)
-                                    ) {
-                                        showPermanentDeleteDialog = true
-                                    }
-                                }
-                            }
-                            isVault -> {
-                                // Mode C: Vault / Hidden (hiddenBottomAction)
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .navigationBarsPadding()
-                                        .padding(vertical = 10.dp),
-                                    horizontalArrangement = Arrangement.SpaceAround,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    BottomActionButton(
-                                        iconRes = R.drawable.ic_share,
-                                        label = stringResource(R.string.share)
-                                    ) {
-                                        currentViewPath?.let { shareMedia(context, it) }
-                                    }
-                                    BottomActionButton(
-                                        iconRes = R.drawable.ic_unhide,
-                                        label = stringResource(R.string.unhide)
-                                    ) {
-                                        vaultConfirm = "unhide"
-                                    }
-                                    BottomActionButton(
-                                        iconRes = R.drawable.ic_delete,
-                                        label = stringResource(R.string.delete)
-                                    ) {
-                                        showPermanentDeleteDialog = true
-                                    }
-                                    Box {
-                                        BottomActionButton(
-                                            iconRes = R.drawable.ic_more,
-                                            label = stringResource(R.string.more)
-                                        ) {
-                                            showMoreMenu = true
-                                        }
-                                        moreMenu()
-                                    }
-                                }
-                            }
-                            else -> {
-                                // Mode A: Normal Gallery / Album (normalBottomAction)
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .navigationBarsPadding()
-                                        .padding(vertical = 10.dp),
-                                    horizontalArrangement = Arrangement.SpaceAround,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    // 1. Share
-                                    BottomActionButton(
-                                        iconRes = R.drawable.ic_share,
-                                        label = stringResource(R.string.share)
-                                    ) {
-                                        currentViewPath?.let { shareMedia(context, it) }
-                                    }
-
-                                    // 2. Private (Vault)
-                                    BottomActionButton(
-                                        iconRes = R.drawable.ic_hide,
-                                        label = stringResource(R.string.private_bottom)
-                                    ) {
-                                        vaultConfirm = "hide"
-                                    }
-
-                                    // 3. Edit (Images) / Add to (Videos)
-                                    if (currentItem.mediaType.isImage) {
-                                        BottomActionButton(
-                                            iconRes = R.drawable.ic_main_edit,
-                                            label = stringResource(R.string.edit)
-                                        ) {
-                                            onNavigate(Screen.Editor.createRoute(currentItem.filePath))
-                                        }
-                                    } else {
-                                        BottomActionButton(
-                                            iconRes = R.drawable.ic_add,
-                                            label = stringResource(R.string.add_to)
-                                        ) {
-                                            showAddToDialog = true
-                                        }
-                                    }
-
-                                    // 4. Delete
-                                    BottomActionButton(
-                                        iconRes = R.drawable.ic_delete,
-                                        label = stringResource(R.string.delete)
-                                    ) {
-                                        showDeleteDialog = true
-                                    }
-
-                                    // 5. More Options
-                                    Box {
-                                        BottomActionButton(
-                                            iconRes = R.drawable.ic_more,
-                                            label = stringResource(R.string.more)
-                                        ) {
-                                            showMoreMenu = true
-                                        }
-
-                                        moreMenu()
-                                    }
-                                }
-                            }
-                        }
+    dialog?.let { opened ->
+        val albums by mediaRepository.getAlbumsFlow().collectAsState(initial = emptyList())
+        ViewerDialogHost(
+            dialog = opened,
+            item = currentItem,
+            albums = albums,
+            onConfirm = {
+                confirm(opened) { item ->
+                    val ok = when (opened.kind) {
+                        ViewerDialogKind.RECYCLE_DELETE -> { mediaRepository.deletePermanently(item.filePath); true }
+                        ViewerDialogKind.VAULT_DELETE -> vaultRepository.deleteFromVault(item.toVaultItem())
+                        ViewerDialogKind.RESTORE -> { mediaRepository.restoreFromTrash(item.filePath); true }
+                        ViewerDialogKind.HIDE -> vaultRepository.moveToVault(item)
+                        ViewerDialogKind.UNHIDE -> vaultRepository.restoreFromVault(item.toVaultItem())
+                        else -> false
                     }
-                }
-            }
-        }
-    }
-
-    // 1. Delete Confirmation Dialog (Matches dialog_delete.xml)
-    if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = {
-                Text(
-                    text = stringResource(R.string.delete_dialog_permission),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            },
-            text = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { deleteMoveToBin = !deleteMoveToBin }
-                        .padding(vertical = 4.dp)
-                ) {
-                    Checkbox(
-                        checked = deleteMoveToBin,
-                        onCheckedChange = { deleteMoveToBin = it },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = GalleryBlue,
-                            checkmarkColor = Color.White
-                        )
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = stringResource(R.string.delete_dialog_move),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    if (ok) onNavigateBack() else toast(R.string.something_went_wrong)
                 }
             },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showDeleteDialog = false
-                        scope.launch {
-                            if (deleteMoveToBin) {
-                                mediaRepository.moveToTrash(currentItem.filePath)
-                                Toast.makeText(context, "Moved to Recycle Bin", Toast.LENGTH_SHORT).show()
-                            } else {
-                                mediaRepository.deletePermanently(currentItem.filePath)
-                                Toast.makeText(context, "Deleted permanently", Toast.LENGTH_SHORT).show()
-                            }
-                            onNavigateBack()
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.height(42.dp).width(110.dp)
-                ) {
-                    Text(stringResource(R.string.yes), color = Color.White, fontWeight = FontWeight.SemiBold)
+            onDelete = { moveToBin ->
+                confirm(opened) { item ->
+                    if (moveToBin) mediaRepository.moveToTrash(item.filePath) else mediaRepository.deletePermanently(item.filePath)
+                    onNavigateBack()
                 }
             },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = { showDeleteDialog = false },
-                    border = BorderStroke(1.dp, GalleryBlue),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = GalleryBlue),
-                    modifier = Modifier.height(42.dp).width(110.dp)
-                ) {
-                    Text(stringResource(R.string.no), color = GalleryBlue, fontWeight = FontWeight.SemiBold)
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(20.dp)
-        )
-    }
-
-    // 2. Permanent Delete Dialog (for Recycle and Vault modes)
-    if (showPermanentDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showPermanentDeleteDialog = false },
-            title = {
-                Text(
-                    text = "Delete Permanently",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            },
-            text = {
-                Text(
-                    text = "Are you sure you want to permanently delete this item? This action cannot be undone.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showPermanentDeleteDialog = false
-                        scope.launch {
-                            if (isRecycle) {
-                                mediaRepository.deletePermanently(currentItem.filePath)
-                                Toast.makeText(context, "Deleted permanently", Toast.LENGTH_SHORT).show()
-                            } else if (isVault) {
-                                vaultRepository.deleteFromVault(currentItem.toVaultItem())
-                                Toast.makeText(context, "Deleted permanently from vault", Toast.LENGTH_SHORT).show()
-                            }
-                            onNavigateBack()
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE11A1A)),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.height(42.dp).width(110.dp)
-                ) {
-                    Text("Delete", color = Color.White, fontWeight = FontWeight.SemiBold)
-                }
-            },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = { showPermanentDeleteDialog = false },
-                    border = BorderStroke(1.dp, GalleryBlue),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = GalleryBlue),
-                    modifier = Modifier.height(42.dp).width(110.dp)
-                ) {
-                    Text(stringResource(R.string.cancel), color = GalleryBlue, fontWeight = FontWeight.SemiBold)
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(20.dp)
-        )
-    }
-
-    // Reference confirmation sheets for hiding / unhiding
-    vaultConfirm?.let { mode ->
-        val hide = mode == "hide"
-        ModalBottomSheet(
-            onDismissRequest = { vaultConfirm = null },
-            containerColor = MaterialTheme.colorScheme.surface,
-            dragHandle = null,
-            // Reference sheet is inset from the screen edges
-            modifier = Modifier.navigationBarsPadding().padding(start = 9.dp, end = 9.dp, bottom = 9.dp),
-            shape = RoundedCornerShape(24.dp)
-        ) {
-            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 18.dp)) {
-                Text(
-                    text = if (hide) "Hide Media" else "Unhide items",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = if (hide) "Are you sure you want to hide media?" else "Are you sure you want to unhide items?",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(28.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(24.dp), modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
-                    OutlinedButton(
-                        onClick = { vaultConfirm = null },
-                        modifier = Modifier.weight(1f).height(40.dp),
-                        shape = RoundedCornerShape(20.dp)
-                    ) { Text("Cancel", color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp) }
-                    Button(
-                        onClick = {
-                            vaultConfirm = null
-                            scope.launch {
-                                val ok = if (hide) vaultRepository.moveToVault(currentItem)
-                                else vaultRepository.restoreFromVault(currentItem.toVaultItem())
-                                if (ok) {
-                                    Toast.makeText(
-                                        context,
-                                        if (hide) "Media files hidden successfully." else "Media files unhidden successfully.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    onNavigateBack()
-                                }
-                            }
-                        },
-                        modifier = Modifier.weight(1f).height(40.dp),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue)
-                    ) { Text("Ok", color = Color.White, fontSize = 16.sp) }
-                }
-                Spacer(modifier = Modifier.navigationBarsPadding().height(8.dp))
-            }
-        }
-    }
-
-    dialog?.takeIf { it.kind == ViewerDialogKind.RENAME }?.let { open ->
-        val item = currentItem
-        FileRenameDialog(
-            item = item,
-            onSave = { name ->
-                dialog = null
-                val target = open.targetIfCurrent(item.filePath) ?: return@FileRenameDialog
-                scope.launch {
-                    busy = true
+            onRename = { name ->
+                confirm(opened) { item ->
                     val ok = if (isVault) vaultRepository.renameInVault(item.toVaultItem(), name)
-                    else mediaRepository.renameMedia(target, name)
-                    busy = false
+                    else mediaRepository.renameMedia(item.filePath, name)
                     // No success toast in the reference; a failed rename must not look like one
-                    if (!ok) Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+                    if (!ok) toast(R.string.something_went_wrong)
+                }
+            },
+            onPickAlbum = { folder -> if (opened.targetIfCurrent(currentItem.filePath) != null) dialog = opened.copy(folder = folder) },
+            onAdd = { move ->
+                confirm(opened) { item ->
+                    if (move && item.folderPath == opened.folder) {
+                        toast(R.string.media_files_should_not_move_to_same_folder)
+                    } else {
+                        val ok = if (move) mediaRepository.moveMediaToFolder(item.filePath, opened.folder)
+                        else mediaRepository.copyMediaToFolder(item.filePath, opened.folder)
+                        toast(if (!ok) R.string.something_went_wrong else if (move) R.string.items_moved_successfully else R.string.items_copied_successfully)
+                    }
                 }
             },
             onDismiss = { dialog = null }
-        )
-    }
-
-    // 4. Add to Album Bottom Sheet (Matches dialog_select_album.xml)
-    if (showAddToDialog) {
-        val albums by mediaRepository.getAlbumsFlow().collectAsState(initial = emptyList())
-        ModalBottomSheet(
-            onDismissRequest = { showAddToDialog = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-            dragHandle = {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 12.dp, bottom = 8.dp)
-                        .width(40.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(MaterialTheme.colorScheme.cardBorder)
-                )
-            }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 8.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.add_to),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                if (albums.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No Albums Found",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 340.dp)
-                    ) {
-                        items(albums) { album ->
-                            val albumName = albumTitle(album)
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable {
-                                        showAddToDialog = false
-                                        scope.launch {
-                                            val ok = mediaRepository.copyMediaToFolder(currentItem.filePath, album.path)
-                                            if (ok) {
-                                                Toast.makeText(context, "Added to $albumName", Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                    }
-                                    .padding(4.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(80.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(MaterialTheme.colorScheme.albumOptionBg),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (album.coverPath.isNotEmpty()) {
-                                        AsyncImage(
-                                            model = ImageRequest.Builder(context).data(File(album.coverPath)).build(),
-                                            contentDescription = null,
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier.fillMaxSize()
-                                        )
-                                    } else {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Folder,
-                                            contentDescription = null,
-                                            tint = GalleryBlue,
-                                            modifier = Modifier.size(36.dp)
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = albumName,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
-    }
-
-    // 5. Details Bottom Sheet (Matches dialog_property.xml)
-    if (showInfoDialog) {
-        ModalBottomSheet(
-            onDismissRequest = { showInfoDialog = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-            dragHandle = {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 12.dp, bottom = 8.dp)
-                        .width(40.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(MaterialTheme.colorScheme.cardBorder)
-                )
-            }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 8.dp)
-                    .navigationBarsPadding()
-            ) {
-                Text(
-                    text = stringResource(R.string.details),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.settingsDivider, thickness = 1.dp)
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                DetailSheetRow(stringResource(R.string.name), currentItem.fileName)
-                DetailSheetRow(stringResource(R.string.path), currentItem.filePath)
-                DetailSheetRow(stringResource(R.string.size), formatFileSize(currentItem.fileSize))
-
-                val dimensionText = remember(currentItem) {
-                    if (currentItem.dimension.isNotEmpty()) {
-                        currentItem.dimension
-                    } else if (currentItem.mediaType.isImage) {
-                        try {
-                            val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                            BitmapFactory.decodeFile(currentItem.filePath, opts)
-                            if (opts.outWidth > 0 && opts.outHeight > 0) "${opts.outWidth}x${opts.outHeight}px" else ""
-                        } catch (_: Exception) { "" }
-                    } else ""
-                }
-                if (dimensionText.isNotEmpty()) {
-                    DetailSheetRow(stringResource(R.string.resolution), dimensionText)
-                }
-
-                if (currentItem.mediaType == MediaType.VIDEO && (videoDurationMs > 0 || currentItem.durationMs > 0)) {
-                    val duration = if (videoDurationMs > 0) videoDurationMs else currentItem.durationMs
-                    DetailSheetRow("Duration", "${duration / 1000} seconds")
-                }
-
-                val dateStr = remember(currentItem.dateAdded, currentItem.dateModified) {
-                    val epoch = if (currentItem.dateAdded > 0) currentItem.dateAdded else currentItem.dateModified
-                    val millis = if (epoch > 10_000_000_000L) epoch else epoch * 1000L
-                    SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault()).format(Date(millis))
-                }
-                DetailSheetRow(stringResource(R.string.taken_on), dateStr)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = { showInfoDialog = false },
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(bottom = 12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
-                    shape = RoundedCornerShape(20.dp),
-                    contentPadding = PaddingValues(horizontal = 40.dp, vertical = 10.dp)
-                ) {
-                    Text(stringResource(R.string.ok), color = Color.White, fontWeight = FontWeight.SemiBold)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SuggestionPill(
-    iconRes: Int,
-    label: String,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(6.dp))
-            .background(Color(0xFF222222)) // reference chip
-            .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 4.dp), // reference chip is 22dp tall
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            tint = Color.White,
-            modifier = Modifier.size(15.dp)
-        )
-        Text(
-            text = label,
-            color = Color.White,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium
-        )
-    }
-}
-
-@Composable
-private fun BottomActionButton(
-    iconRes: Int,
-    label: String,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick
-            )
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(22.dp)
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = label,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1
         )
     }
 }
@@ -1211,7 +641,7 @@ private fun BottomActionButton(
 private fun PagerMediaItemView(
     item: MediaItem,
     displayPath: String?,
-    rotationAngle: Float,
+    version: Int,
     exoPlayer: ExoPlayer?,
     onToggleControls: () -> Unit,
     onDismiss: () -> Unit = {},
@@ -1371,6 +801,8 @@ private fun PagerMediaItemView(
             AsyncImage(
                 model = ImageRequest.Builder(context)
                     .data(displayPath?.let { File(it) })
+                    // A new version is a new request; Coil's file key carries the rotated file's new mtime
+                    .setParameter("version", version)
                     .crossfade(false)
                     .build(),
                 contentDescription = item.fileName,
@@ -1379,7 +811,6 @@ private fun PagerMediaItemView(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer(
-                        rotationZ = rotationAngle,
                         scaleX = scale,
                         scaleY = scale,
                         translationX = offset.x,
@@ -1405,57 +836,17 @@ private fun PagerMediaItemView(
     }
 }
 
-@Composable
-private fun DetailSheetRow(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top
-    ) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = value,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(2f),
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-private fun formatFileSize(bytes: Long): String {
-    if (bytes <= 0) return "0 B"
-    val kb = bytes / 1024.0
-    val mb = kb / 1024.0
-    val gb = mb / 1024.0
-    return when {
-        gb >= 1.0 -> String.format(Locale.US, "%.2f GB", gb)
-        mb >= 1.0 -> String.format(Locale.US, "%.2f MB", mb)
-        kb >= 1.0 -> String.format(Locale.US, "%.2f KB", kb)
-        else -> "$bytes B"
-    }
-}
-
-private fun shareMedia(context: Context, path: String) {
+private fun shareMedia(context: Context, path: String, isVideo: Boolean) {
     try {
         val file = File(path)
         if (!file.exists()) return
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
         val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "*/*"
+            type = if (isVideo) "video/*" else "image/*"
             putExtra(Intent.EXTRA_STREAM, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(intent, "Share Media"))
+        context.startActivity(Intent.createChooser(intent, null))
     } catch (_: Exception) {}
 }
 

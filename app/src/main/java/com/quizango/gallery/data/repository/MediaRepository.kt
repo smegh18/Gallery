@@ -1,5 +1,9 @@
 package com.quizango.gallery.data.repository
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.database.dao.GalleryDao
 import com.quizango.gallery.data.local.database.entity.MediaEntity
@@ -35,6 +39,9 @@ interface MediaRepository {
     suspend fun renameMedia(oldPath: String, newName: String): Boolean
     suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean
     suspend fun moveMediaToFolder(filePath: String, destFolder: String): Boolean
+
+    /** Rotates the image file itself 90° clockwise (viewer Rotate, PA.onRotateBitmap) and rescans it. */
+    suspend fun rotateImage(path: String): Boolean
 
     /** Renames the folder on disk and moves its rows to the new paths; the new folder path, or null when refused or failed. */
     suspend fun renameFolder(folderPath: String, newName: String): String?
@@ -538,6 +545,46 @@ class MediaRepositoryImpl(
                 scanner.scanFiles(moved.path, src.path)
                 dao.deleteByPath(filePath) // the new path comes in with the next sync
             }
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    override suspend fun rotateImage(path: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val file = File(path)
+            if (!file.exists()) return@withContext false
+            when (file.extension.lowercase()) {
+                // JPEG: lossless, only the EXIF orientation turns (flips are dropped)
+                "jpg", "jpeg" -> {
+                    val exif = ExifInterface(path)
+                    val next = when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                        ExifInterface.ORIENTATION_ROTATE_90 -> ExifInterface.ORIENTATION_ROTATE_180
+                        ExifInterface.ORIENTATION_ROTATE_180 -> ExifInterface.ORIENTATION_ROTATE_270
+                        ExifInterface.ORIENTATION_ROTATE_270 -> ExifInterface.ORIENTATION_NORMAL
+                        else -> ExifInterface.ORIENTATION_ROTATE_90
+                    }
+                    exif.setAttribute(ExifInterface.TAG_ORIENTATION, next.toString())
+                    exif.saveAttributes()
+                }
+                "png", "webp" -> {
+                    val source = BitmapFactory.decodeFile(path) ?: return@withContext false
+                    val rotated = Bitmap.createBitmap(source, 0, 0, source.width, source.height, Matrix().apply { postRotate(90f) }, true)
+                    @Suppress("DEPRECATION")
+                    val format = if (file.extension.equals("png", true)) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.WEBP
+                    // Write beside the original and swap, so a failed encode never leaves a half-written photo
+                    val tmp = File(file.parentFile, ".${file.name}.rotating")
+                    val written = tmp.outputStream().use { rotated.compress(format, 100, it) }
+                    if (!written || !tmp.renameTo(file)) {
+                        tmp.delete()
+                        return@withContext false
+                    }
+                }
+                else -> return@withContext false
+            }
+            scanner.scanFiles(path)
+            syncMediaStore()
             true
         } catch (_: Exception) {
             false

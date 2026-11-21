@@ -264,10 +264,16 @@ private fun AddingMediaRow(@StringRes label: Int, modifier: Modifier, onClick: (
 
 /**
  * dialog_hide (S272/oa/n) as Home opens it (HomeActivity.o000Ooo): "Hide Media" / "Are you sure you want to hide
- * media?", Cancel / Ok. Back and outside taps cancel.
+ * media?", Cancel / Ok. Back and outside taps cancel. The viewer reuses it (oa/n) with the restore, unhide and
+ * Recycle Bin delete copy.
  */
 @Composable
-internal fun HideMediaDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+internal fun HideMediaDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    @StringRes title: Int = R.string.hide_media,
+    @StringRes message: Int = R.string.hide_item_permission
+) {
     val titleColor = colorResource(R.color.titleColor)
     CommonDialog(onDismiss) {
         Column(
@@ -277,13 +283,13 @@ internal fun HideMediaDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
                 .padding(vertical = 5.sdp)
         ) {
             Text(
-                text = stringResource(R.string.hide_media),
+                text = stringResource(title),
                 style = GalleryText.BodyXLargeSemiBold,
                 color = titleColor,
                 modifier = Modifier.padding(start = 15.sdp, top = 10.sdp)
             )
             Text(
-                text = stringResource(R.string.hide_item_permission),
+                text = stringResource(message),
                 style = GalleryText.BodyMediumRegular,
                 color = titleColor,
                 modifier = Modifier.padding(horizontal = 15.sdp).padding(vertical = 15.sdp)
@@ -604,7 +610,21 @@ internal fun AlbumPropertyDialog(
     val formattedSize = remember(sizeBytes) {
         android.text.format.Formatter.formatFileSize(context, sizeBytes)
     }
+    PropertyDialog(
+        rows = listOf(
+            R.string.name to album.name,
+            R.string.path to album.path,
+            R.string.size to formattedSize,
+            R.string.total_files to album.itemCount.toString(),
+            R.string.last_modified to formattedDate
+        ),
+        onDismiss = onDismiss
+    )
+}
 
+/** The bottom-anchored Details card shared by dialog_album_property and the viewer's dialog_property. */
+@Composable
+internal fun PropertyDialog(rows: List<Pair<Int, String>>, onDismiss: () -> Unit) {
     CommonDialog(onDismiss) {
         Column(
             modifier = Modifier
@@ -634,11 +654,7 @@ internal fun AlbumPropertyDialog(
                     .padding(start = 15.sdp, top = 8.sdp, bottom = 5.sdp)
             )
 
-            AlbumPropertyRow(R.string.name, album.name)
-            AlbumPropertyRow(R.string.path, album.path)
-            AlbumPropertyRow(R.string.size, formattedSize)
-            AlbumPropertyRow(R.string.total_files, album.itemCount.toString())
-            AlbumPropertyRow(R.string.last_modified, formattedDate)
+            rows.forEach { (label, value) -> AlbumPropertyRow(label, value) }
 
             Row(
                 modifier = Modifier

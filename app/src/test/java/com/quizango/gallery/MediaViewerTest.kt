@@ -6,7 +6,13 @@ import com.quizango.gallery.domain.model.VaultItem
 import com.quizango.gallery.ui.home.AlbumNameCheck
 import com.quizango.gallery.ui.home.checkAlbumName
 import com.quizango.gallery.ui.home.fileNameWithExt
+import com.quizango.gallery.ui.viewer.DockAction as d
 import com.quizango.gallery.ui.viewer.MoreAction
+import com.quizango.gallery.ui.viewer.SUGGESTION_DELAY_MS
+import com.quizango.gallery.ui.viewer.Suggestion
+import com.quizango.gallery.ui.viewer.dockActions
+import com.quizango.gallery.ui.viewer.editBlockedMessage
+import com.quizango.gallery.ui.viewer.suggestionsEligible
 import com.quizango.gallery.ui.viewer.ViewerDialog
 import com.quizango.gallery.ui.viewer.ViewerDialogKind
 import com.quizango.gallery.ui.viewer.formatDuration
@@ -55,6 +61,33 @@ class MediaViewerTest {
         assertEquals(AlbumNameCheck.EMPTY, checkAlbumName(""))
         assertEquals("beach.jpg", fileNameWithExt("beach", "jpg"))
         assertEquals("notes", fileNameWithExt("notes", ""))
+    }
+
+    @Test
+    fun dockRowsPerMode() {
+        assertEquals(listOf(d.SHARE, d.PRIVATE, d.EDIT, d.DELETE, d.MORE), dockActions(isRecycle = false, isVault = false, isVideo = false))
+        assertEquals(listOf(d.SHARE, d.PRIVATE, d.ADD_TO, d.DELETE, d.MORE), dockActions(isRecycle = false, isVault = false, isVideo = true))
+        assertEquals(listOf(d.RESTORE, d.DELETE), dockActions(isRecycle = true, isVault = false, isVideo = false))
+        assertEquals(listOf(d.SHARE, d.UNHIDE, d.DELETE, d.MORE), dockActions(isRecycle = false, isVault = true, isVideo = false))
+    }
+
+    @Test
+    fun suggestionsOnlyForStillNormalPhotos() {
+        assertEquals(1_500L, SUGGESTION_DELAY_MS)
+        assertTrue(suggestionsEligible(photo(), isRecycle = false, isVault = false))
+        assertFalse(suggestionsEligible(photo().copy(mediaType = MediaType.VIDEO), isRecycle = false, isVault = false))
+        assertFalse(suggestionsEligible(photo().copy(isAnimated = true), isRecycle = false, isVault = false))
+        assertFalse(suggestionsEligible(photo(), isRecycle = true, isVault = false))
+        assertFalse(suggestionsEligible(photo(), isRecycle = false, isVault = true))
+        assertEquals(Suggestion.REMOVE_BG, Suggestion.entries.first())
+        assertEquals(R.string.blur_background_guide, Suggestion.BLUR_BG.label)
+    }
+
+    @Test
+    fun editRefusesAnimatedAndCorrupt() {
+        assertEquals(R.string.toast_animated_image, editBlockedMessage(isAnimated = true, decodable = true))
+        assertEquals(R.string.toast_corrupted_image, editBlockedMessage(isAnimated = false, decodable = false))
+        assertNull(editBlockedMessage(isAnimated = false, decodable = true))
     }
 
     @Test

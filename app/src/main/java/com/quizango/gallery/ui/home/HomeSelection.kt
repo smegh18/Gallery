@@ -249,12 +249,15 @@ internal fun Modifier.drawableBackground(@DrawableRes id: Int): Modifier {
 internal fun DeleteMediaDialog(
     count: Int,
     onConfirm: (moveToRecycleBinChecked: Boolean) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    // The vault viewer passes deleted_item_permission; vault files have no Recycle Bin to move to
+    customTitle: String? = null,
+    showMoveToBin: Boolean = true
 ) {
     var moveToBin by rememberSaveable { mutableStateOf(MOVE_TO_RECYCLE_BIN_DEFAULT) }
     val titleColor = colorResource(R.color.titleColor)
     val accent = colorResource(R.color.fastScrollerColor)
-    val title = if (count == 1) stringResource(R.string.delete_dialog_permission)
+    val title = customTitle ?: if (count == 1) stringResource(R.string.delete_dialog_permission)
     else stringResource(R.string.deleted_title) + " " + count + " " + stringResource(R.string.deleted_items)
     CommonDialog(onDismiss) {
         Column(
@@ -269,7 +272,7 @@ internal fun DeleteMediaDialog(
                 color = titleColor,
                 modifier = Modifier.padding(start = 15.sdp, end = 15.sdp, top = 18.sdp, bottom = 15.sdp)
             )
-            Row(
+            if (showMoveToBin) Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .toggleable(value = moveToBin, role = Role.Checkbox, onValueChange = { moveToBin = it })

@@ -4,8 +4,18 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.remember
+import com.quizango.gallery.domain.model.MediaItem
+import com.quizango.gallery.domain.model.MediaType
+import com.quizango.gallery.ui.home.drawableBackground
+import com.quizango.gallery.ui.navigation.Screen
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.shadow
@@ -138,6 +148,132 @@ private fun ViewerGlassButton(@androidx.annotation.DrawableRes icon: Int, @Strin
             tint = Color.Unspecified,
             modifier = Modifier.size(22.dp)
         )
+    }
+}
+
+/** item_bottom_option_layout slots; the labels stay hidden and only serve TalkBack. */
+internal enum class DockAction(@DrawableRes val icon: Int, @StringRes val label: Int) {
+    SHARE(R.drawable.ic_share, R.string.share),
+    PRIVATE(R.drawable.ic_hide, R.string.private_bottom),
+    EDIT(R.drawable.ic_main_edit, R.string.edit),
+    ADD_TO(R.drawable.ic_add, R.string.add_to),
+    DELETE(R.drawable.ic_delete, R.string.delete),
+    MORE(R.drawable.ic_more, R.string.more),
+    RESTORE(R.drawable.ic_restore, R.string.restore),
+    UNHIDE(R.drawable.ic_unhide, R.string.unhide)
+}
+
+/** MF.o0000OOo rows: normal (video swaps Edit for Add to), recyclerBottomAction, and the vault row. */
+internal fun dockActions(isRecycle: Boolean, isVault: Boolean, isVideo: Boolean): List<DockAction> = when {
+    isRecycle -> listOf(DockAction.RESTORE, DockAction.DELETE)
+    isVault -> listOf(DockAction.SHARE, DockAction.UNHIDE, DockAction.DELETE, DockAction.MORE)
+    else -> listOf(DockAction.SHARE, DockAction.PRIVATE, if (isVideo) DockAction.ADD_TO else DockAction.EDIT, DockAction.DELETE, DockAction.MORE)
+}
+
+/** bg_media_full_pill_dock: equal icon-only slots; [moreMenu] is anchored to the More slot. */
+@Composable
+internal fun ViewerDock(actions: List<DockAction>, onAction: (DockAction) -> Unit, moreMenu: @Composable () -> Unit) {
+    val tint = colorResource(R.color.media_full_glass_icon)
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(start = 14.dp, end = 14.dp, bottom = 14.dp)
+            .shadow(6.dp, RoundedCornerShape(26.dp))
+            .drawableBackground(R.drawable.bg_media_full_pill_dock)
+            .padding(vertical = 2.dp)
+    ) {
+        actions.forEach { action ->
+            Box(
+                Modifier
+                    .weight(1f)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = false),
+                        onClick = { onAction(action) }
+                    )
+                    .padding(vertical = 12.sdp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(painterResource(action.icon), stringResource(action.label), tint = tint)
+                if (action == DockAction.MORE) moreMenu()
+            }
+        }
+    }
+}
+
+internal const val SUGGESTION_DELAY_MS = 1_500L
+
+internal val MediaItem.isAnimatedMedia: Boolean get() = isAnimated || mediaType == MediaType.ANIMATED
+
+/** suggestionRunnable runs for still images only, never in the Recycle Bin or the vault. */
+internal fun suggestionsEligible(item: MediaItem, isRecycle: Boolean, isVault: Boolean): Boolean =
+    !item.isVideo && !item.isAnimatedMedia && !isRecycle && !isVault
+
+/** item_suggestion_layout pills in reference order (Copy text stays hidden: enable_copy_text_feature is false). */
+internal enum class Suggestion(@DrawableRes val icon: Int, @StringRes val label: Int) {
+    REMOVE_BG(R.drawable.ic_edit_small_remove_bg, R.string.remove_background),
+    BLUR_BG(R.drawable.ic_edit_small_blur_bg, R.string.blur_background_guide),
+    COLOR_SPLASH(R.drawable.ic_edit_small_color_splash, R.string.color_splash),
+    CROP(R.drawable.ic_edit_small_crop, R.string.crop),
+    MARKUP(R.drawable.ic_edit_small_draw, R.string.markup),
+    ADJUST(R.drawable.ic_edit_small_adjust, R.string.adjust),
+    FILTER(R.drawable.ic_edit_small_filter, R.string.filter)
+}
+
+internal fun suggestionRoute(suggestion: Suggestion, path: String): String = when (suggestion) {
+    Suggestion.REMOVE_BG -> Screen.RemoveBg.createRoute(path)
+    Suggestion.BLUR_BG -> Screen.BlurBg.createRoute(path)
+    Suggestion.COLOR_SPLASH -> Screen.ColorSplash.createRoute(path)
+    Suggestion.CROP -> Screen.Editor.createRoute(path, initialTab = "crop")
+    Suggestion.MARKUP -> Screen.Editor.createRoute(path, initialTab = "brush")
+    Suggestion.ADJUST -> Screen.Editor.createRoute(path, initialTab = "adjust")
+    Suggestion.FILTER -> Screen.Editor.createRoute(path, initialTab = "filter")
+}
+
+/** Horizontally scrolling edit_opt_back pills, the close pill first, 10.sdp above the dock. */
+@Composable
+internal fun SuggestionStrip(onClose: () -> Unit, onPick: (Suggestion) -> Unit, modifier: Modifier = Modifier) {
+    val white = colorResource(R.color.onlyWhite)
+    val pill = RoundedCornerShape(4.sdp)
+    Row(
+        modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.sdp)
+            .horizontalScroll(rememberScrollState())
+            .padding(5.sdp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            Modifier
+                .padding(horizontal = 5.sdp)
+                .clip(pill)
+                .drawableBackground(R.drawable.edit_opt_back)
+                .clickable(onClick = onClose)
+                .padding(3.sdp)
+        ) {
+            Icon(painterResource(R.drawable.ic_close), stringResource(R.string.close), tint = white, modifier = Modifier.size(12.sdp))
+        }
+        Suggestion.entries.forEach { suggestion ->
+            Row(
+                Modifier
+                    .padding(horizontal = 5.sdp)
+                    .clip(pill)
+                    .drawableBackground(R.drawable.edit_opt_back)
+                    .clickable { onPick(suggestion) }
+                    .padding(horizontal = 4.sdp, vertical = 3.sdp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painterResource(suggestion.icon), null, tint = white, modifier = Modifier.size(13.sdp))
+                Text(
+                    stringResource(suggestion.label),
+                    style = GalleryText.BodySmallMedium,
+                    color = white,
+                    maxLines = 1,
+                    modifier = Modifier.padding(start = 3.sdp)
+                )
+            }
+        }
     }
 }
 
