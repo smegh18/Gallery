@@ -302,4 +302,6 @@
     <string name="time_duration">2s</string>
     <string name="blur_background_guide">Sfondo Sfocato</string>
     <string name="file_name_already_exists">Il nome del file esiste già.</string>
+    <string name="mute">Muto</string>
+    <string name="unmute">Riattiva audio</string>
 </resources>

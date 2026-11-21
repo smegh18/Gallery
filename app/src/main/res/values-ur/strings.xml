@@ -273,4 +273,6 @@
     <string name="time_duration">2سیکنڈ</string>
     <string name="blur_background_guide">پس منظر کو دھندلا کریں</string>
     <string name="file_name_already_exists">فائل کا نام پہلے سے موجود ہے۔</string>
+    <string name="mute">آواز بند</string>
+    <string name="unmute">آواز کھولیں</string>
 </resources>

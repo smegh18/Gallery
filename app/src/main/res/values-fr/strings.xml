@@ -294,4 +294,6 @@
     <string name="time_duration">2s</string>
     <string name="blur_background_guide">Arrière-plan flou</string>
     <string name="file_name_already_exists">Le nom du fichier existe déjà.</string>
+    <string name="mute">Muet</string>
+    <string name="unmute">Réactiver le son</string>
 </resources>

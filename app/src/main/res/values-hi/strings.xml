@@ -302,4 +302,6 @@
     <string name="time_duration">2 सेकंड</string>
     <string name="blur_background_guide">बैकग्राउंड को धुंधला करे</string>
     <string name="file_name_already_exists">फ़ाइल का नाम पहले से मौजूद है।</string>
+    <string name="mute">म्यूट</string>
+    <string name="unmute">अनम्यूट</string>
 </resources>

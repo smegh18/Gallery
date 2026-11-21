@@ -294,4 +294,6 @@
     <string name="time_duration">2s</string>
     <string name="blur_background_guide">Blur sa Background</string>
     <string name="file_name_already_exists">Mayroon nang pangalan ang file.</string>
+    <string name="mute">Patahimikin</string>
+    <string name="unmute">Alisin ang Patahimik</string>
 </resources>

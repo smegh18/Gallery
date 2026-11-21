@@ -7,7 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ripple
@@ -275,6 +279,60 @@ internal fun SuggestionStrip(onClose: () -> Unit, onPick: (Suggestion) -> Unit, 
             }
         }
     }
+}
+
+/** MF slide show: slideShowInterval starts at 2 s (slideDuration = interval × 1000). */
+internal const val SLIDESHOW_DEFAULT_SECONDS = 2
+
+/** Tapping the duration text: +1 s up to 5, then back to 1 (MF `if-ge 0x5`). */
+internal fun nextSlideSeconds(seconds: Int): Int = if (seconds < 5) seconds + 1 else 1
+
+/** The page the slide show turns to, or null on the last page, where it stops. */
+internal fun nextSlidePage(current: Int, lastIndex: Int): Int? = (current + 1).takeIf { it <= lastIndex }
+
+/** Recycle Bin and vault pages never start a slide show. */
+internal fun slideshowAllowed(isRecycle: Boolean, isVault: Boolean): Boolean = !isRecycle && !isVault
+
+/**
+ * slideControl: a touch layer over the pager (no swiping or chrome taps while it runs) with three 28.sdp
+ * ic_slide_control_back circles, 40.sdp in: Close bottom-end, Volume top-end, the "2s" duration bottom-start.
+ */
+@Composable
+internal fun SlideshowControls(seconds: Int, muted: Boolean, onClose: () -> Unit, onToggleMute: () -> Unit, onCycleSeconds: () -> Unit) {
+    val white = colorResource(R.color.onlyWhite)
+    Box(
+        Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) { detectTapGestures { } }
+            .padding(40.sdp)
+    ) {
+        SlideButton(Modifier.align(Alignment.TopEnd), onToggleMute) {
+            Icon(
+                painterResource(if (muted) R.drawable.ic_slide_mute else R.drawable.ic_slide_unmute),
+                stringResource(if (muted) R.string.unmute else R.string.mute),
+                tint = Color.Unspecified,
+                modifier = Modifier.fillMaxSize().padding(horizontal = 4.sdp)
+            )
+        }
+        SlideButton(Modifier.align(Alignment.BottomStart), onCycleSeconds) {
+            Text("${seconds}s", style = GalleryText.BodyMediumMedium, color = white)
+        }
+        SlideButton(Modifier.align(Alignment.BottomEnd), onClose) {
+            Icon(painterResource(R.drawable.ic_story_close), stringResource(R.string.close), tint = Color.Unspecified, modifier = Modifier.fillMaxSize().padding(6.sdp))
+        }
+    }
+}
+
+@Composable
+private fun SlideButton(modifier: Modifier, onClick: () -> Unit, content: @Composable () -> Unit) {
+    Box(
+        modifier
+            .size(28.sdp)
+            .clip(CircleShape)
+            .drawableBackground(R.drawable.ic_slide_control_back)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) { content() }
 }
 
 /** popmenu_media_more rows in reference order. */

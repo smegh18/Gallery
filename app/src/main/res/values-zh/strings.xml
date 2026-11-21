@@ -291,4 +291,6 @@
     <string name="time_duration">2秒</string>
     <string name="blur_background_guide">模糊背景</string>
     <string name="file_name_already_exists">文件名已存在。</string>
+    <string name="mute">沉默的</string>
+    <string name="unmute">取消静音</string>
 </resources>

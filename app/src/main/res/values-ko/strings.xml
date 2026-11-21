@@ -302,4 +302,6 @@
     <string name="time_duration">2초</string>
     <string name="blur_background_guide">배경 흐리게</string>
     <string name="file_name_already_exists">파일 이름이 이미 존재합니다.</string>
+    <string name="mute">음소거</string>
+    <string name="unmute">음소거 해제</string>
 </resources>

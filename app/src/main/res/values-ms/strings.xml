@@ -302,4 +302,6 @@
     <string name="time_duration">2s</string>
     <string name="blur_background_guide">Belakang Kabur</string>
     <string name="file_name_already_exists">Nama fail sudah wujud.</string>
+    <string name="mute">Bisu</string>
+    <string name="unmute">Nyahbisu</string>
 </resources>

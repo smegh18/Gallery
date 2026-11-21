@@ -286,4 +286,6 @@
     <string name="time_duration">२सेकंदे</string>
     <string name="blur_background_guide">अस्पष्ट पार्श्वभूमी</string>
     <string name="file_name_already_exists">फाईलचं नाव आधीपासूनच अस्तित्त्वात आहे.</string>
+    <string name="mute">म्यूट करा</string>
+    <string name="unmute">अनम्युट करा</string>
 </resources>

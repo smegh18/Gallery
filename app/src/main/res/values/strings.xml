@@ -385,4 +385,6 @@
     <string name="time_duration">2s</string>
     <string name="blur_background_guide">Blur Background</string>
     <string name="file_name_already_exists">File name already exists.</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
 </resources>

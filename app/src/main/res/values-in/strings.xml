@@ -302,4 +302,6 @@
     <string name="time_duration">2 detik</string>
     <string name="blur_background_guide">Latar Belakang Buram</string>
     <string name="file_name_already_exists">Nama file sudah ada.</string>
+    <string name="mute">Bisu</string>
+    <string name="unmute">Batalkan Bisu</string>
 </resources>

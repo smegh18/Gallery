@@ -17,6 +17,9 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.annotation.StringRes
+import androidx.activity.compose.BackHandler
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -96,6 +99,10 @@ fun MediaViewerScreen(
     val scope = rememberCoroutineScope()
     var showControls by remember { mutableStateOf(true) }
     var showMoreMenu by remember { mutableStateOf(false) }
+    // Slide show runs inside the viewer (MF slideControl), from the current page
+    var slideshow by remember { mutableStateOf(false) }
+    var slideSeconds by remember { mutableIntStateOf(SLIDESHOW_DEFAULT_SECONDS) }
+    var slideMuted by remember { mutableStateOf(false) }
     // Bumped after Rotate rewrites the file, so the page reloads it
     var imageVersion by remember { mutableIntStateOf(0) }
 
@@ -288,7 +295,16 @@ fun MediaViewerScreen(
         when (action) {
             MoreAction.ADD_TO -> open(ViewerDialogKind.ADD_TO)
             MoreAction.RENAME -> open(ViewerDialogKind.RENAME)
-            MoreAction.SLIDE_SHOW -> onNavigate(Screen.StoryView.createRoute(if (isVault) "vault" else folderPath.ifEmpty { "all" }, "Slide show"))
+            MoreAction.SLIDE_SHOW -> {
+                val viewable = currentItem.isVideo || currentViewPath?.let(::isDecodable) == true
+                if (slideshowAllowed(isRecycle, isVault) && viewable) {
+                    slideSeconds = SLIDESHOW_DEFAULT_SECONDS
+                    showControls = false
+                    slideshow = true
+                } else {
+                    toast(R.string.something_went_wrong)
+                }
+            }
             MoreAction.WALLPAPER -> onNavigate(Screen.Wallpaper.createRoute(currentViewPath ?: currentItem.filePath))
             MoreAction.PRINT -> try {
                 val printHelper = androidx.print.PrintHelper(context)
@@ -316,13 +332,32 @@ fun MediaViewerScreen(
     // Edit suggestions: 1500 ms after a still page settles, hidden with the chrome, ✕ closes them for this page
     var suggestionsClosed by remember(currentItem.filePath) { mutableStateOf(false) }
     var suggestionsShown by remember { mutableStateOf(false) }
-    val suggestionsAllowed = showControls && !suggestionsClosed && suggestionsEligible(currentItem, isRecycle, isVault)
+    val suggestionsAllowed = showControls && !slideshow && !suggestionsClosed && suggestionsEligible(currentItem, isRecycle, isVault)
     LaunchedEffect(currentItem.filePath, suggestionsAllowed, pagerState.isScrollInProgress) {
         suggestionsShown = false
         if (suggestionsAllowed && !pagerState.isScrollInProgress) {
             delay(SUGGESTION_DELAY_MS)
             suggestionsShown = true
         }
+    }
+
+    fun stopSlideshow() {
+        slideshow = false
+        showControls = true
+    }
+    // One timer, restarted by each page turn; it stops on the last page (MF runnable)
+    LaunchedEffect(slideshow, pagerState.currentPage, slideSeconds) {
+        if (!slideshow) return@LaunchedEffect
+        delay(slideSeconds * 1000L)
+        val next = nextSlidePage(pagerState.currentPage, displayList.lastIndex)
+        if (next == null) stopSlideshow() else pagerState.animateScrollToPage(next)
+    }
+    // A changed list (sync, delete elsewhere) or leaving the app ends it, as does Back
+    LaunchedEffect(displayList) { if (slideshow) stopSlideshow() }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { if (slideshow) stopSlideshow() }
+    BackHandler(enabled = slideshow) { stopSlideshow() }
+    LaunchedEffect(currentExoPlayer, slideshow, slideMuted) {
+        currentExoPlayer?.volume = if ((slideshow && slideMuted) || (!slideshow && isVideoMuted)) 0f else 1f
     }
 
     // 2.7.2 remains edge-to-edge while leaving Android system bars visible.
@@ -334,12 +369,16 @@ fun MediaViewerScreen(
             controller.show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
         }
         onDispose {
+            view.keepScreenOn = false
             if (window != null) {
                 androidx.core.view.WindowCompat.getInsetsController(window, view)
                     .show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
             }
         }
     }
+
+    // FLAG_KEEP_SCREEN_ON only while the slide show runs
+    LaunchedEffect(slideshow) { view.keepScreenOn = slideshow }
 
     Box(
         modifier = Modifier
@@ -350,7 +389,7 @@ fun MediaViewerScreen(
         HorizontalPager(
             state = pagerState,
             key = { index -> displayList.getOrNull(index)?.filePath ?: index },
-            userScrollEnabled = !isCurrentPageZoomed,
+            userScrollEnabled = !isCurrentPageZoomed && !slideshow,
             modifier = Modifier.fillMaxSize()
         ) { page ->
             val item = displayList.getOrNull(page) ?: fallbackItem
@@ -579,6 +618,16 @@ fun MediaViewerScreen(
                     )
                 }
             }
+        }
+
+        if (slideshow) {
+            SlideshowControls(
+                seconds = slideSeconds,
+                muted = slideMuted,
+                onClose = ::stopSlideshow,
+                onToggleMute = { slideMuted = !slideMuted },
+                onCycleSeconds = { slideSeconds = nextSlideSeconds(slideSeconds) }
+            )
         }
 
         if (busy) {

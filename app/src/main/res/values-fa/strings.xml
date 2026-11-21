@@ -294,4 +294,6 @@
     <string name="time_duration">2ثانیه</string>
     <string name="blur_background_guide">پس‌زمینه مات</string>
     <string name="file_name_already_exists">نام فایل از قبل وجود دارد.</string>
+    <string name="mute">بی‌صدا کردن</string>
+    <string name="unmute">لغو بی‌صدا کردن</string>
 </resources>

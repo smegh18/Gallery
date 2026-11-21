@@ -294,4 +294,6 @@
     <string name="time_duration">2s</string>
     <string name="blur_background_guide">خلفية غامقة</string>
     <string name="file_name_already_exists">اسم الملف موجود بالفعل.</string>
+    <string name="mute">كتم الصوت</string>
+    <string name="unmute">إلغاء كتم الصوت</string>
 </resources>

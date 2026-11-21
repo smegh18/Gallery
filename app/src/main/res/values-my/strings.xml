@@ -302,4 +302,6 @@
     <string name="time_duration">၂စက္ကန့်</string>
     <string name="blur_background_guide">နောက်ဆုံးပြတ်ရန်</string>
     <string name="file_name_already_exists">ဖိုင်အမည်သည် ရှိပြီးသားဖြစ်သည်။</string>
+    <string name="mute">မက်ဆေ့ခ်ျမည်</string>
+    <string name="unmute">ကူညီမည်</string>
 </resources>

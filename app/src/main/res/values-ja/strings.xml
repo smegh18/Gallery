@@ -302,4 +302,6 @@
     <string name="time_duration">2秒</string>
     <string name="blur_background_guide">背景をぼかす</string>
     <string name="file_name_already_exists">ファイル名はすでに存在します。</string>
+    <string name="mute">ミュート</string>
+    <string name="unmute">ミュート解除</string>
 </resources>

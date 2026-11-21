@@ -304,4 +304,6 @@
     <string name="time_duration">2с</string>
     <string name="blur_background_guide">Размыть фон</string>
     <string name="file_name_already_exists">Название файла уже существует.</string>
+    <string name="mute">Без звука</string>
+    <string name="unmute">Включить звук</string>
 </resources>

@@ -290,4 +290,6 @@
     <string name="time_duration">2 saniye</string>
     <string name="blur_background_guide">Arkaplanı Bulanıklaştır</string>
     <string name="file_name_already_exists">Dosya adı zaten mevcut.</string>
+    <string name="mute">Sesini kapatmak</string>
+    <string name="unmute">Sesini açmak</string>
 </resources>

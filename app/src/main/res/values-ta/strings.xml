@@ -303,4 +303,6 @@
     <string name="time_duration">2விநாடிகள்</string>
     <string name="blur_background_guide">பின்னணி மூடு</string>
     <string name="file_name_already_exists">கோப்பு பெயர் ஏற்கனவே உள்ளது.</string>
+    <string name="mute">சுவரை முடக்கு</string>
+    <string name="unmute">சுவர் முடிக்கவில்லை</string>
 </resources>

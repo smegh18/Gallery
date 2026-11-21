@@ -294,4 +294,6 @@
     <string name="time_duration">2s</string>
     <string name="blur_background_guide">Desenfoque fondo</string>
     <string name="file_name_already_exists">El nombre del archivo ya existe.</string>
+    <string name="mute">Silenciar</string>
+    <string name="unmute">Quitar Silencio</string>
 </resources>

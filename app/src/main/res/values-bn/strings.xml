@@ -253,4 +253,6 @@
     <string name="time_duration">2 সে</string>
     <string name="blur_background_guide">ঝাপসা পটভূমি</string>
     <string name="file_name_already_exists">ফাইলের নাম আগে থেকেই আছে।</string>
+    <string name="mute">নিঃশব্দ</string>
+    <string name="unmute">আনমিউট করুন</string>
 </resources>

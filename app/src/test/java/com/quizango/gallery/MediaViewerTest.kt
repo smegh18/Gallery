@@ -8,7 +8,11 @@ import com.quizango.gallery.ui.home.checkAlbumName
 import com.quizango.gallery.ui.home.fileNameWithExt
 import com.quizango.gallery.ui.viewer.DockAction as d
 import com.quizango.gallery.ui.viewer.MoreAction
+import com.quizango.gallery.ui.viewer.SLIDESHOW_DEFAULT_SECONDS
 import com.quizango.gallery.ui.viewer.SUGGESTION_DELAY_MS
+import com.quizango.gallery.ui.viewer.nextSlidePage
+import com.quizango.gallery.ui.viewer.nextSlideSeconds
+import com.quizango.gallery.ui.viewer.slideshowAllowed
 import com.quizango.gallery.ui.viewer.Suggestion
 import com.quizango.gallery.ui.viewer.dockActions
 import com.quizango.gallery.ui.viewer.editBlockedMessage
@@ -88,6 +92,18 @@ class MediaViewerTest {
         assertEquals(R.string.toast_animated_image, editBlockedMessage(isAnimated = true, decodable = true))
         assertEquals(R.string.toast_corrupted_image, editBlockedMessage(isAnimated = false, decodable = false))
         assertNull(editBlockedMessage(isAnimated = false, decodable = true))
+    }
+
+    @Test
+    fun slideshowTwoSecondsFromCurrentPageAndStopsAtEnd() {
+        assertEquals(2, SLIDESHOW_DEFAULT_SECONDS)
+        assertEquals(3, nextSlidePage(current = 2, lastIndex = 5))
+        assertNull(nextSlidePage(current = 5, lastIndex = 5))
+        // Duration tap cycles 2 → 3 → 4 → 5 → 1
+        assertEquals(listOf(3, 4, 5, 1, 2), generateSequence(nextSlideSeconds(2), ::nextSlideSeconds).take(5).toList())
+        assertTrue(slideshowAllowed(isRecycle = false, isVault = false))
+        assertFalse(slideshowAllowed(isRecycle = true, isVault = false))
+        assertFalse(slideshowAllowed(isRecycle = false, isVault = true))
     }
 
     @Test
