@@ -3,6 +3,12 @@ package com.quizango.gallery
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.browse.MediaAction
 import com.quizango.gallery.ui.browse.allFavorite
+import com.quizango.gallery.ui.browse.isAllSelected
+import com.quizango.gallery.ui.browse.pruneSelection
+import com.quizango.gallery.ui.browse.rangePaths
+import com.quizango.gallery.ui.browse.sharedRowKey
+import com.quizango.gallery.ui.browse.sharedRowSpan
+import com.quizango.gallery.ui.browse.toggleAll
 import com.quizango.gallery.ui.browse.mediaListActions
 import com.quizango.gallery.ui.browse.sharedHeaderDate
 import com.quizango.gallery.ui.browse.sharedMediaRows
@@ -78,5 +84,41 @@ class SharedMediaListTest {
             mediaListActions(allFavorite = false)
         )
         assertEquals(MediaAction.UNFAVORITE, mediaListActions(allFavorite = true)[1])
+    }
+
+    @Test
+    fun selectAllLabelFollowsListMutations() {
+        val paths = listOf("/a", "/b", "/c")
+        assertEquals(paths.toSet(), toggleAll(setOf("/a"), paths)) // Select all
+        assertTrue(isAllSelected(paths.toSet(), paths)) // label reads Unselect all
+        assertEquals(emptySet<String>(), toggleAll(paths.toSet(), paths))
+        // a new row arrives: no longer all selected, so the label goes back to Select all
+        assertFalse(isAllSelected(paths.toSet(), paths + "/d"))
+        // rows go away: the pruned selection is again everything, and the count drops with it
+        val pruned = pruneSelection(paths.toSet(), setOf("/a", "/b"))
+        assertEquals(2, pruned.size)
+        assertTrue(isAllSelected(pruned, listOf("/a", "/b")))
+        assertFalse(isAllSelected(emptySet(), emptyList()))
+    }
+
+    @Test
+    fun dragRangeIsInclusiveEitherWayAndClamped() {
+        val paths = listOf("/0", "/1", "/2", "/3", "/4")
+        assertEquals(setOf("/1", "/2", "/3"), rangePaths(paths, 1, 3))
+        assertEquals(setOf("/1", "/2", "/3"), rangePaths(paths, 3, 1))
+        assertEquals(setOf("/3", "/4"), rangePaths(paths, 3, 99)) // list shrank under the finger
+        assertEquals(setOf("/0"), rangePaths(paths, -5, 0))
+        assertEquals(emptySet<String>(), rangePaths(emptyList(), 0, 2))
+    }
+
+    @Test
+    fun keysAreUniqueAndHeadersSpanEveryColumnCount() {
+        val rows = sharedMediaRows(listOf(media(1, at(2026, 6, 15, 10)), media(2, at(2026, 6, 15, 9)), media(3, at(2026, 6, 1, 9))))
+        val keys = rows.map(::sharedRowKey)
+        assertEquals(keys.size, keys.toSet().size)
+        assertEquals(keys, sharedMediaRows(rows.filterIsInstance<PhotoRow.Media>().map { it.item }).map(::sharedRowKey)) // stable
+        for (cols in 3..5) rows.forEach { row ->
+            assertEquals(if (row is PhotoRow.Header) cols else 1, sharedRowSpan(row, cols))
+        }
     }
 }

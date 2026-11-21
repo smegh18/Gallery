@@ -292,7 +292,8 @@ private fun SharedMediaGrid(
     val shownRows = rows ?: return
     // Display order, which day grouping can differ from query order: range selection follows what the user sees
     val media = remember(shownRows) { shownRows.filterIsInstance<PhotoRow.Media>().map { it.item } }
-    val order = remember(media) { media.withIndex().associate { it.value.filePath to it.index } }
+    val mediaPaths = remember(media) { media.map { it.filePath } }
+    val order = remember(mediaPaths) { mediaPaths.withIndex().associate { it.value to it.index } }
     val now = remember(items) { System.currentTimeMillis() }
     val gridState = rememberLazyGridState()
     // Shown at once on a pinch step; the saved value catches up through the preference flow
@@ -304,6 +305,7 @@ private fun SharedMediaGrid(
     val currentChange by rememberUpdatedState(onSelectedChange)
     val currentOpen by rememberUpdatedState(onOpen)
     val currentMedia by rememberUpdatedState(media)
+    val currentPaths by rememberUpdatedState(mediaPaths)
     val currentOrder by rememberUpdatedState(order)
     val padding = PaddingValues(horizontal = 2.sdp, vertical = 4.sdp)
     val layoutDirection = LocalLayoutDirection.current
@@ -349,7 +351,7 @@ private fun SharedMediaGrid(
                         // shortcut: no auto-scroll at the edges while drag-selecting; add it if long ranges are needed
                         val path = gridState.mediaPathAt(change.position, padding, layoutDirection, this)
                         val index = path?.let { currentOrder[it] } ?: return@detectDragGesturesAfterLongPress
-                        currentChange(base + rangePaths(currentMedia.map { it.filePath }, anchor, index))
+                        currentChange(base + rangePaths(currentPaths, anchor, index))
                     }
                 )
             }
