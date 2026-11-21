@@ -140,6 +140,15 @@ internal fun toggleAll(selected: Set<String>, paths: List<String>): Set<String> 
 internal fun pruneSelection(selected: Set<String>, present: Set<String>): Set<String> =
     if (present.containsAll(selected)) selected else selected.filterTo(LinkedHashSet()) { it in present }
 
+internal enum class ListState { LOADING, EMPTY, CONTENT }
+
+/** progressBar until both the first query and the saved column count are in, so the empty copy never flashes first. */
+internal fun listStateOf(items: List<*>?, columns: Int?): ListState = when {
+    items == null || columns == null -> ListState.LOADING
+    items.isEmpty() -> ListState.EMPTY
+    else -> ListState.CONTENT
+}
+
 // R272 anim/item_animation_fall_down via layoutAnimation: 150 ms per item, each starting 15 % later
 private const val ENTRANCE_MS = 150
 private const val ENTRANCE_STAGGER_MS = 22L
@@ -190,15 +199,14 @@ internal fun SharedMediaList(
                 onToggleAll = { onSelectedChange(toggleAll(selected, paths)) }
             )
             Box(Modifier.weight(1f).fillMaxWidth()) {
-                val count = savedCount
-                when {
-                    items == null || count == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                when (listStateOf(items, savedCount)) {
+                    ListState.LOADING -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
                     }
-                    items.isEmpty() -> PhotosEmptyState(emptyTitle, emptyBody)
-                    else -> SharedMediaGrid(
-                        items = items,
-                        columnCount = count,
+                    ListState.EMPTY -> PhotosEmptyState(emptyTitle, emptyBody)
+                    ListState.CONTENT -> SharedMediaGrid(
+                        items = items.orEmpty(),
+                        columnCount = savedCount ?: 3,
                         selected = selected,
                         onSelectedChange = onSelectedChange,
                         onOpen = onOpen,

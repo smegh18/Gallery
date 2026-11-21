@@ -210,6 +210,7 @@ fun GalleryNavHost(
         composable(Screen.Favorites.route) {
             FavoritesScreen(
                 mediaRepository = app.mediaRepository,
+                vaultRepository = app.vaultRepository,
                 onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )

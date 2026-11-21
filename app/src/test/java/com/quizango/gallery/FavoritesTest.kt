@@ -1,108 +1,59 @@
 package com.quizango.gallery
 
 import com.quizango.gallery.domain.model.MediaItem
-import com.quizango.gallery.domain.model.MediaType
-import org.junit.Assert.*
+import com.quizango.gallery.ui.album.viewerRouteFor
+import com.quizango.gallery.ui.browse.FAVORITES_ACTIONS
+import com.quizango.gallery.ui.browse.ListState
+import com.quizango.gallery.ui.browse.MediaAction
+import com.quizango.gallery.ui.browse.listStateOf
+import com.quizango.gallery.ui.browse.pruneSelection
+import com.quizango.gallery.ui.home.ALBUM_FAVORITES
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class FavoritesTest {
 
+    private fun media(id: Long, fav: Boolean = true) = MediaItem(
+        id = id, filePath = "/p/$id.jpg", fileName = "$id.jpg", fileSize = 1L,
+        folderName = "p", folderPath = "/p", dateModified = 1L, dateTaken = 1L, isFavorite = fav
+    )
+
     @Test
-    fun testFavoriteFiltering() {
-        val item1 = createMediaItem(id = 1, path = "/path/1.jpg", isFav = true)
-        val item2 = createMediaItem(id = 2, path = "/path/2.jpg", isFav = false)
-        val item3 = createMediaItem(id = 3, path = "/path/3.jpg", isFav = true, isTrash = true)
-        val item4 = createMediaItem(id = 4, path = "/path/4.jpg", isFav = true)
-
-        val allMedia = listOf(item1, item2, item3, item4)
-
-        // Only active (not in trash) favorites should be shown
-        val activeFavorites = allMedia.filter { it.isFavorite && it.deletedDate == 0L }
-
-        assertEquals(2, activeFavorites.size)
-        assertTrue(activeFavorites.any { it.filePath == item1.filePath })
-        assertTrue(activeFavorites.any { it.filePath == item4.filePath })
-        assertFalse(activeFavorites.any { it.filePath == item2.filePath })
-        assertFalse(activeFavorites.any { it.filePath == item3.filePath })
+    fun favoritesShowsShareUnfavoritePrivateDeleteOnly() {
+        assertEquals(listOf(MediaAction.SHARE, MediaAction.UNFAVORITE, MediaAction.PRIVATE, MediaAction.DELETE), FAVORITES_ACTIONS)
+        assertFalse(MediaAction.ADD_TO in FAVORITES_ACTIONS)
+        assertFalse(MediaAction.CREATE_ALBUM in FAVORITES_ACTIONS)
     }
 
     @Test
-    fun testToggleFavoriteLogic() {
-        val originalItem = createMediaItem(id = 1, path = "/path/photo.jpg", isFav = false)
-        val favoritedItem = originalItem.copy(isFavorite = true)
-
-        assertTrue(favoritedItem.isFavorite)
-
-        val unfavoritedItem = favoritedItem.copy(isFavorite = false)
-        assertFalse(unfavoritedItem.isFavorite)
+    fun unfavoritedRowsLeaveTheListAndTheSelection() {
+        val a = media(1)
+        val b = media(2)
+        val c = media(3)
+        val selected = setOf(a.filePath, c.filePath)
+        // getFavoritesFlow re-emits without the unfavourited rows
+        val after = listOf(a, b, c).map { if (it.filePath in selected) it.copy(isFavorite = false) else it }.filter { it.isFavorite }
+        assertEquals(listOf(b), after)
+        assertEquals(emptySet<String>(), pruneSelection(selected, after.mapTo(HashSet()) { it.filePath }))
+        // a partial removal keeps the rest; nothing removed keeps the same set instance (no extra recomposition)
+        assertEquals(setOf(b.filePath), pruneSelection(setOf(a.filePath, b.filePath), setOf(b.filePath)))
+        val kept = setOf(b.filePath)
+        assertSame(kept, pruneSelection(kept, setOf(a.filePath, b.filePath)))
     }
 
     @Test
-    fun testBatchUnfavoriteLogic() {
-        val item1 = createMediaItem(id = 1, path = "/path/1.jpg", isFav = true)
-        val item2 = createMediaItem(id = 2, path = "/path/2.jpg", isFav = true)
-        val item3 = createMediaItem(id = 3, path = "/path/3.jpg", isFav = true)
-
-        val selectedPaths = setOf(item1.filePath, item3.filePath)
-
-        val remainingFavorites = listOf(item1, item2, item3).map { item ->
-            if (item.filePath in selectedPaths) item.copy(isFavorite = false) else item
-        }.filter { it.isFavorite }
-
-        assertEquals(1, remainingFavorites.size)
-        assertEquals(item2.filePath, remainingFavorites[0].filePath)
+    fun loadingAndEmptyAreDistinct() {
+        assertEquals(ListState.LOADING, listStateOf(null, 3))
+        assertEquals(ListState.LOADING, listStateOf(emptyList<MediaItem>(), null)) // column count not read yet
+        assertEquals(ListState.EMPTY, listStateOf(emptyList<MediaItem>(), 3))
+        assertEquals(ListState.CONTENT, listStateOf(listOf(media(1)), 4))
     }
 
     @Test
-    fun testSelectAllAndUnselectAll() {
-        val paths = listOf("/path/1.jpg", "/path/2.jpg", "/path/3.jpg")
-        val allPathsSet = paths.toSet()
-
-        var selected = setOf<String>()
-        assertFalse(selected.isNotEmpty() && selected.size >= allPathsSet.size)
-
-        // Select All
-        selected = allPathsSet
-        assertTrue(selected.isNotEmpty() && selected.size >= allPathsSet.size)
-
-        // Unselect All
-        selected = emptySet()
-        assertEquals(0, selected.size)
-    }
-
-    @Test
-    fun testFormatFavoriteDuration() {
-        fun formatDuration(ms: Long): String {
-            val totalSeconds = ms / 1000
-            val minutes = totalSeconds / 60
-            val seconds = totalSeconds % 60
-            return "%02d:%02d".format(minutes, seconds)
-        }
-
-        assertEquals("00:00", formatDuration(0L))
-        assertEquals("00:35", formatDuration(35000L))
-        assertEquals("02:15", formatDuration(135000L))
-        assertEquals("12:05", formatDuration(725000L))
-    }
-
-    private fun createMediaItem(
-        id: Long,
-        path: String,
-        isFav: Boolean = false,
-        isTrash: Boolean = false
-    ): MediaItem {
-        return MediaItem(
-            id = id,
-            filePath = path,
-            fileName = path.substringAfterLast('/'),
-            fileSize = 1024L,
-            folderName = "Camera",
-            folderPath = "/storage/emulated/0/DCIM/Camera",
-            dateModified = System.currentTimeMillis(),
-            dateTaken = System.currentTimeMillis(),
-            mediaType = MediaType.IMAGE,
-            isFavorite = isFav,
-            deletedDate = if (isTrash) System.currentTimeMillis() else 0L
-        )
+    fun viewerPagesThroughTheFavorites() {
+        assertTrue(viewerRouteFor(media(1), ALBUM_FAVORITES).contains("folder=filter%3Afavorites"))
     }
 }
