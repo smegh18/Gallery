@@ -289,4 +289,5 @@
     <string name="total_files">Всего файлов</string>
     <string name="modifying_items">Изменение %s элементов…</string>
     <string name="something_went_wrong">Произошла ошибка!</string>
+    <string name="rotate">Повернуть</string>
 </resources>

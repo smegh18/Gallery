@@ -197,7 +197,8 @@ def main():
     args = parser.parse_args()
     _selftest()
     for d in (args.ref, args.ref267) if args.command == "check-colors" else (args.ref,):
-        if not os.path.isfile(os.path.join(d, "values", "strings.xml")):
+        resource = "colors.xml" if args.command == "check-colors" else "strings.xml"
+        if not os.path.isfile(os.path.join(d, "values", resource)):
             print("reference not decoded: %s (see tooling-setup.md)" % d)
             return 2
     if args.command == "check-colors":

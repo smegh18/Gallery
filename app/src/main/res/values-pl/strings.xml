@@ -287,4 +287,5 @@
     <string name="total_files">Łączna liczba plików</string>
     <string name="modifying_items">Modyfikowanie %s elementów...</string>
     <string name="something_went_wrong">Wystąpił problem!</string>
+    <string name="rotate">Obróć</string>
 </resources>

@@ -10,6 +10,23 @@ class ViewerZoomTest {
     private val screen = Size(1000f, 2000f)
 
     @Test
+    fun landscapePhotosUseTwoTimesMaximumZoom() {
+        // 2.7.2 uses a lower maximum for landscape stills than other photos.
+        assertEquals(2f, ViewerZoom.maxZoomFor(4000f, 2000f, isAnimated = false))
+        assertEquals(5f, ViewerZoom.maxZoomFor(2000f, 4000f, isAnimated = false))
+        assertEquals(5f, ViewerZoom.maxZoomFor(2000f, 2000f, isAnimated = false))
+    }
+
+    @Test
+    fun animatedPhotosUseShortSideThresholds() {
+        assertEquals(10f, ViewerZoom.maxZoomFor(150f, 900f, isAnimated = true))
+        assertEquals(6f, ViewerZoom.maxZoomFor(250f, 900f, isAnimated = true))
+        assertEquals(5f, ViewerZoom.maxZoomFor(350f, 900f, isAnimated = true))
+        assertEquals(4f, ViewerZoom.maxZoomFor(450f, 900f, isAnimated = true))
+        assertEquals(3f, ViewerZoom.maxZoomFor(451f, 900f, isAnimated = true))
+    }
+
+    @Test
     fun fitsWidePhotoToWidth() {
         assertEquals(Size(1000f, 500f), ViewerZoom.fittedSize(Size(2000f, 1000f), screen))
     }

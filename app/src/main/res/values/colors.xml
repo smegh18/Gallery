@@ -243,4 +243,19 @@
     <color name="shimmerColorDark">#ffc7cacd</color>
     <color name="shimmerColorMedium">#ffe4e5e7</color>
     <color name="text_sticker_input_bg">#ffe3eff8</color>
+    <color name="fullImageBackColor">#ff000000</color>
+    <color name="video_bg">#00000000</color>
+    <color name="videoPlayerColor">#ff1e1e1e</color>
+    <color name="videoSpeedBackColor">#ff2d2d2d</color>
+    <color name="seekbar_color_bg">#ffbdd7fe</color>
+    <color name="countTitle">#ff7a8389</color>
+    <color name="other_album_bg_color">#ffbfd4e4</color>
+    <color name="other_album_trans">#80000000</color>
+    <color name="blackTran1">#80000000</color>
+    <color name="blackTran2">#20000000</color>
+    <color name="onlyBlack">#ff000000</color>
+    <color name="colorSearch2">#ff000000</color>
+    <color name="op_onboarding_ac_perm_bg">#ffffffff</color>
+    <color name="ripple_color_video">#6389b8ff</color>
+    <color name="videoPlayerColorTrans">#cc1b1b1b</color>
 </resources>

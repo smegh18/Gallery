@@ -137,4 +137,8 @@
     <color name="adsBgColor">#ff1e1e1e</color>
     <color name="adsBgBorderColor">#ff303030</color>
     <color name="text_sticker_input_bg">#ff1e1e1e</color>
+    <color name="fullImageBackColor">#ff0c0c0c</color>
+    <color name="other_album_bg_color">#ff333333</color>
+    <color name="seekbar_color_bg">#ff5b5d5f</color>
+    <color name="op_onboarding_ac_perm_bg">#ff131111</color>
 </resources>

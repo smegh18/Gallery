@@ -18,8 +18,12 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -55,6 +59,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -250,19 +255,6 @@ fun MediaViewerScreen(
         }
     }
 
-    // Formatted date and time matching reference: "28 Oct", "03:04"
-    val epochTime = remember(currentItem.dateAdded, currentItem.dateModified) {
-        val epoch = if (currentItem.dateAdded > 0) currentItem.dateAdded else currentItem.dateModified
-        val millis = if (epoch > 10_000_000_000L) epoch else epoch * 1000L
-        Date(millis)
-    }
-    val dateText = remember(epochTime) {
-        SimpleDateFormat("dd MMM", Locale.getDefault()).format(epochTime)
-    }
-    val timeText = remember(epochTime) {
-        SimpleDateFormat("hh:mm", Locale.getDefault()).format(epochTime)
-    }
-
     // More menu shared by the normal and vault bottom bars (vault: Rename, Set as Wallpaper, Print)
     val moreMenu: @Composable () -> Unit = {
                                         DropdownMenu(
@@ -395,19 +387,13 @@ fun MediaViewerScreen(
                                         }
     }
 
-    // Reference: tapping hides the bars and shows the photo full screen on black
+    // 2.7.2 remains edge-to-edge while leaving Android system bars visible.
     val view = androidx.compose.ui.platform.LocalView.current
-    DisposableEffect(showControls) {
+    DisposableEffect(Unit) {
         val window = (context as? android.app.Activity)?.window
         if (window != null) {
             val controller = androidx.core.view.WindowCompat.getInsetsController(window, view)
-            if (showControls) {
-                controller.show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
-            } else {
-                controller.systemBarsBehavior =
-                    androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                controller.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
-            }
+            controller.show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
         }
         onDispose {
             if (window != null) {
@@ -420,7 +406,7 @@ fun MediaViewerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (showControls) MaterialTheme.colorScheme.background else Color.Black)
+            .background(colorResource(R.color.fullImageBackColor))
     ) {
         // Main Media Horizontal Pager
         HorizontalPager(
@@ -445,132 +431,30 @@ fun MediaViewerScreen(
             )
         }
 
-        // Top Toolbar (Matches activity_media_full_screen.xml toolbarLay)
-        AnimatedVisibility(
+        ViewerTopChrome(
             visible = showControls,
-            enter = fadeIn(),
-            exit = fadeOut(),
+            controls = viewerChromeControls(
+                isVideo = currentItem.isVideo,
+                isRecycle = isRecycle,
+                isVault = isVault,
+                isAnimated = currentItem.isAnimated || currentItem.mediaType == MediaType.ANIMATED,
+                isHeif = currentItem.fileName.endsWith(".heif", ignoreCase = true),
+                isShortVideoPlaying = currentItem.isVideo && isVideoPlaying && videoDurationMs in 1..60_000L
+            ),
+            isFavorite = currentItem.isFavorite,
+            onBack = onNavigateBack,
+            onRotate = { rotationAngle = (rotationAngle + 90f) % 360f },
+            onFavorite = { scope.launch { mediaRepository.setFavorite(currentItem.filePath, !currentItem.isFavorite) } },
+            onCapture = { },
+            onDetails = { showInfoDialog = true },
             modifier = Modifier.align(Alignment.TopCenter)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .statusBarsPadding()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(start = 4.dp, end = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_back),
-                            contentDescription = "Back",
-                            tint = Color.Unspecified
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 6.dp)
-                    ) {
-                        Text(
-                            text = dateText,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = timeText,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            maxLines = 1
-                        )
-                    }
-
-                    // Video Frame Screenshot Capture Button (Reference captureBtn / ic_camera_ss_short)
-                    if (currentItem.mediaType == MediaType.VIDEO) {
-                        IconButton(onClick = {
-                            scope.launch(Dispatchers.IO) {
-                                val bitmap = captureVideoFrame(currentItem.filePath, videoPositionMs)
-                                if (bitmap != null) {
-                                    val saved = saveCapturedFrameToGallery(context, bitmap, currentItem.fileName)
-                                    if (saved != null) {
-                                        mediaRepository.syncMediaStore()
-                                        withContext(Dispatchers.Main) {
-                                            Toast.makeText(context, "Screenshot captured & saved to Gallery", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                                } else {
-                                    withContext(Dispatchers.Main) {
-                                        Toast.makeText(context, "Failed to capture screenshot", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_camera_ss_short),
-                                contentDescription = "Capture Screenshot",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
-
-                    // Rotate Button (Only for images and non-recycle mode, matching reference)
-                    if (currentItem.mediaType.isImage && !isRecycle) {
-                        IconButton(onClick = { rotationAngle = (rotationAngle + 90f) % 360f }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_media_rotate),
-                                contentDescription = "Rotate",
-                                tint = Color.Unspecified
-                            )
-                        }
-                    }
-
-                    // Favorite Button (Red fill if favorite, outline otherwise; hidden in recycle and vault)
-                    if (!isRecycle && !isVault) {
-                        IconButton(onClick = {
-                            scope.launch {
-                                mediaRepository.setFavorite(currentItem.filePath, !currentItem.isFavorite)
-                            }
-                        }) {
-                            Icon(
-                                painter = painterResource(
-                                    id = if (currentItem.isFavorite) R.drawable.ic_fav_fill else R.drawable.ic_favorite
-                                ),
-                                contentDescription = "Favorite",
-                                tint = Color.Unspecified
-                            )
-                        }
-                    }
-
-                    // Property / Info Details Button (not in the reference vault viewer)
-                    if (!isVault) IconButton(onClick = { showInfoDialog = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_property),
-                            contentDescription = "Details",
-                            tint = Color.Unspecified
-                        )
-                    }
-                }
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.settingsDivider, thickness = 1.dp)
-            }
-        }
+        )
 
         // Bottom Overlays (Suggestion Pill Strip + Video Scrubber / Controls + Bottom Action Bar)
         AnimatedVisibility(
             visible = showControls,
-            enter = fadeIn(),
-            exit = fadeOut(),
+            enter = slideInVertically(animationSpec = tween(CHROME_ANIMATION_MS)) { it } + fadeIn(tween(CHROME_ANIMATION_MS)),
+            exit = slideOutVertically(animationSpec = tween(CHROME_ANIMATION_MS)) { it } + fadeOut(tween(CHROME_ANIMATION_MS)),
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             Column(
@@ -1489,6 +1373,12 @@ private fun PagerMediaItemView(
     val containerF = androidx.compose.ui.geometry.Size(containerSize.width.toFloat(), containerSize.height.toFloat())
     // shortcut: ignores 90/270 rotation when fitting; pan limits are approximate on rotated photos.
     val fitted = ViewerZoom.fittedSize(imageSize, containerF)
+    val maxZoom = ViewerZoom.maxZoomFor(
+        width = imageSize.width,
+        height = imageSize.height,
+        isAnimated = item.isAnimated || item.mediaType == MediaType.ANIMATED
+    )
+    val scope = rememberCoroutineScope()
 
     fun clampOffset(proposedOffset: Offset, currentScale: Float): Offset {
         if (containerSize.width == 0 || currentScale <= 1.05f) return Offset.Zero
@@ -1516,13 +1406,20 @@ private fun PagerMediaItemView(
     )
 
     val transformState = rememberTransformableState { zoomChange, offsetChange, _ ->
-        val newScale = (scale * zoomChange).coerceIn(1f, ViewerZoom.MAX_SCALE)
+        val newScale = (scale * zoomChange).coerceIn(ViewerZoom.FIT_SCALE, maxZoom * ViewerZoom.OVERZOOM_FACTOR)
         scale = newScale
         if (newScale <= 1.05f) {
             scale = 1f
             offset = Offset.Zero
         } else {
             offset = clampOffset(offset + offsetChange, newScale)
+        }
+    }
+
+    LaunchedEffect(transformState.isTransformInProgress) {
+        if (!transformState.isTransformInProgress && scale > maxZoom) {
+            scale = maxZoom
+            offset = clampOffset(offset, scale)
         }
     }
 
@@ -1590,16 +1487,21 @@ private fun PagerMediaItemView(
                 .onSizeChanged { containerSize = it }
                 .then(dismissModifier)
                 .then(dismissVisual)
-                .pointerInput(item.filePath) {
+                .pointerInput(item.filePath, maxZoom, fitted, containerF) {
                     detectTapGestures(
                         onTap = { onToggleControls() },
                         onDoubleTap = { tap ->
-                            if (scale > 1.05f) {
-                                scale = 1f
-                                offset = Offset.Zero
-                            } else {
-                                scale = ViewerZoom.DOUBLE_TAP_SCALE
-                                offset = ViewerZoom.offsetForTap(tap, scale, fitted, containerF)
+                            val start = scale
+                            val target = if (scale > 1.05f) ViewerZoom.FIT_SCALE else maxZoom
+                            scope.launch {
+                                animate(start, target, animationSpec = tween(ViewerZoom.DOUBLE_TAP_DURATION_MS)) { value, _ ->
+                                    scale = value
+                                    offset = if (target == ViewerZoom.FIT_SCALE) {
+                                        Offset.Zero
+                                    } else {
+                                        ViewerZoom.offsetForTap(tap, value, fitted, containerF)
+                                    }
+                                }
                             }
                         }
                     )

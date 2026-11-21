@@ -368,4 +368,7 @@
     <string name="something_went_wrong">An issue occurred!</string>
     <!-- no reference key: hard-coded English in S272/bx/c.smali:333, stays English in every language -->
     <string name="cannot_select_system_folders" translatable="false">You can not select system folders</string>
+    <string name="viewer_back" translatable="false">Back</string>
+    <string name="viewer_capture" translatable="false">Capture</string>
+    <string name="rotate">Rotate</string>
 </resources>

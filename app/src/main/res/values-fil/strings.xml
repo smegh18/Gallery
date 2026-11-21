@@ -279,4 +279,5 @@
     <string name="total_files">Kabuuang mga File</string>
     <string name="modifying_items">Binabago ang %s na mga item...</string>
     <string name="something_went_wrong">May nangyaring problema!</string>
+    <string name="rotate">I-ikot</string>
 </resources>

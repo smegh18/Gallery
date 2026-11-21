@@ -279,4 +279,5 @@
     <string name="total_files">تعداد کل فایل‌ها</string>
     <string name="modifying_items">در حال ویرایش %s مورد...</string>
     <string name="something_went_wrong">یک مشکل پیش آمد!</string>
+    <string name="rotate">چرخش</string>
 </resources>

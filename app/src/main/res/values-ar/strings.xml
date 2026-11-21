@@ -279,4 +279,5 @@
     <string name="total_files">مجموع الملفات</string>
     <string name="modifying_items">تعديل %s عناصر...</string>
     <string name="something_went_wrong">حدثت مشكلة!</string>
+    <string name="rotate">تدوير</string>
 </resources>
