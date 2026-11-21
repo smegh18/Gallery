@@ -148,7 +148,17 @@ Plans:
   4. Moments, Place, Animated, Burst and Favorites each match 2.7.2, including their empty states.
   5. Search, Search all and Search by colour match 2.7.2 and return the same kind of results.
 
-**Plans**: TBD
+**Plans**: 8 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Import the approved resources and prove the still viewer, per-image zoom and glass chrome tracer (wave 1)
+- [ ] 05-02-PLAN.md — Complete viewer actions, dialogs, suggestions, More and the two-second slideshow (wave 2)
+- [ ] 05-03-PLAN.md — Split short inline video from long/URI playback and deliver the lifecycle-safe dedicated player (wave 3)
+- [ ] 05-04-PLAN.md — Establish the shared media-list frame through Album Detail and expand it to Favorites (wave 4)
+- [ ] 05-05-PLAN.md — Deliver All Albums, Moments, Animated and Burst on the shared browsing behavior (wave 5)
+- [ ] 05-06-PLAN.md — Add Place grouping, optional Maps-key fallback, runtime location permission and viewer map routing (wave 6)
+- [ ] 05-07-PLAN.md — Rebuild Search, six-item section previews, View All and Search by Color (wave 7)
+- [ ] 05-08-PLAN.md — Remediate review/build/device defects and close evidence for every Phase 5 parity row (wave 8)
 **UI hint**: yes
 
 ### Phase 6: Manage and Cleaner

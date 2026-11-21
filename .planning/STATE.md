@@ -2,18 +2,18 @@
 gsd_state_version: "1.0"
 milestone: v2.0
 milestone_name: Reference 2.7.2 parity
-current_phase: 2
-current_phase_name: Onboarding
-status: verifying
-stopped_at: Phase 4 complete, ready to verify Phase 2
-last_updated: "2026-11-21T05:00:52.983Z"
+current_phase: 5
+current_phase_name: Viewing and Browsing
+status: planned
+stopped_at: Phase 5 planned and ready to execute plan 05-01
+last_updated: "2026-11-21T08:25:49+00:00"
 last_activity: 2026-11-21
-last_activity_desc: Phase 4 complete, transitioned to Phase 2
-state_head: 5f1f66c3d37729ac13feb3600b255743c5b6f75d
+last_activity_desc: Eight Phase 5 execution plans prepared
+state_head: 993c2aa
 progress:
   total_phases: 13
   completed_phases: 4
-  total_plans: 22
+  total_plans: 30
   completed_plans: 22
   percent: 31
 ---
@@ -25,14 +25,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-13)
 
 **Core value:** a user cannot tell our app from reference 2.7.2: same screens, flows, animations and behaviour.
-**Current focus:** Phase 3 - Home Shell and Photos Tab
+**Current focus:** Phase 5 - Viewing and Browsing
 
 ## Current Position
 
-Phase: 2 of 13 (Onboarding)
-Plan: 5
-Status: Phase complete — ready for verification
-Last activity: 2026-11-21 — Phase 4 complete, transitioned to Phase 2
+Phase: 5 of 13 (Viewing and Browsing)
+Plan: 05-01 of 8, ready to start
+Status: Planned
+Last activity: 2026-11-21 — Phase 5 planning
 
 Progress: [███░░░░░░░] 31%
 
@@ -93,6 +93,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-19
-Stopped at: Phase 4 complete, ready to verify Phase 2
-Resume file: None
+Last session: 2026-11-21
+Stopped at: Phase 5 planned and ready to execute plan 05-01
+Resume file: .planning/phases/05-viewing-and-browsing/05-01-PLAN.md
