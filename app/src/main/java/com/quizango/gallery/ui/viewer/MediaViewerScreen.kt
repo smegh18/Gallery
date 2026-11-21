@@ -5,15 +5,9 @@
 
 package com.quizango.gallery.ui.viewer
 
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.annotation.StringRes
@@ -40,7 +34,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -56,10 +49,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.FileProvider
 import androidx.media3.common.MediaItem as ExoMediaItem
@@ -83,7 +74,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(UnstableApi::class)
@@ -117,7 +107,6 @@ fun MediaViewerScreen(
     var videoSpeed by remember { mutableFloatStateOf(1.0f) }
     var videoPositionMs by remember { mutableLongStateOf(0L) }
     var videoDurationMs by remember { mutableLongStateOf(0L) }
-    var showSpeedMenu by remember { mutableStateOf(false) }
 
     // Collect media items for this album/folder, recycle bin, vault, or all media
     val mediaList by remember(folderPath, isRecycle, isVault) {
@@ -197,16 +186,18 @@ fun MediaViewerScreen(
     // Video Player lifecycle for active page
     LaunchedEffect(currentItem.filePath, currentViewPath, isInlineVideo) {
         if (isInlineVideo && currentViewPath != null) {
-            // Starts paused on the first frame and stops at the end (no repeat in the reference inline view)
+            // The effect can run twice while the media list loads; the old player goes before a new one exists
+            currentExoPlayer?.release()
+            // Starts paused on the first frame (the slide show plays it) and stops at the end: no inline repeat
             val player = ExoPlayer.Builder(context).build().apply {
                 val exoMedia = ExoMediaItem.fromUri(Uri.fromFile(File(currentViewPath)))
                 setMediaItem(exoMedia)
                 prepare()
-                playWhenReady = false
+                playWhenReady = slideshow
             }
-            // The effect can run twice while the media list loads; only the newest player may play
-            currentExoPlayer?.release()
             currentExoPlayer = player
+            videoPositionMs = 0L
+            videoDurationMs = currentItem.durationMs
             isVideoPlaying = false
             isVideoMuted = false
             videoSpeed = 1.0f
@@ -444,13 +435,24 @@ fun MediaViewerScreen(
                 }
             },
             onFavorite = { scope.launch { mediaRepository.setFavorite(currentItem.filePath, !currentItem.isFavorite) } },
-            onCapture = { },
+            onCapture = {
+                // 2.7.2 shows no toast for either outcome
+                val path = currentViewPath
+                val at = currentExoPlayer?.currentPosition ?: 0L
+                if (path != null) scope.launch { mediaRepository.saveVideoFrame(path, at) }
+            },
             onDetails = { open(ViewerDialogKind.DETAILS) },
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
-        // Bottom overlays: suggestion pills (hide at once), then the short-video controls and the dock (slide with the chrome)
+        // Bottom overlays: the inline seek row and suggestion pills (hide at once), then the dock (slides with the chrome)
         Column(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {
+            if (showControls && isInlineVideo && isVideoPlaying) {
+                ShortVideoSeekRow(videoPositionMs, videoDurationMs) {
+                    videoPositionMs = it
+                    currentExoPlayer?.seekTo(it)
+                }
+            }
             if (suggestionsShown) {
                 SuggestionStrip(
                     onClose = { suggestionsClosed = true },
@@ -463,172 +465,39 @@ fun MediaViewerScreen(
                 exit = slideOutVertically(animationSpec = tween(CHROME_ANIMATION_MS)) { it } + fadeOut(tween(CHROME_ANIMATION_MS))
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                if (isInlineVideo) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(top = 6.dp)
-                    ) {
-                        // Progress / Scrubber Bar (videoSeek)
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                        ) {
-                            Slider(
-                                value = if (videoDurationMs > 0) videoPositionMs.toFloat().coerceIn(0f, videoDurationMs.toFloat()) else 0f,
-                                onValueChange = { newPos ->
-                                    videoPositionMs = newPos.toLong()
-                                    currentExoPlayer?.seekTo(newPos.toLong())
-                                },
-                                valueRange = 0f..(if (videoDurationMs > 0) videoDurationMs.toFloat() else 1f),
-                                colors = SliderDefaults.colors(
-                                    thumbColor = GalleryBlue,
-                                    activeTrackColor = GalleryBlue,
-                                    inactiveTrackColor = MaterialTheme.colorScheme.cardBorder
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(24.dp)
-                            )
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 4.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = formatDuration(videoPositionMs),
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = formatDuration(if (videoDurationMs > 0) videoDurationMs else currentItem.durationMs),
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-
-                        // Video Playback Controls (shortMuteBtn, shortPlayBtn, shortSpeedBtn)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 32.dp, vertical = 6.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // 1. Mute / Unmute
-                            IconButton(
-                                onClick = {
-                                    if (isVideoMuted) {
-                                        currentExoPlayer?.volume = 1f
-                                        isVideoMuted = false
-                                    } else {
-                                        currentExoPlayer?.volume = 0f
-                                        isVideoMuted = true
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (isVideoMuted) R.drawable.ic_short_video_mute else R.drawable.ic_short_video_unmute
-                                    ),
-                                    contentDescription = if (isVideoMuted) "Unmute" else "Mute",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(26.dp)
-                                )
-                            }
-
-                            // 2. Play / Pause
-                            IconButton(
-                                onClick = {
-                                    if (currentExoPlayer?.isPlaying == true) {
-                                        currentExoPlayer?.pause()
-                                        isVideoPlaying = false
-                                    } else {
-                                        currentExoPlayer?.play()
-                                        isVideoPlaying = true
-                                    }
-                                },
-                                modifier = Modifier
-                                    .size(46.dp)
-                                    .clip(CircleShape)
-                                    .background(GalleryBlue.copy(alpha = 0.12f))
-                            ) {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (isVideoPlaying) R.drawable.ic_short_video_pause else R.drawable.ic_short_video_play
-                                    ),
-                                    contentDescription = if (isVideoPlaying) "Pause" else "Play",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(26.dp)
-                                )
-                            }
-
-                            // 3. Speed Menu
-                            Box {
-                                IconButton(onClick = { showSpeedMenu = true }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_short_video_speed),
-                                        contentDescription = "Playback Speed",
-                                        tint = Color.Unspecified,
-                                        modifier = Modifier.size(26.dp)
-                                    )
-                                }
-
-                                DropdownMenu(
-                                    expanded = showSpeedMenu,
-                                    onDismissRequest = { showSpeedMenu = false },
-                                    modifier = Modifier
-                                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
-                                        .padding(vertical = 4.dp)
-                                        .width(130.dp)
-                                ) {
-                                    val speeds = listOf(0.25f, 0.5f, 1.0f, 1.5f, 2.0f)
-                                    speeds.forEach { speed ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Row(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Text(
-                                                        text = "${speed}x",
-                                                        color = MaterialTheme.colorScheme.onSurface,
-                                                        fontSize = 14.sp,
-                                                        fontWeight = if (videoSpeed == speed) FontWeight.Bold else FontWeight.Medium
-                                                    )
-                                                    if (videoSpeed == speed) {
-                                                        Icon(
-                                                            painter = painterResource(id = R.drawable.ic_short_video_speed_select),
-                                                            contentDescription = "Selected",
-                                                            tint = Color.Unspecified,
-                                                            modifier = Modifier.size(16.dp)
-                                                        )
-                                                    }
-                                                }
-                                            },
-                                            onClick = {
-                                                videoSpeed = speed
-                                                currentExoPlayer?.setPlaybackSpeed(speed)
-                                                showSpeedMenu = false
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
                     ViewerDock(
                         actions = dockActions(isRecycle = isRecycle, isVault = isVault, isVideo = currentItem.isVideo),
                         onAction = ::onDockAction,
-                        moreMenu = moreMenu
+                        moreMenu = moreMenu,
+                        shortVideoRow = if (!isInlineVideo) null else {
+                            {
+                                ShortVideoRow(
+                                    muted = isVideoMuted,
+                                    playing = isVideoPlaying,
+                                    speed = videoSpeed,
+                                    onToggleMute = {
+                                        isVideoMuted = !isVideoMuted
+                                        currentExoPlayer?.volume = if (isVideoMuted) 0f else 1f
+                                    },
+                                    onTogglePlay = {
+                                        currentExoPlayer?.let { p ->
+                                            val wasPlaying = p.isPlaying
+                                            if (wasPlaying) {
+                                                p.pause()
+                                            } else {
+                                                if (restartsFromZero(p.playbackState)) p.seekTo(0L)
+                                                p.play()
+                                            }
+                                            isVideoPlaying = !wasPlaying
+                                        }
+                                    },
+                                    onSpeed = { speed ->
+                                        videoSpeed = speed
+                                        currentExoPlayer?.setPlaybackSpeed(speed)
+                                    }
+                                )
+                            }
+                        }
                     )
                 }
             }
@@ -951,54 +820,6 @@ private fun MediaItem.toVaultItem() = VaultItem(
     durationMs = durationMs,
     dimension = dimension
 )
-
-private fun captureVideoFrame(filePath: String, positionMs: Long): Bitmap? {
-    return try {
-        val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(filePath)
-        val frame = retriever.getFrameAtTime(
-            positionMs * 1000L,
-            MediaMetadataRetriever.OPTION_CLOSEST
-        )
-        retriever.release()
-        frame
-    } catch (_: Exception) {
-        null
-    }
-}
-
-private fun saveCapturedFrameToGallery(context: Context, bitmap: Bitmap, originalFileName: String): String? {
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val baseName = originalFileName.substringBeforeLast(".")
-    val newFileName = "FRAME_${baseName}_$timeStamp.jpg"
-
-    return try {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, newFileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Gallery")
-            }
-            val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-            if (uri != null) {
-                context.contentResolver.openOutputStream(uri)?.use { stream ->
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 95, stream)
-                }
-                uri.toString()
-            } else null
-        } else {
-            val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val galleryDir = File(picturesDir, "Gallery").also { if (!it.exists()) it.mkdirs() }
-            val file = File(galleryDir, newFileName)
-            file.outputStream().use { stream ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 95, stream)
-            }
-            file.absolutePath
-        }
-    } catch (_: Exception) {
-        null
-    }
-}
 
 internal fun formatDuration(durationMs: Long): String {
     if (durationMs <= 0) return "00:00"

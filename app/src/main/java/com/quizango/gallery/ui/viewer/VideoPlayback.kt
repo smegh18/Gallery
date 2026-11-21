@@ -1,6 +1,7 @@
 package com.quizango.gallery.ui.viewer
 
 import android.media.MediaMetadataRetriever
+import androidx.media3.common.Player
 import com.quizango.gallery.domain.model.MediaItem
 import java.io.File
 
@@ -36,3 +37,11 @@ internal fun isPlayableVideo(path: String): Boolean {
         retriever.release()
     }
 }
+
+/** popmenu_short_video_speed / popmenu_video_speed rows. */
+internal val VIDEO_SPEEDS = listOf(0.25f, 0.5f, 1.0f, 1.5f, 2.0f)
+
+internal fun speedLabel(speed: Float): String = "${speed}x"
+
+/** The inline view has no repeat: it stops at the end, and the next Play starts again from zero. */
+internal fun restartsFromZero(playbackState: Int): Boolean = playbackState == Player.STATE_ENDED

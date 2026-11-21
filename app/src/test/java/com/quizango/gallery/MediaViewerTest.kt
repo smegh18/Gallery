@@ -24,6 +24,11 @@ import com.quizango.gallery.ui.viewer.moreActions
 import com.quizango.gallery.ui.viewer.showOnMapRoute
 import com.quizango.gallery.ui.viewer.targetIfCurrent
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.data.repository.captureFileName
+import com.quizango.gallery.ui.viewer.VIDEO_SPEEDS
+import com.quizango.gallery.ui.viewer.restartsFromZero
+import com.quizango.gallery.ui.viewer.speedLabel
+import androidx.media3.common.Player
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
@@ -198,6 +203,27 @@ class MediaViewerTest {
         assertEquals("00:05", formatDuration(5000L))
         assertEquals("01:30", formatDuration(90000L))
         assertEquals("10:00", formatDuration(600000L))
+        // Hours only when needed
+        assertEquals("59:59", formatDuration(3_599_000L))
+        assertEquals("01:00:00", formatDuration(3_600_000L))
+    }
+
+    @Test
+    fun `inline video stops at the end and the next Play restarts from zero`() {
+        assertTrue(restartsFromZero(Player.STATE_ENDED))
+        assertFalse(restartsFromZero(Player.STATE_READY))
+        assertFalse(restartsFromZero(Player.STATE_BUFFERING))
+    }
+
+    @Test
+    fun `speeds are the five reference rows`() {
+        assertEquals(listOf("0.25x", "0.5x", "1.0x", "1.5x", "2.0x"), VIDEO_SPEEDS.map(::speedLabel))
+    }
+
+    @Test
+    fun `capture file is IMG_yyyyMMdd_ millis png`() {
+        val millis = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).parse("2026-11-21 10:30")!!.time
+        assertEquals("IMG_20261121_$millis.png", captureFileName(millis))
     }
 
     @Test

@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
+import android.media.MediaMetadataRetriever
+import android.os.Environment
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.database.dao.GalleryDao
 import com.quizango.gallery.data.local.database.entity.MediaEntity
@@ -43,9 +45,16 @@ interface MediaRepository {
     /** Rotates the image file itself 90° clockwise (viewer Rotate, PA.onRotateBitmap) and rescans it. */
     suspend fun rotateImage(path: String): Boolean
 
+    /** Video Capture: saves the frame at [positionMs] as a PNG under Pictures/Screenshots and rescans it. */
+    suspend fun saveVideoFrame(videoPath: String, positionMs: Long): Boolean
+
     /** Renames the folder on disk and moves its rows to the new paths; the new folder path, or null when refused or failed. */
     suspend fun renameFolder(folderPath: String, newName: String): String?
 }
+
+/** VideoPlayerActivity capture name: "IMG_" + yyyyMMdd_ + epoch millis + ".png". */
+internal fun captureFileName(millis: Long): String =
+    "IMG_" + java.text.SimpleDateFormat("yyyyMMdd_", java.util.Locale.US).format(java.util.Date(millis)) + millis + ".png"
 
 /** [path] after [oldFolder] became [newFolder]: the folder itself and everything under it move, any other path stays. */
 internal fun movedPath(path: String, oldFolder: String, newFolder: String): String = when {
@@ -548,6 +557,26 @@ class MediaRepositoryImpl(
             true
         } catch (_: Exception) {
             false
+        }
+    }
+
+    override suspend fun saveVideoFrame(videoPath: String, positionMs: Long): Boolean = withContext(Dispatchers.IO) {
+        val retriever = MediaMetadataRetriever()
+        try {
+            retriever.setDataSource(videoPath)
+            val frame = retriever.getFrameAtTime(positionMs * 1000L, MediaMetadataRetriever.OPTION_CLOSEST)
+                ?: return@withContext false
+            val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Screenshots")
+            if (!dir.isDirectory && !dir.mkdirs()) return@withContext false
+            val file = File(dir, captureFileName(System.currentTimeMillis()))
+            file.outputStream().use { frame.compress(Bitmap.CompressFormat.PNG, 100, it) }
+            scanner.scanFiles(file.path)
+            syncMediaStore()
+            true
+        } catch (_: Exception) {
+            false
+        } finally {
+            retriever.release()
         }
     }
 

@@ -16,6 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.home.drawableBackground
@@ -174,11 +184,16 @@ internal fun dockActions(isRecycle: Boolean, isVault: Boolean, isVideo: Boolean)
     else -> listOf(DockAction.SHARE, DockAction.PRIVATE, if (isVideo) DockAction.ADD_TO else DockAction.EDIT, DockAction.DELETE, DockAction.MORE)
 }
 
-/** bg_media_full_pill_dock: equal icon-only slots; [moreMenu] is anchored to the More slot. */
+/** bg_media_full_pill_dock: the inline-video row (if any) over equal icon-only slots; [moreMenu] is anchored to More. */
 @Composable
-internal fun ViewerDock(actions: List<DockAction>, onAction: (DockAction) -> Unit, moreMenu: @Composable () -> Unit) {
+internal fun ViewerDock(
+    actions: List<DockAction>,
+    onAction: (DockAction) -> Unit,
+    moreMenu: @Composable () -> Unit,
+    shortVideoRow: (@Composable () -> Unit)? = null
+) {
     val tint = colorResource(R.color.media_full_glass_icon)
-    Row(
+    Column(
         Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
@@ -187,6 +202,8 @@ internal fun ViewerDock(actions: List<DockAction>, onAction: (DockAction) -> Uni
             .drawableBackground(R.drawable.bg_media_full_pill_dock)
             .padding(vertical = 2.dp)
     ) {
+        shortVideoRow?.invoke()
+        Row(Modifier.fillMaxWidth()) {
         actions.forEach { action ->
             Box(
                 Modifier
@@ -201,6 +218,158 @@ internal fun ViewerDock(actions: List<DockAction>, onAction: (DockAction) -> Uni
             ) {
                 Icon(painterResource(action.icon), stringResource(action.label), tint = tint)
                 if (action == DockAction.MORE) moreMenu()
+            }
+        }
+        }
+    }
+}
+
+/** item_bottom_option_layout short-video row: mute start, play centre, speed end, all white. */
+@Composable
+internal fun ShortVideoRow(
+    muted: Boolean,
+    playing: Boolean,
+    speed: Float,
+    onToggleMute: () -> Unit,
+    onTogglePlay: () -> Unit,
+    onSpeed: (Float) -> Unit
+) {
+    val white = colorResource(R.color.onlyWhite)
+    var speedMenu by remember { mutableStateOf(false) }
+    val round = Modifier.clip(CircleShape)
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            painterResource(if (muted) R.drawable.ic_short_video_mute else R.drawable.ic_short_video_unmute),
+            stringResource(if (muted) R.string.unmute else R.string.mute),
+            tint = white,
+            modifier = Modifier.padding(start = 18.sdp).then(round).clickable(onClick = onToggleMute).padding(12.sdp)
+        )
+        Spacer(Modifier.weight(1f))
+        Icon(
+            painterResource(if (playing) R.drawable.ic_short_video_pause else R.drawable.ic_short_video_play),
+            stringResource(if (playing) PAUSE_LABEL else PLAY_LABEL),
+            tint = white,
+            modifier = round.clickable(onClick = onTogglePlay).padding(horizontal = 2.sdp, vertical = 6.sdp)
+        )
+        Spacer(Modifier.weight(1f))
+        Box(Modifier.padding(end = 18.sdp)) {
+            Icon(
+                painterResource(R.drawable.ic_short_video_speed),
+                stringResource(R.string.speed),
+                tint = white,
+                modifier = round.clickable { speedMenu = true }.padding(12.sdp)
+            )
+            if (speedMenu) {
+                SpeedPopup(
+                    current = speed,
+                    above = true,
+                    background = colorResource(R.color.dialogBack),
+                    textColor = colorResource(R.color.titleColor),
+                    selectIcon = R.drawable.ic_short_video_speed_select,
+                    onPick = { speedMenu = false; onSpeed(it) },
+                    onDismiss = { speedMenu = false }
+                )
+            }
+        }
+    }
+}
+
+/** The reference icons carry no labels; TalkBack reads Media3's translated control descriptions. */
+internal val PLAY_LABEL = androidx.media3.ui.R.string.exo_controls_play_description
+internal val PAUSE_LABEL = androidx.media3.ui.R.string.exo_controls_pause_description
+
+/** videoSeek + start/end times above the dock while an inline video plays (section 1.8). */
+@Composable
+internal fun ShortVideoSeekRow(positionMs: Long, durationMs: Long, onSeek: (Long) -> Unit) {
+    val progress = colorResource(R.color.shortVideoProgress)
+    val time = GalleryText.BodyXSmallMedium.copy(shadow = Shadow(Color.Black, Offset(2f, 2f), 4f))
+    Column(Modifier.fillMaxWidth().padding(bottom = 4.sdp)) {
+        VideoSeekBar(positionMs, durationMs, progress, onSeek, Modifier.fillMaxWidth().padding(horizontal = 10.sdp))
+        Row(
+            Modifier.fillMaxWidth().padding(top = 4.sdp).padding(horizontal = 10.sdp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(formatDuration(positionMs), style = time, color = colorResource(R.color.onlyWhite))
+            Text(formatDuration(durationMs), style = time, color = colorResource(R.color.onlyWhite))
+        }
+    }
+}
+
+/**
+ * AppCompatSeekBar with sb_progress_drawable / sb_thumb, both tinted [color]: a 5.dp track (the drawable's
+ * #26 alpha under the tint), the progress in [color] and a 16.dp thumb. Tap or drag seeks; mirrors in RTL.
+ */
+@Composable
+internal fun VideoSeekBar(positionMs: Long, durationMs: Long, color: Color, onSeek: (Long) -> Unit, modifier: Modifier = Modifier) {
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val duration by rememberUpdatedState(durationMs)
+    val seek by rememberUpdatedState(onSeek)
+    val fraction = if (durationMs > 0) (positionMs.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
+    fun seekAt(x: Float, width: Int, thumb: Float) {
+        val track = width - 2 * thumb
+        if (duration <= 0 || track <= 0f) return
+        val f = ((x - thumb) / track).coerceIn(0f, 1f)
+        seek(((if (rtl) 1f - f else f) * duration).toLong())
+    }
+    Canvas(
+        modifier
+            .height(16.dp)
+            .pointerInput(rtl) { detectTapGestures { seekAt(it.x, size.width, 8.dp.toPx()) } }
+            .pointerInput(rtl) {
+                detectHorizontalDragGestures { change, _ ->
+                    change.consume()
+                    seekAt(change.position.x, size.width, 8.dp.toPx())
+                }
+            }
+    ) {
+        val thumb = 8.dp.toPx()
+        val y = size.height / 2
+        val start = thumb
+        val end = size.width - thumb
+        val at = if (rtl) end - (end - start) * fraction else start + (end - start) * fraction
+        val stroke = 5.dp.toPx()
+        drawLine(color.copy(alpha = 0x26 / 255f), Offset(start, y), Offset(end, y), stroke, StrokeCap.Round)
+        drawLine(color, Offset(if (rtl) end else start, y), Offset(at, y), stroke, StrokeCap.Round)
+        drawCircle(color, thumb, Offset(at, y))
+    }
+}
+
+/** popmenu_short_video_speed (inline) / popmenu_video_speed (player): 100.sdp card, the current speed ticked. */
+@Composable
+internal fun SpeedPopup(
+    current: Float,
+    above: Boolean,
+    background: Color,
+    textColor: Color,
+    @DrawableRes selectIcon: Int,
+    onPick: (Float) -> Unit,
+    onDismiss: () -> Unit
+) {
+    Popup(
+        popupPositionProvider = if (above) AboveAnchorEnd else BelowAnchorStart,
+        onDismissRequest = onDismiss,
+        properties = PopupProperties(focusable = true)
+    ) {
+        Column(
+            Modifier
+                .width(100.sdp)
+                .shadow(1.dp, RoundedCornerShape(16.sdp))
+                .background(background, RoundedCornerShape(16.sdp))
+                .padding(horizontal = 10.sdp, vertical = 8.sdp)
+        ) {
+            VIDEO_SPEEDS.forEach { speed ->
+                Row(
+                    Modifier.fillMaxWidth().clickable { onPick(speed) }.padding(vertical = 8.sdp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        speedLabel(speed),
+                        style = GalleryText.BodyMediumMedium,
+                        color = textColor,
+                        modifier = Modifier.weight(1f).padding(start = 5.sdp)
+                    )
+                    if (speed == current) Icon(painterResource(selectIcon), null, tint = Color.Unspecified)
+                }
             }
         }
     }
@@ -358,6 +527,19 @@ internal fun moreActions(isVault: Boolean, isVideo: Boolean, hasPlace: Boolean):
         add(MoreAction.PRINT)
     }
     if (!isVault && hasPlace) add(MoreAction.SHOW_ON_MAP)
+}
+
+/** Puts the popup's top under the anchor, start-aligned with it (the player's quick-control card). */
+private object BelowAnchorStart : PopupPositionProvider {
+    override fun calculatePosition(
+        anchorBounds: IntRect,
+        windowSize: IntSize,
+        layoutDirection: LayoutDirection,
+        popupContentSize: IntSize
+    ): IntOffset {
+        val x = if (layoutDirection == LayoutDirection.Ltr) anchorBounds.left else anchorBounds.right - popupContentSize.width
+        return IntOffset(x, anchorBounds.bottom)
+    }
 }
 
 /** Puts the popup's bottom on the anchor's top, end-aligned with it (Gravity.BOTTOM above the dock). */
