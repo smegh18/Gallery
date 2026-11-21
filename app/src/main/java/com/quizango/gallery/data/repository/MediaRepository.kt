@@ -49,8 +49,8 @@ internal fun movedPath(path: String, oldFolder: String, newFolder: String): Stri
 
 /**
  * Renames [folder] to [newName] and rewrites the rows of its whole tree (active and Recycle Bin, subfolders included)
- * under the new paths with every other field kept. The rows are read before the rename and replaced in ONE
- * [inTransaction] call after it succeeds, so a media sync running meanwhile sees all old or all new rows. Returns the
+ * under the new paths with every other field kept. The rows are snapshotted before the rename and written (REPLACE,
+ * so they win over any default rows a sync inserted meanwhile) in ONE [inTransaction] call after it succeeds. Returns the
  * old and new file paths for the MediaStore scan, or null with nothing touched when the folder is missing, a sibling
  * already has the name (ignoring case, so also an unchanged or case-only rename) or [renameDir] fails.
  */
@@ -66,12 +66,13 @@ internal suspend fun renameFolderRows(
     if (parent.listFiles()?.any { it.name.equals(newName, ignoreCase = true) } != false) return null // taken, or unreadable
     val oldFolder = folder.path.replace(File.separatorChar, '/')
     val newFolder = File(parent, newName).path.replace(File.separatorChar, '/')
+    // Snapshot BEFORE the rename: a sync running right after it would drop these rows (files gone) and lose their flags
+    val tree = dao.getAllMedia().filter { it.filePath.startsWith("$oldFolder/") }
     if (!renameDir(folder, File(parent, newName))) return null
     var oldPaths: List<String> = emptyList()
     var newPaths: List<String> = emptyList()
     try {
         inTransaction {
-            val tree = dao.getAllMedia().filter { it.filePath.startsWith("$oldFolder/") }
             val moved = tree.map { row ->
                 val tail = row.folderPath.removePrefix(oldFolder) // "" for a direct file, "/sub" below it
                 val rel = row.relativePath.trimEnd('/')

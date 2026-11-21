@@ -165,4 +165,24 @@ class RenameFolderTest {
         assertEquals(3, result.second.size)
         assertTrue(result.second.all { it.startsWith("$base/Trips/") })
     }
+
+    @Test
+    fun aSyncRunningRightAfterTheRenameDoesNotLoseFlags() {
+        val dao = FakeDao(rows)
+        // Simulates syncMediaStore between renameTo and the transaction: old rows dropped (files gone), new rows default
+        val result = rename(dao, "Holiday", renameDir = { from, to ->
+            from.renameTo(to).also { ok ->
+                if (ok) rows.filter { it.filePath.startsWith(trip.path.replace('\\', '/') + "/") }.forEach { old ->
+                    dao.rows.remove(old.filePath)
+                    val path = old.filePath.replace("/Trip/", "/Holiday/")
+                    dao.rows[path] = old.copy(filePath = path, isFavorite = false, deletedDate = 0L)
+                }
+            }
+        })
+        assertTrue(result != null)
+        val fav = dao.rows.values.single { it.fileName == "a.jpg" }
+        val bin = dao.rows.values.single { it.fileName == "bin.jpg" }
+        assertTrue(fav.isFavorite)
+        assertEquals(123L, bin.deletedDate)
+    }
 }
