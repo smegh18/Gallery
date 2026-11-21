@@ -17,3 +17,14 @@ internal fun groupPlaces(items: List<MediaItem>): List<PlaceGroup> =
 
 /** Card or marker tap: the media list of exactly this place, titled with it (MapActivity → MediaListActivity). */
 internal fun placeMediaRoute(group: PlaceGroup): String = Screen.AlbumDetail.createRoute("filter:place:${group.key}", group.key)
+
+/**
+ * item_location face per ce/a: one item shows the single cover; 2 stack full-width, 3 put two over one,
+ * 4+ make the 2x2 mosaic (no overflow count). Rows of item indices; empty for the single cover.
+ */
+internal fun placeMosaicRows(count: Int): List<List<Int>> = when {
+    count > 3 -> listOf(listOf(0, 1), listOf(2, 3))
+    count == 3 -> listOf(listOf(0, 1), listOf(2))
+    count == 2 -> listOf(listOf(0), listOf(1))
+    else -> emptyList()
+}
