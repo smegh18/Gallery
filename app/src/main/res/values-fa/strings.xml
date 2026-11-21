@@ -327,4 +327,8 @@
     <string name="scanning_photos">در حال اسکن تصاویر...</string>
     <string name="scanning_time">زمان اسکن وابسته به تعداد تصاویر است</string>
     <string name="moment_lottie_text">لطفاً منتظر بمانید تا تصاویر اسکن شوند. این کمتر از چند لحظه طول خواهد کشید.</string>
+    <string name="geographic_photo">تصویر جغرافیایی</string>
+    <string name="allow">اجازه دادن</string>
+    <string name="allow_gallery_location">به گالری اجازه دسترسی به موقعیت شما را بدهید.</string>
+    <string name="home_permission_location">لطفاً مجوز موقعیت را اعطا کنید.</string>
 </resources>

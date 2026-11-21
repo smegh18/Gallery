@@ -337,4 +337,8 @@
     <string name="scanning_photos">Сканирование фотографий....</string>
     <string name="scanning_time">Время сканирования зависит от количества фотографий</string>
     <string name="moment_lottie_text">Пожалуйста, подождите, пока мы сканируем изображения. Это не займет много времени..</string>
+    <string name="geographic_photo">Географическое фото</string>
+    <string name="allow">Разрешить</string>
+    <string name="allow_gallery_location">Разрешите Галерее доступ к вашему местоположению.</string>
+    <string name="home_permission_location">Пожалуйста, предоставьте разрешение на местоположение.</string>
 </resources>

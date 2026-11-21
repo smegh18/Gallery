@@ -88,6 +88,20 @@ internal fun burstGroupKey(filePath: String, fileName: String, folderPath: Strin
 internal fun MediaItem.burstKey(manufacturer: String = android.os.Build.MANUFACTURER.orEmpty()): String =
     burstGroupKey(filePath, fileName, folderPath, mediaType == MediaType.IMAGE, manufacturer)
 
+/** A usable photo position: not the 0,0 "no location" default and inside the lat/lng ranges (NaN fails both). */
+internal fun hasCoordinates(lat: Float, lng: Float): Boolean =
+    (lat != 0f || lng != 0f) && lat in -90f..90f && lng in -180f..180f
+
+/**
+ * Place group key (MapViewModel groups by getPlace()): the trimmed place name, else "lat,lng" at 4 decimals (~11 m)
+ * when only coordinates exist, else "". Travels as filter:place:<key> and is only compared, never used as a path.
+ */
+internal fun placeKey(place: String, lat: Float, lng: Float): String = place.trim().ifEmpty {
+    if (hasCoordinates(lat, lng)) String.format(java.util.Locale.ROOT, "%.4f,%.4f", lat, lng) else ""
+}
+
+internal fun MediaItem.placeKey(): String = placeKey(placeName, latitude, longitude)
+
 /** [path] after [oldFolder] became [newFolder]: the folder itself and everything under it move, any other path stays. */
 internal fun movedPath(path: String, oldFolder: String, newFolder: String): String = when {
     path == oldFolder -> newFolder
@@ -375,7 +389,14 @@ class MediaRepositoryImpl(
             }
             folderPath == "filter:place" -> {
                 activeEntities.map { list ->
-                    list.filter { it.isLocation || it.lat != 0f || it.longs != 0f }.map { it.toDomain() }
+                    list.filter { placeKey(it.place, it.lat, it.longs).isNotEmpty() }.map { it.toDomain() }
+                }
+            }
+            folderPath.startsWith("filter:place:") -> {
+                // One place: its media among the current rows, matched by key
+                val key = folderPath.removePrefix("filter:place:")
+                activeEntities.map { list ->
+                    list.filter { placeKey(it.place, it.lat, it.longs) == key }.map { it.toDomain() }
                 }
             }
             folderPath == "filter:favorites" -> {

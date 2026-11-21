@@ -327,4 +327,8 @@
     <string name="scanning_photos">Ikinikindat ang Mga Larawan....</string>
     <string name="scanning_time">Ang oras ng pag-i-scan ay nagdedepende sa bilang ng mga larawan</string>
     <string name="moment_lottie_text">Mangyaring maghintay habang sinusuri namin ang mga imahe. Hindi ito tatagal nang matagal.</string>
+    <string name="geographic_photo">Geographic photo</string>
+    <string name="allow">Payagan</string>
+    <string name="allow_gallery_location">Payagan ang Gallery na makapag-access sa iyong lokasyon.</string>
+    <string name="home_permission_location">Pakipagkaloob ng pahintulot sa lokasyon.</string>
 </resources>

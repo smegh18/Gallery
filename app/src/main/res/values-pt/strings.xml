@@ -335,4 +335,8 @@
     <string name="scanning_photos">Digitalizando Fotos...</string>
     <string name="scanning_time">O tempo de digitalização depende do número de fotos</string>
     <string name="moment_lottie_text">Aguarde enquanto escaneamos as imagens. Isso não vai demorar muito.</string>
+    <string name="geographic_photo">Foto Geográfica</string>
+    <string name="allow">Permitir</string>
+    <string name="allow_gallery_location">Permitir que a Galeria acesse sua localização.</string>
+    <string name="home_permission_location">Por favor, conceda permissão de localização.</string>
 </resources>

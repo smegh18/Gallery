@@ -1,9 +1,16 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
 }
+
+// Our own Maps key lives only in the untracked local.properties (MAPS_API_KEY=...); blank leaves the Place map empty
+val mapsApiKey: String = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}.getProperty("MAPS_API_KEY", "").trim()
 
 android {
     namespace = "com.quizango.gallery"
@@ -17,6 +24,7 @@ android {
         versionName = "2.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
 
     buildTypes {
@@ -77,6 +85,9 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+
+    // Place map (UI-SPEC §7, user decision 2026-11-21)
+    implementation("com.google.android.gms:play-services-maps:20.1.0")
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)

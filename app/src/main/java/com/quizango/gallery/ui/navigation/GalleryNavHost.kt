@@ -38,6 +38,7 @@ import com.quizango.gallery.ui.creative.WallpaperScreen
 import com.quizango.gallery.ui.discovery.AnimatedMediaScreen
 import com.quizango.gallery.ui.discovery.BurstPhotoScreen
 import com.quizango.gallery.ui.discovery.MomentsScreen
+import com.quizango.gallery.ui.discovery.PlaceScreen
 import com.quizango.gallery.ui.discovery.momentRoute
 import com.quizango.gallery.ui.discovery.OrganizerRecycleScreen
 import com.quizango.gallery.ui.discovery.QuickOrganizerScreen
@@ -459,6 +460,18 @@ fun GalleryNavHost(
                 mediaRepository = app.mediaRepository,
                 moments = app.moments,
                 onMomentClick = { label -> navController.navigateOnce(momentRoute(label)) },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.Place.route,
+            arguments = listOf(navArgument("key") { type = NavType.StringType; defaultValue = "" })
+        ) { backStackEntry ->
+            PlaceScreen(
+                selectedKey = URLDecoder.decode(backStackEntry.arguments?.getString("key") ?: "", StandardCharsets.UTF_8.toString()),
+                mediaRepository = app.mediaRepository,
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

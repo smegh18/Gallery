@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.discovery.placeRoute
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.Inter
@@ -45,14 +46,14 @@ enum class ExploreItem {
 }
 
 /** Where each Explore item goes (UI-SPEC 3.7); no interstitials. */
-internal fun exploreRoute(item: ExploreItem, junkCleanedToday: Boolean, placeTitle: String): String = when (item) {
+internal fun exploreRoute(item: ExploreItem, junkCleanedToday: Boolean): String = when (item) {
     ExploreItem.SCAN -> if (junkCleanedToday) Screen.Cleaner.route else Screen.RemoveJunk.route
     ExploreItem.AI_EDITOR -> Screen.Editor.createRoute()
     ExploreItem.COLLAGE -> Screen.CollageMaker.route
     ExploreItem.VAULT -> Screen.VaultLock.route
     ExploreItem.FAVORITES -> Screen.Favorites.route
     ExploreItem.MOMENTS -> Screen.Moments.route
-    ExploreItem.PLACE -> Screen.AlbumDetail.createRoute("filter:place", placeTitle)
+    ExploreItem.PLACE -> placeRoute()
     ExploreItem.DUPLICATE_FINDER -> Screen.DuplicateWaiting.route
     ExploreItem.QUICK_ORGANIZE -> Screen.QuickOrganizer.route
     ExploreItem.RECYCLE_BIN -> Screen.RecycleBin.route
@@ -83,14 +84,13 @@ fun ExploreTab(
     onNavigate: (String) -> Unit,
     onCollageOpened: () -> Unit
 ) {
-    val placeTitle = stringResource(R.string.str_home_place)
     val context = LocalContext.current
     val showDuplicate = remember {
         val info = ActivityManager.MemoryInfo()
         (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(info)
         showsDuplicateFinder(Build.VERSION.SDK_INT, info.totalMem)
     }
-    fun open(item: ExploreItem) = onNavigate(exploreRoute(item, junkCleanedToday, placeTitle))
+    fun open(item: ExploreItem) = onNavigate(exploreRoute(item, junkCleanedToday))
 
     // Reference scrollView has overScrollMode=never.
     CompositionLocalProvider(LocalOverscrollConfiguration provides null) {

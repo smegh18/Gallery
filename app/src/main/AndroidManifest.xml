@@ -80,6 +80,11 @@
                 android:resource="@xml/shortcuts" />
         </activity>
 
+        <!-- Place map key from local.properties MAPS_API_KEY; empty when unset (the map area then stays blank) -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

@@ -286,4 +286,8 @@
     <string name="scanning_photos">ফটো স্ক্যান করা হচ্ছে...</string>
     <string name="scanning_time">স্ক্যান করার সময় ছবির সংখ্যার উপর নির্ভর করে</string>
     <string name="moment_lottie_text">আমরা ছবি স্ক্যান করছি অনুগ্রহ করে অপেক্ষা করুন. এটি বেশি সময় নেবে না..</string>
+    <string name="geographic_photo">ভৌগলিক ছবি</string>
+    <string name="allow">অনুমতি দিন</string>
+    <string name="allow_gallery_location">গ্যালারীকে আপনার অবস্থান অ্যাক্সেস করার অনুমতি দিন।</string>
+    <string name="home_permission_location">অনুগ্রহ করে অবস্থানের অনুমতি দিন।</string>
 </resources>

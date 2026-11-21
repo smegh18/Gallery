@@ -335,4 +335,8 @@
     <string name="scanning_photos">사진 스캔 중....</string>
     <string name="scanning_time">사진 스캔 시간은 사진 수에 따라 달라집니다</string>
     <string name="moment_lottie_text">이미지를 스캔하는 동안 기다려주세요. 이 작업은 오래 걸리지 않습니다.</string>
+    <string name="geographic_photo">지리 사진</string>
+    <string name="allow">허용하기</string>
+    <string name="allow_gallery_location">갤러리가 위치에 액세스하도록 허용하십시오.</string>
+    <string name="home_permission_location">위치 권한을 부여하십시오.</string>
 </resources>

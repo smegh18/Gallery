@@ -335,4 +335,8 @@
     <string name="scanning_photos">ပုံများကို ရှာဖွေနေသည်....</string>
     <string name="scanning_time">ပုံများအရောင်ကြားခြင်းကို ရှာမည်ဖြစ်သည်</string>
     <string name="moment_lottie_text">ကျေးဇူးတင်ပါ၊ သင့်ပတ်ဝန်းကျင်အတွင်း ဓာတ်ဆီပါတယ်။ ဒါကြောင်းနောက်လည်း မျှော်လင့်ပါမည်။</string>
+    <string name="geographic_photo">တည်နေသော ဓာတ်ပုံ</string>
+    <string name="allow">ခွင့်ပြုပါ</string>
+    <string name="allow_gallery_location">သွေးစစ်သည်ကို သွားပါ။</string>
+    <string name="home_permission_location">တည်နေရာ အကြောင်းစားပြုလုပ်ရန် အိတ်အမှတ်ပေးပါ။</string>
 </resources>

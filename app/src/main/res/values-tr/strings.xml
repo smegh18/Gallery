@@ -323,4 +323,8 @@
     <string name="scanning_photos">Fotoğraflar taranıyor....</string>
     <string name="scanning_time">Tarama süresi fotoğraf sayısına bağlıdır</string>
     <string name="moment_lottie_text">Görüntüleri tararken lütfen bekleyin. Çok uzun sürmeyecek.</string>
+    <string name="geographic_photo">Coğrafi fotoğraf</string>
+    <string name="allow">İzin vermek</string>
+    <string name="allow_gallery_location">"Galeri'nin konumunuza erişmesine izin verin."</string>
+    <string name="home_permission_location">Lütfen konum izni verin.</string>
 </resources>

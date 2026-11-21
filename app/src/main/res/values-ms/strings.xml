@@ -335,4 +335,8 @@
     <string name="scanning_photos">Pengimbasan Foto....</string>
     <string name="scanning_time">Masa pengimbasan bergantung pada jumlah foto</string>
     <string name="moment_lottie_text">Harap tunggu sebentar semasa kami mengimbas imej. Ini tidak akan lama.</string>
+    <string name="geographic_photo">Foto Geografi</string>
+    <string name="allow">Benarkan</string>
+    <string name="allow_gallery_location">Benarkan Galeri mengakses lokasi anda.</string>
+    <string name="home_permission_location">Sila berikan kebenaran lokasi.</string>
 </resources>

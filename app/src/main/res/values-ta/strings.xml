@@ -336,4 +336,8 @@
     <string name="scanning_photos">புகைப்படங்கள் கணக்கிடுகின்றன....</string>
     <string name="scanning_time">புகைப்படங்களின் எண்ணிக்கைக்கு கணக்கிடுதல் நேரம் விளக்கம் செய்யும்</string>
     <string name="moment_lottie_text">நாங்கள் படங்களை ஸ்கேன் செய்கிறோம் என்று தயவுசெய்து காத்திருக்கவும். இது குறைந்த நேரம் பெறாது.</string>
+    <string name="geographic_photo">புவியியல் புகைப்படம்</string>
+    <string name="allow">அனுமதி</string>
+    <string name="allow_gallery_location">உங்கள் இடத்தில் கேலரி அணுகல் அனுமதிக்கவும்.</string>
+    <string name="home_permission_location">இருப்பிடத்திற்கு அனுமதி அளுத்துக் கொள்ளவும்.</string>
 </resources>

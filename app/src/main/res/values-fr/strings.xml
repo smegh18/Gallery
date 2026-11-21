@@ -327,4 +327,8 @@
     <string name="scanning_photos">Analyse des photos en cours...</string>
     <string name="scanning_time">"Le temps d'analyse dépend du nombre de photos"</string>
     <string name="moment_lottie_text">Veuillez patienter pendant que nous scannons les images. Cela ne prendra pas longtemps.</string>
+    <string name="geographic_photo">Photo géographique</string>
+    <string name="allow">Autoriser</string>
+    <string name="allow_gallery_location">Autorisez la Galerie à accéder à votre emplacement.</string>
+    <string name="home_permission_location">"Veuillez accorder l'autorisation de localisation."</string>
 </resources>

@@ -327,4 +327,8 @@
     <string name="scanning_photos">جارٍ مسح الصور...</string>
     <string name="scanning_time">مدة المسح تعتمد على عدد الصور</string>
     <string name="moment_lottie_text">الرجاء الانتظار حيث نقوم بفحص الصور. لن يستغرق ذلك وقتًا طويلاً.</string>
+    <string name="geographic_photo">صورة جغرافية</string>
+    <string name="allow">اسمح</string>
+    <string name="allow_gallery_location">اسمح لمعرض الصور بالوصول إلى موقعك.</string>
+    <string name="home_permission_location">يرجى منح إذن الموقع.</string>
 </resources>

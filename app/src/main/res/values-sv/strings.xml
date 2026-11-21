@@ -335,4 +335,8 @@
     <string name="scanning_photos">Skannar bilder....</string>
     <string name="scanning_time">Skanningstiden beror på antalet bilder</string>
     <string name="moment_lottie_text">Vänligen vänta medan vi skannar bilder. Detta kommer inte att ta lång tid.</string>
+    <string name="geographic_photo">Geografiskt foto</string>
+    <string name="allow">Tillåt</string>
+    <string name="allow_gallery_location">Tillåt Galeriet att få åtkomst till din plats.</string>
+    <string name="home_permission_location">Var vänlig och ge plats tillstånd.</string>
 </resources>

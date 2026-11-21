@@ -82,6 +82,7 @@ sealed class Screen(val route: String) {
 
     // Discovery & Media Types
     data object Moments : Screen("moments")
+    data object Place : Screen("place?key={key}") // built by discovery.placeRoute
     data object StoryView : Screen("story?path={path}&title={title}") {
         fun createRoute(path: String, title: String): String {
             val encodedPath = URLEncoder.encode(path, StandardCharsets.UTF_8.toString())

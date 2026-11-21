@@ -1,5 +1,6 @@
 package com.quizango.gallery
 
+import com.quizango.gallery.ui.discovery.placeRoute
 import com.quizango.gallery.ui.home.ExploreItem
 import com.quizango.gallery.ui.home.exploreRoute
 import com.quizango.gallery.ui.home.manageRows
@@ -13,7 +14,7 @@ import org.junit.Test
 
 class ExploreTabTest {
 
-    private fun route(item: ExploreItem, junk: Boolean = false) = exploreRoute(item, junk, "Place")
+    private fun route(item: ExploreItem, junk: Boolean = false) = exploreRoute(item, junk)
 
     @Test
     fun scanNowOpensRemoveJunkUnlessJunkWasClearedToday() {
@@ -28,7 +29,7 @@ class ExploreTabTest {
         assertEquals(Screen.VaultLock.route, route(ExploreItem.VAULT))
         assertEquals(Screen.Favorites.route, route(ExploreItem.FAVORITES))
         assertEquals(Screen.Moments.route, route(ExploreItem.MOMENTS))
-        assertEquals(Screen.AlbumDetail.createRoute("filter:place", "Place"), route(ExploreItem.PLACE))
+        assertEquals(placeRoute(), route(ExploreItem.PLACE))
         assertEquals(Screen.DuplicateWaiting.route, route(ExploreItem.DUPLICATE_FINDER))
         assertEquals(Screen.QuickOrganizer.route, route(ExploreItem.QUICK_ORGANIZE))
         assertEquals(Screen.RecycleBin.route, route(ExploreItem.RECYCLE_BIN))

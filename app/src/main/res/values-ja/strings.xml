@@ -335,4 +335,8 @@
     <string name="scanning_photos">写真をスキャン中...</string>
     <string name="scanning_time">スキャン時間は写真の数によります</string>
     <string name="moment_lottie_text">画像をスキャンしている間お待ちください。これは長くはかかりません。</string>
+    <string name="geographic_photo">地理的な写真</string>
+    <string name="allow">許可する</string>
+    <string name="allow_gallery_location">ギャラリーに位置情報へのアクセスを許可する。</string>
+    <string name="home_permission_location">位置情報の許可を付与してください</string>
 </resources>
