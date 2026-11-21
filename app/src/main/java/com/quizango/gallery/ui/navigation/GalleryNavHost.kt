@@ -38,6 +38,7 @@ import com.quizango.gallery.ui.creative.WallpaperScreen
 import com.quizango.gallery.ui.discovery.AnimatedMediaScreen
 import com.quizango.gallery.ui.discovery.BurstPhotoScreen
 import com.quizango.gallery.ui.discovery.MomentsScreen
+import com.quizango.gallery.ui.discovery.momentRoute
 import com.quizango.gallery.ui.discovery.OrganizerRecycleScreen
 import com.quizango.gallery.ui.discovery.QuickOrganizerScreen
 import com.quizango.gallery.ui.discovery.SearchColorScreen
@@ -457,9 +458,7 @@ fun GalleryNavHost(
             MomentsScreen(
                 mediaRepository = app.mediaRepository,
                 moments = app.moments,
-                onMomentClick = { label ->
-                    navController.navigateOnce(Screen.AlbumDetail.createRoute("filter:moment:$label", label))
-                },
+                onMomentClick = { label -> navController.navigateOnce(momentRoute(label)) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -565,9 +564,8 @@ fun GalleryNavHost(
         composable(Screen.AnimatedMedia.route) {
             AnimatedMediaScreen(
                 mediaRepository = app.mediaRepository,
-                onMediaClick = { mediaItem ->
-                    navController.navigateOnce(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
-                },
+                vaultRepository = app.vaultRepository,
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

@@ -319,4 +319,11 @@
     <string name="selected_media_files_successfully_copied">Matagumpay na inikopya ang napiling mga media file.</string>
     <string name="selected_media_files_successfully_moved">Matagumpay na inilipat ang mga file ng media.</string>
     <string name="other_albums">Iba pang Mga Album</string>
+    <string name="moment">Mga Sandali</string>
+    <string name="animated">Animated</string>
+    <string name="oops">Ay oo!</string>
+    <string name="no_moment_files_found">Walang mga file ng sandali dito.</string>
+    <string name="scanning_photos">Ikinikindat ang Mga Larawan....</string>
+    <string name="scanning_time">Ang oras ng pag-i-scan ay nagdedepende sa bilang ng mga larawan</string>
+    <string name="moment_lottie_text">Mangyaring maghintay habang sinusuri namin ang mga imahe. Hindi ito tatagal nang matagal.</string>
 </resources>

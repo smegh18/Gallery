@@ -316,4 +316,11 @@
     <string name="selected_media_files_successfully_copied">媒体文件复制成功。</string>
     <string name="selected_media_files_successfully_moved">媒体文件移动成功。</string>
     <string name="other_albums">其他专辑</string>
+    <string name="moment">时刻</string>
+    <string name="animated">动画</string>
+    <string name="oops">哎呀！</string>
+    <string name="no_moment_files_found">这里没有时刻文件。</string>
+    <string name="scanning_photos">正在扫描照片....</string>
+    <string name="scanning_time">扫描时间取决于照片数量</string>
+    <string name="moment_lottie_text">我们正在扫描图片，请稍候。不会花太长时间。</string>
 </resources>

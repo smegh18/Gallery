@@ -415,4 +415,11 @@
     <string name="selected_media_files_successfully_moved">Media files moved successfully.</string>
     <!-- Phase 5 album / discovery browsing (§5, §6, §8, §9) -->
     <string name="other_albums">Other Albums</string>
+    <string name="moment">Moments</string>
+    <string name="animated">Animated</string>
+    <string name="oops">Oops!</string>
+    <string name="no_moment_files_found">No moment files here.</string>
+    <string name="scanning_photos">Scanning Photos....</string>
+    <string name="scanning_time">Scanning time depends on number of photos</string>
+    <string name="moment_lottie_text">Kindly wait as we are scanning images. This won’t take long..</string>
 </resources>

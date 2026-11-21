@@ -327,4 +327,11 @@
     <string name="selected_media_files_successfully_copied">Valda mediefiler har kopierats framgångsrikt.</string>
     <string name="selected_media_files_successfully_moved">Mediefiler flyttade framgångsrikt.</string>
     <string name="other_albums">Andra Album</string>
+    <string name="moment">Ögonblick</string>
+    <string name="animated">Animerad</string>
+    <string name="oops">Hoppsan!</string>
+    <string name="no_moment_files_found">Inga ögonblicksfilerna här.</string>
+    <string name="scanning_photos">Skannar bilder....</string>
+    <string name="scanning_time">Skanningstiden beror på antalet bilder</string>
+    <string name="moment_lottie_text">Vänligen vänta medan vi skannar bilder. Detta kommer inte att ta lång tid.</string>
 </resources>

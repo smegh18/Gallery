@@ -315,4 +315,11 @@
     <string name="selected_media_files_successfully_copied">Medya dosyaları başarıyla kopyalandı.</string>
     <string name="selected_media_files_successfully_moved">Medya dosyaları başarıyla taşındı.</string>
     <string name="other_albums">Diğer Albümler</string>
+    <string name="moment">Anlar</string>
+    <string name="animated">Animasyonlu</string>
+    <string name="oops">Oops!</string>
+    <string name="no_moment_files_found">Burada anlık dosya yok.</string>
+    <string name="scanning_photos">Fotoğraflar taranıyor....</string>
+    <string name="scanning_time">Tarama süresi fotoğraf sayısına bağlıdır</string>
+    <string name="moment_lottie_text">Görüntüleri tararken lütfen bekleyin. Çok uzun sürmeyecek.</string>
 </resources>

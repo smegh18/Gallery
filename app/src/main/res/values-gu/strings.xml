@@ -311,4 +311,11 @@
     <string name="selected_media_files_successfully_copied">પસંદગીના મીડિયા ફાઇલો સફળતાપૂર્વક કૉપિ કરી દીધી.</string>
     <string name="selected_media_files_successfully_moved">મિડિયા ફાઇલો સફળતાથી ખસેડવામાં આવતા.</string>
     <string name="other_albums">અન્ય આલ્બમ</string>
+    <string name="moment">મોમેન્ટસ</string>
+    <string name="animated">એનિમેટેડ</string>
+    <string name="oops">ઓહ!</string>
+    <string name="no_moment_files_found">અહીં કોઈ મોમેન્ટ ફાઇલ્સ મળ્યા નથી.</string>
+    <string name="scanning_photos">ફોટો સ્કેન થઈ રહી છે....</string>
+    <string name="scanning_time">સ્કેનિંગનો સમય ફોટોની સંખ્યા પર આધાર રાખે છે</string>
+    <string name="moment_lottie_text">કૃપા કરીને રાહ જોવાની છે કે અમે ચિત્રોને સ્કેન કરીએ છીએ. આ ઘણું સમય નહીં લઇશે.</string>
 </resources>

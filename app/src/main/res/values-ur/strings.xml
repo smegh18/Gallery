@@ -298,4 +298,11 @@
     <string name="selected_media_files_successfully_copied">منتخب شدہ میڈیا فائلیں کامیابی سے نقل کر دی گئیں۔</string>
     <string name="selected_media_files_successfully_moved">رسائی فائلیں کامیابی سے ہٹا دی گئی ہیں۔</string>
     <string name="other_albums">دیگر البمز</string>
+    <string name="moment">لمحات</string>
+    <string name="animated">متحرک</string>
+    <string name="oops">آپس میں بول چال:!</string>
+    <string name="no_moment_files_found">یہاں کوئی لمحہ فائلیں نہیں ہیں۔</string>
+    <string name="scanning_photos">تصاویر اسکین کی جا رہی ہیں...</string>
+    <string name="scanning_time">اسکیننگ کا وقت تصاویر کی تعداد پر منحصر ہوتا ہے</string>
+    <string name="moment_lottie_text">براہ کرم انتظار کریں چونکہ ہم تصاویر کو اسکین کر رہے ہیں۔ یہ زیادہ وقت نہیں لیگا۔</string>
 </resources>

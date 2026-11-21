@@ -319,4 +319,11 @@
     <string name="selected_media_files_successfully_copied">فایل‌های رسانه‌ای انتخابی با موفقیت کپی شدند.</string>
     <string name="selected_media_files_successfully_moved">فایل‌های رسانه با موفقیت منتقل شدند.</string>
     <string name="other_albums">سایر آلبوم‌ها</string>
+    <string name="moment">لحظات</string>
+    <string name="animated">متحرک</string>
+    <string name="oops">اوه!</string>
+    <string name="no_moment_files_found">فایل‌های لحظه‌ای موجود نیست.</string>
+    <string name="scanning_photos">در حال اسکن تصاویر...</string>
+    <string name="scanning_time">زمان اسکن وابسته به تعداد تصاویر است</string>
+    <string name="moment_lottie_text">لطفاً منتظر بمانید تا تصاویر اسکن شوند. این کمتر از چند لحظه طول خواهد کشید.</string>
 </resources>

@@ -278,4 +278,11 @@
     <string name="selected_media_files_successfully_copied">মিডিয়া ফাইল সফলভাবে অনুলিপি করা হয়েছে.</string>
     <string name="selected_media_files_successfully_moved">মিডিয়া ফাইল সফলভাবে সরানো হয়েছে৷</string>
     <string name="other_albums">অন্যান্য অ্যালবাম</string>
+    <string name="moment">মুহূর্ত</string>
+    <string name="animated">অ্যানিমেটেড</string>
+    <string name="oops">উফ!</string>
+    <string name="no_moment_files_found">এখানে কোন মুহূর্ত ফাইল নেই.</string>
+    <string name="scanning_photos">ফটো স্ক্যান করা হচ্ছে...</string>
+    <string name="scanning_time">স্ক্যান করার সময় ছবির সংখ্যার উপর নির্ভর করে</string>
+    <string name="moment_lottie_text">আমরা ছবি স্ক্যান করছি অনুগ্রহ করে অপেক্ষা করুন. এটি বেশি সময় নেবে না..</string>
 </resources>

@@ -319,4 +319,11 @@
     <string name="selected_media_files_successfully_copied">تم نسخ ملفات الوسائط المحددة بنجاح.</string>
     <string name="selected_media_files_successfully_moved">تم نقل ملفات الوسائط بنجاح.</string>
     <string name="other_albums">الألبومات الأخرى</string>
+    <string name="moment">لحظات</string>
+    <string name="animated">متحرك</string>
+    <string name="oops">عفوًا!</string>
+    <string name="no_moment_files_found">لا توجد ملفات لحظة هنا.</string>
+    <string name="scanning_photos">جارٍ مسح الصور...</string>
+    <string name="scanning_time">مدة المسح تعتمد على عدد الصور</string>
+    <string name="moment_lottie_text">الرجاء الانتظار حيث نقوم بفحص الصور. لن يستغرق ذلك وقتًا طويلاً.</string>
 </resources>

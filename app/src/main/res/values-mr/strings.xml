@@ -311,4 +311,11 @@
     <string name="selected_media_files_successfully_copied">निवडलेली मीडिया फाइले सफलतेने कॉपी केली गेली.</string>
     <string name="selected_media_files_successfully_moved">मीडिया फाइल्स सफलतेच हलवी गेली.</string>
     <string name="other_albums">इतर एल्बम्स</string>
+    <string name="moment">क्षणे</string>
+    <string name="animated">चलचित्रित</string>
+    <string name="oops">अरेरे!</string>
+    <string name="no_moment_files_found">इथे कोणत्याही क्षणफाइल्स नाहीत.</string>
+    <string name="scanning_photos">फोटो स्कॅन करीत आहे....</string>
+    <string name="scanning_time">स्कॅनिंग वेळ फोटोच्या संख्येनुसार आहे</string>
+    <string name="moment_lottie_text">कृपया थांबा, आपल्याला चित्रे स्कॅन करत आहोत. हे लांबू नका.</string>
 </resources>

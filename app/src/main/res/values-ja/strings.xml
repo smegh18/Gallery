@@ -327,4 +327,11 @@
     <string name="selected_media_files_successfully_copied">選択したメディアファイルを正常にコピーしました。</string>
     <string name="selected_media_files_successfully_moved">メディアファイルが正常に移動しました。</string>
     <string name="other_albums">その他のアルバム</string>
+    <string name="moment">瞬間</string>
+    <string name="animated">アニメーション</string>
+    <string name="oops">おっと！</string>
+    <string name="no_moment_files_found">ここにはモーメントファイルがありません。</string>
+    <string name="scanning_photos">写真をスキャン中...</string>
+    <string name="scanning_time">スキャン時間は写真の数によります</string>
+    <string name="moment_lottie_text">画像をスキャンしている間お待ちください。これは長くはかかりません。</string>
 </resources>

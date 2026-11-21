@@ -327,4 +327,11 @@
     <string name="selected_media_files_successfully_copied">चयनित मीडिया फ़ाइलें सफलतापूर्वक कॉपी की गईं।</string>
     <string name="selected_media_files_successfully_moved">मीडिया फाइल्स सफलतापूर्वक हलवी गई.</string>
     <string name="other_albums">अन्य एल्बम</string>
+    <string name="moment">क्षण</string>
+    <string name="animated">एनिमेटेड</string>
+    <string name="oops">उफ़!</string>
+    <string name="no_moment_files_found">यहाँ कोई पल फ़ाइल नहीं मिली।</string>
+    <string name="scanning_photos">फोटो जांच रहे हैं....</string>
+    <string name="scanning_time">फोटों की संख्या पर फोटो जांच करने का समय निर्धारित करता है</string>
+    <string name="moment_lottie_text">कृपया प्रतीक्षा करें क्योंकि हम छवियाँ स्कैन कर रहे हैं। यह ज्यादा समय नहीं लेगा।</string>
 </resources>

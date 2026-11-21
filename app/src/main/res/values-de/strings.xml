@@ -319,4 +319,11 @@
     <string name="selected_media_files_successfully_copied">Ausgewählte Mediendateien wurden erfolgreich kopiert.</string>
     <string name="selected_media_files_successfully_moved">Mediendateien erfolgreich verschoben.</string>
     <string name="other_albums">Andere Alben</string>
+    <string name="moment">Momente</string>
+    <string name="animated">Animiert</string>
+    <string name="oops">Hoppla!</string>
+    <string name="no_moment_files_found">Keine Momentdateien hier.</string>
+    <string name="scanning_photos">Scannen von Fotos....</string>
+    <string name="scanning_time">Die Scannzeit hängt von der Anzahl der Fotos ab</string>
+    <string name="moment_lottie_text">Bitte warten Sie, während wir Bilder scannen. Dies wird nicht lange dauern.</string>
 </resources>

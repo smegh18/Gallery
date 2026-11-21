@@ -328,4 +328,11 @@
     <string name="selected_media_files_successfully_copied">தேர்ந்தெடுக்கப்பட்ட உலா கோப்புகள் வெற்றியாக நகல் எடுக்கப்பட்டன.</string>
     <string name="selected_media_files_successfully_moved">மீடியா கோப்புகள் வெற்றியாக நகலெடுக்கப்பட்டன.</string>
     <string name="other_albums">மற்ற ஆல்பங்கள்</string>
+    <string name="moment">காலம்</string>
+    <string name="animated">அனிமேடெட்</string>
+    <string name="oops">அச்சமடைந்தது!</string>
+    <string name="no_moment_files_found">இங்கு எந்த கால கோப்புகளும் இல்லை.</string>
+    <string name="scanning_photos">புகைப்படங்கள் கணக்கிடுகின்றன....</string>
+    <string name="scanning_time">புகைப்படங்களின் எண்ணிக்கைக்கு கணக்கிடுதல் நேரம் விளக்கம் செய்யும்</string>
+    <string name="moment_lottie_text">நாங்கள் படங்களை ஸ்கேன் செய்கிறோம் என்று தயவுசெய்து காத்திருக்கவும். இது குறைந்த நேரம் பெறாது.</string>
 </resources>

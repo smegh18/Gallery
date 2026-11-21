@@ -329,4 +329,11 @@
     <string name="selected_media_files_successfully_copied">Медиа файлы успешно скопированы.</string>
     <string name="selected_media_files_successfully_moved">Медиа файлы успешно перемещены.</string>
     <string name="other_albums">Другие альбомы</string>
+    <string name="moment">Моменты</string>
+    <string name="animated">Анимированное</string>
+    <string name="oops">Ой!</string>
+    <string name="no_moment_files_found">Здесь нет файлов моментов.</string>
+    <string name="scanning_photos">Сканирование фотографий....</string>
+    <string name="scanning_time">Время сканирования зависит от количества фотографий</string>
+    <string name="moment_lottie_text">Пожалуйста, подождите, пока мы сканируем изображения. Это не займет много времени..</string>
 </resources>

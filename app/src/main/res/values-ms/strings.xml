@@ -327,4 +327,11 @@
     <string name="selected_media_files_successfully_copied">Fail media yang dipilih berjaya disalin.</string>
     <string name="selected_media_files_successfully_moved">Fail media berjaya dipindahkan.</string>
     <string name="other_albums">Album Lain</string>
+    <string name="moment">Moment</string>
+    <string name="animated">Animasi</string>
+    <string name="oops">Oups!</string>
+    <string name="no_moment_files_found">Tiada fail momen di sini.</string>
+    <string name="scanning_photos">Pengimbasan Foto....</string>
+    <string name="scanning_time">Masa pengimbasan bergantung pada jumlah foto</string>
+    <string name="moment_lottie_text">Harap tunggu sebentar semasa kami mengimbas imej. Ini tidak akan lama.</string>
 </resources>

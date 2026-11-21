@@ -327,4 +327,11 @@
     <string name="selected_media_files_successfully_copied">Berhasil menyalin file media yang dipilih.</string>
     <string name="selected_media_files_successfully_moved">File media berhasil dipindahkan.</string>
     <string name="other_albums">Album Lainnya</string>
+    <string name="moment">Moment</string>
+    <string name="animated">Animasi</string>
+    <string name="oops">Ups!</string>
+    <string name="no_moment_files_found">Tidak ada file momen di sini.</string>
+    <string name="scanning_photos">Memindai Foto....</string>
+    <string name="scanning_time">Waktu pemindaian tergantung pada jumlah foto</string>
+    <string name="moment_lottie_text">Tunggu sebentar karena kami sedang memindai gambar. Ini tidak akan lama.</string>
 </resources>

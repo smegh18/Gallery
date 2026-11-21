@@ -319,4 +319,11 @@
     <string name="selected_media_files_successfully_copied">Fichiers multimédias sélectionnés copiés avec succès.</string>
     <string name="selected_media_files_successfully_moved">Fichiers multimédias déplacés avec succès.</string>
     <string name="other_albums">Autres albums</string>
+    <string name="moment">Moments</string>
+    <string name="animated">Animé</string>
+    <string name="oops">Oops !</string>
+    <string name="no_moment_files_found">Aucun fichier de moment ici.</string>
+    <string name="scanning_photos">Analyse des photos en cours...</string>
+    <string name="scanning_time">"Le temps d'analyse dépend du nombre de photos"</string>
+    <string name="moment_lottie_text">Veuillez patienter pendant que nous scannons les images. Cela ne prendra pas longtemps.</string>
 </resources>

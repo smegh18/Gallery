@@ -327,4 +327,11 @@
     <string name="selected_media_files_successfully_copied">ရွေးချယ်ထားသော မီဒီယာ ဖိုင်များကို အဆင်မြင်စွာ ကော်လံသုံးထားသည်။</string>
     <string name="selected_media_files_successfully_moved">မီဒီယာ ဖိုင်များကို အောင်မြင်ပြီးခြင်း။</string>
     <string name="other_albums">အခြားအယ်လ်များ</string>
+    <string name="moment">နားမေးခြင်း</string>
+    <string name="animated">အပ်နှံမီဒီယာများ</string>
+    <string name="oops">လားမတွေ့ပါနော်!</string>
+    <string name="no_moment_files_found">ဤနေရာတွင် မော်ဒယ်ဖိုများမရှိပါ။</string>
+    <string name="scanning_photos">ပုံများကို ရှာဖွေနေသည်....</string>
+    <string name="scanning_time">ပုံများအရောင်ကြားခြင်းကို ရှာမည်ဖြစ်သည်</string>
+    <string name="moment_lottie_text">ကျေးဇူးတင်ပါ၊ သင့်ပတ်ဝန်းကျင်အတွင်း ဓာတ်ဆီပါတယ်။ ဒါကြောင်းနောက်လည်း မျှော်လင့်ပါမည်။</string>
 </resources>

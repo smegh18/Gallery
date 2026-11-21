@@ -1,41 +1,75 @@
 package com.quizango.gallery.ui.discovery
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.MomentScanner
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.Album
+import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
-import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.browse.AlbumSquareCard
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.home.PhotosEmptyState
+import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterial3Api::class)
+internal enum class MomentsState { WAIT, EMPTY, CONTENT }
+
+/**
+ * Cards once any moment exists; the scanner wait while a scan runs or the groups are not yet built from the
+ * current photos and labels; "Oops!" only after both settle, so the empty copy never flashes first.
+ */
+internal fun momentsState(groupCount: Int?, settled: Boolean, scanning: Boolean): MomentsState = when {
+    (groupCount ?: 0) > 0 -> MomentsState.CONTENT
+    scanning || !settled -> MomentsState.WAIT
+    else -> MomentsState.EMPTY
+}
+
+/** momentsScanningLayout shows once the scan has a count (MO / ga/g: max > 0 and progress > 0). */
+internal fun showsScanHeader(p: MomentScanner.Progress?): Boolean = p != null && p.total > 0 && p.done > 0
+
+/** A moment opens the media list titled with its label; the filter re-resolves the label against current rows. */
+internal fun momentRoute(label: String): String = Screen.AlbumDetail.createRoute("filter:moment:$label", label)
+
+private class MomentGroups(val photos: List<MediaItem>, val labels: Map<String, String>, val albums: List<Album>)
+
+/** MomentsActivity (§6): MomentScanner labels, shown as item_search_sub cards. */
 @Composable
 fun MomentsScreen(
     mediaRepository: MediaRepository,
@@ -50,236 +84,90 @@ fun MomentsScreen(
     val photos = remember(allMedia) { allMedia?.filter { it.mediaType != MediaType.VIDEO } }
     LaunchedEffect(photos) { photos?.let { moments.scan(it) } }
 
-    // Reference: one album per label, filling in while the scan runs
-    val groups by produceState(emptyList<Album>(), photos, labels) {
+    // One album per label, filling in while the scan runs
+    val built by produceState<MomentGroups?>(null, photos, labels) {
+        val p = photos ?: return@produceState
         value = withContext(Dispatchers.Default) {
-            MomentScanner.group(photos.orEmpty(), labels).map { (label, items) ->
+            MomentGroups(p, labels, MomentScanner.group(p, labels).map { (label, items) ->
                 val cover = items.first()
                 Album(
-                    id = "filter:moment:$label",
-                    name = label,
-                    path = "filter:moment:$label",
-                    coverPath = cover.filePath,
-                    itemCount = items.size,
-                    coverId = cover.id
+                    id = "filter:moment:$label", name = label, path = "filter:moment:$label",
+                    coverPath = cover.filePath, itemCount = items.size, coverId = cover.id
                 )
-            }
+            })
         }
     }
+    val groups = built?.albums
+    val settled = built?.let { it.photos === photos && it.labels === labels } == true
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Moments",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground
+    Column(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        SharedMediaToolbar(title = stringResource(R.string.moment), onBack = onNavigateBack)
+        progress?.takeIf(::showsScanHeader)?.let { ScanningHeader(it) }
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            when (momentsState(groups?.size, settled, progress != null)) {
+                MomentsState.WAIT -> ScannerWait()
+                MomentsState.EMPTY -> PhotosEmptyState(R.string.oops, R.string.no_moment_files_found)
+                MomentsState.CONTENT -> LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    contentPadding = PaddingValues(horizontal = 2.sdp, vertical = 6.sdp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(groups.orEmpty(), key = { it.id }) { album ->
+                        AlbumSquareCard(
+                            title = album.name,
+                            count = album.itemCount,
+                            cover = album.coverUri,
+                            titleTop = 4.sdp, // item_search_sub
+                            onClick = { onMomentClick(album.name) },
+                            modifier = Modifier.padding(4.sdp)
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            val p = progress
-            when {
-                groups.isEmpty() && (p != null || photos == null) -> WaitingForScan(p)
-                groups.isEmpty() -> EmptyMoments()
-                else -> LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    if (p != null) {
-                        item(span = { GridItemSpan(maxLineSpan) }) { ScanningCard(p) }
-                    }
-                    items(groups, key = { it.id }) { album ->
-                        AlbumCard(album = album, onClick = { onMomentClick(album.name) })
-                    }
                 }
             }
         }
+        Spacer(Modifier.navigationBarsPadding())
     }
 }
 
-/** Reference header: "Scanning Photos...." with count, bar and hint. */
+/** momentsScanningLayout: "Scanning Photos...." with done/total, a determinate bar and the hint. */
 @Composable
-private fun ScanningCard(p: MomentScanner.Progress) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(14.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = "Scanning Photos....",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "${p.done}/${p.total}",
-                fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+private fun ScanningHeader(p: MomentScanner.Progress) {
+    val titleColor = colorResource(R.color.titleColor)
+    Column(Modifier.fillMaxWidth().padding(top = 10.sdp)) {
+        Row(Modifier.fillMaxWidth().padding(top = 10.sdp, start = 10.sdp, end = 10.sdp)) {
+            Text(stringResource(R.string.scanning_photos), style = GalleryText.BodySmallRegular, color = titleColor, modifier = Modifier.weight(1f))
+            Text("${p.done}/${p.total}", style = GalleryText.BodyLargeSemiBold, color = titleColor)
         }
-        Spacer(Modifier.height(10.dp))
         LinearProgressIndicator(
-            progress = { if (p.total == 0) 0f else p.done.toFloat() / p.total },
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(4.dp)),
-            color = GalleryBlue,
-            trackColor = MaterialTheme.colorScheme.outlineVariant,
-            // plain filling line: no M3 end dot or gap
+            progress = { p.done.toFloat() / p.total },
+            color = colorResource(R.color.colorPrimary),
+            trackColor = colorResource(R.color.seekbar_color_bg),
             gapSize = 0.dp,
-            drawStopIndicator = {}
+            drawStopIndicator = {},
+            // progressBarStyleHorizontal: a 4.dp track centred in its 16.dp minimum height
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.sdp, vertical = 5.sdp).padding(vertical = 6.dp).height(4.dp)
         )
-        Spacer(Modifier.height(8.dp))
         Text(
-            text = "Scanning time depends on number of photos",
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            stringResource(R.string.scanning_time),
+            style = GalleryText.BodyXSmallRegular,
+            color = titleColor,
+            modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 5.sdp)
         )
     }
 }
 
+/** rl_scanner_lottie_view: the looping scanner and "Kindly wait..." while nothing is found yet. */
 @Composable
-private fun WaitingForScan(p: MomentScanner.Progress?) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (p != null) ScanningCard(p)
-        Spacer(Modifier.weight(1f))
-        CircularProgressIndicator(color = GalleryBlue)
-        Spacer(Modifier.height(16.dp))
+private fun ScannerWait() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.moment_scanner_lottie))
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        LottieAnimation(composition, iterations = LottieConstants.IterateForever, modifier = Modifier.size(140.sdp))
         Text(
-            text = "Kindly wait as we are scanning images. This won’t take long..",
-            fontSize = 14.sp,
+            stringResource(R.string.moment_lottie_text),
+            style = GalleryText.BodySmallMedium,
+            color = colorResource(R.color.titleColor),
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(Modifier.weight(1f))
-    }
-}
-
-@Composable
-private fun EmptyMoments() {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_empty_img),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(90.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Oops!",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = "No moment files here.",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color(0xFF8C9BAE)
-        )
-    }
-}
-
-// Moments keeps the 2.6.7 card until Phase 5 restyles it.
-@Composable
-private fun AlbumCard(
-    album: Album,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-        ) {
-            if (album.coverPath.isNotEmpty()) {
-                AsyncImage(
-                    model = album.coverUri,
-                    contentDescription = album.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-                if (album.isVideoCover) {
-                    Icon(
-                        imageVector = Icons.Filled.Videocam,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(10.dp)
-                            .size(22.dp)
-                    )
-                }
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.image_loading_albums),
-                    contentDescription = album.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Text(
-            text = album.name,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 13.5.sp,
-            maxLines = 2, // reference wraps long names
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(modifier = Modifier.height(2.dp))
-
-        Text(
-            text = "${album.itemCount}",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium
+            modifier = Modifier.padding(top = 10.sdp, start = 20.sdp, end = 20.sdp)
         )
     }
 }

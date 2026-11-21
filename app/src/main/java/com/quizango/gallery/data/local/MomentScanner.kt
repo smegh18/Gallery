@@ -48,27 +48,32 @@ class MomentScanner(private val context: Context) {
     /** Labels photos not seen yet; keeps running if the screen closes. */
     fun scan(photos: List<MediaItem>) {
         if (job?.isActive == true) return
+        // Running from the call (total 0 until the saved labels load), so Moments never shows "none found" first
+        _progress.value = Progress(0, 0)
         job = scope.launch {
-            loaded.join()
-            val todo = photos.filter { it.filePath !in _labels.value }
-            if (todo.isEmpty()) return@launch
-            val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
             try {
-                _progress.value = Progress(0, todo.size)
-                val batch = StringBuilder()
-                todo.forEachIndexed { i, item ->
-                    val label = runCatching { labelOf(labeler, item) }.getOrNull()
-                    if (label != null) {
-                        _labels.value = _labels.value + (item.filePath to label)
-                        batch.append(line(item.filePath, label))
+                loaded.join()
+                val todo = photos.filter { it.filePath !in _labels.value }
+                if (todo.isEmpty()) return@launch
+                val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+                try {
+                    _progress.value = Progress(0, todo.size)
+                    val batch = StringBuilder()
+                    todo.forEachIndexed { i, item ->
+                        val label = runCatching { labelOf(labeler, item) }.getOrNull()
+                        if (label != null) {
+                            _labels.value = _labels.value + (item.filePath to label)
+                            batch.append(line(item.filePath, label))
+                        }
+                        _progress.value = Progress(i + 1, todo.size)
+                        if ((i + 1) % 50 == 0 || i == todo.lastIndex) {
+                            file.appendText(batch.toString()); batch.clear()
+                        }
                     }
-                    _progress.value = Progress(i + 1, todo.size)
-                    if ((i + 1) % 50 == 0 || i == todo.lastIndex) {
-                        file.appendText(batch.toString()); batch.clear()
-                    }
+                } finally {
+                    labeler.close()
                 }
             } finally {
-                labeler.close()
                 _progress.value = null
             }
         }
