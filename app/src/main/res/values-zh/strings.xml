@@ -277,4 +277,18 @@
     <string name="total_files">文件总数</string>
     <string name="modifying_items">正在修改 %s 个项目...</string>
     <string name="something_went_wrong">出現了問題！</string>
+    <string name="delete_items">删除项目</string>
+    <string name="delete_items_description">所有项目将从您的设备中永久删除，且无法恢复。</string>
+    <string name="deleted_item_permission">您确定要删除此项吗？</string>
+    <string name="restore_items">恢复项目</string>
+    <string name="restore_item_permission">您确定要恢复项目吗？</string>
+    <string name="unhide_items">取消隐藏项目</string>
+    <string name="unhide_item_permission">您确定要取消隐藏项目吗？</string>
+    <string name="toast_animated_image">无法编辑动画图像。</string>
+    <string name="toast_corrupted_image">无法编辑损坏的图像。</string>
+    <string name="couldn_t_rotate_image">无法旋转图像！</string>
+    <string name="show_on_map">在地图上显示</string>
+    <string name="time_duration">2秒</string>
+    <string name="blur_background_guide">模糊背景</string>
+    <string name="file_name_already_exists">文件名已存在。</string>
 </resources>

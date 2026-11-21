@@ -334,6 +334,9 @@ internal fun albumNameExists(name: String, roots: List<File>): Boolean = roots.a
         root.listFiles()?.any { it.isDirectory && it.name.equals(name, ignoreCase = true) } == true
 }
 
+/** The file name a rename produces: [name] plus the kept extension, if the file had one. */
+internal fun fileNameWithExt(name: String, ext: String): String = if (ext.isEmpty()) name else "$name.$ext"
+
 /** S272/ua/c albumPath and organizerPath; new albums go in the first. */
 internal fun albumRoots(): List<File> {
     val pictures = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
@@ -456,9 +459,16 @@ internal fun CreateAlbumDialog(onCreate: (String) -> Unit, onDismiss: () -> Unit
  * dialog_rename (S272/ci/h): the same underlined field as the create dialog, prefilled with [current] and hinted
  * enter_name, Cancel / Save. Save as ci/h does it: empty does nothing, 50+ characters or a name taken in [parent]
  * (ignoring case, so an unchanged or case-only name too) gets a toast, otherwise [onSave] with the trimmed name.
+ * With [ext] it renames a file the same way (ci/h isAlbum false): the taken check is "name.ext" in [parent].
  */
 @Composable
-internal fun RenameAlbumDialog(current: String, parent: File, onSave: (String) -> Unit, onDismiss: () -> Unit) {
+internal fun RenameAlbumDialog(
+    current: String,
+    parent: File,
+    onSave: (String) -> Unit,
+    onDismiss: () -> Unit,
+    ext: String? = null
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var field by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(current, TextRange(current.length))) }
@@ -473,7 +483,7 @@ internal fun RenameAlbumDialog(current: String, parent: File, onSave: (String) -
     val titleColor = colorResource(R.color.titleColor)
     val lineColor = colorResource(if (focused) R.color.dark_blue else R.color.album_dialog)
     val tooLong = stringResource(R.string.album_name_cannot_exceed_more_than_50_characters)
-    val taken = stringResource(R.string.album_name_already_exists)
+    val taken = stringResource(if (ext == null) R.string.album_name_already_exists else R.string.file_name_already_exists)
     CommonDialog(onDismiss) {
         Column(
             modifier = Modifier
@@ -535,7 +545,10 @@ internal fun RenameAlbumDialog(current: String, parent: File, onSave: (String) -
                         AlbumNameCheck.OK -> if (!checking) {
                             checking = true
                             scope.launch {
-                                val exists = withContext(Dispatchers.IO) { albumNameExists(trimmed, listOf(parent)) }
+                                val exists = withContext(Dispatchers.IO) {
+                                    if (ext == null) albumNameExists(trimmed, listOf(parent))
+                                    else File(parent, fileNameWithExt(trimmed, ext)).exists()
+                                }
                                 checking = false
                                 if (exists) Toast.makeText(context, taken, Toast.LENGTH_SHORT).show() else onSave(trimmed)
                             }

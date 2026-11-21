@@ -288,4 +288,18 @@
     <string name="modifying_items">Modifica di %s elementi...</string>
     <string name="something_went_wrong">Si è verificato un problema!</string>
     <string name="rotate">Ruota</string>
+    <string name="delete_items">Elimina elementi</string>
+    <string name="delete_items_description">Tutti gli elementi verranno eliminati permanentemente dal dispositivo e non potranno essere recuperati.</string>
+    <string name="deleted_item_permission">Sei sicuro di voler eliminare questo elemento?</string>
+    <string name="restore_items">Ripristina elementi</string>
+    <string name="restore_item_permission">Sei sicuro di voler ripristinare gli elementi?</string>
+    <string name="unhide_items">Mostra elementi</string>
+    <string name="unhide_item_permission">Sei sicuro di voler mostrare gli elementi?</string>
+    <string name="toast_animated_image">"Impossibile modificare l'immagine animata."</string>
+    <string name="toast_corrupted_image">"Impossibile modificare l'immagine corrotta."</string>
+    <string name="couldn_t_rotate_image">"Impossibile ruotare l'immagine!"</string>
+    <string name="show_on_map">Mostra sulla mappa</string>
+    <string name="time_duration">2s</string>
+    <string name="blur_background_guide">Sfondo Sfocato</string>
+    <string name="file_name_already_exists">Il nome del file esiste già.</string>
 </resources>

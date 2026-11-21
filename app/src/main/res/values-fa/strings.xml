@@ -280,4 +280,18 @@
     <string name="modifying_items">در حال ویرایش %s مورد...</string>
     <string name="something_went_wrong">یک مشکل پیش آمد!</string>
     <string name="rotate">چرخش</string>
+    <string name="delete_items">حذف موارد</string>
+    <string name="delete_items_description">تمام موارد برای همیشه از دستگاه شما حذف خواهند شد و قابل بازیابی نیستند.</string>
+    <string name="deleted_item_permission">آیا مطمئن هستید که می‌خواهید این آیتم را حذف کنید؟</string>
+    <string name="restore_items">آیتم‌ها را بازیابی کنید</string>
+    <string name="restore_item_permission">آیا مطمئن هستید که می‌خواهید آیتم‌ها را بازیابی کنید؟</string>
+    <string name="unhide_items">آیتم‌ها را پنهان کنید</string>
+    <string name="unhide_item_permission">آیا مطمئن هستید که می‌خواهید آیتم‌ها را پنهان کنید؟</string>
+    <string name="toast_animated_image">قادر به ویرایش تصویر متحرک نیست.</string>
+    <string name="toast_corrupted_image">قادر به ویرایش تصویر خراب نیست.</string>
+    <string name="couldn_t_rotate_image">تصویر نتوانست چرخانده شود!</string>
+    <string name="show_on_map">نمایش در نقشه</string>
+    <string name="time_duration">2ثانیه</string>
+    <string name="blur_background_guide">پس‌زمینه مات</string>
+    <string name="file_name_already_exists">نام فایل از قبل وجود دارد.</string>
 </resources>

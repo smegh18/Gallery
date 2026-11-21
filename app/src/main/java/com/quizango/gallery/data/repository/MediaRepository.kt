@@ -495,7 +495,17 @@ class MediaRepositoryImpl(
             val ext = oldFile.extension
             val finalName = if (newName.endsWith(".$ext", ignoreCase = true)) newName else "$newName.$ext"
             val newFile = File(oldFile.parentFile, finalName)
+            if (newFile.exists()) return@withContext false
+            // Snapshot first: the next sync drops the old row (file gone) and would lose its favourite flag
+            val row = dao.getMediaByPath(oldPath)
             if (oldFile.renameTo(newFile)) {
+                row?.let {
+                    inTransaction {
+                        dao.insert(it.copy(filePath = newFile.path, fileName = newFile.name))
+                        dao.deleteByPath(oldPath)
+                    }
+                }
+                scanner.scanFiles(newFile.path, oldFile.path) // MIUI does not index java.io renames by itself
                 syncMediaStore()
                 true
             } else {

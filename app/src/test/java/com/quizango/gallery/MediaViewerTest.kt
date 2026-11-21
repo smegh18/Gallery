@@ -3,7 +3,16 @@ package com.quizango.gallery
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.domain.model.VaultItem
+import com.quizango.gallery.ui.home.AlbumNameCheck
+import com.quizango.gallery.ui.home.checkAlbumName
+import com.quizango.gallery.ui.home.fileNameWithExt
+import com.quizango.gallery.ui.viewer.MoreAction
+import com.quizango.gallery.ui.viewer.ViewerDialog
+import com.quizango.gallery.ui.viewer.ViewerDialogKind
 import com.quizango.gallery.ui.viewer.formatDuration
+import com.quizango.gallery.ui.viewer.moreActions
+import com.quizango.gallery.ui.viewer.showOnMapRoute
+import com.quizango.gallery.ui.viewer.targetIfCurrent
 import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.*
 import org.junit.Test
@@ -12,6 +21,47 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MediaViewerTest {
+
+    private fun photo(path: String = "/p/IMG_1.jpg", place: String = "") = MediaItem(
+        id = 1, filePath = path, fileName = File(path).name, fileSize = 1, folderName = "p", folderPath = "/p",
+        dateModified = 1, dateTaken = 1, placeName = place
+    )
+
+    @Test
+    fun moreActionsKeepReferenceOrder() {
+        assertEquals(
+            listOf(MoreAction.ADD_TO, MoreAction.RENAME, MoreAction.SLIDE_SHOW, MoreAction.WALLPAPER, MoreAction.PRINT, MoreAction.SHOW_ON_MAP),
+            moreActions(isVault = false, isVideo = false, hasPlace = true)
+        )
+        assertEquals(
+            listOf(MoreAction.ADD_TO, MoreAction.RENAME, MoreAction.SLIDE_SHOW, MoreAction.WALLPAPER, MoreAction.PRINT),
+            moreActions(isVault = false, isVideo = false, hasPlace = false)
+        )
+        assertEquals(listOf(MoreAction.RENAME, MoreAction.WALLPAPER, MoreAction.PRINT), moreActions(isVault = true, isVideo = false, hasPlace = true))
+    }
+
+    @Test
+    fun dialogNeverActsOnAnotherPage() {
+        val open = ViewerDialog(ViewerDialogKind.RENAME, "/p/IMG_1.jpg")
+        assertEquals("/p/IMG_1.jpg", open.targetIfCurrent("/p/IMG_1.jpg"))
+        // Swiped (or the list moved) between opening and Save
+        assertNull(open.targetIfCurrent("/p/IMG_2.jpg"))
+    }
+
+    @Test
+    fun renameRefusesFiftyCharactersAndKeepsExtension() {
+        assertEquals(AlbumNameCheck.OK, checkAlbumName("a".repeat(49)))
+        assertEquals(AlbumNameCheck.TOO_LONG, checkAlbumName("a".repeat(50)))
+        assertEquals(AlbumNameCheck.EMPTY, checkAlbumName(""))
+        assertEquals("beach.jpg", fileNameWithExt("beach", "jpg"))
+        assertEquals("notes", fileNameWithExt("notes", ""))
+    }
+
+    @Test
+    fun showOnMapOnlyWithPlace() {
+        assertNull(showOnMapRoute(photo()))
+        assertNotNull(showOnMapRoute(photo(place = "Paris")))
+    }
 
     @Test
     fun testToolbarDateTimeFormatting() {

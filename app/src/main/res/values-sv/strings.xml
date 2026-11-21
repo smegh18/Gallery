@@ -288,4 +288,18 @@
     <string name="modifying_items">Ändrar %s objekt...</string>
     <string name="something_went_wrong">Ett problem uppstod!</string>
     <string name="rotate">Rotera</string>
+    <string name="delete_items">Ta bort objekt</string>
+    <string name="delete_items_description">Alla objekt kommer att tas bort permanent från din enhet och kan inte återställas.</string>
+    <string name="deleted_item_permission">Är du säker på att du vill radera detta objekt?</string>
+    <string name="restore_items">Återställ objekt</string>
+    <string name="restore_item_permission">Är du säker på att du vill återställa objekt?</string>
+    <string name="unhide_items">Visa objekt</string>
+    <string name="unhide_item_permission">Är du säker på att du vill visa objekt?</string>
+    <string name="toast_animated_image">Kan inte redigera animerad bild.</string>
+    <string name="toast_corrupted_image">Kan inte redigera skadad bild.</string>
+    <string name="couldn_t_rotate_image">Kunde inte rotera bilden!</string>
+    <string name="show_on_map">Visa på karta</string>
+    <string name="time_duration">2s</string>
+    <string name="blur_background_guide">Sudda ut bakgrunden</string>
+    <string name="file_name_already_exists">Filnamnet finns redan.</string>
 </resources>

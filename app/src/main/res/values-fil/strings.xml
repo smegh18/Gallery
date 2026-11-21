@@ -280,4 +280,18 @@
     <string name="modifying_items">Binabago ang %s na mga item...</string>
     <string name="something_went_wrong">May nangyaring problema!</string>
     <string name="rotate">I-ikot</string>
+    <string name="delete_items">I-delete ang mga item</string>
+    <string name="delete_items_description">Ang lahat ng item ay permanenteng madidelete mula sa iyong device at hindi na maaaring mabawi.</string>
+    <string name="deleted_item_permission">Sigurado ka bang nais mong burahin ang item na ito?</string>
+    <string name="restore_items">Ibalik ang mga item</string>
+    <string name="restore_item_permission">Sigurado ka bang nais mong ibalik ang mga item?</string>
+    <string name="unhide_items">Tanggalin ang pagkakatago sa mga item</string>
+    <string name="unhide_item_permission">Sigurado ka bang nais mong tanggalin ang pagkakatago sa mga item?</string>
+    <string name="toast_animated_image">Hindi maedit ang animated image.</string>
+    <string name="toast_corrupted_image">Hindi makapag-edit ng sira na larawan.</string>
+    <string name="couldn_t_rotate_image">Hindi ma-rotate ang larawan!</string>
+    <string name="show_on_map">Ipakita sa mapa</string>
+    <string name="time_duration">2s</string>
+    <string name="blur_background_guide">Blur sa Background</string>
+    <string name="file_name_already_exists">Mayroon nang pangalan ang file.</string>
 </resources>

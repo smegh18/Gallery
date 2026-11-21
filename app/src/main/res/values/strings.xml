@@ -371,4 +371,18 @@
     <string name="viewer_back" translatable="false">Back</string>
     <string name="viewer_capture" translatable="false">Capture</string>
     <string name="rotate">Rotate</string>
+    <string name="delete_items">Delete items</string>
+    <string name="delete_items_description">All items will be permanently deleted from your device and cannot be recovered.</string>
+    <string name="deleted_item_permission">Are you sure you want to delete this item?</string>
+    <string name="restore_items">Restore items</string>
+    <string name="restore_item_permission">Are you sure you want to restore items?</string>
+    <string name="unhide_items">Unhide items</string>
+    <string name="unhide_item_permission">Are you sure you want to unhide items?</string>
+    <string name="toast_animated_image">Unable to edit animated image.</string>
+    <string name="toast_corrupted_image">Unable to edit corrupted image.</string>
+    <string name="couldn_t_rotate_image">"Couldn't rotate image!"</string>
+    <string name="show_on_map">Show on map</string>
+    <string name="time_duration">2s</string>
+    <string name="blur_background_guide">Blur Background</string>
+    <string name="file_name_already_exists">File name already exists.</string>
 </resources>

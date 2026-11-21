@@ -1,7 +1,24 @@
 package com.quizango.gallery.ui.viewer
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -121,5 +138,76 @@ private fun ViewerGlassButton(@androidx.annotation.DrawableRes icon: Int, @Strin
             tint = Color.Unspecified,
             modifier = Modifier.size(22.dp)
         )
+    }
+}
+
+/** popmenu_media_more rows in reference order. */
+internal enum class MoreAction(@DrawableRes val icon: Int, @StringRes val label: Int) {
+    ADD_TO(R.drawable.ic_add, R.string.add_to),
+    RENAME(R.drawable.ic_rename, R.string.rename),
+    SLIDE_SHOW(R.drawable.ic_slideshow, R.string.slide_show),
+    WALLPAPER(R.drawable.ic_set_as, R.string.set_as_wallpaper),
+    PRINT(R.drawable.ic_print, R.string.print),
+    SHOW_ON_MAP(R.drawable.ic_map, R.string.show_on_map)
+}
+
+/**
+ * MF More popup per type: normal shows everything, Show on map only with a place; the vault (type 2) hides Add to and
+ * Show on map. Slide show stays out of the vault, and Wallpaper / Print need a still image to decode.
+ */
+internal fun moreActions(isVault: Boolean, isVideo: Boolean, hasPlace: Boolean): List<MoreAction> = buildList {
+    if (!isVault) add(MoreAction.ADD_TO)
+    add(MoreAction.RENAME)
+    if (!isVault) add(MoreAction.SLIDE_SHOW)
+    if (!isVideo) {
+        add(MoreAction.WALLPAPER)
+        add(MoreAction.PRINT)
+    }
+    if (!isVault && hasPlace) add(MoreAction.SHOW_ON_MAP)
+}
+
+/** Puts the popup's bottom on the anchor's top, end-aligned with it (Gravity.BOTTOM above the dock). */
+private object AboveAnchorEnd : PopupPositionProvider {
+    override fun calculatePosition(
+        anchorBounds: IntRect,
+        windowSize: IntSize,
+        layoutDirection: LayoutDirection,
+        popupContentSize: IntSize
+    ): IntOffset {
+        val x = if (layoutDirection == LayoutDirection.Ltr) anchorBounds.right - popupContentSize.width else anchorBounds.left
+        return IntOffset(x, anchorBounds.top - popupContentSize.height)
+    }
+}
+
+/** popmenu_media_more: dialogBack card, radius 16.sdp, 160.sdp wide, anchored above the dock it is placed in. */
+@Composable
+internal fun ViewerMoreCard(actions: List<MoreAction>, onAction: (MoreAction) -> Unit, onDismiss: () -> Unit) {
+    Popup(popupPositionProvider = AboveAnchorEnd, onDismissRequest = onDismiss, properties = PopupProperties(focusable = true)) {
+        Column(
+            Modifier
+                .width(160.sdp)
+                .shadow(1.dp, RoundedCornerShape(16.sdp))
+                .background(colorResource(R.color.dialogBack), RoundedCornerShape(16.sdp))
+                .padding(horizontal = 8.sdp, vertical = 5.sdp)
+        ) {
+            actions.forEach { action ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { onAction(action) }
+                        .padding(vertical = 5.sdp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(painterResource(action.icon), null, tint = Color.Unspecified, modifier = Modifier.padding(5.sdp))
+                    Text(
+                        stringResource(action.label),
+                        style = GalleryText.BodySmallMedium,
+                        color = colorResource(R.color.titleColor),
+                        maxLines = 1,
+                        modifier = Modifier.padding(start = 5.sdp)
+                    )
+                }
+            }
+        }
     }
 }

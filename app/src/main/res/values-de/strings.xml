@@ -280,4 +280,18 @@
     <string name="modifying_items">Ändere %s Elemente...</string>
     <string name="something_went_wrong">Ein Problem ist aufgetreten!</string>
     <string name="rotate">Drehen</string>
+    <string name="delete_items">Elemente löschen</string>
+    <string name="delete_items_description">Alle Elemente werden dauerhaft von Ihrem Gerät gelöscht und können nicht wiederhergestellt werden.</string>
+    <string name="deleted_item_permission">Sind Sie sicher, dass Sie dieses Element löschen möchten?</string>
+    <string name="restore_items">Elemente wiederherstellen</string>
+    <string name="restore_item_permission">Sind Sie sicher, dass Sie Elemente wiederherstellen möchten?</string>
+    <string name="unhide_items">Elemente einblenden</string>
+    <string name="unhide_item_permission">Sind Sie sicher, dass Sie Elemente einblenden möchten?</string>
+    <string name="toast_animated_image">Kann das animierte Bild nicht bearbeiten.</string>
+    <string name="toast_corrupted_image">Kann das beschädigte Bild nicht bearbeiten.</string>
+    <string name="couldn_t_rotate_image">Bild konnte nicht gedreht werden!</string>
+    <string name="show_on_map">Auf Karte anzeigen</string>
+    <string name="time_duration">2s</string>
+    <string name="blur_background_guide">Hintergrund verschwommen</string>
+    <string name="file_name_already_exists">Dateiname existiert bereits.</string>
 </resources>

@@ -288,4 +288,18 @@
     <string name="modifying_items">Menukar %s item...</string>
     <string name="something_went_wrong">Satu isu telah berlaku!</string>
     <string name="rotate">Putar</string>
+    <string name="delete_items">Padam item</string>
+    <string name="delete_items_description">Semua item akan dipadamkan secara kekal daripada peranti anda dan tidak boleh dipulihkan。</string>
+    <string name="deleted_item_permission">Adakah anda pasti mahu memadam item ini?</string>
+    <string name="restore_items">Pulihkan item</string>
+    <string name="restore_item_permission">Adakah anda pasti mahu memulihkan item?</string>
+    <string name="unhide_items">Buka sembunyikan item</string>
+    <string name="unhide_item_permission">Adakah anda pasti mahu membuka sembunyikan item?</string>
+    <string name="toast_animated_image">Tidak dapat mengedit imej animasi.</string>
+    <string name="toast_corrupted_image">Tidak dapat mengedit gambar yang rosak.</string>
+    <string name="couldn_t_rotate_image">Gambar tidak dapat diputarkan!</string>
+    <string name="show_on_map">Papar di peta</string>
+    <string name="time_duration">2s</string>
+    <string name="blur_background_guide">Belakang Kabur</string>
+    <string name="file_name_already_exists">Nama fail sudah wujud.</string>
 </resources>

@@ -288,4 +288,18 @@
     <string name="modifying_items">%s ကိုယ်ပိုင်မှု ကိုက်ညီသည်...</string>
     <string name="something_went_wrong">အနားမြှောင်ခြင်းတစ်ခုရှိပြီးသွားပါတယ်!</string>
     <string name="rotate">လှည့်ပါ</string>
+    <string name="delete_items">အရာများကို ဖျက်ပါ</string>
+    <string name="delete_items_description">အရာအားလုံးကို သင့်စက်ပစ္စည်းမှ အပြီးတိုင်ဖျက်ပစ်မည်ဖြစ်ပြီး ပြန်လည်ရယူ၍မရနိုင်ပါ။</string>
+    <string name="deleted_item_permission">ဤကိုယ်တို့ ပစ္စည်းကို သင်ဖျက်မလား?</string>
+    <string name="restore_items">ပြန်တင်ရန် ကုန်ပစ္စည်းများ</string>
+    <string name="restore_item_permission">သင်သေချာပြန်တင်ရန် ကုန်ပစ္စည်းများကို သေချာလာလာမှာသောသဘောတူညီရမှာလား?</string>
+    <string name="unhide_items">ကိုပျောက်ကုန်ပစ္စည်းများ</string>
+    <string name="unhide_item_permission">သင်သေချာကိုပျောက်ကုန်ပစ္စည်းများကို သေချာလာလာမှာသောသဘောတူညီရမှာလား?</string>
+    <string name="toast_animated_image">အဆိုပါနောက်ဆုံးပုံရိပ်ကို တည်းဖြတ်၍ မရပါ။</string>
+    <string name="toast_corrupted_image">ပုံပြဿနာဖြစ်နေသည်မဟုတ်ပါ။</string>
+    <string name="couldn_t_rotate_image">ဓာတ်ပုံကို လုပ်နိုင်နေပါသည်!</string>
+    <string name="show_on_map">မြေပုံပြရန်</string>
+    <string name="time_duration">၂စက္ကန့်</string>
+    <string name="blur_background_guide">နောက်ဆုံးပြတ်ရန်</string>
+    <string name="file_name_already_exists">ဖိုင်အမည်သည် ရှိပြီးသားဖြစ်သည်။</string>
 </resources>

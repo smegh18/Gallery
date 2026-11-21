@@ -289,4 +289,18 @@
     <string name="modifying_items">%s பொருட்களை மாற்றுகிறது...</string>
     <string name="something_went_wrong">ஒரு சிக்கல் ஏற்பட்டது!</string>
     <string name="rotate">முதுகேற்று</string>
+    <string name="delete_items">உருப்படிகளை நீக்கு</string>
+    <string name="delete_items_description">அனைத்து உருப்படிகளும் உங்கள் சாதனத்திலிருந்து நிரந்தரமாக நீக்கப்படும், அவற்றை மீட்டெடுக்க முடியாது.</string>
+    <string name="deleted_item_permission">இந்த உருப்படியை நீக்க விரும்புகிறீர்களா?</string>
+    <string name="restore_items">உருப்படிகளை மீட்டுக் கொடு</string>
+    <string name="restore_item_permission">உங்கள் உருப்படிகளை மீட்டுக் கொண்டீர்களா?</string>
+    <string name="unhide_items">உருப்படிகளை வெளியேற்று</string>
+    <string name="unhide_item_permission">உங்கள் உருப்படிகளை வெளியேற்ற விரும்புகிறீர்களா?</string>
+    <string name="toast_animated_image">கோவையாக்கப்பட்ட படத்தைத் திருத்த முடியவில்லை.</string>
+    <string name="toast_corrupted_image">சேதமான படத்தை திருத்த முடியாது.</string>
+    <string name="couldn_t_rotate_image">படத்தை சுழற்சியடைய முடியவில்லை!</string>
+    <string name="show_on_map">வரைபடத்தில் காட்டு</string>
+    <string name="time_duration">2விநாடிகள்</string>
+    <string name="blur_background_guide">பின்னணி மூடு</string>
+    <string name="file_name_already_exists">கோப்பு பெயர் ஏற்கனவே உள்ளது.</string>
 </resources>

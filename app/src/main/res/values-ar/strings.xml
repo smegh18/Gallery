@@ -280,4 +280,18 @@
     <string name="modifying_items">تعديل %s عناصر...</string>
     <string name="something_went_wrong">حدثت مشكلة!</string>
     <string name="rotate">تدوير</string>
+    <string name="delete_items">حذف العناصر</string>
+    <string name="delete_items_description">سيتم حذف جميع العناصر نهائيًا من جهازك ولا يمكن استعادتها.</string>
+    <string name="deleted_item_permission">هل أنت متأكد من أنك تريد حذف هذا العنصر؟</string>
+    <string name="restore_items">استعادة العناصر</string>
+    <string name="restore_item_permission">هل أنت متأكد من أنك تريد استعادة العناصر؟</string>
+    <string name="unhide_items">إظهار العناصر</string>
+    <string name="unhide_item_permission">هل أنت متأكد من أنك تريد إظهار العناصر؟</string>
+    <string name="toast_animated_image">غير قادر على تحرير الصورة المتحركة.</string>
+    <string name="toast_corrupted_image">غير قادر على تحرير الصورة التالفة.</string>
+    <string name="couldn_t_rotate_image">تعذرت تدوير الصورة!</string>
+    <string name="show_on_map">عرض على الخريطة</string>
+    <string name="time_duration">2s</string>
+    <string name="blur_background_guide">خلفية غامقة</string>
+    <string name="file_name_already_exists">اسم الملف موجود بالفعل.</string>
 </resources>

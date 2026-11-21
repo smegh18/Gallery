@@ -259,4 +259,18 @@
     <string name="modifying_items">%s اشیاء میں ترمیم کی جا رہی ہیں۔..</string>
     <string name="something_went_wrong">ایک مسئلہ پیش آیا!</string>
     <string name="rotate">گھمائیں</string>
+    <string name="delete_items">اشیاء حذف کریں</string>
+    <string name="delete_items_description">تمام اشیاء آپ کے آلے سے مستقل طور پر حذف کر دی جائیں گی اور انہیں دوبارہ حاصل نہیں کیا جا سکتا۔</string>
+    <string name="deleted_item_permission">کیا آپ واقعی اس اشیاء کو حذف کرنا چاہتے ہیں؟</string>
+    <string name="restore_items">اشیاء بحال کریں</string>
+    <string name="restore_item_permission">کیا آپ واقعی اشیاء کو بحال کرنا چاہتے ہیں؟</string>
+    <string name="unhide_items">اشیاء ظاہر کریں</string>
+    <string name="unhide_item_permission">کیا آپ واقعی اشیاء کو ظاہر کرنا چاہتے ہیں؟</string>
+    <string name="toast_animated_image">متحرک تصویر کو ترمیم کرنے میں قابل نہیں ہے۔</string>
+    <string name="toast_corrupted_image">تبدیل کرنے میں ناکام ہوا تصویر.</string>
+    <string name="couldn_t_rotate_image">تصویر گھمایا نہیں جا سکا!</string>
+    <string name="show_on_map">نقشے پر دکھائیں</string>
+    <string name="time_duration">2سیکنڈ</string>
+    <string name="blur_background_guide">پس منظر کو دھندلا کریں</string>
+    <string name="file_name_already_exists">فائل کا نام پہلے سے موجود ہے۔</string>
 </resources>

@@ -113,8 +113,6 @@ fun MediaViewerScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showPermanentDeleteDialog by remember { mutableStateOf(false) }
     var deleteMoveToBin by remember { mutableStateOf(true) }
-    var showRenameDialog by remember { mutableStateOf(false) }
-    var renameInput by remember { mutableStateOf("") }
     var showAddToDialog by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
     var vaultConfirm by remember { mutableStateOf<String?>(null) } // "hide" | "unhide"
@@ -160,7 +158,8 @@ fun MediaViewerScreen(
 
     val displayList = remember(mediaList, fallbackItem) {
         if (mediaList.isNotEmpty()) {
-            if (mediaList.any { it.filePath == filePath }) {
+            // A renamed or removed opened file must not come back as a stale extra page
+            if (mediaList.any { it.filePath == filePath } || !File(filePath).exists()) {
                 mediaList
             } else {
                 listOf(fallbackItem) + mediaList
@@ -255,136 +254,42 @@ fun MediaViewerScreen(
         }
     }
 
-    // More menu shared by the normal and vault bottom bars (vault: Rename, Set as Wallpaper, Print)
+    // One open dialog at a time, bound to the page it was opened on; a page change closes it
+    var dialog by remember { mutableStateOf<ViewerDialog?>(null) }
+    var busy by remember { mutableStateOf(false) }
+    LaunchedEffect(currentItem.filePath) {
+        dialog = null
+        showMoreMenu = false
+    }
+
+    fun onMoreAction(action: MoreAction) {
+        showMoreMenu = false
+        when (action) {
+            MoreAction.ADD_TO -> showAddToDialog = true
+            MoreAction.RENAME -> dialog = ViewerDialog(ViewerDialogKind.RENAME, currentItem.filePath)
+            MoreAction.SLIDE_SHOW -> onNavigate(Screen.StoryView.createRoute(if (isVault) "vault" else folderPath.ifEmpty { "all" }, "Slide show"))
+            MoreAction.WALLPAPER -> onNavigate(Screen.Wallpaper.createRoute(currentViewPath ?: currentItem.filePath))
+            MoreAction.PRINT -> try {
+                val printHelper = androidx.print.PrintHelper(context)
+                printHelper.scaleMode = androidx.print.PrintHelper.SCALE_MODE_FIT
+                // The Uri overload decodes off the main thread
+                printHelper.printBitmap(currentItem.fileName, Uri.fromFile(File(currentViewPath ?: currentItem.filePath)))
+            } catch (_: Exception) {
+                Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+            }
+            MoreAction.SHOW_ON_MAP -> showOnMapRoute(currentItem)?.let(onNavigate)
+        }
+    }
+
+    // More card shared by the normal and vault docks
     val moreMenu: @Composable () -> Unit = {
-                                        DropdownMenu(
-                                            expanded = showMoreMenu,
-                                            onDismissRequest = { showMoreMenu = false },
-                                            modifier = Modifier
-                                                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
-                                                .padding(vertical = 4.dp)
-                                        ) {
-                                            if (!isVault) DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        stringResource(R.string.add_to),
-                                                        color = MaterialTheme.colorScheme.onSurface,
-                                                        fontSize = 14.sp,
-                                                        fontWeight = FontWeight.Medium
-                                                    )
-                                                },
-                                                onClick = {
-                                                    showMoreMenu = false
-                                                    showAddToDialog = true
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painterResource(id = R.drawable.ic_add),
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSurface,
-                                                        modifier = Modifier.size(20.dp)
-                                                    )
-                                                }
-                                            )
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        stringResource(R.string.rename),
-                                                        color = MaterialTheme.colorScheme.onSurface,
-                                                        fontSize = 14.sp,
-                                                        fontWeight = FontWeight.Medium
-                                                    )
-                                                },
-                                                onClick = {
-                                                    showMoreMenu = false
-                                                    renameInput = File(currentItem.filePath).nameWithoutExtension
-                                                    showRenameDialog = true
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painterResource(id = R.drawable.ic_rename),
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSurface,
-                                                        modifier = Modifier.size(20.dp)
-                                                    )
-                                                }
-                                            )
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        stringResource(R.string.slide_show),
-                                                        color = MaterialTheme.colorScheme.onSurface,
-                                                        fontSize = 14.sp,
-                                                        fontWeight = FontWeight.Medium
-                                                    )
-                                                },
-                                                onClick = {
-                                                    showMoreMenu = false
-                                                    onNavigate(Screen.StoryView.createRoute(if (isVault) "vault" else folderPath.ifEmpty { "all" }, "Slide show"))
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painterResource(id = R.drawable.ic_slideshow),
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSurface,
-                                                        modifier = Modifier.size(20.dp)
-                                                    )
-                                                }
-                                            )
-                                            if (currentItem.mediaType.isImage) {
-                                                DropdownMenuItem(
-                                                    text = {
-                                                        Text(
-                                                            stringResource(R.string.set_as_wallpaper),
-                                                            color = MaterialTheme.colorScheme.onSurface,
-                                                            fontSize = 14.sp,
-                                                            fontWeight = FontWeight.Medium
-                                                        )
-                                                    },
-                                                    onClick = {
-                                                        showMoreMenu = false
-                                                        onNavigate(Screen.Wallpaper.createRoute(currentViewPath ?: currentItem.filePath))
-                                                    },
-                                                    leadingIcon = {
-                                                        Icon(
-                                                            painterResource(id = R.drawable.ic_set_as),
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.onSurface,
-                                                            modifier = Modifier.size(20.dp)
-                                                        )
-                                                    }
-                                                )
-                                                DropdownMenuItem(
-                                                    text = {
-                                                        Text(
-                                                            stringResource(R.string.print),
-                                                            color = MaterialTheme.colorScheme.onSurface,
-                                                            fontSize = 14.sp,
-                                                            fontWeight = FontWeight.Medium
-                                                        )
-                                                    },
-                                                    onClick = {
-                                                        showMoreMenu = false
-                                                        try {
-                                                            val printHelper = androidx.print.PrintHelper(context)
-                                                            printHelper.scaleMode = androidx.print.PrintHelper.SCALE_MODE_FIT
-                                                            val bitmap = BitmapFactory.decodeFile(currentViewPath ?: currentItem.filePath)
-                                                            if (bitmap != null) {
-                                                                printHelper.printBitmap("Print ${currentItem.fileName}", bitmap)
-                                                            }
-                                                        } catch (_: Exception) {}
-                                                    },
-                                                    leadingIcon = {
-                                                        Icon(
-                                                            painterResource(id = R.drawable.ic_print),
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.onSurface,
-                                                            modifier = Modifier.size(20.dp)
-                                                        )
-                                                    }
-                                                )
-                                            }
-                                        }
+        if (showMoreMenu) {
+            ViewerMoreCard(
+                actions = moreActions(isVault = isVault, isVideo = currentItem.isVideo, hasPlace = currentItem.placeName.isNotBlank()),
+                onAction = ::onMoreAction,
+                onDismiss = { showMoreMenu = false }
+            )
+        }
     }
 
     // 2.7.2 remains edge-to-edge while leaving Android system bars visible.
@@ -429,6 +334,10 @@ fun MediaViewerScreen(
                     }
                 }
             )
+        }
+
+        if (busy) {
+            CircularProgressIndicator(color = colorResource(R.color.colorPrimary), modifier = Modifier.align(Alignment.Center))
         }
 
         ViewerTopChrome(
@@ -958,7 +867,6 @@ fun MediaViewerScreen(
         )
     }
 
-    // 3. Rename Dialog (Matches dialog_rename.xml)
     // Reference confirmation sheets for hiding / unhiding
     vaultConfirm?.let { mode ->
         val hide = mode == "hide"
@@ -1016,71 +924,23 @@ fun MediaViewerScreen(
         }
     }
 
-    if (showRenameDialog) {
-        AlertDialog(
-            onDismissRequest = { showRenameDialog = false },
-            title = {
-                Text(
-                    text = stringResource(R.string.rename),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            },
-            text = {
-                TextField(
-                    value = renameInput,
-                    onValueChange = { renameInput = it },
-                    placeholder = { Text(stringResource(R.string.enter_name), color = MaterialTheme.colorScheme.textTertiary) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = GalleryBlue,
-                        unfocusedIndicatorColor = MaterialTheme.colorScheme.settingsDivider,
-                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                    )
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val trimmed = renameInput.trim()
-                        if (trimmed.isNotEmpty()) {
-                            scope.launch {
-                                val success = if (isVault) vaultRepository.renameInVault(currentItem.toVaultItem(), trimmed)
-                                    else mediaRepository.renameMedia(currentItem.filePath, trimmed)
-                                if (success) {
-                                    Toast.makeText(context, "Renamed successfully", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(context, "Could not rename file", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                        showRenameDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.height(42.dp).width(110.dp)
-                ) {
-                    Text(stringResource(R.string.save), color = Color.White, fontWeight = FontWeight.SemiBold)
+    dialog?.takeIf { it.kind == ViewerDialogKind.RENAME }?.let { open ->
+        val item = currentItem
+        FileRenameDialog(
+            item = item,
+            onSave = { name ->
+                dialog = null
+                val target = open.targetIfCurrent(item.filePath) ?: return@FileRenameDialog
+                scope.launch {
+                    busy = true
+                    val ok = if (isVault) vaultRepository.renameInVault(item.toVaultItem(), name)
+                    else mediaRepository.renameMedia(target, name)
+                    busy = false
+                    // No success toast in the reference; a failed rename must not look like one
+                    if (!ok) Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                 }
             },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = { showRenameDialog = false },
-                    border = BorderStroke(1.dp, GalleryBlue),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = GalleryBlue),
-                    modifier = Modifier.height(42.dp).width(110.dp)
-                ) {
-                    Text(stringResource(R.string.cancel), color = GalleryBlue, fontWeight = FontWeight.SemiBold)
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(20.dp)
+            onDismiss = { dialog = null }
         )
     }
 

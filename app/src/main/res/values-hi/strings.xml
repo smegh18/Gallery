@@ -288,4 +288,18 @@
     <string name="modifying_items">%s आइटमों को संशोधित किया जा रहा है...</string>
     <string name="something_went_wrong">एक समस्या उत्पन्न हुई!</string>
     <string name="rotate">घुमाएँ</string>
+    <string name="delete_items">आइटम हटाएं</string>
+    <string name="delete_items_description">सभी आइटम आपके डिवाइस से स्थायी रूप से हटा दिए जाएंगे और उन्हें वापस नहीं पाया जा सकता।</string>
+    <string name="deleted_item_permission">क्या आप वाकई इस आइटम को हटाना चाहते हैं?</string>
+    <string name="restore_items">आइटम फिर से बहाल करें</string>
+    <string name="restore_item_permission">क्या आप वाकई आइटम को पुनर्स्थापित करना चाहते हैं?</string>
+    <string name="unhide_items">आइटम दिखाएं</string>
+    <string name="unhide_item_permission">क्या आप वाकई आइटम दिखाना चाहते हैं?</string>
+    <string name="toast_animated_image">एनिमेटेड छवि को संपादित करने में असमर्थ।</string>
+    <string name="toast_corrupted_image">भ्रष्ट छवि को संपादित करने में असमर्थ।</string>
+    <string name="couldn_t_rotate_image">चित्र को घुमाया नहीं जा सका!</string>
+    <string name="show_on_map">मैप पर दिखाएं</string>
+    <string name="time_duration">2 सेकंड</string>
+    <string name="blur_background_guide">बैकग्राउंड को धुंधला करे</string>
+    <string name="file_name_already_exists">फ़ाइल का नाम पहले से मौजूद है।</string>
 </resources>

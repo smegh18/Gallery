@@ -276,4 +276,18 @@
     <string name="total_files">Toplam dosya sayısı</string>
     <string name="modifying_items">%s öğe değiştiriliyor…</string>
     <string name="something_went_wrong">Bir sorun oluştu!</string>
+    <string name="delete_items">Öğeleri sil</string>
+    <string name="delete_items_description">Tüm öğeler cihazınızdan kalıcı olarak silinecek ve geri kurtarılamayacaktır.</string>
+    <string name="deleted_item_permission">Bu öğeyi silmek istediğinizden emin misiniz?</string>
+    <string name="restore_items">Öğeleri geri yükle</string>
+    <string name="restore_item_permission">Öğeleri geri yüklemek istediğinizden emin misiniz?</string>
+    <string name="unhide_items">Öğeleri gizle</string>
+    <string name="unhide_item_permission">Öğeleri göstermek istediğinizden emin misiniz?</string>
+    <string name="toast_animated_image">Animasyonlu resim düzenlenemiyor.</string>
+    <string name="toast_corrupted_image">Bozuk görüntü düzenlenemiyor.</string>
+    <string name="couldn_t_rotate_image">Resim döndürülemedi!</string>
+    <string name="show_on_map">Haritada göster</string>
+    <string name="time_duration">2 saniye</string>
+    <string name="blur_background_guide">Arkaplanı Bulanıklaştır</string>
+    <string name="file_name_already_exists">Dosya adı zaten mevcut.</string>
 </resources>

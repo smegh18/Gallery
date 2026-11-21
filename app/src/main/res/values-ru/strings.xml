@@ -290,4 +290,18 @@
     <string name="modifying_items">Изменение %s элементов…</string>
     <string name="something_went_wrong">Произошла ошибка!</string>
     <string name="rotate">Повернуть</string>
+    <string name="delete_items">Удалить элементы</string>
+    <string name="delete_items_description">Все элементы будут безвозвратно удалены с вашего устройства и не подлежат восстановлению.</string>
+    <string name="deleted_item_permission">Вы уверены, что хотите удалить этот элемент?</string>
+    <string name="restore_items">Восстановить элементы</string>
+    <string name="restore_item_permission">Вы уверены, что хотите восстановить элементы?</string>
+    <string name="unhide_items">Отобразить элементы</string>
+    <string name="unhide_item_permission">Вы уверены, что хотите отобразить элементы?</string>
+    <string name="toast_animated_image">Не удалось редактировать анимированное изображение.</string>
+    <string name="toast_corrupted_image">Не удалось редактировать поврежденное изображение.</string>
+    <string name="couldn_t_rotate_image">Не удалось повернуть изображение!</string>
+    <string name="show_on_map">Показать на карте</string>
+    <string name="time_duration">2с</string>
+    <string name="blur_background_guide">Размыть фон</string>
+    <string name="file_name_already_exists">Название файла уже существует.</string>
 </resources>

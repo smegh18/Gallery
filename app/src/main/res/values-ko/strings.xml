@@ -288,4 +288,18 @@
     <string name="modifying_items">%s개의 항목 수정 중...</string>
     <string name="something_went_wrong">문제가 발생했습니다!</string>
     <string name="rotate">회전</string>
+    <string name="delete_items">항목 삭제</string>
+    <string name="delete_items_description">모든 항목이 기기에서 영구적으로 삭제되며 복구할 수 없습니다.</string>
+    <string name="deleted_item_permission">이 항목을 삭제하시겠습니까?</string>
+    <string name="restore_items">항목 복원</string>
+    <string name="restore_item_permission">항목을 복원하시겠습니까?</string>
+    <string name="unhide_items">항목 숨기기 해제</string>
+    <string name="unhide_item_permission">항목을 숨기기 해제하시겠습니까?</string>
+    <string name="toast_animated_image">애니메이션 이미지를 편집할 수 없습니다.</string>
+    <string name="toast_corrupted_image">손상된 이미지를 편집할 수 없습니다.</string>
+    <string name="couldn_t_rotate_image">이미지를 회전할 수 없습니다!</string>
+    <string name="show_on_map">지도에 표시</string>
+    <string name="time_duration">2초</string>
+    <string name="blur_background_guide">배경 흐리게</string>
+    <string name="file_name_already_exists">파일 이름이 이미 존재합니다.</string>
 </resources>

@@ -288,4 +288,18 @@
     <string name="modifying_items">%s 個のアイテムを変更中...</string>
     <string name="something_went_wrong">問題が発生しました！</string>
     <string name="rotate">回転</string>
+    <string name="delete_items">アイテムを削除</string>
+    <string name="delete_items_description">すべてのアイテムがデバイスから完全に削除され、复元できなくなります。</string>
+    <string name="deleted_item_permission">このアイテムを削除してもよろしいですか？</string>
+    <string name="restore_items">アイテムを復元</string>
+    <string name="restore_item_permission">アイテムを復元してもよろしいですか？</string>
+    <string name="unhide_items">アイテムを表示解除</string>
+    <string name="unhide_item_permission">アイテムを表示解除してもよろしいですか？</string>
+    <string name="toast_animated_image">アニメーション画像を編集できません。</string>
+    <string name="toast_corrupted_image">壊れた画像を編集できません。</string>
+    <string name="couldn_t_rotate_image">画像を回転できませんでした！</string>
+    <string name="show_on_map">地図上で表示</string>
+    <string name="time_duration">2秒</string>
+    <string name="blur_background_guide">背景をぼかす</string>
+    <string name="file_name_already_exists">ファイル名はすでに存在します。</string>
 </resources>

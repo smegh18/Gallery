@@ -272,4 +272,18 @@
     <string name="modifying_items">%s आयटम संपादित करत आहे...</string>
     <string name="something_went_wrong">काही तंत्रधन होतंय!</string>
     <string name="rotate">फिरवा</string>
+    <string name="delete_items">आयटम हटवा</string>
+    <string name="delete_items_description">सर्व आयटम तुमच्या डिव्हाइसमधून कायमचे हटवले जातील आणि ते पुन्हा मिळवता येणार नाहीत।</string>
+    <string name="deleted_item_permission">तुम्ही सुनिश्चित आहात की तुम्ही हे आयटम काढू इच्छिता?</string>
+    <string name="restore_items">आयटम्स पुनरावृत्ती</string>
+    <string name="restore_item_permission">किंवा आपल्याला आयटम्स पुनरावृत्ती करायची आहे का?</string>
+    <string name="unhide_items">आयटम्स लपवा</string>
+    <string name="unhide_item_permission">कोणत्याही आयटम्स लपवायच्या आहेत का?</string>
+    <string name="toast_animated_image">एनिमेटेड चित्र संपादित करण्यास अक्षम.</string>
+    <string name="toast_corrupted_image">दुर्बळित इमेज संपादित करू शकत नाही.</string>
+    <string name="couldn_t_rotate_image">छवी घुमवता येऊ शकत नाही!</string>
+    <string name="show_on_map">नकाश्यावर दर्शवा</string>
+    <string name="time_duration">२सेकंदे</string>
+    <string name="blur_background_guide">अस्पष्ट पार्श्वभूमी</string>
+    <string name="file_name_already_exists">फाईलचं नाव आधीपासूनच अस्तित्त्वात आहे.</string>
 </resources>

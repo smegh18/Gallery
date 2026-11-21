@@ -239,4 +239,18 @@
     <string name="total_files">মোট ফাইল</string>
     <string name="modifying_items">%s আইটেম সংশোধন করা হচ্ছে...</string>
     <string name="something_went_wrong">একটি সমস্যা ঘটেছে!</string>
+    <string name="delete_items">আইটেমগুলি মুছুন</string>
+    <string name="delete_items_description">সমস্ত আইটেম আপনার ডিভাইস থেকে স্থায়ীভাবে মুছে ফেলা হবে এবং সেগুলি আর পুনরুদ্ধার করা যাবে না。</string>
+    <string name="deleted_item_permission">আপনি কি এই আইটেমটি মুছতে চান?</string>
+    <string name="restore_items">আইটেম পুনরুদ্ধার করুন</string>
+    <string name="restore_item_permission">আপনি কি আইটেম পুনরুদ্ধার করার বিষয়ে নিশ্চিত?</string>
+    <string name="unhide_items">আইটেম লুকান</string>
+    <string name="unhide_item_permission">আপনি কি আইটেম লুকাতে চান?</string>
+    <string name="toast_animated_image">অ্যানিমেটেড ছবি সম্পাদনা করতে অক্ষম৷</string>
+    <string name="toast_corrupted_image">দূষিত ছবি সম্পাদনা করতে অক্ষম.</string>
+    <string name="couldn_t_rotate_image">ছবি ঘোরানো যায়নি!</string>
+    <string name="show_on_map">মানচিত্রে দেখান</string>
+    <string name="time_duration">2 সে</string>
+    <string name="blur_background_guide">ঝাপসা পটভূমি</string>
+    <string name="file_name_already_exists">ফাইলের নাম আগে থেকেই আছে।</string>
 </resources>

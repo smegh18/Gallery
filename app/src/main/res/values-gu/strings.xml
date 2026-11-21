@@ -272,4 +272,18 @@
     <string name="modifying_items">%s આઇટમ્સ ફેરફાર કરાઈ રહ્યા છે...</string>
     <string name="something_went_wrong">એક મુશ્કિલ આવી છે!</string>
     <string name="rotate">ઘૂરો</string>
+    <string name="delete_items">આઇટમ્સ કાઢી નાખો</string>
+    <string name="delete_items_description">બધી આઇટમ્સ તમારા ઉપકરણમાંથી કાયમી ધોરણે કાઢી નાખવામાં આવશે અને તેને પુનઃપ્રાપ્ત કરી શકાશે નહીં.</string>
+    <string name="deleted_item_permission">શશું તમે ખરેખર આ આઇટમ કાઢી નાખવા માંગો છો?</string>
+    <string name="restore_items">આઇટમ્સ મૂકો</string>
+    <string name="restore_item_permission">શું તમે ખરેખર આઇટમ્સ પુનઃસ્થાપિત કરવા માંગો છો?</string>
+    <string name="unhide_items">આઇટમ્સ અનહાઇડ કરો</string>
+    <string name="unhide_item_permission">શું તમે આઇટમ્સ અનહાઇડ કરવા માંગો છો?</string>
+    <string name="toast_animated_image">એની એનિમેટેડ છબીને સંપાદિત કરવામાં અક્ષમ.</string>
+    <string name="toast_corrupted_image">વિકળીત છબિને સંપાદિત કરવામાં અસમર્થ.</string>
+    <string name="couldn_t_rotate_image">છબીને ઘૂમાવી શક્ય નથી!</string>
+    <string name="show_on_map">નક્શા પર દર્શાવો</string>
+    <string name="time_duration">2 સેકન્ડ</string>
+    <string name="blur_background_guide">બ્લર બેકગ્રાઉન્ડ</string>
+    <string name="file_name_already_exists">ફાઈલનું નામ પહેલાથી મોજૂદ છે.</string>
 </resources>
