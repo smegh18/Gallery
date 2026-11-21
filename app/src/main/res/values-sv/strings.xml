@@ -318,4 +318,6 @@
     <string name="audio_not_available">Ljud är inte tillgängligt.</string>
     <string name="video_not_found">Video hittades inte.</string>
     <string name="this_video_format_not_supported">Ogiltigt videoformat</string>
+    <string name="subtitle">Undertext</string>
+    <string name="audio_track">Ljudspår</string>
 </resources>

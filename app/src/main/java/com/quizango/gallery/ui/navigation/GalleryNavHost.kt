@@ -202,6 +202,7 @@ fun GalleryNavHost(
                 isVault = args?.getBoolean("isVault") ?: false,
                 mediaRepository = app.mediaRepository,
                 vaultRepository = app.vaultRepository,
+                preferences = app.preferences,
                 onNavigateBack = { navController.popBackStack() }
             )
         }

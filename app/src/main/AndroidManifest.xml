@@ -47,12 +47,13 @@
                 android:value="true" />
         </service>
 
-        <!-- Launcher / Splash Activity -->
+        <!-- Launcher / Splash Activity. The Video player turns it to sensor orientation; rotation is handled in place so playback survives -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

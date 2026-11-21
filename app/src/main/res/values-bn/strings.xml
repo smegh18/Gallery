@@ -269,4 +269,6 @@
     <string name="audio_not_available">অডিও উপলব্ধ নেই.</string>
     <string name="video_not_found">ভিডিও পাওয়া যায়নি.</string>
     <string name="this_video_format_not_supported">অসমর্থিত ভিডিও বিন্যাস</string>
+    <string name="subtitle">সাবটাইটেল</string>
+    <string name="audio_track">অডিও ট্র্যাক</string>
 </resources>

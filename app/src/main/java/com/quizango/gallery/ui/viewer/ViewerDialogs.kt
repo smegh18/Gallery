@@ -99,7 +99,7 @@ internal fun ViewerDialogHost(
 
 /** dialog_property / dialog_video_property: Name, Path, Size, Resolution, Taken on. */
 @Composable
-private fun MediaDetailsDialog(item: MediaItem, onDismiss: () -> Unit) {
+internal fun MediaDetailsDialog(item: MediaItem, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val resolution = remember(item.filePath, item.dimension) {
         item.dimension.ifEmpty {

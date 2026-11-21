@@ -302,4 +302,6 @@
     <string name="audio_not_available">ऑडिओ उपलब्ध नाही.</string>
     <string name="video_not_found">व्हिडिओ सापडला नाही.</string>
     <string name="this_video_format_not_supported">असमर्थित व्हिडिओ फॉर्मॅट</string>
+    <string name="subtitle">उपशीर्षक</string>
+    <string name="audio_track">ऑडिओ ट्रॅक</string>
 </resources>

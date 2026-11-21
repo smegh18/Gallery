@@ -3,11 +3,23 @@ package com.quizango.gallery
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.navigation.Screen
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import com.quizango.gallery.R
+import com.quizango.gallery.ui.viewer.CONTROLS_HIDE_MS
+import com.quizango.gallery.ui.viewer.SEEK_STEP_MS
+import com.quizango.gallery.ui.viewer.TapZone
 import com.quizango.gallery.ui.viewer.VideoPlaylist
+import com.quizango.gallery.ui.viewer.VideoRepeat
+import com.quizango.gallery.ui.viewer.playlistStep
+import com.quizango.gallery.ui.viewer.seekTarget
+import com.quizango.gallery.ui.viewer.tapZone
+import com.quizango.gallery.ui.viewer.videoErrorMessage
 import com.quizango.gallery.ui.viewer.playsInline
 import com.quizango.gallery.ui.viewer.videoPlaylist
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -53,5 +65,47 @@ class VideoPlayerTest {
         assertEquals(path, URLDecoder.decode(args["path"], "UTF-8"))
         assertEquals("filter:favorites", URLDecoder.decode(args["folder"], "UTF-8"))
         assertEquals("true", args["isVault"])
+    }
+
+    @Test
+    fun `repeat cycles No Repeat, Repeat One, Loop and back`() {
+        assertEquals(VideoRepeat.REPEAT_ONE, VideoRepeat.NO_REPEAT.next())
+        assertEquals(VideoRepeat.LOOP, VideoRepeat.REPEAT_ONE.next())
+        assertEquals(VideoRepeat.NO_REPEAT, VideoRepeat.LOOP.next())
+        assertEquals(listOf(Player.REPEAT_MODE_OFF, Player.REPEAT_MODE_ONE, Player.REPEAT_MODE_ALL), VideoRepeat.entries.map { it.exoMode })
+        // isNoRepeat is saved as 0 / 1 / 2; anything else falls back to No Repeat
+        assertEquals(VideoRepeat.LOOP, VideoRepeat.fromSaved(2))
+        assertEquals(VideoRepeat.NO_REPEAT, VideoRepeat.fromSaved(7))
+    }
+
+    @Test
+    fun `side double-taps seek 10 s clamped to the video and controls hide after 3 s`() {
+        assertEquals(10_000L, SEEK_STEP_MS)
+        assertEquals(3_000L, CONTROLS_HIDE_MS)
+        assertEquals(0L, seekTarget(4_000L, -SEEK_STEP_MS, 90_000L))
+        assertEquals(90_000L, seekTarget(85_000L, SEEK_STEP_MS, 90_000L))
+        assertEquals(30_000L, seekTarget(20_000L, SEEK_STEP_MS, 90_000L))
+        assertEquals(0L, seekTarget(5_000L, SEEK_STEP_MS, -1L)) // duration unknown (C.TIME_UNSET is negative)
+        assertEquals(TapZone.BACK, tapZone(100f, 900f))
+        assertEquals(TapZone.CENTRE, tapZone(450f, 900f))
+        assertEquals(TapZone.FORWARD, tapZone(800f, 900f))
+    }
+
+    @Test
+    fun `previous and next refuse the playlist ends`() {
+        assertNull(playlistStep(0, -1, 3))
+        assertNull(playlistStep(2, 1, 3))
+        assertEquals(1, playlistStep(0, 1, 3))
+        assertEquals(1, playlistStep(2, -1, 3))
+        assertNull(playlistStep(0, 1, 1))
+    }
+
+    @Test
+    fun `errors map to the reference copy`() {
+        assertEquals(R.string.video_not_found, videoErrorMessage(false, PlaybackException.ERROR_CODE_UNSPECIFIED))
+        assertEquals(R.string.video_not_found, videoErrorMessage(true, PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND))
+        assertEquals(R.string.this_video_format_not_supported, videoErrorMessage(true, PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED))
+        assertEquals(R.string.this_video_format_not_supported, videoErrorMessage(true, PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED))
+        assertEquals(R.string.something_went_wrong, videoErrorMessage(true, PlaybackException.ERROR_CODE_IO_UNSPECIFIED))
     }
 }

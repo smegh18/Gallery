@@ -310,4 +310,6 @@
     <string name="audio_not_available">الصوت غير متاح.</string>
     <string name="video_not_found">الفيديو غير موجود.</string>
     <string name="this_video_format_not_supported">تنسيق الفيديو غير معتمد</string>
+    <string name="subtitle">ترجمة</string>
+    <string name="audio_track">المسار الصوتي</string>
 </resources>

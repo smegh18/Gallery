@@ -318,4 +318,6 @@
     <string name="audio_not_available">အသုံးချသည်မရရှိနိုင်ပါ။</string>
     <string name="video_not_found">ဗီဒီယို မရှိပါ။</string>
     <string name="this_video_format_not_supported">မီဒီယာ ဗီဒီယို ပုံစံမပြုရပါ</string>
+    <string name="subtitle">စာတမ်းအမည်</string>
+    <string name="audio_track">အသံဖွင့်ရန်</string>
 </resources>

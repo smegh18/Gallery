@@ -306,4 +306,6 @@
     <string name="audio_not_available">Ses mevcut değil.</string>
     <string name="video_not_found">Video bulunamadı.</string>
     <string name="this_video_format_not_supported">Desteklenmeyen video biçimi</string>
+    <string name="subtitle">Altyazı</string>
+    <string name="audio_track">Ses parçası</string>
 </resources>

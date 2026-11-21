@@ -318,4 +318,6 @@
     <string name="audio_not_available">Áudio não disponível.</string>
     <string name="video_not_found">Vídeo não encontrado.</string>
     <string name="this_video_format_not_supported">Formato de vídeo não suportado</string>
+    <string name="subtitle">Legenda</string>
+    <string name="audio_track">Faixa de Áudio</string>
 </resources>

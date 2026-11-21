@@ -318,4 +318,6 @@
     <string name="audio_not_available">ऑडियो उपलब्ध नहीं है।</string>
     <string name="video_not_found">वीडियो नहीं मिला।</string>
     <string name="this_video_format_not_supported">असमर्थित वीडियो फ़ॉर्मेट</string>
+    <string name="subtitle">उपशीर्षक</string>
+    <string name="audio_track">ऑडियो ट्रैक</string>
 </resources>

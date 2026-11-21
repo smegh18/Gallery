@@ -289,4 +289,6 @@
     <string name="audio_not_available">آڈیو دستیاب نہیں ہے۔</string>
     <string name="video_not_found">ویڈیو نہیں ملی۔</string>
     <string name="this_video_format_not_supported">غیر معتبر ویڈیو فارمیٹ</string>
+    <string name="subtitle">ذیلی سرخی</string>
+    <string name="audio_track">آڈیو ٹریک</string>
 </resources>

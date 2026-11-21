@@ -318,4 +318,6 @@
     <string name="audio_not_available">オーディオは利用できません。</string>
     <string name="video_not_found">ビデオが見つかりません。</string>
     <string name="this_video_format_not_supported">サポートされていないビデオ形式</string>
+    <string name="subtitle">字幕</string>
+    <string name="audio_track">オーディオトラック</string>
 </resources>

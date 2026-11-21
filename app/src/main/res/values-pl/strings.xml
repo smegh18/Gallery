@@ -318,4 +318,6 @@
     <string name="audio_not_available">Dźwięk nie jest dostępny.</string>
     <string name="video_not_found">Nie znaleziono filmu.</string>
     <string name="this_video_format_not_supported">Nieobsługiwany format wideo</string>
+    <string name="subtitle">Napisy</string>
+    <string name="audio_track">Ścieżka dźwiękowa</string>
 </resources>

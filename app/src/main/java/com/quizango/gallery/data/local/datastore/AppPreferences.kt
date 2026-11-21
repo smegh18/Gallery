@@ -25,6 +25,7 @@ class AppPreferences(private val context: Context) {
         val INSTALL_SOURCE = stringPreferencesKey("install_source")
         val THEME_MODE = intPreferencesKey("theme_mode") // 0: Light, 1: Dark, 2: System
         val MEDIA_COL_COUNT = intPreferencesKey("media_col_count")
+        val IS_NO_REPEAT = intPreferencesKey("isNoRepeat") // 2.7.2 key: Video player repeat 0 / 1 / 2
         val PINCH_TIP_SEEN = booleanPreferencesKey("isPinchInOutToolTip") // 2.7.2 key name
         val SESSION_COUNT = intPreferencesKey("sessionCount") // 2.7.2 key names from here
         val VAULT_HINT_SEEN = booleanPreferencesKey("isVaultHintToolTip")
@@ -55,6 +56,7 @@ class AppPreferences(private val context: Context) {
     val appLanguage: Flow<String> = context.dataStore.data.map { it[Keys.APP_LANGUAGE] ?: "en" }
     val themeMode: Flow<Int> = context.dataStore.data.map { it[Keys.THEME_MODE] ?: 2 }
     val mediaColCount: Flow<Int> = context.dataStore.data.map { it[Keys.MEDIA_COL_COUNT] ?: 3 }
+    val isNoRepeat: Flow<Int> = context.dataStore.data.map { it[Keys.IS_NO_REPEAT] ?: 0 }
     val isPinchInOutToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.PINCH_TIP_SEEN] ?: false }
     val sessionCount: Flow<Int> = context.dataStore.data.map { it[Keys.SESSION_COUNT] ?: 0 }
     val isVaultHintToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.VAULT_HINT_SEEN] ?: false }
@@ -121,6 +123,10 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setMediaColCount(count: Int) {
         context.dataStore.edit { it[Keys.MEDIA_COL_COUNT] = count }
+    }
+
+    suspend fun setNoRepeat(value: Int) {
+        context.dataStore.edit { it[Keys.IS_NO_REPEAT] = value }
     }
 
     suspend fun setAlbumsPinned(paths: Set<String>, pinned: Boolean) {

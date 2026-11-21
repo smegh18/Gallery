@@ -260,13 +260,14 @@ internal fun ShortVideoRow(
                 modifier = round.clickable { speedMenu = true }.padding(12.sdp)
             )
             if (speedMenu) {
-                SpeedPopup(
-                    current = speed,
-                    above = true,
+                OptionsPopup(
+                    options = VIDEO_SPEEDS.map(::speedLabel),
+                    selected = VIDEO_SPEEDS.indexOf(speed),
+                    position = AnchoredPopup(above = true, end = true),
                     background = colorResource(R.color.dialogBack),
                     textColor = colorResource(R.color.titleColor),
                     selectIcon = R.drawable.ic_short_video_speed_select,
-                    onPick = { speedMenu = false; onSpeed(it) },
+                    onPick = { speedMenu = false; onSpeed(VIDEO_SPEEDS[it]) },
                     onDismiss = { speedMenu = false }
                 )
             }
@@ -334,22 +335,22 @@ internal fun VideoSeekBar(positionMs: Long, durationMs: Long, color: Color, onSe
     }
 }
 
-/** popmenu_short_video_speed (inline) / popmenu_video_speed (player): 100.sdp card, the current speed ticked. */
+/**
+ * popmenu_short_video_speed (inline) / popmenu_video_speed (player) card, 100.sdp wide with the [selected] row ticked;
+ * the player's subtitle and audio pickers reuse it.
+ */
 @Composable
-internal fun SpeedPopup(
-    current: Float,
-    above: Boolean,
+internal fun OptionsPopup(
+    options: List<String>,
+    selected: Int,
+    position: PopupPositionProvider,
     background: Color,
     textColor: Color,
     @DrawableRes selectIcon: Int,
-    onPick: (Float) -> Unit,
+    onPick: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    Popup(
-        popupPositionProvider = if (above) AboveAnchorEnd else BelowAnchorStart,
-        onDismissRequest = onDismiss,
-        properties = PopupProperties(focusable = true)
-    ) {
+    Popup(popupPositionProvider = position, onDismissRequest = onDismiss, properties = PopupProperties(focusable = true)) {
         Column(
             Modifier
                 .width(100.sdp)
@@ -357,18 +358,18 @@ internal fun SpeedPopup(
                 .background(background, RoundedCornerShape(16.sdp))
                 .padding(horizontal = 10.sdp, vertical = 8.sdp)
         ) {
-            VIDEO_SPEEDS.forEach { speed ->
+            options.forEachIndexed { index, option ->
                 Row(
-                    Modifier.fillMaxWidth().clickable { onPick(speed) }.padding(vertical = 8.sdp),
+                    Modifier.fillMaxWidth().clickable { onPick(index) }.padding(vertical = 8.sdp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        speedLabel(speed),
+                        option,
                         style = GalleryText.BodyMediumMedium,
                         color = textColor,
                         modifier = Modifier.weight(1f).padding(start = 5.sdp)
                     )
-                    if (speed == current) Icon(painterResource(selectIcon), null, tint = Color.Unspecified)
+                    if (index == selected) Icon(painterResource(selectIcon), null, tint = Color.Unspecified)
                 }
             }
         }
@@ -529,36 +530,24 @@ internal fun moreActions(isVault: Boolean, isVideo: Boolean, hasPlace: Boolean):
     if (!isVault && hasPlace) add(MoreAction.SHOW_ON_MAP)
 }
 
-/** Puts the popup's top under the anchor, start-aligned with it (the player's quick-control card). */
-private object BelowAnchorStart : PopupPositionProvider {
+/** Places a popup above or below its anchor, aligned to the anchor's start or end edge (mirrored in RTL). */
+internal class AnchoredPopup(private val above: Boolean, private val end: Boolean) : PopupPositionProvider {
     override fun calculatePosition(
         anchorBounds: IntRect,
         windowSize: IntSize,
         layoutDirection: LayoutDirection,
         popupContentSize: IntSize
     ): IntOffset {
-        val x = if (layoutDirection == LayoutDirection.Ltr) anchorBounds.left else anchorBounds.right - popupContentSize.width
-        return IntOffset(x, anchorBounds.bottom)
-    }
-}
-
-/** Puts the popup's bottom on the anchor's top, end-aligned with it (Gravity.BOTTOM above the dock). */
-private object AboveAnchorEnd : PopupPositionProvider {
-    override fun calculatePosition(
-        anchorBounds: IntRect,
-        windowSize: IntSize,
-        layoutDirection: LayoutDirection,
-        popupContentSize: IntSize
-    ): IntOffset {
-        val x = if (layoutDirection == LayoutDirection.Ltr) anchorBounds.right - popupContentSize.width else anchorBounds.left
-        return IntOffset(x, anchorBounds.top - popupContentSize.height)
+        val alignRight = end == (layoutDirection == LayoutDirection.Ltr)
+        val x = if (alignRight) anchorBounds.right - popupContentSize.width else anchorBounds.left
+        return IntOffset(x, if (above) anchorBounds.top - popupContentSize.height else anchorBounds.bottom)
     }
 }
 
 /** popmenu_media_more: dialogBack card, radius 16.sdp, 160.sdp wide, anchored above the dock it is placed in. */
 @Composable
 internal fun ViewerMoreCard(actions: List<MoreAction>, onAction: (MoreAction) -> Unit, onDismiss: () -> Unit) {
-    Popup(popupPositionProvider = AboveAnchorEnd, onDismissRequest = onDismiss, properties = PopupProperties(focusable = true)) {
+    Popup(popupPositionProvider = AnchoredPopup(above = true, end = true), onDismissRequest = onDismiss, properties = PopupProperties(focusable = true)) {
         Column(
             Modifier
                 .width(160.sdp)

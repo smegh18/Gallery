@@ -319,4 +319,6 @@
     <string name="audio_not_available">ஒலி கிடைக்கவில்லை.</string>
     <string name="video_not_found">வீடியோ காணப்படவில்லை.</string>
     <string name="this_video_format_not_supported">ஆதரிக்கப்படாத காணொளி வடிவம்</string>
+    <string name="subtitle">உபத்திரவு</string>
+    <string name="audio_track">ஆடியோ ட்ரேக்</string>
 </resources>

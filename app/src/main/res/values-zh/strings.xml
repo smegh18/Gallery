@@ -307,4 +307,6 @@
     <string name="audio_not_available">音频不可用。</string>
     <string name="video_not_found">未找到视频。</string>
     <string name="this_video_format_not_supported">不支持的视频格式</string>
+    <string name="subtitle">字幕</string>
+    <string name="audio_track">音轨</string>
 </resources>

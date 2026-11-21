@@ -310,4 +310,6 @@
     <string name="audio_not_available">Audio hindi available.</string>
     <string name="video_not_found">Hindi natagpuan ang video.</string>
     <string name="this_video_format_not_supported">Hindi suportadong format ng video</string>
+    <string name="subtitle">Subtitle</string>
+    <string name="audio_track">Track ng Audio</string>
 </resources>

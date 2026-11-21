@@ -318,4 +318,6 @@
     <string name="audio_not_available">Audio tidak tersedia.</string>
     <string name="video_not_found">Video tidak dijumpai.</string>
     <string name="this_video_format_not_supported">Format video tidak disokong</string>
+    <string name="subtitle">Subtajuk</string>
+    <string name="audio_track">Trek Audio</string>
 </resources>

@@ -370,6 +370,9 @@
     <string name="cannot_select_system_folders" translatable="false">You can not select system folders</string>
     <string name="viewer_back" translatable="false">Back</string>
     <string name="viewer_capture" translatable="false">Capture</string>
+    <string name="viewer_lock" translatable="false">Lock</string>
+    <string name="viewer_unlock" translatable="false">Unlock</string>
+    <string name="viewer_floating" translatable="false">Floating</string>
     <string name="rotate">Rotate</string>
     <string name="delete_items">Delete items</string>
     <string name="delete_items_description">All items will be permanently deleted from your device and cannot be recovered.</string>
@@ -401,4 +404,6 @@
     <string name="audio_not_available">Audio is not available.</string>
     <string name="video_not_found">Video not found.</string>
     <string name="this_video_format_not_supported">Unsupported video format</string>
+    <string name="subtitle">Subtitle</string>
+    <string name="audio_track">Audio track</string>
 </resources>

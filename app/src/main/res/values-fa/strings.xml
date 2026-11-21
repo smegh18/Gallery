@@ -310,4 +310,6 @@
     <string name="audio_not_available">صدا در دسترس نیست.</string>
     <string name="video_not_found">ویدئو پیدا نشد.</string>
     <string name="this_video_format_not_supported">فرمت ویدئو پشتیبانی نمی‌شود</string>
+    <string name="subtitle">زیرنویس</string>
+    <string name="audio_track">پیگیری صدا</string>
 </resources>
