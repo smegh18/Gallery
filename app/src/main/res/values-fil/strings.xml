@@ -318,4 +318,5 @@
     <string name="selected_media_files_successfully_hide">Matagumpay na itinago ang napiling mga media file.</string>
     <string name="selected_media_files_successfully_copied">Matagumpay na inikopya ang napiling mga media file.</string>
     <string name="selected_media_files_successfully_moved">Matagumpay na inilipat ang mga file ng media.</string>
+    <string name="other_albums">Iba pang Mga Album</string>
 </resources>

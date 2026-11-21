@@ -326,4 +326,5 @@
     <string name="selected_media_files_successfully_hide">Fail media yang dipilih berjaya disembunyikan.</string>
     <string name="selected_media_files_successfully_copied">Fail media yang dipilih berjaya disalin.</string>
     <string name="selected_media_files_successfully_moved">Fail media berjaya dipindahkan.</string>
+    <string name="other_albums">Album Lain</string>
 </resources>

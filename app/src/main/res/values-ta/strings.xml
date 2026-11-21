@@ -327,4 +327,5 @@
     <string name="selected_media_files_successfully_hide">தேர்ந்தெடுக்கப்பட்ட உலா கோப்புகள் வெற்றியாக மறைக்கப்பட்டன.</string>
     <string name="selected_media_files_successfully_copied">தேர்ந்தெடுக்கப்பட்ட உலா கோப்புகள் வெற்றியாக நகல் எடுக்கப்பட்டன.</string>
     <string name="selected_media_files_successfully_moved">மீடியா கோப்புகள் வெற்றியாக நகலெடுக்கப்பட்டன.</string>
+    <string name="other_albums">மற்ற ஆல்பங்கள்</string>
 </resources>

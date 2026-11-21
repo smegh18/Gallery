@@ -310,4 +310,5 @@
     <string name="selected_media_files_successfully_hide">निवडलेली मीडिया फाइले सफलतेने लपवली गेली.</string>
     <string name="selected_media_files_successfully_copied">निवडलेली मीडिया फाइले सफलतेने कॉपी केली गेली.</string>
     <string name="selected_media_files_successfully_moved">मीडिया फाइल्स सफलतेच हलवी गेली.</string>
+    <string name="other_albums">इतर एल्बम्स</string>
 </resources>

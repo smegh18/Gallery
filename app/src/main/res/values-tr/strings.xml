@@ -314,4 +314,5 @@
     <string name="selected_media_files_successfully_hide">Medya dosyaları başarıyla gizlendi.</string>
     <string name="selected_media_files_successfully_copied">Medya dosyaları başarıyla kopyalandı.</string>
     <string name="selected_media_files_successfully_moved">Medya dosyaları başarıyla taşındı.</string>
+    <string name="other_albums">Diğer Albümler</string>
 </resources>

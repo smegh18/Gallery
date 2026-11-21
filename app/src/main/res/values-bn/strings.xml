@@ -277,4 +277,5 @@
     <string name="selected_media_files_successfully_hide">মিডিয়া ফাইলগুলি সফলভাবে লুকানো হয়েছে৷</string>
     <string name="selected_media_files_successfully_copied">মিডিয়া ফাইল সফলভাবে অনুলিপি করা হয়েছে.</string>
     <string name="selected_media_files_successfully_moved">মিডিয়া ফাইল সফলভাবে সরানো হয়েছে৷</string>
+    <string name="other_albums">অন্যান্য অ্যালবাম</string>
 </resources>

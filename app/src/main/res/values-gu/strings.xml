@@ -310,4 +310,5 @@
     <string name="selected_media_files_successfully_hide">પસંદગીના મીડિયા ફાઇલો સફળતાપૂર્વક છુપાવેલી.</string>
     <string name="selected_media_files_successfully_copied">પસંદગીના મીડિયા ફાઇલો સફળતાપૂર્વક કૉપિ કરી દીધી.</string>
     <string name="selected_media_files_successfully_moved">મિડિયા ફાઇલો સફળતાથી ખસેડવામાં આવતા.</string>
+    <string name="other_albums">અન્ય આલ્બમ</string>
 </resources>

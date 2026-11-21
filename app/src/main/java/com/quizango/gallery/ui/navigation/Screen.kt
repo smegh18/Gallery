@@ -37,6 +37,7 @@ sealed class Screen(val route: String) {
     }
 
     data object Favorites : Screen("favorites")
+    data object AllAlbums : Screen("all_albums") // Other Albums: 2.7.2 enters only from notifications (Phase 9)
     data object RecycleBin : Screen("recycle")
     data object Duplicates : Screen("duplicates")
     data object VaultLock : Screen("vault_lock")

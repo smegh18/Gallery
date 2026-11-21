@@ -315,4 +315,5 @@
     <string name="selected_media_files_successfully_hide">媒体文件隐藏成功。</string>
     <string name="selected_media_files_successfully_copied">媒体文件复制成功。</string>
     <string name="selected_media_files_successfully_moved">媒体文件移动成功。</string>
+    <string name="other_albums">其他专辑</string>
 </resources>

@@ -318,4 +318,5 @@
     <string name="selected_media_files_successfully_hide">تم إخفاء ملفات الوسائط المحددة بنجاح.</string>
     <string name="selected_media_files_successfully_copied">تم نسخ ملفات الوسائط المحددة بنجاح.</string>
     <string name="selected_media_files_successfully_moved">تم نقل ملفات الوسائط بنجاح.</string>
+    <string name="other_albums">الألبومات الأخرى</string>
 </resources>

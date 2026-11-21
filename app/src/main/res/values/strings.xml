@@ -413,4 +413,6 @@
     <string name="selected_media_files_successfully_hide">Media files hidden successfully.</string>
     <string name="selected_media_files_successfully_copied">Media files copied successfully.</string>
     <string name="selected_media_files_successfully_moved">Media files moved successfully.</string>
+    <!-- Phase 5 album / discovery browsing (§5, §6, §8, §9) -->
+    <string name="other_albums">Other Albums</string>
 </resources>

@@ -326,4 +326,5 @@
     <string name="selected_media_files_successfully_hide">선택한 미디어 파일이 성공적으로 숨겨졌습니다.</string>
     <string name="selected_media_files_successfully_copied">선택한 미디어 파일이 성공적으로 복사되었습니다.</string>
     <string name="selected_media_files_successfully_moved">미디어 파일이 성공적으로 이동되었습니다.</string>
+    <string name="other_albums">기타 앨범</string>
 </resources>

@@ -326,4 +326,5 @@
     <string name="selected_media_files_successfully_hide">चयनित मीडिया फ़ाइलें सफलतापूर्वक छुपाई गईं।</string>
     <string name="selected_media_files_successfully_copied">चयनित मीडिया फ़ाइलें सफलतापूर्वक कॉपी की गईं।</string>
     <string name="selected_media_files_successfully_moved">मीडिया फाइल्स सफलतापूर्वक हलवी गई.</string>
+    <string name="other_albums">अन्य एल्बम</string>
 </resources>

@@ -326,4 +326,5 @@
     <string name="selected_media_files_successfully_hide">Wybrane pliki multimedialne zostały pomyślnie ukryte.</string>
     <string name="selected_media_files_successfully_copied">Wybrane pliki multimedialne zostały pomyślnie skopiowane.</string>
     <string name="selected_media_files_successfully_moved">Pliki multimedialne przeniesione pomyślnie.</string>
+    <string name="other_albums">Inne albumy</string>
 </resources>

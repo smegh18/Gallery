@@ -318,4 +318,5 @@
     <string name="selected_media_files_successfully_hide">Ausgewählte Mediendateien wurden erfolgreich ausgeblendet.</string>
     <string name="selected_media_files_successfully_copied">Ausgewählte Mediendateien wurden erfolgreich kopiert.</string>
     <string name="selected_media_files_successfully_moved">Mediendateien erfolgreich verschoben.</string>
+    <string name="other_albums">Andere Alben</string>
 </resources>

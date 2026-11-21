@@ -223,15 +223,19 @@ internal fun SharedMediaList(
     }
 }
 
-/** layout_toolbar: back + title, or close + count + Select all / Unselect all while selecting. */
+/**
+ * layout_toolbar: back + title, or close + count + Select all / Unselect all while selecting.
+ * [onInfo] shows `propertyBtn` (album selection Info) while selecting.
+ */
 @Composable
-private fun SharedMediaToolbar(
+internal fun SharedMediaToolbar(
     title: String,
-    selecting: Boolean,
-    allSelected: Boolean,
+    selecting: Boolean = false,
+    allSelected: Boolean = false,
     onBack: () -> Unit,
-    onClose: () -> Unit,
-    onToggleAll: () -> Unit
+    onClose: () -> Unit = {},
+    onToggleAll: () -> Unit = {},
+    onInfo: (() -> Unit)? = null
 ) {
     Column(
         Modifier
@@ -269,6 +273,17 @@ private fun SharedMediaToolbar(
                 style = GalleryText.BodyMediumMedium,
                 color = colorResource(R.color.colorPrimary),
                 modifier = Modifier.clickable(onClick = onToggleAll).padding(5.sdp)
+            )
+            if (selecting && onInfo != null) Image(
+                painter = painterResource(R.drawable.ic_property),
+                contentDescription = stringResource(R.string.details),
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = false),
+                        onClick = onInfo
+                    )
+                    .padding(2.sdp)
             )
         }
         // toolbarDevider: 1.dp of the 56.dp ?actionBarSize

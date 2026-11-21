@@ -328,4 +328,5 @@
     <string name="selected_media_files_successfully_hide">Медиа файлы успешно скрыты.</string>
     <string name="selected_media_files_successfully_copied">Медиа файлы успешно скопированы.</string>
     <string name="selected_media_files_successfully_moved">Медиа файлы успешно перемещены.</string>
+    <string name="other_albums">Другие альбомы</string>
 </resources>

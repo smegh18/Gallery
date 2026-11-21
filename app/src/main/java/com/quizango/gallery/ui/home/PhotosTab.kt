@@ -434,7 +434,7 @@ private fun DrawableBox(@DrawableRes id: Int, modifier: Modifier) {
 
 /** fragment_all_media emptyLayout; the shared list frame passes its per-screen copy. */
 @Composable
-internal fun PhotosEmptyState(@StringRes title: Int = R.string.no_items, @StringRes body: Int = R.string.no_media_file) {
+internal fun PhotosEmptyState(@StringRes title: Int = R.string.no_items, @StringRes body: Int? = R.string.no_media_file) {
     Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -448,7 +448,7 @@ internal fun PhotosEmptyState(@StringRes title: Int = R.string.no_items, @String
             color = titleColor,
             modifier = Modifier.padding(top = 20.sdp, bottom = 10.sdp)
         )
-        Text(
+        if (body != null) Text(
             text = stringResource(body),
             style = GalleryText.BodySmallRegular,
             color = titleColor,

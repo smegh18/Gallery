@@ -318,4 +318,5 @@
     <string name="selected_media_files_successfully_hide">فایل‌های رسانه‌ای انتخابی با موفقیت مخفی شدند.</string>
     <string name="selected_media_files_successfully_copied">فایل‌های رسانه‌ای انتخابی با موفقیت کپی شدند.</string>
     <string name="selected_media_files_successfully_moved">فایل‌های رسانه با موفقیت منتقل شدند.</string>
+    <string name="other_albums">سایر آلبوم‌ها</string>
 </resources>

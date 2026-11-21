@@ -21,6 +21,7 @@ import androidx.navigation.navArgument
 import com.quizango.gallery.GalleryApplication
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.album.AlbumDetailScreen
+import com.quizango.gallery.ui.album.AllAlbumsScreen
 import com.quizango.gallery.ui.cleaner.CleanerScreen
 import com.quizango.gallery.ui.cleaner.DuplicateCompleteScreen
 import com.quizango.gallery.ui.cleaner.DuplicatePhotoScreen
@@ -211,6 +212,22 @@ fun GalleryNavHost(
             FavoritesScreen(
                 mediaRepository = app.mediaRepository,
                 vaultRepository = app.vaultRepository,
+                onNavigate = { route -> navController.navigateOnce(route) },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.AllAlbums.route) {
+            // Its own selection state: the Albums tab's selection never leaks in
+            val albumsViewModel: HomeViewModel = viewModel(
+                factory = HomeViewModel.Factory(
+                    mediaRepository = app.mediaRepository,
+                    vaultRepository = app.vaultRepository,
+                    preferences = app.preferences
+                )
+            )
+            AllAlbumsScreen(
+                viewModel = albumsViewModel,
                 onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )

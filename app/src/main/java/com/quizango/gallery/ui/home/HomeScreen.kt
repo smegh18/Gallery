@@ -41,10 +41,6 @@ import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
 import com.quizango.gallery.ui.components.AddToAlbumSheet
-import com.quizango.gallery.ui.components.MediaPicker
-import com.quizango.gallery.domain.model.MediaType
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.splash.checkStoragePermissions
 import com.quizango.gallery.ui.theme.GalleryBlue
@@ -65,17 +61,14 @@ fun HomeScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showAddToSheet by remember { mutableStateOf(false) }
     var showHideDialog by remember { mutableStateOf(false) }
-    var showCoverPicker by remember { mutableStateOf(false) }
-    var showRename by remember { mutableStateOf(false) }
-    var showAlbumProperty by remember { mutableStateOf(false) }
-    var renaming by remember { mutableStateOf<Int?>(null) } // item count while the rename runs
-    val renameFailed = stringResource(R.string.something_went_wrong)
     val shareTitle = stringResource(R.string.share)
     val copiedMessage = stringResource(R.string.items_copied_successfully)
     val movedMessage = stringResource(R.string.items_moved_successfully)
     val sameFolderMessage = stringResource(R.string.media_files_should_not_move_to_same_folder)
     // Folder picked for the selection (Add to, or a new album from it); dialog_select_add then asks Move or Copy
     var addTarget by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val openAlbumDialog = rememberAlbumSelectionDialogs(viewModel, uiState)
 
     var titleBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     val albumSelecting = uiState.selectedAlbums.isNotEmpty()
@@ -143,7 +136,7 @@ fun HomeScreen(
                     allSelected = allSelected,
                     onClose = { viewModel.clearAlbumSelection() },
                     onToggleAll = { if (allSelected) viewModel.clearAlbumSelection() else viewModel.selectAllAlbums() },
-                    onInfo = { showAlbumProperty = true },
+                    onInfo = { openAlbumDialog(AlbumDialog.INFO) },
                     infoAlpha = if (uiState.selectedAlbums.size > 1) 0f else 1f
                 )
             } else if (uiState.isSelectionMode) {
@@ -244,16 +237,7 @@ fun HomeScreen(
                 }
 
                 if (albumSelecting) {
-                    AlbumSelectionBottomBar(
-                        pinLabel = pinLabel(uiState.selectedAlbums, uiState.albumsList.filter { it.isPinned }.map { it.path }.toSet()),
-                        singleActionAlpha = singleAlbumActionAlpha(uiState.selectedAlbums.size),
-                        onPin = viewModel::pinSelectedAlbum,
-                        onAddTo = { showAddToSheet = true },
-                        onDelete = { showDeleteDialog = true },
-                        onChangeCover = { if (viewModel.changeCoverTarget() != null) showCoverPicker = true },
-                        onRename = { if (viewModel.changeCoverTarget() != null) showRename = true },
-                        modifier = Modifier.align(Alignment.BottomCenter)
-                    )
+                    AlbumSelectionBottomBar(viewModel, uiState, openAlbumDialog, Modifier.align(Alignment.BottomCenter))
                 } else if (uiState.isSelectionMode) {
                     HomeSelectionBottomBar(
                         onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
@@ -311,65 +295,6 @@ fun HomeScreen(
         }
     }
 
-    // Change cover: 2.7.2 opens its in-app picker (InternalSelectMediaActivity, photos only) over the album's media
-    if (showCoverPicker) {
-        val target = viewModel.changeCoverTarget()
-        if (target == null) showCoverPicker = false
-        else Dialog(onDismissRequest = { showCoverPicker = false }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-            MediaPicker(
-                title = target.name,
-                items = uiState.mediaList.filter { it.folderPath == target.path && it.mediaType != MediaType.VIDEO },
-                onBack = { showCoverPicker = false },
-                onPick = { item ->
-                    showCoverPicker = false
-                    viewModel.setSelectedAlbumCover(item)
-                }
-            )
-        }
-    }
-
-    if (showRename) {
-        val target = viewModel.changeCoverTarget()
-        if (target == null) showRename = false
-        else RenameAlbumDialog(
-            current = target.name,
-            parent = File(target.path).parentFile ?: File("/"),
-            onSave = { name ->
-                showRename = false
-                renaming = target.itemCount
-                viewModel.renameSelectedAlbum(name) { ok ->
-                    renaming = null
-                    if (!ok) Toast.makeText(context, renameFailed, Toast.LENGTH_SHORT).show()
-                }
-            },
-            onDismiss = { showRename = false }
-        )
-    }
-    renaming?.let { RenameProgressDialog(it) }
-
-    if (showAlbumProperty) {
-        val target = viewModel.changeCoverTarget()
-        if (target == null) {
-            showAlbumProperty = false
-        } else {
-            val albumMedia = remember(target.path, uiState.mediaList) {
-                uiState.mediaList.filter { it.folderPath == target.path }
-            }
-            val sizeBytes = remember(albumMedia) {
-                albumMedia.sumOf { it.fileSize }
-            }
-            val lastModified = remember(albumMedia, target.path) {
-                albumMedia.maxOfOrNull { it.dateModified } ?: 0L
-            }
-            AlbumPropertyDialog(
-                album = target,
-                sizeBytes = sizeBytes,
-                lastModified = lastModified,
-                onDismiss = { showAlbumProperty = false }
-            )
-        }
-    }
-
     if (showSortDialog) {
         SortDialog(
             current = uiState.sortOrder,
@@ -393,12 +318,10 @@ fun HomeScreen(
 
     if (showDeleteDialog) {
         DeleteMediaDialog(
-            // Album Delete counts albums, as the top bar does (HA.count of the selection event)
-            count = if (albumSelecting) uiState.selectedAlbums.size else uiState.selectedPaths.size,
+            count = uiState.selectedPaths.size,
             onConfirm = { checked ->
                 showDeleteDialog = false
-                if (albumSelecting) viewModel.deleteSelectedAlbums(deleteActionFor(checked))
-                else viewModel.deleteSelected(deleteActionFor(checked))
+                viewModel.deleteSelected(deleteActionFor(checked))
             },
             onDismiss = { showDeleteDialog = false }
         )
@@ -407,11 +330,8 @@ fun HomeScreen(
     if (showAddToSheet) {
         AddToAlbumSheet(
             albums = uiState.albumsList,
-            previewItem = uiState.mediaList.firstOrNull {
-                if (albumSelecting) it.folderPath in uiState.selectedAlbums else it.filePath in uiState.selectedPaths
-            },
-            selectedCount = if (albumSelecting) uiState.albumsList.filter { it.path in uiState.selectedAlbums }.sumOf { it.itemCount }
-            else uiState.selectedPaths.size,
+            previewItem = uiState.mediaList.firstOrNull { it.filePath in uiState.selectedPaths },
+            selectedCount = uiState.selectedPaths.size,
             onAlbumClick = { album ->
                 showAddToSheet = false
                 addTarget = album.path
@@ -425,8 +345,7 @@ fun HomeScreen(
             addTarget = null
             val message = if (move) movedMessage else copiedMessage
             val onDone = { done: Int -> if (done > 0) Toast.makeText(context, message, Toast.LENGTH_SHORT).show() }
-            val started = if (albumSelecting) viewModel.addSelectedAlbumsToFolder(target, move, onDone)
-            else viewModel.addSelectedToFolder(target, move, onDone)
+            val started = viewModel.addSelectedToFolder(target, move, onDone)
             if (!started) Toast.makeText(context, sameFolderMessage, Toast.LENGTH_SHORT).show()
         }
         AddingMediaDialog(onMove = { add(move = true) }, onCopy = { add(move = false) }, onCancel = { addTarget = null })
