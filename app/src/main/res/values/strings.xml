@@ -417,6 +417,7 @@
     <string name="other_albums">Other Albums</string>
     <string name="moment">Moments</string>
     <string name="animated">Animated</string>
+    <string name="burst">Burst</string>
     <string name="oops">Oops!</string>
     <string name="no_moment_files_found">No moment files here.</string>
     <string name="scanning_photos">Scanning Photos....</string>

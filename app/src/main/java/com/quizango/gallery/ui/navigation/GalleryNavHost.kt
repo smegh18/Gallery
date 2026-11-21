@@ -573,9 +573,7 @@ fun GalleryNavHost(
         composable(Screen.BurstPhotos.route) {
             BurstPhotoScreen(
                 mediaRepository = app.mediaRepository,
-                onMediaClick = { mediaItem ->
-                    navController.navigateOnce(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
-                },
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

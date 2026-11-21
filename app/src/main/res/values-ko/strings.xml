@@ -329,6 +329,7 @@
     <string name="other_albums">기타 앨범</string>
     <string name="moment">순간</string>
     <string name="animated">애니메이션</string>
+    <string name="burst">버스트</string>
     <string name="oops">이런!</string>
     <string name="no_moment_files_found">모멘트 파일이 없습니다.</string>
     <string name="scanning_photos">사진 스캔 중....</string>

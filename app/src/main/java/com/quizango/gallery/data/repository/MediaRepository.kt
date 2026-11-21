@@ -12,6 +12,7 @@ import com.quizango.gallery.data.local.database.entity.MediaEntity
 import com.quizango.gallery.data.local.mediastore.MediaStoreScanner
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
+import com.quizango.gallery.domain.model.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -55,6 +56,37 @@ interface MediaRepository {
 /** VideoPlayerActivity capture name: "IMG_" + yyyyMMdd_ + epoch millis + ".png". */
 internal fun captureFileName(millis: Long): String =
     "IMG_" + java.text.SimpleDateFormat("yyyyMMdd_", java.util.Locale.US).format(java.util.Date(millis)) + millis + ".png"
+
+/**
+ * The 2.7.2 burst group key (`relativePath`, set by S272/s9/ao.OooOOOO): a camera JPEG whose name carries the maker's
+ * burst marker is grouped by its path up to the last "_" (a trailing "_cover" frame joins its burst); "" when the file
+ * is not a burst frame. Keys are only compared with other derived keys, never used as a path.
+ */
+internal fun burstGroupKey(filePath: String, fileName: String, folderPath: String, isImage: Boolean, manufacturer: String): String {
+    val maker = manufacturer.lowercase(java.util.Locale.ROOT)
+    val oppo = maker == "oppo"
+    val marker = when (maker) {
+        "oppo", "samsung" -> ""
+        "xiaomi" -> "timeburst"
+        else -> "burst"
+    }
+    val name = fileName.lowercase(java.util.Locale.ROOT)
+    if (!isImage || !folderPath.contains(if (oppo) "DCIM/Camera/Cshot" else "DCIM/Camera")) return ""
+    if (!oppo && !fileName.contains("_")) return ""
+    if (!name.contains(marker) || !name.contains(".jpg")) return ""
+    val cut = filePath.lastIndexOf('_')
+    if (cut == -1 && !oppo) return ""
+    val key = when (maker) {
+        "oppo" -> File(filePath).parentFile?.name.orEmpty()
+        "motorola" -> filePath.substring(cut)
+        else -> filePath.substring(0, cut)
+    }
+    val coverCut = key.lastIndexOf('_')
+    return if (name.contains("cover") && coverCut != -1) key.substring(0, coverCut) else key
+}
+
+internal fun MediaItem.burstKey(manufacturer: String = android.os.Build.MANUFACTURER.orEmpty()): String =
+    burstGroupKey(filePath, fileName, folderPath, mediaType == MediaType.IMAGE, manufacturer)
 
 /** [path] after [oldFolder] became [newFolder]: the folder itself and everything under it move, any other path stays. */
 internal fun movedPath(path: String, oldFolder: String, newFolder: String): String = when {
@@ -335,12 +367,11 @@ class MediaRepositoryImpl(
                     }.map { it.toDomain() }
                 }
             }
-            folderPath == "filter:burst" -> {
-                activeEntities.map { list ->
-                    list.filter {
-                        it.filePath.contains("BURST", ignoreCase = true) || it.fileName.contains("BURST", ignoreCase = true)
-                    }.map { it.toDomain() }
-                }
+            folderPath == "filter:burst" -> getBurstPhotosFlow()
+            folderPath.startsWith("filter:burst:") -> {
+                // One burst group: its frames among the current rows, nothing from other bursts
+                val key = folderPath.removePrefix("filter:burst:")
+                getBurstPhotosFlow().map { frames -> frames.filter { it.burstKey() == key } }
             }
             folderPath == "filter:place" -> {
                 activeEntities.map { list ->
@@ -420,12 +451,11 @@ class MediaRepositoryImpl(
 
     override fun getBurstPhotosFlow(): Flow<List<MediaItem>> {
         return cached("burst") { run {
+        // 2.7.2: images with a burst key, newest first (the active rows' order)
         activeEntities.map { list ->
-            list.filter {
-                it.filePath.contains("BURST", ignoreCase = true) ||
-                it.fileName.contains("BURST", ignoreCase = true)
-            }.map { it.toDomain() }
-        }
+            val maker = android.os.Build.MANUFACTURER.orEmpty()
+            list.filter { burstGroupKey(it.filePath, it.fileName, it.folderPath, it.mediaType == 1, maker).isNotEmpty() }.map { it.toDomain() }
+        }.flowOn(Dispatchers.Default)
     } }
     }
 

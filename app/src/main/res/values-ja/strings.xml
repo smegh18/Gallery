@@ -329,6 +329,7 @@
     <string name="other_albums">その他のアルバム</string>
     <string name="moment">瞬間</string>
     <string name="animated">アニメーション</string>
+    <string name="burst">バースト</string>
     <string name="oops">おっと！</string>
     <string name="no_moment_files_found">ここにはモーメントファイルがありません。</string>
     <string name="scanning_photos">写真をスキャン中...</string>

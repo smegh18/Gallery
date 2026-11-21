@@ -331,6 +331,7 @@
     <string name="other_albums">Другие альбомы</string>
     <string name="moment">Моменты</string>
     <string name="animated">Анимированное</string>
+    <string name="burst">Серия</string>
     <string name="oops">Ой!</string>
     <string name="no_moment_files_found">Здесь нет файлов моментов.</string>
     <string name="scanning_photos">Сканирование фотографий....</string>

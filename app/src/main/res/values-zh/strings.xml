@@ -318,6 +318,7 @@
     <string name="other_albums">其他专辑</string>
     <string name="moment">时刻</string>
     <string name="animated">动画</string>
+    <string name="burst">爆裂</string>
     <string name="oops">哎呀！</string>
     <string name="no_moment_files_found">这里没有时刻文件。</string>
     <string name="scanning_photos">正在扫描照片....</string>

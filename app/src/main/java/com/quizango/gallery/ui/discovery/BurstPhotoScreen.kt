@@ -1,158 +1,96 @@
 package com.quizango.gallery.ui.discovery
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.BurstMode
-import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.MediaRepository
+import com.quizango.gallery.data.repository.burstKey
 import com.quizango.gallery.domain.model.MediaItem
-import com.quizango.gallery.ui.theme.GalleryBlue
-import java.io.File
+import com.quizango.gallery.ui.browse.AlbumSquareCard
+import com.quizango.gallery.ui.browse.ListState
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.browse.listStateOf
+import com.quizango.gallery.ui.home.PhotosEmptyState
+import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.sdp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterial3Api::class)
+internal class BurstGroup(val key: String, val frames: List<MediaItem>)
+
+/**
+ * BurstPhotoViewModel (bf/a): frames grouped by key in query order (newest first), groups sorted by their first
+ * frame newest first (ax/u case 11), frame order kept. [frames] carry a non-empty key.
+ */
+internal fun burstGroups(frames: List<MediaItem>, keyOf: (MediaItem) -> String): List<BurstGroup> =
+    frames.groupBy(keyOf).map { (key, group) -> BurstGroup(key, group) }
+        .sortedByDescending { it.frames.first().dateModified }
+
+/** Card title "Burst N" (getString(burst) + " " + position) and the media list of exactly that group. */
+internal fun burstRoute(group: BurstGroup, title: String): String = Screen.AlbumDetail.createRoute("filter:burst:${group.key}", title)
+
+/** BurstPhotoActivity (§9): one item_grid_square_album card per burst, opening that burst's frames only. */
 @Composable
 fun BurstPhotoScreen(
     mediaRepository: MediaRepository,
-    onMediaClick: (MediaItem) -> Unit,
+    onNavigate: (String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    val burstList by mediaRepository.getBurstPhotosFlow().collectAsState(initial = emptyList())
+    val frames by remember { mediaRepository.getBurstPhotosFlow() }
+        .collectAsState<List<MediaItem>, List<MediaItem>?>(initial = null)
+    val groups by produceState<List<BurstGroup>?>(null, frames) {
+        val all = frames ?: return@produceState
+        value = withContext(Dispatchers.Default) { burstGroups(all) { it.burstKey() } }
+    }
+    val burst = stringResource(R.string.burst)
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Burst Photos",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            if (burstList.isEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_empty_img),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(90.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "No burst shots found",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = "Consecutive high-speed burst captures will appear here.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF8C9BAE),
-                        textAlign = TextAlign.Center
-                    )
+    Column(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        SharedMediaToolbar(title = burst, onBack = onNavigateBack)
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            when (listStateOf(groups, 3)) {
+                ListState.LOADING -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
                 }
-            } else {
-                LazyVerticalGrid(
+                ListState.EMPTY -> PhotosEmptyState(R.string.no_items, R.string.no_media_file)
+                ListState.CONTENT -> LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(2.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    contentPadding = PaddingValues(4.sdp),
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    items(burstList, key = { it.filePath }) { item ->
-                        Box(
-                            modifier = Modifier
-                                .aspectRatio(1f)
-                                .clickable { onMediaClick(item) }
-                        ) {
-                            AsyncImage(
-                                model = File(item.filePath),
-                                contentDescription = item.fileName,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-
-                            // Burst Icon Badge
-                            Surface(
-                                color = Color.Black.copy(alpha = 0.7f),
-                                shape = RoundedCornerShape(4.dp),
-                                modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .padding(4.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.BurstMode,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier.size(12.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(2.dp))
-                                    Text(
-                                        text = "BURST",
-                                        color = Color.White,
-                                        fontSize = 9.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
-                        }
+                    itemsIndexed(groups.orEmpty(), key = { _, group -> group.key }) { i, group ->
+                        val title = "$burst ${i + 1}"
+                        // be/b binds the single-cover face: first frame, title, bare count; never the 2x2 mosaic
+                        AlbumSquareCard(
+                            title = title,
+                            count = group.frames.size,
+                            cover = group.frames.first().contentUri,
+                            onClick = { onNavigate(burstRoute(group, title)) },
+                            modifier = Modifier.padding(end = 8.sdp, bottom = 8.sdp)
+                        )
                     }
                 }
             }
         }
+        Spacer(Modifier.navigationBarsPadding())
     }
 }

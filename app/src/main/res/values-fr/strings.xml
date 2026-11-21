@@ -321,6 +321,7 @@
     <string name="other_albums">Autres albums</string>
     <string name="moment">Moments</string>
     <string name="animated">Animé</string>
+    <string name="burst">Rafale</string>
     <string name="oops">Oops !</string>
     <string name="no_moment_files_found">Aucun fichier de moment ici.</string>
     <string name="scanning_photos">Analyse des photos en cours...</string>
