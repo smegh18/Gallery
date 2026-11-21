@@ -30,6 +30,12 @@ sealed class Screen(val route: String) {
         }
     }
 
+    /** Carries the list source, not the playlist: the player rebuilds the queue from the same source. */
+    data object VideoPlayer : Screen("video?path={path}&folder={folder}&isRecycle={isRecycle}&isVault={isVault}") {
+        fun createRoute(path: String, folder: String = "", isRecycle: Boolean = false, isVault: Boolean = false): String =
+            MediaViewer.createRoute(path, folder, isRecycle, isVault).replaceFirst("viewer?", "video?")
+    }
+
     data object Favorites : Screen("favorites")
     data object RecycleBin : Screen("recycle")
     data object Duplicates : Screen("duplicates")

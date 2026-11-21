@@ -55,6 +55,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -75,9 +76,12 @@ import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.domain.model.VaultItem
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -117,13 +121,7 @@ fun MediaViewerScreen(
 
     // Collect media items for this album/folder, recycle bin, vault, or all media
     val mediaList by remember(folderPath, isRecycle, isVault) {
-        when {
-            isRecycle -> mediaRepository.getRecycleBinFlow()
-            isVault -> vaultRepository.getVaultItemsFlow().map { list -> list.map { it.toMediaItem() } }
-            folderPath == "filter:favorites" -> mediaRepository.getFavoritesFlow()
-            folderPath.isNotEmpty() -> mediaRepository.getMediaByFolderFlow(folderPath)
-            else -> mediaRepository.getActiveMediaFlow()
-        }
+        mediaSourceFlow(mediaRepository, vaultRepository, folderPath, isRecycle, isVault)
     }.collectAsState(initial = emptyList())
 
     val fallbackItem = remember(filePath) {
@@ -193,20 +191,23 @@ fun MediaViewerScreen(
     fun viewPath(m: MediaItem): String? = if (isVault) vaultViewPaths[m.filePath] else m.filePath
     val currentViewPath = viewPath(currentItem)
 
+    // Only short videos get an inline player; longer ones open the Video player (§1.8)
+    val isInlineVideo = currentItem.isVideo && playsInline(currentItem.filePath, currentItem.durationMs)
+
     // Video Player lifecycle for active page
-    LaunchedEffect(currentItem.filePath, currentViewPath) {
-        if (currentItem.mediaType == MediaType.VIDEO && currentViewPath != null) {
+    LaunchedEffect(currentItem.filePath, currentViewPath, isInlineVideo) {
+        if (isInlineVideo && currentViewPath != null) {
+            // Starts paused on the first frame and stops at the end (no repeat in the reference inline view)
             val player = ExoPlayer.Builder(context).build().apply {
                 val exoMedia = ExoMediaItem.fromUri(Uri.fromFile(File(currentViewPath)))
                 setMediaItem(exoMedia)
-                repeatMode = ExoPlayer.REPEAT_MODE_ONE
                 prepare()
-                playWhenReady = true
+                playWhenReady = false
             }
             // The effect can run twice while the media list loads; only the newest player may play
             currentExoPlayer?.release()
             currentExoPlayer = player
-            isVideoPlaying = true
+            isVideoPlaying = false
             isVideoMuted = false
             videoSpeed = 1.0f
 
@@ -239,6 +240,8 @@ fun MediaViewerScreen(
             currentExoPlayer = null
         }
     }
+    // ON_PAUSE comes first on Back, on opening another screen and on Home, so audio stops before any transition
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) { currentExoPlayer?.pause() }
 
     // One open dialog at a time, bound to the page it was opened on; a page change closes it
     var dialog by remember { mutableStateOf<ViewerDialog?>(null) }
@@ -267,6 +270,16 @@ fun MediaViewerScreen(
     }
 
     fun toast(@StringRes message: Int) = Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+
+    // ic_full_video_play: check the file plays (corrupt → toast), then open the Video player on the list's videos
+    fun playExternal(path: String?) {
+        if (path == null) return
+        scope.launch {
+            val ok = withContext(Dispatchers.IO) { isPlayableVideo(path) }
+            if (ok) onNavigate(Screen.VideoPlayer.createRoute(path, folderPath, isRecycle, isVault))
+            else toast(R.string.toast_corrupted_video)
+        }
+    }
 
     fun onDockAction(action: DockAction) {
         when (action) {
@@ -398,6 +411,7 @@ fun MediaViewerScreen(
                 displayPath = viewPath(item),
                 version = if (page == pagerState.currentPage) imageVersion else 0,
                 exoPlayer = if (page == pagerState.currentPage) currentExoPlayer else null,
+                onPlayExternal = { playExternal(viewPath(item)) },
                 onToggleControls = { showControls = !showControls },
                 onDismiss = onNavigateBack,
                 onZoomChange = { zoomed ->
@@ -416,7 +430,7 @@ fun MediaViewerScreen(
                 isVault = isVault,
                 isAnimated = currentItem.isAnimatedMedia,
                 isHeif = currentItem.fileName.endsWith(".heif", ignoreCase = true),
-                isShortVideoPlaying = currentItem.isVideo && isVideoPlaying && videoDurationMs in 1..60_000L
+                isShortVideoPlaying = isInlineVideo && isVideoPlaying
             ),
             isFavorite = currentItem.isFavorite,
             onBack = onNavigateBack,
@@ -449,7 +463,7 @@ fun MediaViewerScreen(
                 exit = slideOutVertically(animationSpec = tween(CHROME_ANIMATION_MS)) { it } + fadeOut(tween(CHROME_ANIMATION_MS))
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                if (currentItem.mediaType == MediaType.VIDEO) {
+                if (isInlineVideo) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -692,6 +706,7 @@ private fun PagerMediaItemView(
     displayPath: String?,
     version: Int,
     exoPlayer: ExoPlayer?,
+    onPlayExternal: () -> Unit,
     onToggleControls: () -> Unit,
     onDismiss: () -> Unit = {},
     onZoomChange: (Boolean) -> Unit = {}
@@ -803,18 +818,15 @@ private fun PagerMediaItemView(
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.fillMaxSize()
                 )
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.5f)),
-                    contentAlignment = Alignment.Center
-                ) {
+                if (!playsInline(item.filePath, item.durationMs)) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_short_video_play),
-                        contentDescription = "Play",
-                        tint = Color.White,
-                        modifier = Modifier.size(28.dp)
+                        painter = painterResource(R.drawable.ic_full_video_play),
+                        contentDescription = stringResource(androidx.media3.ui.R.string.exo_controls_play_description),
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .clickable(onClick = onPlayExternal)
+                            .padding(30.sdp)
                     )
                 }
             }
@@ -897,6 +909,21 @@ private fun shareMedia(context: Context, path: String, isVideo: Boolean) {
         }
         context.startActivity(Intent.createChooser(intent, null))
     } catch (_: Exception) {}
+}
+
+/** The list a viewer (or the Video player it opens) pages through. */
+internal fun mediaSourceFlow(
+    mediaRepository: MediaRepository,
+    vaultRepository: VaultRepository,
+    folderPath: String,
+    isRecycle: Boolean,
+    isVault: Boolean
+): Flow<List<MediaItem>> = when {
+    isRecycle -> mediaRepository.getRecycleBinFlow()
+    isVault -> vaultRepository.getVaultItemsFlow().map { list -> list.map { it.toMediaItem() } }
+    folderPath == "filter:favorites" -> mediaRepository.getFavoritesFlow()
+    folderPath.isNotEmpty() -> mediaRepository.getMediaByFolderFlow(folderPath)
+    else -> mediaRepository.getActiveMediaFlow()
 }
 
 private fun VaultItem.toMediaItem() = MediaItem(

@@ -296,4 +296,18 @@
     <string name="file_name_already_exists">نام فایل از قبل وجود دارد.</string>
     <string name="mute">بی‌صدا کردن</string>
     <string name="unmute">لغو بی‌صدا کردن</string>
+    <string name="toast_corrupted_video">ویدیو آلوده قابل پخش نیست.</string>
+    <string name="no_previous_video">ویدیو قبلی وجود ندارد</string>
+    <string name="no_next_video">ویدیو بعدی وجود ندارد</string>
+    <string name="repeat_one">تکرار یک</string>
+    <string name="loop">حلقه</string>
+    <string name="no_repeat">بدون تکرار</string>
+    <string name="capture_ss">تهیه عکس از صفحه</string>
+    <string name="speed">سرعت</string>
+    <string name="ten_sec">۱۰ ثانیه</string>
+    <string name="paused">متوقف شده</string>
+    <string name="subtitle_not_available">زیرنویس در دسترس نیست.</string>
+    <string name="audio_not_available">صدا در دسترس نیست.</string>
+    <string name="video_not_found">ویدئو پیدا نشد.</string>
+    <string name="this_video_format_not_supported">فرمت ویدئو پشتیبانی نمی‌شود</string>
 </resources>

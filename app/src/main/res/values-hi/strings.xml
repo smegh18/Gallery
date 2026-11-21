@@ -304,4 +304,18 @@
     <string name="file_name_already_exists">फ़ाइल का नाम पहले से मौजूद है।</string>
     <string name="mute">म्यूट</string>
     <string name="unmute">अनम्यूट</string>
+    <string name="toast_corrupted_video">" भ्रष्ट वीडियो नहीं चल सकता।"</string>
+    <string name="no_previous_video">कोई पिछला वीडियो नहीं</string>
+    <string name="no_next_video">कोई अगला वीडियो नहीं</string>
+    <string name="repeat_one">एक को दोहराएं</string>
+    <string name="loop">लूप</string>
+    <string name="no_repeat">कोई दोहराना नहीं</string>
+    <string name="capture_ss">स्क्रीनशॉट ले</string>
+    <string name="speed">गति</string>
+    <string name="ten_sec">10 सेकंड</string>
+    <string name="paused">रोका गया</string>
+    <string name="subtitle_not_available">सबटाइटल उपलब्ध नहीं है।</string>
+    <string name="audio_not_available">ऑडियो उपलब्ध नहीं है।</string>
+    <string name="video_not_found">वीडियो नहीं मिला।</string>
+    <string name="this_video_format_not_supported">असमर्थित वीडियो फ़ॉर्मेट</string>
 </resources>

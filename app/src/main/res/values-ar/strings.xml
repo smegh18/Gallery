@@ -296,4 +296,18 @@
     <string name="file_name_already_exists">اسم الملف موجود بالفعل.</string>
     <string name="mute">كتم الصوت</string>
     <string name="unmute">إلغاء كتم الصوت</string>
+    <string name="toast_corrupted_video">الفيديو التالف لا يعمل.</string>
+    <string name="no_previous_video">لا يوجد فيديو سابق</string>
+    <string name="no_next_video">لا يوجد فيديو تالي</string>
+    <string name="repeat_one">تكرار واحد</string>
+    <string name="loop">حلقة</string>
+    <string name="no_repeat">بدون تكرار</string>
+    <string name="capture_ss">التقاط لقطة</string>
+    <string name="speed">سرعة</string>
+    <string name="ten_sec">١٠ ثواني</string>
+    <string name="paused">متوقف</string>
+    <string name="subtitle_not_available">الترجمة غير متاحة.</string>
+    <string name="audio_not_available">الصوت غير متاح.</string>
+    <string name="video_not_found">الفيديو غير موجود.</string>
+    <string name="this_video_format_not_supported">تنسيق الفيديو غير معتمد</string>
 </resources>

@@ -255,4 +255,18 @@
     <string name="file_name_already_exists">ফাইলের নাম আগে থেকেই আছে।</string>
     <string name="mute">নিঃশব্দ</string>
     <string name="unmute">আনমিউট করুন</string>
+    <string name="toast_corrupted_video">নষ্ট ভিডিও প্লে না.</string>
+    <string name="no_previous_video">আগের কোন ভিডিও নেই</string>
+    <string name="no_next_video">পরবর্তী ভিডিও নেই</string>
+    <string name="repeat_one">এক পুনরাবৃত্তি</string>
+    <string name="loop">লুপ</string>
+    <string name="no_repeat">নো রিপিট</string>
+    <string name="capture_ss">ক্যাপচার ss</string>
+    <string name="speed">গতি</string>
+    <string name="ten_sec">10 সেকেন্ড</string>
+    <string name="paused">বিরতি দেওয়া হয়েছে</string>
+    <string name="subtitle_not_available">সাবটাইটেল পাওয়া যায় না।</string>
+    <string name="audio_not_available">অডিও উপলব্ধ নেই.</string>
+    <string name="video_not_found">ভিডিও পাওয়া যায়নি.</string>
+    <string name="this_video_format_not_supported">অসমর্থিত ভিডিও বিন্যাস</string>
 </resources>

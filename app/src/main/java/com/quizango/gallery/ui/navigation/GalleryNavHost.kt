@@ -61,6 +61,7 @@ import com.quizango.gallery.ui.vault.VaultMediaScreen
 import com.quizango.gallery.ui.vault.VaultRecoveryQuestionScreen
 import com.quizango.gallery.ui.vault.VaultSettingScreen
 import com.quizango.gallery.ui.viewer.MediaViewerScreen
+import com.quizango.gallery.ui.viewer.VideoPlayerScreen
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -180,6 +181,27 @@ fun GalleryNavHost(
                 mediaRepository = app.mediaRepository,
                 vaultRepository = app.vaultRepository,
                 onNavigate = { route -> navController.navigateOnce(route) },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.VideoPlayer.route,
+            arguments = listOf(
+                navArgument("path") { type = NavType.StringType; defaultValue = "" },
+                navArgument("folder") { type = NavType.StringType; defaultValue = "" },
+                navArgument("isRecycle") { type = NavType.BoolType; defaultValue = false },
+                navArgument("isVault") { type = NavType.BoolType; defaultValue = false }
+            )
+        ) { backStackEntry ->
+            val args = backStackEntry.arguments
+            VideoPlayerScreen(
+                filePath = URLDecoder.decode(args?.getString("path") ?: "", StandardCharsets.UTF_8.toString()),
+                folderPath = URLDecoder.decode(args?.getString("folder") ?: "", StandardCharsets.UTF_8.toString()),
+                isRecycle = args?.getBoolean("isRecycle") ?: false,
+                isVault = args?.getBoolean("isVault") ?: false,
+                mediaRepository = app.mediaRepository,
+                vaultRepository = app.vaultRepository,
                 onNavigateBack = { navController.popBackStack() }
             )
         }

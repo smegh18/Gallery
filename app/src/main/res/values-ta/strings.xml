@@ -305,4 +305,18 @@
     <string name="file_name_already_exists">கோப்பு பெயர் ஏற்கனவே உள்ளது.</string>
     <string name="mute">சுவரை முடக்கு</string>
     <string name="unmute">சுவர் முடிக்கவில்லை</string>
+    <string name="toast_corrupted_video">சேதும் வீடியோ இல்லாமல் இயக்கம் செய்ய முடியாது.</string>
+    <string name="no_previous_video">முந்தைய வீடியோ இல்லை</string>
+    <string name="no_next_video">அடுத்த வீடியோ இல்லை</string>
+    <string name="repeat_one">ஒருவரை மீண்டும் கொண்டு வாசிக்க</string>
+    <string name="loop">மூட்டு</string>
+    <string name="no_repeat">மீள்வழி செய்ய விரும்பாதே</string>
+    <string name="capture_ss">திருடரம் ss</string>
+    <string name="speed">வேகம்</string>
+    <string name="ten_sec">10 விநாடிகள்</string>
+    <string name="paused">நிறுத்தப்பட்டது</string>
+    <string name="subtitle_not_available">உரையாடல் கிடைக்கவில்லை.</string>
+    <string name="audio_not_available">ஒலி கிடைக்கவில்லை.</string>
+    <string name="video_not_found">வீடியோ காணப்படவில்லை.</string>
+    <string name="this_video_format_not_supported">ஆதரிக்கப்படாத காணொளி வடிவம்</string>
 </resources>

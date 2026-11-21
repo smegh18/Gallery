@@ -387,4 +387,18 @@
     <string name="file_name_already_exists">File name already exists.</string>
     <string name="mute">Mute</string>
     <string name="unmute">Unmute</string>
+    <string name="toast_corrupted_video">Corrupted video not play.</string>
+    <string name="no_previous_video">No previous video</string>
+    <string name="no_next_video">No next video</string>
+    <string name="repeat_one">Repeat One</string>
+    <string name="loop">Loop</string>
+    <string name="no_repeat">No Repeat</string>
+    <string name="capture_ss">Capture ss</string>
+    <string name="speed">Speed</string>
+    <string name="ten_sec">10 seconds</string>
+    <string name="paused">Paused</string>
+    <string name="subtitle_not_available">Subtitle is not available.</string>
+    <string name="audio_not_available">Audio is not available.</string>
+    <string name="video_not_found">Video not found.</string>
+    <string name="this_video_format_not_supported">Unsupported video format</string>
 </resources>

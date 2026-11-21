@@ -292,4 +292,18 @@
     <string name="file_name_already_exists">Dosya adı zaten mevcut.</string>
     <string name="mute">Sesini kapatmak</string>
     <string name="unmute">Sesini açmak</string>
+    <string name="toast_corrupted_video">Bozuk video oynatılamıyor.</string>
+    <string name="no_previous_video">Önceki video yok</string>
+    <string name="no_next_video">Sonraki video yok</string>
+    <string name="repeat_one">Birini Tekrarla</string>
+    <string name="loop">Döngü</string>
+    <string name="no_repeat">Tekrar Yok</string>
+    <string name="capture_ss">"SS'yi yakala"</string>
+    <string name="speed">Hız</string>
+    <string name="ten_sec">10 saniye</string>
+    <string name="paused">Duraklatıldı</string>
+    <string name="subtitle_not_available">Altyazı mevcut değil.</string>
+    <string name="audio_not_available">Ses mevcut değil.</string>
+    <string name="video_not_found">Video bulunamadı.</string>
+    <string name="this_video_format_not_supported">Desteklenmeyen video biçimi</string>
 </resources>

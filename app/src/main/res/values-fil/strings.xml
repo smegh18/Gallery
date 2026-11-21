@@ -296,4 +296,18 @@
     <string name="file_name_already_exists">Mayroon nang pangalan ang file.</string>
     <string name="mute">Patahimikin</string>
     <string name="unmute">Alisin ang Patahimik</string>
+    <string name="toast_corrupted_video">Hindi ma-play ang sira na video.</string>
+    <string name="no_previous_video">Walang nakaraang video</string>
+    <string name="no_next_video">Walang susunod na video</string>
+    <string name="repeat_one">Ulitin Isa</string>
+    <string name="loop">Likuran</string>
+    <string name="no_repeat">Walang Ulan</string>
+    <string name="capture_ss">Kunan ng ss</string>
+    <string name="speed">Bilis</string>
+    <string name="ten_sec">10 segundo</string>
+    <string name="paused">Itinigil</string>
+    <string name="subtitle_not_available">Subtitle hindi available.</string>
+    <string name="audio_not_available">Audio hindi available.</string>
+    <string name="video_not_found">Hindi natagpuan ang video.</string>
+    <string name="this_video_format_not_supported">Hindi suportadong format ng video</string>
 </resources>

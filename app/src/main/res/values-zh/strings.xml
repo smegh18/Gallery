@@ -293,4 +293,18 @@
     <string name="file_name_already_exists">文件名已存在。</string>
     <string name="mute">沉默的</string>
     <string name="unmute">取消静音</string>
+    <string name="toast_corrupted_video">损坏的视频无法播放。</string>
+    <string name="no_previous_video">没有之前的视频</string>
+    <string name="no_next_video">没有下一个视频</string>
+    <string name="repeat_one">重复一次</string>
+    <string name="loop">环形</string>
+    <string name="no_repeat">不重复</string>
+    <string name="capture_ss">捕获 ss</string>
+    <string name="speed">速度</string>
+    <string name="ten_sec">10秒</string>
+    <string name="paused">已暂停</string>
+    <string name="subtitle_not_available">沒有字幕。</string>
+    <string name="audio_not_available">音频不可用。</string>
+    <string name="video_not_found">未找到视频。</string>
+    <string name="this_video_format_not_supported">不支持的视频格式</string>
 </resources>

@@ -275,4 +275,18 @@
     <string name="file_name_already_exists">فائل کا نام پہلے سے موجود ہے۔</string>
     <string name="mute">آواز بند</string>
     <string name="unmute">آواز کھولیں</string>
+    <string name="toast_corrupted_video">معیاری ویڈیو کھیل نہیں سکتی۔</string>
+    <string name="no_previous_video">کوئی پچھلا ویڈیو نہیں</string>
+    <string name="no_next_video">کوئی اگلا ویڈیو نہیں</string>
+    <string name="repeat_one">ایک دوہراؤ</string>
+    <string name="loop">لوپ</string>
+    <string name="no_repeat">بلا دہرائیں</string>
+    <string name="capture_ss">اسکرین شوٹ کریں</string>
+    <string name="speed">رفتار</string>
+    <string name="ten_sec">10 سیکنڈ</string>
+    <string name="paused">روک دیا گیا</string>
+    <string name="subtitle_not_available">سب ٹائٹل دستیاب نہیں ہے۔</string>
+    <string name="audio_not_available">آڈیو دستیاب نہیں ہے۔</string>
+    <string name="video_not_found">ویڈیو نہیں ملی۔</string>
+    <string name="this_video_format_not_supported">غیر معتبر ویڈیو فارمیٹ</string>
 </resources>

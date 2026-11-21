@@ -304,4 +304,18 @@
     <string name="file_name_already_exists">Nama fail sudah wujud.</string>
     <string name="mute">Bisu</string>
     <string name="unmute">Nyahbisu</string>
+    <string name="toast_corrupted_video">" Video rosak tidak dapat diputar."</string>
+    <string name="no_previous_video">Tiada video sebelumnya</string>
+    <string name="no_next_video">Tiada video seterusnya</string>
+    <string name="repeat_one">Ulang Satu</string>
+    <string name="loop">Lingkaran</string>
+    <string name="no_repeat">Tiada Ulang</string>
+    <string name="capture_ss">Tangkapan SS</string>
+    <string name="speed">Kelajuan</string>
+    <string name="ten_sec">10 saat</string>
+    <string name="paused">Dijeda</string>
+    <string name="subtitle_not_available">Subtajuk tidak tersedia.</string>
+    <string name="audio_not_available">Audio tidak tersedia.</string>
+    <string name="video_not_found">Video tidak dijumpai.</string>
+    <string name="this_video_format_not_supported">Format video tidak disokong</string>
 </resources>

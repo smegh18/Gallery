@@ -304,4 +304,18 @@
     <string name="file_name_already_exists">Filnamnet finns redan.</string>
     <string name="mute">Ljud av</string>
     <string name="unmute">Ljud på</string>
+    <string name="toast_corrupted_video">Korrupt video kan inte spelas upp.</string>
+    <string name="no_previous_video">Inget föregående video</string>
+    <string name="no_next_video">Inget nästa video</string>
+    <string name="repeat_one">Upprepa en</string>
+    <string name="loop">Loopa</string>
+    <string name="no_repeat">Ingen upprepning</string>
+    <string name="capture_ss">Ta skärmbild</string>
+    <string name="speed">Hastighet</string>
+    <string name="ten_sec">10 sekunder</string>
+    <string name="paused">Pausat</string>
+    <string name="subtitle_not_available">Textning är inte tillgänglig.</string>
+    <string name="audio_not_available">Ljud är inte tillgängligt.</string>
+    <string name="video_not_found">Video hittades inte.</string>
+    <string name="this_video_format_not_supported">Ogiltigt videoformat</string>
 </resources>

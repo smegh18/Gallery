@@ -304,4 +304,18 @@
     <string name="file_name_already_exists">O nome do arquivo já existe.</string>
     <string name="mute">Silenciar</string>
     <string name="unmute">Ativar Som</string>
+    <string name="toast_corrupted_video">O vídeo corrompido não pode ser reproduzido.</string>
+    <string name="no_previous_video">Nenhum vídeo anterior</string>
+    <string name="no_next_video">Nenhum próximo vídeo</string>
+    <string name="repeat_one">Repetir uma vez</string>
+    <string name="loop">Loop</string>
+    <string name="no_repeat">Sem Repetição</string>
+    <string name="capture_ss">Capturar ss</string>
+    <string name="speed">Velocidade</string>
+    <string name="ten_sec">10 segundos</string>
+    <string name="paused">Pausado</string>
+    <string name="subtitle_not_available">Legenda não disponível.</string>
+    <string name="audio_not_available">Áudio não disponível.</string>
+    <string name="video_not_found">Vídeo não encontrado.</string>
+    <string name="this_video_format_not_supported">Formato de vídeo não suportado</string>
 </resources>

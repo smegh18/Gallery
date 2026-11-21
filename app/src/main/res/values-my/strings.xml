@@ -304,4 +304,18 @@
     <string name="file_name_already_exists">ဖိုင်အမည်သည် ရှိပြီးသားဖြစ်သည်။</string>
     <string name="mute">မက်ဆေ့ခ်ျမည်</string>
     <string name="unmute">ကူညီမည်</string>
+    <string name="toast_corrupted_video">" ကြည့်နေသောဗီဒီယိုကိုမှားနိုင်ပါပြီ။"</string>
+    <string name="no_previous_video">ရှေးခယျုပျက်စီးသော ဗီဒီယိုမရှိသေးပါ</string>
+    <string name="no_next_video">ရှေးခယျုပျက်စီးသော ဗီဒီယိုမရှိသေးပါ</string>
+    <string name="repeat_one">တစ်ကြိမ်နေ့တစ်</string>
+    <string name="loop">လိုပြီးသွား</string>
+    <string name="no_repeat">ပြန်သွားမရှိသော</string>
+    <string name="capture_ss">မက်ဆေ့ခ်မည့်</string>
+    <string name="speed">အပြည့်</string>
+    <string name="ten_sec">10 စက္ကန့်</string>
+    <string name="paused">ရပ်တန်နေ</string>
+    <string name="subtitle_not_available">စာတမ်းမရရှိနိုင်ပါ။</string>
+    <string name="audio_not_available">အသုံးချသည်မရရှိနိုင်ပါ။</string>
+    <string name="video_not_found">ဗီဒီယို မရှိပါ။</string>
+    <string name="this_video_format_not_supported">မီဒီယာ ဗီဒီယို ပုံစံမပြုရပါ</string>
 </resources>

@@ -304,4 +304,18 @@
     <string name="file_name_already_exists">ファイル名はすでに存在します。</string>
     <string name="mute">ミュート</string>
     <string name="unmute">ミュート解除</string>
+    <string name="toast_corrupted_video">" 壊れたビデオは再生できません。"</string>
+    <string name="no_previous_video">前のビデオはありません</string>
+    <string name="no_next_video">次のビデオはありません</string>
+    <string name="repeat_one">1 曲リピート</string>
+    <string name="loop">ループ</string>
+    <string name="no_repeat">繰り返さない</string>
+    <string name="capture_ss">スクリーンショットをキャプチャ</string>
+    <string name="speed">速度</string>
+    <string name="ten_sec">10 秒</string>
+    <string name="paused">一時停止中</string>
+    <string name="subtitle_not_available">字幕は利用できません。</string>
+    <string name="audio_not_available">オーディオは利用できません。</string>
+    <string name="video_not_found">ビデオが見つかりません。</string>
+    <string name="this_video_format_not_supported">サポートされていないビデオ形式</string>
 </resources>

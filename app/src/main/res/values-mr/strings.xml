@@ -288,4 +288,18 @@
     <string name="file_name_already_exists">फाईलचं नाव आधीपासूनच अस्तित्त्वात आहे.</string>
     <string name="mute">म्यूट करा</string>
     <string name="unmute">अनम्युट करा</string>
+    <string name="toast_corrupted_video">खराब व्हिडिओ नाही चालू करू शकतो.</string>
+    <string name="no_previous_video">कोणताही आधीचं व्हिडिओ नाही</string>
+    <string name="no_next_video">कोणताही पुढील व्हिडिओ नाही</string>
+    <string name="repeat_one">एक नक्कीपासून</string>
+    <string name="loop">वर्तनी</string>
+    <string name="no_repeat">पुनरावृत्ति नाही</string>
+    <string name="capture_ss">स्क्रीनशॉट कॅप्चर करा</string>
+    <string name="speed">गति</string>
+    <string name="ten_sec">10 सेकंड</string>
+    <string name="paused">थांबले</string>
+    <string name="subtitle_not_available">सबटायटल उपलब्ध नाही.</string>
+    <string name="audio_not_available">ऑडिओ उपलब्ध नाही.</string>
+    <string name="video_not_found">व्हिडिओ सापडला नाही.</string>
+    <string name="this_video_format_not_supported">असमर्थित व्हिडिओ फॉर्मॅट</string>
 </resources>
