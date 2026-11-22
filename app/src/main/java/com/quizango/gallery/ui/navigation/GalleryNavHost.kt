@@ -68,8 +68,6 @@ import com.quizango.gallery.ui.vault.VaultRecoveryQuestionScreen
 import com.quizango.gallery.ui.vault.VaultSettingScreen
 import com.quizango.gallery.ui.viewer.MediaViewerScreen
 import com.quizango.gallery.ui.viewer.VideoPlayerScreen
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -410,9 +408,9 @@ fun GalleryNavHost(
             )
         ) { backStackEntry ->
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
-            val path = if (rawPath.isNotEmpty()) URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString()) else null
+            val path = if (rawPath.isNotEmpty()) rawPath else null
             val rawTab = backStackEntry.arguments?.getString("tab") ?: ""
-            val tab = if (rawTab.isNotEmpty()) URLDecoder.decode(rawTab, StandardCharsets.UTF_8.toString()) else null
+            val tab = if (rawTab.isNotEmpty()) rawTab else null
 
             PhotoEditorScreen(
                 initialPath = path,
@@ -501,9 +499,9 @@ fun GalleryNavHost(
             popExitTransition = { fadeOut(tween(500)) }
         ) { backStackEntry ->
             val rawTitle = backStackEntry.arguments?.getString("title") ?: "Story"
-            val title = URLDecoder.decode(rawTitle, StandardCharsets.UTF_8.toString())
+            val title = rawTitle
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
-            val path = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
+            val path = rawPath
             val allMedia by app.mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
             // Built-in albums (Screenshots, Camera...) are "filter:" ids, not folders
             val filterMedia by androidx.compose.runtime.produceState(emptyList<com.quizango.gallery.domain.model.MediaItem>(), path) {
@@ -632,7 +630,7 @@ fun GalleryNavHost(
             )
         ) { backStackEntry ->
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
-            val path = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
+            val path = rawPath
 
             WallpaperScreen(
                 imagePath = path,
@@ -653,7 +651,7 @@ fun GalleryNavHost(
             )
         ) { backStackEntry ->
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
-            val path = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
+            val path = rawPath
 
             RemoveBgScreen(
                 imagePath = path,
@@ -669,7 +667,7 @@ fun GalleryNavHost(
             )
         ) { backStackEntry ->
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
-            val path = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
+            val path = rawPath
 
             BlurBgScreen(
                 imagePath = path,
@@ -685,7 +683,7 @@ fun GalleryNavHost(
             )
         ) { backStackEntry ->
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
-            val path = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
+            val path = rawPath
 
             ColorSplashScreen(
                 imagePath = path,
