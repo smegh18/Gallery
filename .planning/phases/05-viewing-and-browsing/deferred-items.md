@@ -1,0 +1,4 @@
+# Deferred items (found in 05-08, not Phase 5 routes)
+
+- **Double route decode outside Phase 5.** `GalleryNavHost.kt` still runs `URLDecoder.decode` on arguments that Navigation 2.8.8 has already decoded for the Editor (`path`, `tab`), StoryView (`path`, `title`), Wallpaper, and the vault / organizer / collage / sticker routes. A literal `+` or `%` in a path or title is corrupted, and a stray `%` can throw. Fix is the same as 08a85d3: use the argument as is (route builders already encode spaces as `%20` through `encodeRouteArg`). Owner: the phase that owns each screen (Phase 6 and later), or a small cleanup plan.
+- **No instrumented navigation test.** `RouteArgsTest` simulates the navigation decode with `java.net.URI` (same percent-decoding, `+` kept). A `TestNavHostController` test in `androidTest` would prove it against the real nav host, but nothing can run it without a device.
