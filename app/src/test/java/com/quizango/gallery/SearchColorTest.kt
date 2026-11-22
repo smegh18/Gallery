@@ -16,6 +16,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.net.URLDecoder
+import com.quizango.gallery.navArg
 
 class SearchColorTest {
 
@@ -36,11 +37,9 @@ class SearchColorTest {
     @Test
     fun selectedColorIsDecodedExactlyFromTheRoute() {
         SEARCH_SWATCH_HEX.forEach { hex ->
-            val route = Screen.SearchColor.createRoute(hex)
-            assertEquals(hex, colorFromArg(route.substringAfter("color=")))   // still encoded (%23...)
-            assertEquals(hex, colorFromArg(hex))                              // already decoded by the nav host
+            assertEquals(hex, colorFromArg(navArg(Screen.SearchColor.createRoute(hex), "color")))
         }
-        assertEquals("#007AFF", colorFromArg("%23007aff")) // picker colours are upper-cased
+        assertEquals("#007AFF", colorFromArg("#007aff")) // picker colours are upper-cased
     }
 
     @Test

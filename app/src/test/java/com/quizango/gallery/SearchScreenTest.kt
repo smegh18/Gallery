@@ -123,15 +123,15 @@ class SearchScreenTest {
     @Test
     fun viewAllRouteRoundTripsSectionAndQueryAndRejectsUnknownSections() {
         val route = Screen.SearchViewAll.createRoute(SearchSection.PLACES.type, "São Paulo & co/50%")
-        val query = route.substringAfter("query=")
-        assertTrue(!query.contains('&') && !query.contains(' ') && !query.contains('/'))
-        assertEquals(SearchSection.PLACES to "São Paulo & co/50%", viewAllArgs("2", query))
+        val encoded = route.substringAfter("query=")
+        assertTrue(!encoded.contains('&') && !encoded.contains(' ') && !encoded.contains('/'))
+        assertEquals(SearchSection.PLACES to "São Paulo & co/50%", viewAllArgs("2", navArg(route, "query")))
         assertEquals(SearchSection.MOMENTS to "", viewAllArgs("3", null))
         // Hand-edited or stale routes fall back to no section (empty result), never a crash
         assertNull(viewAllArgs("9", "x").first)
         assertNull(viewAllArgs("abc", "x").first)
         assertNull(viewAllArgs(null, "x").first)
-        assertEquals("100%", viewAllArgs("1", "100%").second) // an already-decoded value is kept as is
+        assertEquals("100%", viewAllArgs("1", "100%").second) // the nav host decodes; the screen must not decode again
         assertTrue(sectionCards(index, viewAllArgs("9", "x").first, "x").isEmpty())
     }
 

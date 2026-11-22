@@ -24,14 +24,12 @@ import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.ui.browse.SharedMediaToolbar
 import com.quizango.gallery.ui.home.PhotosEmptyState
 import com.quizango.gallery.ui.theme.sdp
-import java.net.URLDecoder
 
 /**
- * The route arguments as typed values. The nav host hands over the argument text; decoding never throws (an
- * already-decoded "100%" is kept as is) and a section outside Albums / Places / Moments is null, which shows the empty state.
+ * The route arguments as typed values. The nav host has already percent-decoded the text, so it is used as is; a section outside Albums / Places / Moments is null, which shows the empty state.
  */
 internal fun viewAllArgs(sectionArg: String?, queryArg: String?): Pair<SearchSection?, String> {
-    val query = queryArg?.let { runCatching { URLDecoder.decode(it, "UTF-8") }.getOrDefault(it) }.orEmpty()
+    val query = queryArg.orEmpty()
     return SearchSection.of(sectionArg?.toIntOrNull()) to query
 }
 

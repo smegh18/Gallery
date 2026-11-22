@@ -73,14 +73,14 @@ class PlaceScreenTest {
     fun cardRouteCarriesThePlaceFilterEncodedAndNeverAPath() {
         val group = groupPlaces(listOf(item(1, "A/B: c&d", 1f, 1f))).single()
         val route = placeMediaRoute(group)
-        assertEquals("album/filter%3Aplace%3AA%2FB%3A+c%26d/A%2FB%3A+c%26d", route)
+        assertEquals("album/filter%3Aplace%3AA%2FB%3A%20c%26d/A%2FB%3A%20c%26d", route)
         assertTrue(route.split("/").size == 3) // nothing in the key can add a path segment
     }
 
     @Test
     fun placeRouteEncodesTheSelectedKey() {
         assertEquals("place?key=", placeRoute())
-        assertEquals("place?key=Saint+Louis%2FMO", placeRoute("Saint Louis/MO"))
+        assertEquals("place?key=Saint%20Louis%2FMO", placeRoute("Saint Louis/MO"))
         assertNotNull(placeRoute("48.8566,2.3522"))
     }
 

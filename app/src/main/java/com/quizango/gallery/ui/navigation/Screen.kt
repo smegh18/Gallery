@@ -3,6 +3,9 @@ package com.quizango.gallery.ui.navigation
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+/** Percent-encodes a route argument. Navigation decodes "+" as is, so a space must be %20 (URLEncoder writes "+"). */
+internal fun encodeRouteArg(value: String): String = URLEncoder.encode(value, StandardCharsets.UTF_8.toString()).replace("+", "%20")
+
 sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
     data object FeaturePromo : Screen("feature_promo")
@@ -11,8 +14,8 @@ sealed class Screen(val route: String) {
     
     data object AlbumDetail : Screen("album/{bucketId}/{bucketName}") {
         fun createRoute(bucketId: String, bucketName: String): String {
-            val encodedName = URLEncoder.encode(bucketName, StandardCharsets.UTF_8.toString())
-            val encodedId = URLEncoder.encode(bucketId, StandardCharsets.UTF_8.toString())
+            val encodedName = encodeRouteArg(bucketName)
+            val encodedId = encodeRouteArg(bucketId)
             return "album/$encodedId/$encodedName"
         }
     }
@@ -24,8 +27,8 @@ sealed class Screen(val route: String) {
             isRecycle: Boolean = false,
             isVault: Boolean = false
         ): String {
-            val encodedPath = URLEncoder.encode(path, StandardCharsets.UTF_8.toString())
-            val encodedFolder = URLEncoder.encode(folder, StandardCharsets.UTF_8.toString())
+            val encodedPath = encodeRouteArg(path)
+            val encodedFolder = encodeRouteArg(folder)
             return "viewer?path=$encodedPath&folder=$encodedFolder&isRecycle=$isRecycle&isVault=$isVault"
         }
     }
@@ -47,22 +50,22 @@ sealed class Screen(val route: String) {
     data object Cleaner : Screen("cleaner")
     data object Editor : Screen("editor?path={path}&tab={tab}") {
         fun createRoute(path: String = "", initialTab: String = ""): String {
-            val encoded = URLEncoder.encode(path, StandardCharsets.UTF_8.toString())
-            val encodedTab = URLEncoder.encode(initialTab, StandardCharsets.UTF_8.toString())
+            val encoded = encodeRouteArg(path)
+            val encodedTab = encodeRouteArg(initialTab)
             return "editor?path=$encoded&tab=$encodedTab"
         }
     }
     data object Search : Screen("search")
     data object SearchColor : Screen("search/color?color={color}") {
         fun createRoute(color: String = "#FF0000"): String {
-            val encoded = URLEncoder.encode(color, StandardCharsets.UTF_8.toString())
+            val encoded = encodeRouteArg(color)
             return "search/color?color=$encoded"
         }
     }
     /** Section type (SearchSection.type) and the typed query; the screen recomputes its results from the current data. */
     data object SearchViewAll : Screen("search/all?section={section}&query={query}") {
         fun createRoute(section: Int, query: String): String {
-            val encoded = URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
+            val encoded = encodeRouteArg(query)
             return "search/all?section=$section&query=$encoded"
         }
     }
@@ -92,8 +95,8 @@ sealed class Screen(val route: String) {
     data object Place : Screen("place?key={key}") // built by discovery.placeRoute
     data object StoryView : Screen("story?path={path}&title={title}") {
         fun createRoute(path: String, title: String): String {
-            val encodedPath = URLEncoder.encode(path, StandardCharsets.UTF_8.toString())
-            val encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8.toString())
+            val encodedPath = encodeRouteArg(path)
+            val encodedTitle = encodeRouteArg(title)
             return "story?path=$encodedPath&title=$encodedTitle"
         }
     }
@@ -106,26 +109,26 @@ sealed class Screen(val route: String) {
     data object CollageMaker : Screen("creative/collage")
     data object Wallpaper : Screen("creative/wallpaper?path={path}") {
         fun createRoute(path: String): String {
-            val encoded = URLEncoder.encode(path, StandardCharsets.UTF_8.toString())
+            val encoded = encodeRouteArg(path)
             return "creative/wallpaper?path=$encoded"
         }
     }
     data object Stickers : Screen("creative/stickers")
     data object RemoveBg : Screen("creative/remove_bg?path={path}") {
         fun createRoute(path: String = ""): String {
-            val encoded = URLEncoder.encode(path, StandardCharsets.UTF_8.toString())
+            val encoded = encodeRouteArg(path)
             return "creative/remove_bg?path=$encoded"
         }
     }
     data object BlurBg : Screen("creative/blur_bg?path={path}") {
         fun createRoute(path: String = ""): String {
-            val encoded = URLEncoder.encode(path, StandardCharsets.UTF_8.toString())
+            val encoded = encodeRouteArg(path)
             return "creative/blur_bg?path=$encoded"
         }
     }
     data object ColorSplash : Screen("creative/color_splash?path={path}") {
         fun createRoute(path: String = ""): String {
-            val encoded = URLEncoder.encode(path, StandardCharsets.UTF_8.toString())
+            val encoded = encodeRouteArg(path)
             return "creative/color_splash?path=$encoded"
         }
     }

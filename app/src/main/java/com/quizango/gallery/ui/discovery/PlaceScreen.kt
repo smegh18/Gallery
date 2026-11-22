@@ -87,18 +87,17 @@ import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.browse.SharedMediaToolbar
 import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.navigation.encodeRouteArg
 import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import kotlin.coroutines.resume
 
 /** The Place screen (MapActivity); [selectedKey] is the place the viewer's Show on map came from, "" from Explore. */
 internal fun placeRoute(selectedKey: String = ""): String =
-    "place?key=" + URLEncoder.encode(selectedKey, StandardCharsets.UTF_8.toString())
+    "place?key=" + encodeRouteArg(selectedKey)
 
 /** What an Allow-stripe permission result means: ask again later, or send the user to the app's settings. */
 internal enum class LocationOutcome { GRANTED, RETRY, SETTINGS }

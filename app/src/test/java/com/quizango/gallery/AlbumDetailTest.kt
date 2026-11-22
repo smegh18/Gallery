@@ -6,6 +6,7 @@ import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.album.viewerRouteFor
 import com.quizango.gallery.ui.home.formatGroupHeader
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.navigation.encodeRouteArg
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
@@ -110,8 +111,8 @@ class AlbumDetailTest {
     fun viewerRouteCarriesThePathAndTheListSource() {
         val item = createSampleMediaItem(1, "a b.jpg")
         val folder = viewerRouteFor(item, "/storage/emulated/0/DCIM/Camera")
-        assertTrue(folder.contains("path=" + java.net.URLEncoder.encode(item.filePath, "UTF-8")))
-        assertTrue(folder.contains("folder=" + java.net.URLEncoder.encode("/storage/emulated/0/DCIM/Camera", "UTF-8")))
+        assertTrue(folder.contains("path=" + encodeRouteArg(item.filePath)))
+        assertTrue(folder.contains("folder=" + encodeRouteArg("/storage/emulated/0/DCIM/Camera")))
         assertTrue(viewerRouteFor(item, "filter:favorites").contains("folder=filter%3Afavorites"))
     }
 

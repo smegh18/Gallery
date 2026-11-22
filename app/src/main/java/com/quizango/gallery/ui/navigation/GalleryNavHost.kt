@@ -148,10 +148,11 @@ fun GalleryNavHost(
                 navArgument("bucketName") { type = NavType.StringType }
             )
         ) { backStackEntry ->
+            // Navigation has already percent-decoded route arguments; decoding again corrupts "+" and "%".
             val rawId = backStackEntry.arguments?.getString("bucketId") ?: ""
             val rawName = backStackEntry.arguments?.getString("bucketName") ?: ""
-            val bucketId = URLDecoder.decode(rawId, StandardCharsets.UTF_8.toString())
-            val bucketName = URLDecoder.decode(rawName, StandardCharsets.UTF_8.toString())
+            val bucketId = rawId
+            val bucketName = rawName
 
             AlbumDetailScreen(
                 bucketId = bucketId,
@@ -173,9 +174,9 @@ fun GalleryNavHost(
             )
         ) { backStackEntry ->
             val rawPath = backStackEntry.arguments?.getString("path") ?: ""
-            val filePath = URLDecoder.decode(rawPath, StandardCharsets.UTF_8.toString())
+            val filePath = rawPath
             val rawFolder = backStackEntry.arguments?.getString("folder") ?: ""
-            val folderPath = URLDecoder.decode(rawFolder, StandardCharsets.UTF_8.toString())
+            val folderPath = rawFolder
             val isRecycle = backStackEntry.arguments?.getBoolean("isRecycle") ?: false
             val isVault = backStackEntry.arguments?.getBoolean("isVault") ?: false
 
@@ -202,8 +203,8 @@ fun GalleryNavHost(
         ) { backStackEntry ->
             val args = backStackEntry.arguments
             VideoPlayerScreen(
-                filePath = URLDecoder.decode(args?.getString("path") ?: "", StandardCharsets.UTF_8.toString()),
-                folderPath = URLDecoder.decode(args?.getString("folder") ?: "", StandardCharsets.UTF_8.toString()),
+                filePath = args?.getString("path") ?: "",
+                folderPath = args?.getString("folder") ?: "",
                 isRecycle = args?.getBoolean("isRecycle") ?: false,
                 isVault = args?.getBoolean("isVault") ?: false,
                 mediaRepository = app.mediaRepository,
@@ -480,7 +481,7 @@ fun GalleryNavHost(
             arguments = listOf(navArgument("key") { type = NavType.StringType; defaultValue = "" })
         ) { backStackEntry ->
             PlaceScreen(
-                selectedKey = URLDecoder.decode(backStackEntry.arguments?.getString("key") ?: "", StandardCharsets.UTF_8.toString()),
+                selectedKey = backStackEntry.arguments?.getString("key") ?: "",
                 mediaRepository = app.mediaRepository,
                 onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }

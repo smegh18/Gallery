@@ -16,7 +16,6 @@ import com.quizango.gallery.ui.browse.MediaAction
 import com.quizango.gallery.ui.browse.SharedMediaList
 import com.quizango.gallery.ui.browse.allFavorite
 import com.quizango.gallery.ui.browse.rememberMediaListActions
-import java.net.URLDecoder
 
 internal const val DEFAULT_SEARCH_COLOR = "#FF0000"
 
@@ -27,7 +26,7 @@ private val HEX_COLOR = Regex("#[0-9A-Fa-f]{6}")
  * swatches produce it), else the route default. A malformed argument never reaches the repository filter.
  */
 internal fun colorFromArg(arg: String?): String {
-    val decoded = arg?.let { runCatching { URLDecoder.decode(it, "UTF-8") }.getOrDefault(it) }.orEmpty()
+    val decoded = arg.orEmpty()
     return if (HEX_COLOR.matches(decoded)) decoded.uppercase() else DEFAULT_SEARCH_COLOR
 }
 

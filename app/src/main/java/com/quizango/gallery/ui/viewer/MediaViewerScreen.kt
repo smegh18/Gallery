@@ -132,22 +132,10 @@ fun MediaViewerScreen(
     val isListReady = mediaList.isNotEmpty()
 
     val displayList = remember(mediaList, fallbackItem) {
-        if (mediaList.isNotEmpty()) {
-            // A renamed or removed opened file must not come back as a stale extra page
-            if (mediaList.any { it.filePath == filePath } || !File(filePath).exists()) {
-                mediaList
-            } else {
-                listOf(fallbackItem) + mediaList
-            }
-        } else {
-            listOf(fallbackItem)
-        }
+        viewerDisplayList(mediaList, filePath, fallbackItem) { File(filePath).exists() }
     }
 
-    val targetIndex = remember(displayList, filePath) {
-        val idx = displayList.indexOfFirst { it.filePath == filePath }
-        if (idx >= 0) idx else 0
-    }
+    val targetIndex = remember(displayList, filePath) { viewerTargetIndex(displayList, filePath) }
 
     val pagerState = key(isListReady) {
         rememberPagerState(
@@ -779,6 +767,23 @@ private fun shareMedia(context: Context, path: String, isVideo: Boolean) {
         context.startActivity(Intent.createChooser(intent, null))
     } catch (_: Exception) {}
 }
+
+/** The viewer's pages: the source list, plus the opened file when the list lacks it but it is still on disk. */
+internal fun viewerDisplayList(
+    mediaList: List<MediaItem>,
+    filePath: String,
+    fallbackItem: MediaItem,
+    fileExists: () -> Boolean
+): List<MediaItem> = when {
+    mediaList.isEmpty() -> listOf(fallbackItem)
+    // A renamed or removed opened file must not come back as a stale extra page
+    mediaList.any { it.filePath == filePath } || !fileExists() -> mediaList
+    else -> listOf(fallbackItem) + mediaList
+}
+
+/** The page of the opened file, or the first page when it is not in the list. */
+internal fun viewerTargetIndex(displayList: List<MediaItem>, filePath: String): Int =
+    displayList.indexOfFirst { it.filePath == filePath }.coerceAtLeast(0)
 
 /** The list a viewer (or the Video player it opens) pages through. */
 internal fun mediaSourceFlow(
