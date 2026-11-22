@@ -16,8 +16,10 @@ import com.quizango.gallery.ui.search.hsvOf
 import com.quizango.gallery.ui.search.searchPreview
 import com.quizango.gallery.ui.search.searchResults
 import com.quizango.gallery.ui.search.sectionCards
+import com.quizango.gallery.ui.search.viewAllArgs
 import androidx.compose.ui.graphics.Color
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -116,6 +118,31 @@ class SearchScreenTest {
         assertEquals(1f, s, 0f)
         assertEquals(1f, v, 0f)
         assertEquals("#FF0000", hexOf(colorOfHex("#ff0000")))
+    }
+
+    @Test
+    fun viewAllRouteRoundTripsSectionAndQueryAndRejectsUnknownSections() {
+        val route = Screen.SearchViewAll.createRoute(SearchSection.PLACES.type, "São Paulo & co/50%")
+        val query = route.substringAfter("query=")
+        assertTrue(!query.contains('&') && !query.contains(' ') && !query.contains('/'))
+        assertEquals(SearchSection.PLACES to "São Paulo & co/50%", viewAllArgs("2", query))
+        assertEquals(SearchSection.MOMENTS to "", viewAllArgs("3", null))
+        // Hand-edited or stale routes fall back to no section (empty result), never a crash
+        assertNull(viewAllArgs("9", "x").first)
+        assertNull(viewAllArgs("abc", "x").first)
+        assertNull(viewAllArgs(null, "x").first)
+        assertEquals("100%", viewAllArgs("1", "100%").second) // an already-decoded value is kept as is
+        assertTrue(sectionCards(index, viewAllArgs("9", "x").first, "x").isEmpty())
+    }
+
+    @Test
+    fun viewAllListsTheCompleteFilteredSectionWhileSearchShowsSix() {
+        val many = buildSearchIndex(emptyList(), (1L..9L).map { photo(it, "Place $it") }, emptyMap())
+        val (section, query) = viewAllArgs("2", "place")
+        val full = sectionCards(many, section, query)
+        assertEquals(9, full.size)
+        assertEquals(6, searchResults(many, "place").single().second.let(::searchPreview).size)
+        assertEquals(listOf("Place 9"), sectionCards(many, section, "place 9").map { it.title })
     }
 
     @Test
