@@ -59,6 +59,13 @@ sealed class Screen(val route: String) {
             return "search/color?color=$encoded"
         }
     }
+    /** Section type (SearchSection.type) and the typed query; the screen recomputes its results from the current data. */
+    data object SearchViewAll : Screen("search/all?section={section}&query={query}") {
+        fun createRoute(section: Int, query: String): String {
+            val encoded = URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
+            return "search/all?section=$section&query=$encoded"
+        }
+    }
     data object Language : Screen("language")
     data object Theme : Screen("theme")
     data object Settings : Screen("settings")

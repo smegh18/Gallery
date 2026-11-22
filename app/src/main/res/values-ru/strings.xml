@@ -341,4 +341,9 @@
     <string name="allow">Разрешить</string>
     <string name="allow_gallery_location">Разрешите Галерее доступ к вашему местоположению.</string>
     <string name="home_permission_location">Пожалуйста, предоставьте разрешение на местоположение.</string>
+    <string name="choose_color">Выберите цвет</string>
+    <string name="colors">Цвета</string>
+    <string name="places">Места</string>
+    <string name="view_all">Посмотреть все</string>
+    <string name="search_deleted">Мы не смогли найти папку, которую вы ищете. Возможно, она была перемещена, переименована или удалена.</string>
 </resources>

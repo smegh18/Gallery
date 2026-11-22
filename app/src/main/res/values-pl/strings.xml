@@ -57,7 +57,7 @@
  „Dostęp do wszystkich plików” ma również ogromne znaczenie dla Google. Wszystkie aplikacje wymagające tego pozwolenia muszą przed publikacją przejść rygorystyczną kontrolę Google. Żadna złośliwa aplikacja nie może uzyskać tego uprawnienia.
 
  Kliknij poniższy adres URL, aby się dowiedzieć więcej informacji: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Otwórz ustawienia</string>
+    <string name="open_settings">\tOtwórz ustawienia</string>
     <string name="select_app_language">Wybierz język aplikacji</string>
     <string name="album_collage_new">Nowy</string>
     <string name="collage_maker_explore_title">Twórca Kolaży</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Kolaż</string>
     <string name="explore_collage_desc">Połącz swoje zdjęcia</string>
     <string name="vault">Sejf</string>
-    <string name="str_home_favourite">\u0009Ulubione</string>
+    <string name="str_home_favourite">\tUlubione</string>
     <string name="str_home_Moments">Chwile</string>
     <string name="str_home_place">Miejsce</string>
     <string name="str_home_Recycle_bin">Kosz</string>
@@ -339,4 +339,9 @@
     <string name="allow">Zezwól</string>
     <string name="allow_gallery_location">Zezwól Galerii na dostęp do Twojej lokalizacji.</string>
     <string name="home_permission_location">Proszę udzielić uprawnień do lokalizacji.</string>
+    <string name="choose_color">Wybierz kolor</string>
+    <string name="colors">Kolory</string>
+    <string name="places">Miejsca</string>
+    <string name="view_all">Wyświetl Wszystko</string>
+    <string name="search_deleted">Nie mogliśmy odnaleźć folderu, którego szukasz. Musiał być przeniesiony, zmieniony nazwę lub usunięty.</string>
 </resources>

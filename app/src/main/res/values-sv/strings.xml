@@ -57,7 +57,7 @@
  All Files Access är också av stor betydelse för Google. Alla appar som kräver detta tillstånd måste genomgå en strikt granskning av Google innan de publiceras. Ingen skadlig app kan få denna behörighet.
 
  Klicka på följande URL för att veta för mer: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Öppna inställningar</string>
+    <string name="open_settings">\tÖppna inställningar</string>
     <string name="select_app_language">Välj App Språk</string>
     <string name="album_collage_new">Ny</string>
     <string name="collage_maker_explore_title">Collagetillverkare</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Collage</string>
     <string name="explore_collage_desc">Kombinera dina foton</string>
     <string name="vault">Valv</string>
-    <string name="str_home_favourite">\u0009Favoriter</string>
+    <string name="str_home_favourite">\tFavoriter</string>
     <string name="str_home_Moments">Ögonblick</string>
     <string name="str_home_place">Plats</string>
     <string name="str_home_Recycle_bin">Papperskorg</string>
@@ -339,4 +339,9 @@
     <string name="allow">Tillåt</string>
     <string name="allow_gallery_location">Tillåt Galeriet att få åtkomst till din plats.</string>
     <string name="home_permission_location">Var vänlig och ge plats tillstånd.</string>
+    <string name="choose_color">Välj färg</string>
+    <string name="colors">Färger</string>
+    <string name="places">Platser</string>
+    <string name="view_all">Visa Alla</string>
+    <string name="search_deleted">Vi kunde inte hitta mappen du söker efter. Den måste ha flyttats, bytt namn eller raderats.</string>
 </resources>

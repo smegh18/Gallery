@@ -339,4 +339,9 @@
     <string name="allow">Permitir</string>
     <string name="allow_gallery_location">Permitir que a Galeria acesse sua localização.</string>
     <string name="home_permission_location">Por favor, conceda permissão de localização.</string>
+    <string name="choose_color">Escolher cor</string>
+    <string name="colors">Cores</string>
+    <string name="places">Locais</string>
+    <string name="view_all">Ver Tudo</string>
+    <string name="search_deleted">Não conseguimos localizar a pasta que você está procurando. Ela deve ter sido movida, renomeada ou excluída.</string>
 </resources>

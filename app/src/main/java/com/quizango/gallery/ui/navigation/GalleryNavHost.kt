@@ -422,16 +422,9 @@ fun GalleryNavHost(
         composable(Screen.Search.route) {
             SearchScreen(
                 mediaRepository = app.mediaRepository,
-                onMediaClick = { mediaItem ->
-                    navController.navigateOnce(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
-                },
-                onAlbumClick = { album ->
-                    navController.navigateOnce(Screen.AlbumDetail.createRoute(album.id, album.name))
-                },
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToColorSearch = { colorHex ->
-                    navController.navigateOnce(Screen.SearchColor.createRoute(colorHex))
-                }
+                moments = app.moments,
+                onNavigate = { route -> navController.navigateOnce(route) },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 

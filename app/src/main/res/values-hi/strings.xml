@@ -57,7 +57,7 @@
  Google के लिए ऑल फाइल्स एक्सेस का भी बहुत महत्व है। जिन ऐप्स को इस अनुमति की आवश्यकता है, उन्हें प्रकाशित होने से पहले Google द्वारा कड़ी समीक्षा से गुजरना होगा। कोई भी दुर्भावनापूर्ण ऐप यह अनुमति हासिल नहीं कर सकता.
 
  जानने के लिए निम्न URL पर क्लिक करें अधिक जानकारी के लिए: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009सेटिंग्स खोलें</string>
+    <string name="open_settings">\tसेटिंग्स खोलें</string>
     <string name="select_app_language">ऐप भाषा चुनें</string>
     <string name="album_collage_new">नया</string>
     <string name="collage_maker_explore_title">कोलाज मेकर</string>
@@ -339,4 +339,9 @@
     <string name="allow">अनुमति दें</string>
     <string name="allow_gallery_location">गैलरी को आपके स्थान तक पहुँचने की अनुमति दें।</string>
     <string name="home_permission_location">कृपया स्थान अनुमति प्रदान करें।</string>
+    <string name="choose_color">रंग चुनें</string>
+    <string name="colors">रंग</string>
+    <string name="places">स्थान</string>
+    <string name="view_all">सभी देखें</string>
+    <string name="search_deleted">हम वह फ़ोल्डर नहीं ढूँढ पा रहे हैं जिसे आप खोज रहे हैं। शायद वह हटा दिया गया है, नाम बदल दिया गया है, या फिर हटा दिया गया है।</string>
 </resources>

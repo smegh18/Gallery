@@ -339,4 +339,9 @@
     <string name="allow">ခွင့်ပြုပါ</string>
     <string name="allow_gallery_location">သွေးစစ်သည်ကို သွားပါ။</string>
     <string name="home_permission_location">တည်နေရာ အကြောင်းစားပြုလုပ်ရန် အိတ်အမှတ်ပေးပါ။</string>
+    <string name="choose_color">အရောင်ကို ရွေးချယ်ပါ</string>
+    <string name="colors">အရောင်းများ</string>
+    <string name="places">နေရာများ</string>
+    <string name="view_all">အားလုံးကြည့်ပါ</string>
+    <string name="search_deleted">သင်ရှာဖွေနေသည်အကြောင်း သင်ကိုလှုံ့ဆောင်ရေးထားသည့်ဖိုင်ကိုရှာဖွေလို့မရှိသေးပါ။ ဒီနေရာမှ မင်းဖုန်းကို စာပိုင်းများကို ဖယ်ရှားသင့်မှသေချားပြီး သွားသောကိုယ်ပစ္စည်းများကို ရှာဖွေနိုင်သည်။</string>
 </resources>

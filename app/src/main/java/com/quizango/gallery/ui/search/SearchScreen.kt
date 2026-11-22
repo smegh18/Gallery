@@ -1,658 +1,407 @@
 package com.quizango.gallery.ui.search
 
-import com.quizango.gallery.ui.theme.Inter
-import kotlinx.coroutines.flow.map
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.view.WindowManager
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.zIndex
 import com.quizango.gallery.R
+import com.quizango.gallery.data.local.MomentScanner
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
-import com.quizango.gallery.ui.theme.GalleryBlue
-import com.quizango.gallery.ui.theme.cardBackground
-import com.quizango.gallery.ui.theme.isDark
-import com.quizango.gallery.ui.theme.searchBarBg
-import com.quizango.gallery.ui.theme.settingsDivider
-import java.io.File
+import com.quizango.gallery.ui.browse.AlbumSquareCard
+import com.quizango.gallery.ui.discovery.groupPlaces
+import com.quizango.gallery.ui.discovery.momentRoute
+import com.quizango.gallery.ui.discovery.placeMediaRoute
+import com.quizango.gallery.ui.home.PhotosEmptyState
+import com.quizango.gallery.ui.home.drawableBackground
+import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-val SEARCH_COLORS = listOf(
-    Color(0xFFF2F2F2),
-    Color(0xFF000000),
-    Color(0xFFFF0000),
-    Color(0xFFFFE500),
-    Color(0xFFFF7A00),
-    Color(0xFFFF00E5),
-    Color(0xFF9E00FF),
-    Color(0xFF0066FF),
-    Color(0xFF00C2FF),
-    Color(0xFF008625)
-)
+/** SearchViewModel shows six cards per section before View All (`const/4 ... 0x6` in 2.7.2). */
+internal const val SEARCH_PREVIEW_LIMIT = 6
 
-private val SEARCH_COLORS_HEX = listOf(
-    "#F2F2F2",
-    "#000000",
-    "#FF0000",
-    "#FFE500",
-    "#FF7A00",
-    "#FF00E5",
-    "#9E00FF",
-    "#0066FF",
-    "#00C2FF",
-    "#008625"
-)
+/** Result sections in screen order; [type] is the reference event type (Albums 1, Places 2, Moments 3). */
+internal enum class SearchSection(val type: Int, @StringRes val title: Int) {
+    ALBUMS(1, R.string.albums),
+    PLACES(2, R.string.places),
+    MOMENTS(3, R.string.moment);
 
+    companion object {
+        /** Anything outside the three types (a hand-edited or stale route) is null, never a crash. */
+        fun of(type: Int?): SearchSection? = entries.firstOrNull { it.type == type }
+    }
+}
+
+/** One item_search_sub card. [route] is the media list it opens; the cover is resolved only when drawn. */
+internal class SearchCard(
+    val title: String,
+    val count: Int,
+    val route: String,
+    private val album: Album? = null,
+    private val item: MediaItem? = null
+) {
+    val cover: Any? get() = album?.coverUri ?: item?.contentUri
+}
+
+internal typealias SearchIndex = Map<SearchSection, List<SearchCard>>
+
+/**
+ * Every card of every section, unfiltered. Albums are real device folders only (no All Photos / Videos / Camera /
+ * Screenshots); places and moments use the same grouping and filter keys as their browse screens.
+ */
+internal fun buildSearchIndex(albums: List<Album>, media: List<MediaItem>, labels: Map<String, String>): SearchIndex {
+    val photos = media.filter { it.mediaType != MediaType.VIDEO }
+    return mapOf(
+        SearchSection.ALBUMS to albums.filter { !it.id.startsWith("filter:") }.map {
+            SearchCard(it.name, it.itemCount, Screen.AlbumDetail.createRoute(it.id, it.name), album = it)
+        },
+        SearchSection.PLACES to groupPlaces(media).map {
+            SearchCard(it.key, it.items.size, placeMediaRoute(it), item = it.items.first())
+        },
+        SearchSection.MOMENTS to MomentScanner.group(photos, labels).map { (label, items) ->
+            SearchCard(label, items.size, momentRoute(label), item = items.first())
+        }
+    )
+}
+
+/** Cards of [section] whose name contains [query] (case-insensitive); a blank query keeps all. */
+internal fun sectionCards(index: SearchIndex, section: SearchSection?, query: String): List<SearchCard> {
+    val needle = query.trim()
+    return index[section].orEmpty().filter { needle.isEmpty() || it.title.contains(needle, ignoreCase = true) }
+}
+
+/** The non-empty sections for [query], in Albums, Places, Moments order. */
+internal fun searchResults(index: SearchIndex, query: String): List<Pair<SearchSection, List<SearchCard>>> =
+    SearchSection.entries.map { it to sectionCards(index, it, query) }.filter { it.second.isNotEmpty() }
+
+internal fun searchPreview(cards: List<SearchCard>): List<SearchCard> = cards.take(SEARCH_PREVIEW_LIMIT)
+
+/**
+ * The search index once media, albums and moment labels are in (null before, so "Oops!" never flashes first).
+ * Starts or continues the on-device moment scan so Moments results do not depend on visiting Moments first.
+ */
+@Composable
+internal fun rememberSearchIndex(mediaRepository: MediaRepository, moments: MomentScanner): SearchIndex? {
+    val media by remember { mediaRepository.getActiveMediaFlow() }
+        .collectAsState<List<MediaItem>, List<MediaItem>?>(initial = null)
+    val albums by remember { mediaRepository.getAlbumsFlow() }
+        .collectAsState<List<Album>, List<Album>?>(initial = null)
+    val labels by moments.labels.collectAsState()
+    LaunchedEffect(media) {
+        media?.let { all -> moments.scan(all.filter { it.mediaType != MediaType.VIDEO }) }
+    }
+    val index by produceState<SearchIndex?>(null, media, albums, labels) {
+        val m = media ?: return@produceState
+        val a = albums ?: return@produceState
+        value = withContext(Dispatchers.Default) { buildSearchIndex(a, m, labels) }
+    }
+    return index
+}
+
+/** SearchActivity (§11): Colors, then Albums / Places / Moments previews that filter as the user types. */
 @Composable
 fun SearchScreen(
     mediaRepository: MediaRepository,
-    onMediaClick: (MediaItem) -> Unit,
-    onAlbumClick: ((Album) -> Unit)? = null,
-    onNavigateBack: () -> Unit,
-    onNavigateToColorSearch: ((String) -> Unit)? = null
+    moments: MomentScanner,
+    onNavigate: (String) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
-    val allMedia by mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
-    // Reference search lists real folders only, not All Photos / Videos / Camera / Screenshots
-    val allAlbums by remember { mediaRepository.getAlbumsFlow().map { list -> list.filter { !it.id.startsWith("filter:") } } }
-        .collectAsState(initial = emptyList())
+    // Saved, so Back from View All returns to the same query
+    var query by rememberSaveable { mutableStateOf("") }
+    var picking by remember { mutableStateOf(false) }
+    val index = rememberSearchIndex(mediaRepository, moments)
+    val results = remember(index, query) { index?.let { searchResults(it, query) } }
+    AdjustNothingWhileShown()
 
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedColorIndex by remember { mutableStateOf<Int?>(null) }
-    var expandedAlbumsViewAll by remember { mutableStateOf(false) }
-    var expandedMediaViewAll by remember { mutableStateOf(false) }
-
-    // Filter albums according to search query
-    val filteredAlbums = remember(allAlbums, searchQuery) {
-        if (searchQuery.isBlank()) {
-            allAlbums
-        } else {
-            allAlbums.filter { album ->
-                album.name.contains(searchQuery, ignoreCase = true)
-            }
-        }
-    }
-
-    // Filter media items according to search query and selected color
-    val filteredMedia = remember(allMedia, searchQuery, selectedColorIndex) {
-        allMedia.filter { item ->
-            val matchesQuery = if (searchQuery.isBlank()) {
-                true
-            } else {
-                item.fileName.contains(searchQuery, ignoreCase = true) ||
-                    item.folderPath.contains(searchQuery, ignoreCase = true)
-            }
-
-            val matchesColor = if (selectedColorIndex == null) {
-                true
-            } else {
-                (Math.abs(item.filePath.hashCode()) % SEARCH_COLORS.size) == selectedColorIndex
-            }
-
-            matchesQuery && matchesColor
-        }
-    }
-
-    val photosList = remember(filteredMedia) {
-        filteredMedia.filter { it.mediaType == MediaType.IMAGE }
-    }
-
-    val videosList = remember(filteredMedia) {
-        filteredMedia.filter { it.mediaType == MediaType.VIDEO }
-    }
-
-    val isSearchActive = searchQuery.isNotBlank() || selectedColorIndex != null
-    val hasResults = filteredAlbums.isNotEmpty() || filteredMedia.isNotEmpty()
-
-    Scaffold(
-        topBar = {
-            // Reference layout_search_toolbar.xml
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .statusBarsPadding()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(horizontal = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = onNavigateBack,
-                        modifier = Modifier.size(40.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_back),
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-
-                    // Search Input Box (search_back: @color/sticker_search_color #F3F6FC, radius 16sdp ~ 20dp)
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(40.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(MaterialTheme.colorScheme.searchBarBg)
-                            .padding(horizontal = 14.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            BasicTextField(
-                                value = searchQuery,
-                                onValueChange = { searchQuery = it },
-                                singleLine = true,
-                                textStyle = TextStyle(
-                                    fontFamily = Inter,
-                                    fontSize = 14.sp,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                cursorBrush = SolidColor(GalleryBlue),
-                                modifier = Modifier.weight(1f),
-                                decorationBox = { innerTextField ->
-                                    if (searchQuery.isEmpty()) {
-                                        Text(
-                                            text = "Search",
-                                            fontSize = 14.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                    innerTextField()
-                                }
-                            )
-
-                            if (searchQuery.isNotEmpty()) {
-                                IconButton(
-                                    onClick = { searchQuery = "" },
-                                    modifier = Modifier.size(20.dp)
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_close),
-                                        contentDescription = "Clear",
-                                        tint = MaterialTheme.colorScheme.onBackground,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                            } else {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_search_common),
-                                    contentDescription = "Search",
-                                    tint = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
+    Column(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        SearchToolbar(query = query, onQueryChange = { query = it }, onBack = onNavigateBack)
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            LazyColumn(Modifier.fillMaxSize()) {
+                item { ColorsRow(onPick = { picking = true }, onColor = { onNavigate(Screen.SearchColor.createRoute(it)) }) }
+                results?.let { sections ->
+                    if (sections.isEmpty()) item {
+                        Box(Modifier.fillParentMaxHeight(0.7f).fillMaxWidth()) {
+                            PhotosEmptyState(R.string.oops, R.string.search_deleted)
                         }
                     }
-
-                    Spacer(modifier = Modifier.width(6.dp))
+                    sections.forEach { (section, cards) ->
+                        item(key = section.type) {
+                            SectionBlock(
+                                section = section,
+                                cards = searchPreview(cards),
+                                onViewAll = { onNavigate(Screen.SearchViewAll.createRoute(section.type, query)) },
+                                onOpen = { onNavigate(it.route) }
+                            )
+                        }
+                    }
                 }
-
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.settingsDivider,
-                    thickness = 1.dp
-                )
             }
+            if (results == null) Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
+            }
+        }
+        Spacer(Modifier.navigationBarsPadding())
+    }
+
+    if (picking) SearchColorPickerDialog(
+        onChosen = { hex ->
+            picking = false
+            onNavigate(Screen.SearchColor.createRoute(hex))
         },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        if (isSearchActive && !hasResults) {
-            // Reference activity_search.xml: emptyLayout
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(horizontal = 40.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_empty_img),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(100.dp)
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text = "Oops!",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "No search results found",
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                // 1. Colors Section (Reference activity_search.xml: colorLay)
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp)
-                    ) {
-                        Text(
-                            text = "Colors",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(horizontal = 14.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(horizontal = 14.dp),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            item {
-                                // Color picker dropper icon (Reference ic_search_color_picker @id/searchColorPick)
-                                Box(
-                                    modifier = Modifier
-                                        .size(32.dp)
-                                        .clickable {
-                                            if (onNavigateToColorSearch != null) {
-                                                onNavigateToColorSearch("#FF0000")
-                                            } else {
-                                                selectedColorIndex = null
-                                            }
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_search_color_picker),
-                                        contentDescription = "Color Picker",
-                                        tint = Color.Unspecified,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-
-                            itemsIndexed(SEARCH_COLORS) { index, color ->
-                                val isSelected = selectedColorIndex == index
-                                Box(
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .clip(CircleShape)
-                                        .background(color)
-                                        .border(
-                                            width = if (isSelected) 2.5.dp else 1.dp,
-                                            color = if (isSelected) GalleryBlue else if (index == 0) Color(0xFFD0D7DE) else Color.White,
-                                            shape = CircleShape
-                                        )
-                                        .clickable {
-                                            if (onNavigateToColorSearch != null) {
-                                                onNavigateToColorSearch(SEARCH_COLORS_HEX[index])
-                                            } else {
-                                                selectedColorIndex = if (isSelected) null else index
-                                            }
-                                        }
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.settingsDivider,
-                            thickness = 0.5.dp,
-                            modifier = Modifier.padding(horizontal = 14.dp)
-                        )
-                    }
-                }
-
-                // 2. Albums Section (Reference item_search_main.xml: Albums)
-                if (filteredAlbums.isNotEmpty()) {
-                    item {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            // Section Header with "View All"
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Albums",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Text(
-                                    text = if (expandedAlbumsViewAll) "Collapse" else "View All",
-                                    fontSize = 13.5.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = GalleryBlue,
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .clickable {
-                                            expandedAlbumsViewAll = !expandedAlbumsViewAll
-                                        }
-                                        .padding(horizontal = 4.dp, vertical = 2.dp)
-                                )
-                            }
-
-                            // 3-Column Grid of Albums (Reference item_search_sub.xml)
-                            val displayAlbums = if (expandedAlbumsViewAll) {
-                                filteredAlbums
-                            } else {
-                                filteredAlbums.take(6)
-                            }
-
-                            val chunkedAlbums = displayAlbums.chunked(3)
-                            chunkedAlbums.forEach { rowAlbums ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    rowAlbums.forEach { album ->
-                                        Box(modifier = Modifier.weight(1f)) {
-                                            SearchAlbumCard(
-                                                album = album,
-                                                onClick = {
-                                                    if (onAlbumClick != null) {
-                                                        onAlbumClick(album)
-                                                    }
-                                                }
-                                            )
-                                        }
-                                    }
-                                    // Fill empty slots in row
-                                    repeat(3 - rowAlbums.size) {
-                                        Spacer(modifier = Modifier.weight(1f))
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
-
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.settingsDivider,
-                                thickness = 0.5.dp,
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
-                            )
-                        }
-                    }
-                }
-
-                // 3. Photos Section (Reference item_search_main.xml: Photos)
-                if (photosList.isNotEmpty()) {
-                    item {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            // Section Header with "View All"
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Photos",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Text(
-                                    text = if (expandedMediaViewAll) "Collapse" else "View All",
-                                    fontSize = 13.5.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = GalleryBlue,
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .clickable {
-                                            expandedMediaViewAll = !expandedMediaViewAll
-                                        }
-                                        .padding(horizontal = 4.dp, vertical = 2.dp)
-                                )
-                            }
-
-                            // 3-Column Grid of Photos
-                            val displayPhotos = if (expandedMediaViewAll) {
-                                photosList
-                            } else {
-                                photosList.take(6)
-                            }
-
-                            val chunkedPhotos = displayPhotos.chunked(3)
-                            chunkedPhotos.forEach { rowPhotos ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    rowPhotos.forEach { mediaItem ->
-                                        Box(modifier = Modifier.weight(1f)) {
-                                            SearchMediaCard(
-                                                item = mediaItem,
-                                                onClick = { onMediaClick(mediaItem) }
-                                            )
-                                        }
-                                    }
-                                    repeat(3 - rowPhotos.size) {
-                                        Spacer(modifier = Modifier.weight(1f))
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
-
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.settingsDivider,
-                                thickness = 0.5.dp,
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
-                            )
-                        }
-                    }
-                }
-
-                // 4. Videos Section (if any videos exist)
-                if (videosList.isNotEmpty()) {
-                    item {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Videos",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-
-                            val chunkedVideos = videosList.take(6).chunked(3)
-                            chunkedVideos.forEach { rowVideos ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    rowVideos.forEach { mediaItem ->
-                                        Box(modifier = Modifier.weight(1f)) {
-                                            SearchMediaCard(
-                                                item = mediaItem,
-                                                onClick = { onMediaClick(mediaItem) }
-                                            )
-                                        }
-                                    }
-                                    repeat(3 - rowVideos.size) {
-                                        Spacer(modifier = Modifier.weight(1f))
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+        onDismiss = { picking = false }
+    )
 }
 
-/**
- * Reconstructs item_search_sub.xml for Album items:
- * - Square thumbnail with RoundedCornerShape(10.dp)
- * - Album title in @color/titleColor (#1E3354)
- * - Item count in @color/countTitle (#707C93)
- */
+/** layout_search_toolbar: back, the `search_back` field with hint, clear or search icon, divider. */
 @Composable
-private fun SearchAlbumCard(
-    album: Album,
-    onClick: () -> Unit
-) {
+private fun SearchToolbar(query: String, onQueryChange: (String) -> Unit, onBack: () -> Unit) {
+    val keyboard = LocalSoftwareKeyboardController.current
     Column(
-        modifier = Modifier
+        Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .clickable(onClick = onClick)
-            .padding(4.dp)
+            .zIndex(1f)
+            .shadow(2.sdp)
+            .background(colorResource(R.color.backgroundColor))
+            .statusBarsPadding()
     ) {
-        // SquareCardLayout
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.cardBackground),
-            contentAlignment = Alignment.Center
-        ) {
-            if (album.coverPath.isNotEmpty()) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = coil.request.ImageRequest.Builder(androidx.compose.ui.platform.LocalContext.current).data(File(album.coverPath)).size(300, 300).allowRgb565(true).build()),
-                    contentDescription = album.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_create_album),
-                    contentDescription = null,
-                    tint = Color(0xFF99A4B6),
-                    modifier = Modifier.size(36.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = album.name,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 2.dp)
-        )
-
-        Text(
-            text = "${album.itemCount}",
-            fontSize = 11.5.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            modifier = Modifier.padding(horizontal = 2.dp)
-        )
-    }
-}
-
-/**
- * Reconstructs item_search_sub.xml for individual Media items:
- * - Square thumbnail with RoundedCornerShape(10.dp)
- * - File title and info
- */
-@Composable
-private fun SearchMediaCard(
-    item: MediaItem,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .clickable(onClick = onClick)
-            .padding(4.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.cardBackground),
-            contentAlignment = Alignment.Center
+        Row(
+            modifier = Modifier.fillMaxWidth().height(55.dp).padding(start = 4.sdp, end = 10.sdp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = coil.request.ImageRequest.Builder(androidx.compose.ui.platform.LocalContext.current).data(File(item.filePath)).size(300, 300).allowRgb565(true).build()),
-                contentDescription = item.fileName,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                painter = painterResource(R.drawable.ic_back),
+                contentDescription = stringResource(R.string.viewer_back),
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = false),
+                        onClick = onBack
+                    )
+                    .padding(6.sdp)
             )
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.sdp)
+                    .drawableBackground(R.drawable.search_back)
+                    .padding(horizontal = 10.sdp, vertical = 7.sdp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BasicTextField(
+                    value = query,
+                    onValueChange = onQueryChange,
+                    singleLine = true,
+                    textStyle = GalleryText.BodySmallMedium.copy(color = colorResource(R.color.black)),
+                    cursorBrush = SolidColor(colorResource(R.color.colorPrimary)),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
+                    modifier = Modifier.weight(1f),
+                    decorationBox = { field ->
+                        Box(contentAlignment = Alignment.CenterStart) {
+                            if (query.isEmpty()) Text(
+                                stringResource(R.string.search),
+                                style = GalleryText.BodySmallMedium,
+                                color = colorResource(R.color.hintLanguageColor),
+                                maxLines = 1
+                            )
+                            field()
+                        }
+                    }
+                )
+                if (query.isEmpty()) Image(
+                    painter = painterResource(R.drawable.ic_search_common),
+                    contentDescription = stringResource(R.string.search),
+                    modifier = Modifier.padding(end = 10.sdp)
+                ) else Image(
+                    painter = painterResource(R.drawable.ic_close),
+                    contentDescription = stringResource(R.string.cancel),
+                    modifier = Modifier
+                        .padding(end = 10.sdp)
+                        .size(19.sdp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = ripple(bounded = false),
+                            onClick = { onQueryChange("") }
+                        )
+                        .padding(1.sdp)
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = item.fileName,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 2.dp)
-        )
+        HorizontalDivider(thickness = 1.dp, color = colorResource(R.color.actionbarDividerColor))
     }
 }
 
+/** colorLay: the "Colors" header, the picker button and the ten swatches, then the divider. */
+@Composable
+private fun ColorsRow(onPick: () -> Unit, onColor: (String) -> Unit) {
+    Column(Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.colors),
+            style = GalleryText.BodyLargeMedium,
+            color = colorResource(R.color.black),
+            modifier = Modifier.padding(top = 10.sdp, start = 5.sdp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(start = 4.sdp, end = 4.sdp, top = 5.sdp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_search_color_picker),
+                contentDescription = stringResource(R.string.choose_color),
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = false),
+                        onClick = onPick
+                    )
+                    .padding(6.sdp)
+            )
+            SEARCH_SWATCH_HEX.forEach { hex ->
+                Box(
+                    Modifier
+                        .padding(4.sdp)
+                        .size(20.sdp)
+                        .clip(CircleShape)
+                        .background(colorOfHex(hex))
+                        .border(1.sdp, colorResource(R.color.onlyWhite), CircleShape)
+                        .semantics { contentDescription = hex }
+                        .clickable { onColor(hex) }
+                )
+            }
+        }
+        SectionDivider()
+    }
+}
+
+/** item_search_main: title with View All, up to six item_search_sub cards in 3 columns, divider. */
+@Composable
+private fun SectionBlock(section: SearchSection, cards: List<SearchCard>, onViewAll: () -> Unit, onOpen: (SearchCard) -> Unit) {
+    Column(Modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth().padding(top = 10.sdp), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(section.title),
+                style = GalleryText.BodyMediumSemiBold,
+                color = colorResource(R.color.black),
+                modifier = Modifier.weight(1f).padding(start = 5.sdp)
+            )
+            Text(
+                text = stringResource(R.string.view_all),
+                style = GalleryText.BodyMediumMedium,
+                color = colorResource(R.color.colorPrimary),
+                modifier = Modifier.padding(end = 6.sdp).clickable(onClick = onViewAll).padding(4.sdp)
+            )
+        }
+        Column(Modifier.fillMaxWidth().padding(top = 5.sdp, start = 2.sdp, end = 2.sdp)) {
+            cards.chunked(3).forEach { row ->
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+                    row.forEach { card ->
+                        SearchCardView(card, { onOpen(card) }, Modifier.weight(1f))
+                    }
+                    // Keep a short last row on the 3-column grid
+                    repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
+                }
+            }
+        }
+        SectionDivider()
+    }
+}
+
+/** item_search_sub (§11.3): margin 4.sdp around the square cover, title and count. */
+@Composable
+internal fun SearchCardView(card: SearchCard, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    AlbumSquareCard(
+        title = card.title,
+        count = card.count,
+        cover = card.cover,
+        titleTop = 4.sdp,
+        onClick = onClick,
+        modifier = modifier.padding(4.sdp)
+    )
+}
+
+@Composable
+private fun SectionDivider() {
+    HorizontalDivider(
+        thickness = 0.5.dp,
+        color = colorResource(R.color.dividerColor),
+        modifier = Modifier.padding(start = 8.sdp, end = 8.sdp, top = 10.sdp)
+    )
+}
+
+private fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+
+/** SearchActivity is `adjustNothing`: the keyboard overlays the page instead of resizing it. Restored on leaving. */
+@Composable
+private fun AdjustNothingWhileShown() {
+    val window = LocalContext.current.findActivity()?.window ?: return
+    DisposableEffect(window) {
+        val previous = window.attributes.softInputMode
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        onDispose { window.setSoftInputMode(previous) }
+    }
+}

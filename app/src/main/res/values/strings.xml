@@ -427,4 +427,9 @@
     <string name="allow">Allow</string>
     <string name="allow_gallery_location">Allow Gallery to access your location.</string>
     <string name="home_permission_location">Please grant location permission.</string>
+    <string name="choose_color">Choose color</string>
+    <string name="colors">Colors</string>
+    <string name="places">Places</string>
+    <string name="view_all">View All</string>
+    <string name="search_deleted">"We couldn't locate the folder you're searching for. It might have been moved, renamed, or deleted."</string>
 </resources>

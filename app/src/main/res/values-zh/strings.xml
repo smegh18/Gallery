@@ -328,4 +328,9 @@
     <string name="allow">允许</string>
     <string name="allow_gallery_location">允许图库访问您的位置。</string>
     <string name="home_permission_location">请授予位置权限。</string>
+    <string name="choose_color">选择颜色</string>
+    <string name="colors">颜色</string>
+    <string name="places">地点</string>
+    <string name="view_all">查看全部</string>
+    <string name="search_deleted">我们找不到您要搜索的文件夹。它可能已被移动、重命名或删除。</string>
 </resources>
