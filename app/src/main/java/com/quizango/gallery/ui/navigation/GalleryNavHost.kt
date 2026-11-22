@@ -42,7 +42,9 @@ import com.quizango.gallery.ui.discovery.PlaceScreen
 import com.quizango.gallery.ui.discovery.momentRoute
 import com.quizango.gallery.ui.discovery.OrganizerRecycleScreen
 import com.quizango.gallery.ui.discovery.QuickOrganizerScreen
+import com.quizango.gallery.ui.discovery.DEFAULT_SEARCH_COLOR
 import com.quizango.gallery.ui.discovery.SearchColorScreen
+import com.quizango.gallery.ui.discovery.colorFromArg
 import com.quizango.gallery.ui.discovery.StoryViewScreen
 import com.quizango.gallery.ui.editor.PhotoEditorScreen
 import com.quizango.gallery.ui.favorites.FavoritesScreen
@@ -52,6 +54,7 @@ import com.quizango.gallery.ui.onboarding.FeaturePromoScreen
 import com.quizango.gallery.ui.permission.PermissionScreen
 import com.quizango.gallery.ui.recycle.RecycleScreen
 import com.quizango.gallery.ui.search.SearchScreen
+import com.quizango.gallery.ui.search.SearchViewAllScreen
 import com.quizango.gallery.ui.settings.AboutScreen
 import com.quizango.gallery.ui.settings.LanguageScreen
 import com.quizango.gallery.ui.settings.SettingsScreen
@@ -429,21 +432,36 @@ fun GalleryNavHost(
         }
 
         composable(
+            route = Screen.SearchViewAll.route,
+            arguments = listOf(
+                navArgument("section") { type = NavType.StringType; defaultValue = "" },
+                navArgument("query") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) { backStackEntry ->
+            SearchViewAllScreen(
+                sectionArg = backStackEntry.arguments?.getString("section"),
+                queryArg = backStackEntry.arguments?.getString("query"),
+                mediaRepository = app.mediaRepository,
+                moments = app.moments,
+                onNavigate = { route -> navController.navigateOnce(route) },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
             route = Screen.SearchColor.route,
             arguments = listOf(
                 navArgument("color") {
                     type = NavType.StringType
-                    defaultValue = "#FF0000"
+                    defaultValue = DEFAULT_SEARCH_COLOR
                 }
             )
         ) { backStackEntry ->
-            val colorHex = backStackEntry.arguments?.getString("color") ?: "#FF0000"
             SearchColorScreen(
-                colorHex = colorHex,
+                colorHex = colorFromArg(backStackEntry.arguments?.getString("color")),
                 mediaRepository = app.mediaRepository,
-                onMediaClick = { mediaItem ->
-                    navController.navigateOnce(Screen.MediaViewer.createRoute(path = mediaItem.filePath))
-                },
+                vaultRepository = app.vaultRepository,
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
