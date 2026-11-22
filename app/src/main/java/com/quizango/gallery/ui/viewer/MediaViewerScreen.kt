@@ -326,7 +326,7 @@ fun MediaViewerScreen(
     val moreMenu: @Composable () -> Unit = {
         if (showMoreMenu) {
             ViewerMoreCard(
-                actions = moreActions(isVault = isVault, isVideo = currentItem.isVideo, hasPlace = currentItem.placeName.isNotBlank()),
+                actions = moreActions(isVault = isVault, isVideo = currentItem.isVideo, hasPlace = showOnMapRoute(currentItem) != null),
                 onAction = ::onMoreAction,
                 onDismiss = { showMoreMenu = false }
             )

@@ -16,7 +16,8 @@ import com.quizango.gallery.ui.home.DeleteMediaDialog
 import com.quizango.gallery.ui.home.HideMediaDialog
 import com.quizango.gallery.ui.home.PropertyDialog
 import com.quizango.gallery.ui.home.RenameAlbumDialog
-import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.data.repository.placeKey
+import com.quizango.gallery.ui.discovery.placeRoute
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -33,9 +34,8 @@ internal data class ViewerDialog(val kind: ViewerDialogKind, val path: String, v
 /** The captured path, only while that page is still the current one (a sync or swipe may have moved the pager). */
 internal fun ViewerDialog.targetIfCurrent(currentPath: String): String? = path.takeIf { it == currentPath }
 
-/** More → Show on map: only for an item with a place (MF `getPlace()` non-empty). No Maps key needed. */
-internal fun showOnMapRoute(item: MediaItem): String? =
-    item.placeName.takeIf { it.isNotBlank() }?.let { Screen.AlbumDetail.createRoute("filter:place", it) }
+/** More → Show on map: only for a geotagged item (a place name or usable coordinates); opens Place on that place. No Maps key needed. */
+internal fun showOnMapRoute(item: MediaItem): String? = item.placeKey().takeIf { it.isNotEmpty() }?.let(::placeRoute)
 
 /** Edit refuses animated and undecodable images with the reference toasts; null when the editor may open. */
 @StringRes

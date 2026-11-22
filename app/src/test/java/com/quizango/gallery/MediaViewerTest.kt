@@ -22,6 +22,7 @@ import com.quizango.gallery.ui.viewer.ViewerDialogKind
 import com.quizango.gallery.ui.viewer.formatDuration
 import com.quizango.gallery.ui.viewer.moreActions
 import com.quizango.gallery.ui.viewer.showOnMapRoute
+import com.quizango.gallery.ui.discovery.placeRoute
 import com.quizango.gallery.ui.viewer.targetIfCurrent
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.data.repository.captureFileName
@@ -37,9 +38,9 @@ import java.util.*
 
 class MediaViewerTest {
 
-    private fun photo(path: String = "/p/IMG_1.jpg", place: String = "") = MediaItem(
+    private fun photo(path: String = "/p/IMG_1.jpg", place: String = "", lat: Float = 0f, lng: Float = 0f) = MediaItem(
         id = 1, filePath = path, fileName = File(path).name, fileSize = 1, folderName = "p", folderPath = "/p",
-        dateModified = 1, dateTaken = 1, placeName = place
+        dateModified = 1, dateTaken = 1, placeName = place, latitude = lat, longitude = lng
     )
 
     @Test
@@ -114,7 +115,9 @@ class MediaViewerTest {
     @Test
     fun showOnMapOnlyWithPlace() {
         assertNull(showOnMapRoute(photo()))
-        assertNotNull(showOnMapRoute(photo(place = "Paris")))
+        assertNull(showOnMapRoute(photo(place = "  ")))
+        assertEquals(placeRoute("Paris"), showOnMapRoute(photo(place = "Paris")))
+        assertEquals(placeRoute("48.8566,2.3522"), showOnMapRoute(photo(lat = 48.8566f, lng = 2.3522f)))
     }
 
     @Test
