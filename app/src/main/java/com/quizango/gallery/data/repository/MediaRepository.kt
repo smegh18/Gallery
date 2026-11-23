@@ -7,6 +7,8 @@ import android.media.ExifInterface
 import android.media.MediaMetadataRetriever
 import android.os.Environment
 import com.quizango.gallery.R
+import com.quizango.gallery.data.local.PathMutationOutcome
+import com.quizango.gallery.data.local.PathMutationOutcome.Status
 import com.quizango.gallery.data.local.database.dao.GalleryDao
 import com.quizango.gallery.data.local.database.entity.MediaEntity
 import com.quizango.gallery.data.local.mediastore.MediaStoreScanner
@@ -37,8 +39,8 @@ interface MediaRepository {
     suspend fun setFavorite(path: String, favorite: Boolean)
     suspend fun moveToTrash(path: String)
     suspend fun restoreFromTrash(path: String)
-    suspend fun deletePermanently(path: String)
-    suspend fun deletePermanently(paths: List<String>)
+    suspend fun deletePermanently(path: String): PathMutationOutcome
+    suspend fun deletePermanently(paths: List<String>): List<PathMutationOutcome>
     suspend fun renameMedia(oldPath: String, newName: String): Boolean
     suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean
     suspend fun moveMediaToFolder(filePath: String, destFolder: String): Boolean
@@ -201,6 +203,45 @@ internal fun moveIntoFolder(src: File, dir: File): File? {
     if (dest.length() == src.length() && src.delete()) return dest
     dest.delete()
     return null
+}
+
+/** True when no file is left at [path]: deleted now or already gone. */
+internal fun deleteFileIfPresent(path: String): Boolean {
+    val file = File(path)
+    return file.delete() || !file.exists()
+}
+
+/** Runs [block]; false on any failure. Cancellation still propagates. */
+private inline fun attempt(block: () -> Boolean): Boolean = try {
+    block()
+} catch (e: kotlin.coroutines.cancellation.CancellationException) {
+    throw e
+} catch (e: Exception) {
+    false
+}
+
+/**
+ * Permanent delete, file first: a row goes only once its file is gone, so a failed file delete keeps its row. A row
+ * delete that fails after the file went is retried by sending the same request again (the file is then absent).
+ * Repeated paths are handled once, outcomes come back in input order.
+ */
+internal suspend fun deleteFilesThenRows(
+    paths: List<String>,
+    deleteFile: (String) -> Boolean,
+    deleteRows: suspend (List<String>) -> Unit
+): List<PathMutationOutcome> {
+    val unique = paths.distinct()
+    val filesGone = unique.filterTo(LinkedHashSet()) { attempt { deleteFile(it) } }
+    val rowsGone = HashSet<String>()
+    // SQLite caps the variables of one IN list
+    filesGone.chunked(500).forEach { chunk -> if (attempt { deleteRows(chunk); true }) rowsGone += chunk }
+    return unique.map { path ->
+        PathMutationOutcome(path, when (path) {
+            in rowsGone -> Status.SUCCESS
+            in filesGone -> Status.METADATA_FAILED
+            else -> Status.FILE_FAILED
+        })
+    }
 }
 
 class MediaRepositoryImpl(
@@ -557,22 +598,10 @@ class MediaRepositoryImpl(
         dao.restoreFromTrash(path)
     }
 
-    override suspend fun deletePermanently(path: String) = withContext(Dispatchers.IO) {
-        dao.deleteByPath(path)
-        try {
-            val file = File(path)
-            if (file.exists()) file.delete()
-        } catch (_: Exception) {}
-    }
+    override suspend fun deletePermanently(path: String): PathMutationOutcome = deletePermanently(listOf(path)).single()
 
-    override suspend fun deletePermanently(paths: List<String>) = withContext(Dispatchers.IO) {
-        dao.deleteByPaths(paths)
-        paths.forEach { path ->
-            try {
-                val file = File(path)
-                if (file.exists()) file.delete()
-            } catch (_: Exception) {}
-        }
+    override suspend fun deletePermanently(paths: List<String>): List<PathMutationOutcome> = withContext(Dispatchers.IO) {
+        deleteFilesThenRows(paths, ::deleteFileIfPresent) { dao.deleteByPaths(it) }
     }
 
     override suspend fun renameMedia(oldPath: String, newName: String): Boolean = withContext(Dispatchers.IO) {
