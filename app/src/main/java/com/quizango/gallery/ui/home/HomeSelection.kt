@@ -224,9 +224,10 @@ internal fun AlbumSelectionBottomBar(
 
 /** Draws an XML shape/ripple drawable as the background, which painterResource cannot load. */
 @Composable
-internal fun Modifier.drawableBackground(@DrawableRes id: Int): Modifier {
+internal fun Modifier.drawableBackground(@DrawableRes id: Int, tint: Int? = null): Modifier {
     // Resolved on each composition so night colours follow the theme (as PhotosTab's DrawableBox).
     val drawable = ContextCompat.getDrawable(LocalContext.current, id) ?: return this
+    tint?.let { drawable.setTint(it) } // android:backgroundTint
     return drawBehind {
         drawIntoCanvas { canvas ->
             drawable.setBounds(0, 0, size.width.toInt(), size.height.toInt())
