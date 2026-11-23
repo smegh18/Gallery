@@ -6,6 +6,7 @@ import com.quizango.gallery.data.local.failedPaths
 import com.quizango.gallery.data.local.successfulPaths
 import com.quizango.gallery.data.repository.deleteFileIfPresent
 import com.quizango.gallery.data.repository.deleteFilesThenRows
+import com.quizango.gallery.data.repository.updateRows
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -105,5 +106,20 @@ class MediaRepositoryMutationTest {
         assertEquals(listOf(a), out.successfulPaths())
         assertEquals(listOf(stuck), out.failedPaths())
         assertEquals(deleteFilesThenRows(listOf(stuck), { false }, loggedRowDelete).single(), out[1])
+    }
+
+    @Test
+    fun trashAndRestoreReportEachRowAndKeepInputIdentity() = runBlocking {
+        val a = file("a.jpg")
+        val b = file("b.jpg")
+        val out = updateRows(listOf(a, b, a)) {
+            if (it == b) throw IllegalStateException("db")
+            calls += "row:$it"
+        }
+        assertEquals(listOf(PathMutationOutcome(a, Status.SUCCESS), PathMutationOutcome(b, Status.METADATA_FAILED)), out)
+        assertEquals(listOf(a), out.successfulPaths())
+        assertEquals(listOf(b), out.failedPaths())
+        assertEquals(listOf("row:$a"), calls)
+        assertTrue(File(a).exists() && File(b).exists()) // trash never touches the file
     }
 }

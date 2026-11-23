@@ -37,8 +37,10 @@ interface MediaRepository {
     fun searchByColorFlow(colorHex: String): Flow<List<MediaItem>>
     suspend fun syncMediaStore()
     suspend fun setFavorite(path: String, favorite: Boolean)
-    suspend fun moveToTrash(path: String)
-    suspend fun restoreFromTrash(path: String)
+    suspend fun moveToTrash(path: String): PathMutationOutcome
+    suspend fun moveToTrash(paths: List<String>): List<PathMutationOutcome>
+    suspend fun restoreFromTrash(path: String): PathMutationOutcome
+    suspend fun restoreFromTrash(paths: List<String>): List<PathMutationOutcome>
     suspend fun deletePermanently(path: String): PathMutationOutcome
     suspend fun deletePermanently(paths: List<String>): List<PathMutationOutcome>
     suspend fun renameMedia(oldPath: String, newName: String): Boolean
@@ -243,6 +245,12 @@ internal suspend fun deleteFilesThenRows(
         })
     }
 }
+
+/** Trash and restore change rows only (files stay where they are); one row failing does not hide the rest. */
+internal suspend fun updateRows(paths: List<String>, update: suspend (String) -> Unit): List<PathMutationOutcome> =
+    paths.distinct().map { path ->
+        PathMutationOutcome(path, if (attempt { update(path); true }) Status.SUCCESS else Status.METADATA_FAILED)
+    }
 
 class MediaRepositoryImpl(
     private val dao: GalleryDao,
@@ -590,12 +598,16 @@ class MediaRepositoryImpl(
         dao.setFavorite(path, favorite)
     }
 
-    override suspend fun moveToTrash(path: String) = withContext(Dispatchers.IO) {
-        dao.moveToTrash(path)
+    override suspend fun moveToTrash(path: String): PathMutationOutcome = moveToTrash(listOf(path)).single()
+
+    override suspend fun moveToTrash(paths: List<String>): List<PathMutationOutcome> = withContext(Dispatchers.IO) {
+        updateRows(paths) { dao.moveToTrash(it) }
     }
 
-    override suspend fun restoreFromTrash(path: String) = withContext(Dispatchers.IO) {
-        dao.restoreFromTrash(path)
+    override suspend fun restoreFromTrash(path: String): PathMutationOutcome = restoreFromTrash(listOf(path)).single()
+
+    override suspend fun restoreFromTrash(paths: List<String>): List<PathMutationOutcome> = withContext(Dispatchers.IO) {
+        updateRows(paths) { dao.restoreFromTrash(it) }
     }
 
     override suspend fun deletePermanently(path: String): PathMutationOutcome = deletePermanently(listOf(path)).single()
