@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- R272 ic_check_new; its split gradient ($ic_check_new__0) is #0066FF at both stops, so a solid fill. -->
+<vector android:height="24.0dip" android:width="24.0dip" android:viewportWidth="22.0" android:viewportHeight="22.0"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#ff0066ff" android:pathData="M11,0L11,0A11,11 0,0 1,22 11L22,11A11,11 0,0 1,11 22L11,22A11,11 0,0 1,0 11L0,11A11,11 0,0 1,11 0z" />
+    <path android:fillColor="#ffffffff" android:pathData="M15.619,9.226L9.777,15.031C9.602,15.206 9.372,15.293 9.142,15.293C8.912,15.293 8.682,15.206 8.507,15.031L5.586,12.129C5.234,11.78 5.234,11.215 5.586,10.866C5.937,10.517 6.505,10.517 6.857,10.866L9.142,13.137L14.348,7.963C14.699,7.614 15.267,7.614 15.619,7.963C15.97,8.312 15.97,8.877 15.619,9.226Z" />
+</vector>

@@ -1,103 +1,111 @@
 package com.quizango.gallery.ui.cleaner
 
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.core.graphics.drawable.toBitmap
-import android.content.Context
 import android.os.Environment
-import android.os.StatFs
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.quizango.gallery.R
-import androidx.compose.ui.res.colorResource
+import androidx.core.graphics.drawable.toBitmap
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.quizango.gallery.R
+import com.quizango.gallery.data.local.JunkScanResult
+import com.quizango.gallery.data.local.JunkScanner
+import com.quizango.gallery.data.local.failedPaths
+import com.quizango.gallery.data.local.successfulPaths
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
+import com.quizango.gallery.ui.theme.ssp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.job
-import com.quizango.gallery.ui.theme.cardBackground
-import com.quizango.gallery.ui.theme.cardBorder
-import com.quizango.gallery.ui.theme.isDark
-import com.quizango.gallery.ui.theme.settingsDivider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-data class JunkCategory(
-    val id: String,
-    val name: String,
-    val description: String,
-    val sizeBytes: Long,
-    val iconRes: Int,
-    val isChecked: Boolean = true,
-    val files: List<java.io.File> = emptyList()
-) {
-    constructor(id: String, name: String, sizeBytes: Long, iconRes: Int, isChecked: Boolean = true) :
-        this(id = id, name = name, description = "", sizeBytes = sizeBytes, iconRes = iconRes, isChecked = isChecked)
-}
-typealias JunkCategoryItem = JunkCategory
-
-enum class StorageCleanPhase {
-    SCANNING,   // JunkScanActivity (Warm orange gradient #FF7000 to #FF8D01)
-    OVERVIEW,   // RemoveJunkActivity (Red gradient #F94D3C to #EB1D08 with storage_clean_bg_img)
-    CLEANING,   // Cleaning in-progress animation
-    COMPLETED   // JunkClearedActivity (img_junk_cleared_done & Release More Space)
-}
-
-fun formatStorageBytes(bytes: Long): String {
-    val kb = bytes / 1024.0
-    val mb = kb / 1024.0
-    val gb = mb / 1024.0
-    return when {
-        gb >= 1.0 -> String.format("%.2f GB", gb)
-        mb >= 1.0 -> String.format("%.1f MB", mb)
-        kb >= 1.0 -> String.format("%.1f kB", kb) // reference style, e.g. 57.9 kB
-        bytes > 0 -> "$bytes B"
-        else -> "0 B"
-    }
-}
+/** JunkScanActivity, RemoveJunkActivity (results, cleaning) and JunkClearedActivity as states of one route. */
+enum class StorageCleanPhase { SCANNING, OVERVIEW, CLEANING, COMPLETED }
 
 /** dx/f: the done text stays up this long before the results open. */
 internal const val JUNK_SCAN_HOLD_MS = 2500L
 
 /** dx/f uses the fixed `junk_scan_completed_message` ("1.40 GB" baked in, Q1), never the measured size. */
 internal fun junkScanStatus(done: Boolean) = if (done) R.string.junk_scan_completed_message else R.string.scanning
+
+/** RJ dataMap rows in order (the ads slot before them stays collapsed, D5): dy/m names, dy/g icons. */
+internal enum class JunkRow(val id: String, @StringRes val title: Int, @DrawableRes val icon: Int) {
+    JUNK(JunkScanner.APP_CACHE, R.string.junk_files_display, R.drawable.ic_cleaner_junk_file),
+    APK(JunkScanner.APK, R.string.obsolete_apk_files, R.drawable.ic_cleaner_apk_file),
+    TEMP(JunkScanner.TEMP, R.string.temp_file, R.drawable.ic_cleaner_temp_file),
+    LOG(JunkScanner.LOG, R.string.log_files, R.drawable.ic_cleaner_log_file),
+    EMPTY(JunkScanner.EMPTY_FOLDER, R.string.empty_folder, R.drawable.ic_cleaner_folder_file);
+
+    companion object {
+        fun of(id: String) = entries.first { it.id == id }
+    }
+}
+
+/** Scan defaults: every found path is ticked except Log Files, which are real documents (Q6: the user opts in). */
+internal fun initialJunkSelection(results: List<JunkScanResult>): Set<String> =
+    results.filter { it.id != JunkScanner.LOG }.flatMapTo(mutableSetOf()) { r -> r.files.map { it.path } }
+
+/** dy/g: ic_check_new when every path is ticked, ic_uncheck_new when none, ic_radio_foreground_new when some. */
+@DrawableRes
+internal fun junkCheckIcon(paths: List<String>, selected: Set<String>): Int {
+    val ticked = paths.count { it in selected }
+    return when (ticked) {
+        0 -> R.drawable.ic_uncheck_new
+        paths.size -> R.drawable.ic_check_new
+        else -> R.drawable.ic_radio_foreground_new
+    }
+}
+
+/** Category check tap: a fully ticked category clears, any other ticks every path. */
+internal fun toggleJunkCategory(paths: List<String>, selected: Set<String>): Set<String> =
+    if (paths.all { it in selected }) selected - paths.toSet() else selected + paths
+
+internal fun junkBytes(paths: Iterable<String>, sizes: Map<String, Long>): Long = paths.sumOf { sizes[it] ?: 0L }
+
+/** What one Clean did: the paths that are gone, their scanned bytes, and the paths that failed (left ticked to retry). */
+internal data class JunkCleanResult(val removed: Set<String>, val failed: Set<String>, val freedBytes: Long)
+
+/** Deletes a frozen snapshot of ticked paths; freed bytes count only paths whose outcome says they are gone. */
+internal fun runJunkClean(snapshot: List<String>, sizes: Map<String, Long>): JunkCleanResult {
+    val outcomes = JunkScanner.clean(snapshot)
+    val removed = outcomes.successfulPaths()
+    return JunkCleanResult(removed.toSet(), outcomes.failedPaths().toSet(), junkBytes(removed, sizes))
+}
 
 /** activity_junk_scan: orange while scanning, red with done_cleaner_lottie once progress reaches 100. */
 @Composable
@@ -146,64 +154,35 @@ private fun JunkScanState(done: Boolean, path: String, onBack: () -> Unit) {
     }
 }
 
-/**
- * Storage Clean Suite with 100% visual and functional parity to reference APK
- * Matches:
- * 1. JunkScanActivity (Scanning animation with paths and warm orange gradient)
- * 2. RemoveJunkActivity (Red gradient collapsing header with storage_clean_bg_img,
- *    5 categories with checkmarks, Clean & Deep Clean pill buttons)
- * 3. JunkClearedActivity (Junk cleared celebration + Release More Space options)
- */
-@OptIn(ExperimentalMaterial3Api::class)
+/** Junk scan, results, cleaning and Junk cleared (UI-SPEC §2). Back from any state leaves the route. */
 @Composable
 fun RemoveJunkScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToCleaner: () -> Unit = {},
     onNavigateToDuplicates: () -> Unit = {},
     onNavigateToScreenshots: () -> Unit = {},
     onNavigateToLargeVideos: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    // Saved so Back from a "Release more space" card returns to the result, not a new scan
-    var currentPhase by rememberSaveable { mutableStateOf(StorageCleanPhase.SCANNING) }
-    var scanningPath by remember { mutableStateOf("/storage/emulated/0") }
+    // Saved so Back from a "Release more space" row returns to Junk cleared, not a new scan
+    var phase by rememberSaveable { mutableStateOf(StorageCleanPhase.SCANNING) }
+    var scanningPath by remember { mutableStateOf("") }
     var scanProgress by remember { mutableIntStateOf(0) }
-    var totalFreedBytes by rememberSaveable { mutableLongStateOf(0L) }
-    var totalStorageBytes by remember { mutableLongStateOf(0L) }
-    var freeStorageBytes by remember { mutableLongStateOf(0L) }
-
-    var categories by remember {
-        mutableStateOf(
-            listOf(
-                JunkCategoryItem("app_cache", "Junk Files", 0L, R.drawable.ic_cleaner_junk_file),
-                JunkCategoryItem("apk_files", "Obsolete APK Files", 0L, R.drawable.ic_cleaner_apk_file),
-                JunkCategoryItem("temp_files", "Temp Files", 0L, R.drawable.ic_cleaner_temp_file),
-                JunkCategoryItem("log_files", "Log Files", 0L, R.drawable.ic_cleaner_log_file),
-                JunkCategoryItem("empty_folder", "Empty Folders", 0L, R.drawable.ic_cleaner_folder_file)
-            )
-        )
-    }
-
-    // Paths the user unticked inside an expanded category
-    var excludedPaths by remember { mutableStateOf(setOf<String>()) }
-    var expandedId by remember { mutableStateOf<String?>(null) }
+    var freedBytes by rememberSaveable { mutableLongStateOf(0L) }
+    var results by remember { mutableStateOf(emptyList<JunkScanResult>()) }
+    var sizes by remember { mutableStateOf(emptyMap<String, Long>()) }
+    var selected by remember { mutableStateOf(emptySet<String>()) }
 
     // Real scan (JunkScanner): every size shown comes from files that exist.
     // Leaving the screen cancels this effect, so a stale scan never reaches the results (and stops walking).
     LaunchedEffect(Unit) {
-        if (currentPhase == StorageCleanPhase.COMPLETED) return@LaunchedEffect
-        currentPhase = StorageCleanPhase.SCANNING
+        if (phase == StorageCleanPhase.COMPLETED) return@LaunchedEffect
+        phase = StorageCleanPhase.SCANNING
         scanProgress = 0
         val job = coroutineContext.job
-        val results = withContext(Dispatchers.IO) {
-            try {
-                val stat = StatFs(Environment.getDataDirectory().path)
-                totalStorageBytes = stat.totalBytes
-                freeStorageBytes = stat.availableBytes
-            } catch (_: Exception) {}
+        val (found, foundSizes) = withContext(Dispatchers.IO) {
             var last = 0L
-            com.quizango.gallery.data.local.JunkScanner.scan(
+            val r = JunkScanner.scan(
                 storageRoot = Environment.getExternalStorageDirectory(),
                 appCacheDirs = listOfNotNull(context.cacheDir, context.externalCacheDir),
                 onProgress = { scanProgress = it }
@@ -211,449 +190,63 @@ fun RemoveJunkScreen(
                 job.ensureActive()
                 val now = System.currentTimeMillis()
                 if (now - last > 80) { scanningPath = path; last = now } // throttle UI updates
-            }.associateBy { it.id }
+            }
+            // Sizes are read once here, so the results never stat files on recomposition
+            r to r.flatMap { it.files }.associate { it.path to it.length() }
         }
-        categories = categories.map { c ->
-            val files = results[c.id]?.files.orEmpty()
-            val size = files.sumOf { it.length() }
-            // Log Files (old documents) stay unticked: Q6 user decision, Clean would delete real documents
-            c.copy(files = files, sizeBytes = size, isChecked = size > 0 && c.id != "log_files")
-        }
+        results = found
+        sizes = foundSizes
+        selected = initialJunkSelection(found)
         delay(JUNK_SCAN_HOLD_MS)
-        currentPhase = StorageCleanPhase.OVERVIEW
+        phase = StorageCleanPhase.OVERVIEW
     }
 
-    val selectedFiles = categories.filter { it.isChecked }.flatMap { c -> c.files.filter { it.path !in excludedPaths } }
-    val totalSelectedJunk = selectedFiles.sumOf { it.length() }
+    val selectedBytes = junkBytes(selected, sizes)
 
-    when (currentPhase) {
+    fun startClean() {
+        if (phase != StorageCleanPhase.OVERVIEW || selectedBytes <= 0) return
+        val snapshot = selected.toList() // frozen at the tap: later ticks cannot widen the delete
+        val snapshotSizes = sizes
+        phase = StorageCleanPhase.CLEANING
+        scope.launch {
+            // NonCancellable: once deletion starts its result is applied even if the user leaves
+            val result = withContext(Dispatchers.IO + NonCancellable) { runJunkClean(snapshot, snapshotSizes) }
+            results = results.map { r -> r.copy(files = r.files.filter { it.path !in result.removed }) }
+            selected = selected - result.removed
+            freedBytes = result.freedBytes
+            phase = if (result.removed.isEmpty()) StorageCleanPhase.OVERVIEW else StorageCleanPhase.COMPLETED
+        }
+    }
+
+    when (phase) {
         StorageCleanPhase.SCANNING -> JunkScanState(scanProgress >= 100, scanningPath, onNavigateBack)
 
-        StorageCleanPhase.OVERVIEW -> {
-            // Reference RemoveJunkActivity layout: activity_remove_junk.xml
-            // Red gradient header (#F94D3C -> #EB1D08) with circular sun container, category list, Clean & Deep Clean buttons
-            Scaffold(
-                bottomBar = {
-                    Surface(
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .navigationBarsPadding()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            val isCleanEnabled = totalSelectedJunk > 0
-
-                            // Clean Button (btnClean)
-                            Button(
-                                onClick = {
-                                    if (isCleanEnabled) {
-                                        scope.launch {
-                                            currentPhase = StorageCleanPhase.CLEANING
-                                            val toDelete = selectedFiles
-                                            delay(1200)
-                                            totalFreedBytes = withContext(Dispatchers.IO) {
-                                                com.quizango.gallery.data.local.JunkScanner.clean(toDelete)
-                                            }
-                                            currentPhase = StorageCleanPhase.COMPLETED
-                                        }
-                                    }
-                                },
-                                enabled = isCleanEnabled,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(48.dp),
-                                shape = RoundedCornerShape(25.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (MaterialTheme.colorScheme.isDark) Color(0xFF272727) else Color(0xFFF0F1F8),
-                                    disabledContainerColor = if (MaterialTheme.colorScheme.isDark) Color(0xFF1E1E1E) else Color(0xFFE2E4E8),
-                                    disabledContentColor = Color(0xFF9EA3AE)
-                                )
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.clean),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp,
-                                    color = if (isCleanEnabled && MaterialTheme.colorScheme.isDark) Color.White else Color(0xFFA7B1BD)
-                                )
-                            }
-
-                            // Deep Clean Button (btnDelete with deep_clean_ic)
-                            Button(
-                                onClick = onNavigateToCleaner,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(48.dp),
-                                shape = RoundedCornerShape(25.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0B72F6))
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.deep_clean_ic),
-                                    contentDescription = "Deep Clean",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = stringResource(R.string.deep_clean),
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    fontSize = 15.sp
-                                )
-                            }
-                        }
-                    }
-                }
-            ) { paddingValues ->
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    // Header with layout_progress_image_view (#F94D3C -> #EB1D08)
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        listOf(Color(0xFFF94D3C), Color(0xFFEB1D08))
-                                    )
-                                )
-                                .statusBarsPadding()
-                                .padding(bottom = 26.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                // Toolbar
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 14.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    // Reference header has no back arrow; system back still works
-                                    Text(
-                                        text = stringResource(R.string.storage_clean),
-                                        fontSize = 19.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                // Centered Sun Element (storage_clean_bg_img)
-                                Box(
-                                    modifier = Modifier.size(160.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.storage_clean_bg_img),
-                                        contentDescription = null,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        val parts = formatStorageBytes(totalSelectedJunk).split(" ")
-                                        Row(verticalAlignment = Alignment.Bottom) {
-                                            Text(text = parts[0], fontSize = 30.sp, fontWeight = FontWeight.ExtraBold, color = Color.White)
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text(
-                                                text = parts.getOrElse(1) { "" }, fontSize = 13.sp, fontWeight = FontWeight.Bold,
-                                                color = Color.White, modifier = Modifier.padding(bottom = 5.dp)
-                                            )
-                                        }
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Text(
-                                            text = stringResource(R.string.junk_found),
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = Color.White.copy(alpha = 0.95f)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    // 5 Junk Categories matching item_remove_junk.xml (no dividers in reference)
-                    categories.forEach { item ->
-                        item(key = item.id) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable(enabled = item.sizeBytes > 0) {
-                                        expandedId = if (expandedId == item.id) null else item.id
-                                    }
-                                    .padding(horizontal = 16.dp, vertical = 13.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = item.iconRes),
-                                    contentDescription = item.name,
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(26.dp)
-                                )
-                                Spacer(modifier = Modifier.width(14.dp))
-                                Text(
-                                    text = item.name,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                if (item.sizeBytes > 0) {
-                                    Icon(
-                                        imageVector = if (expandedId == item.id) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onBackground,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Text(
-                                        text = formatStorageBytes(item.sizeBytes),
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        modifier = Modifier.padding(end = 12.dp)
-                                    )
-                                    JunkCheck(item.isChecked) {
-                                        categories = categories.map {
-                                            if (it.id == item.id) it.copy(isChecked = !it.isChecked) else it
-                                        }
-                                        excludedPaths = excludedPaths - item.files.map { it.path }.toSet()
-                                    }
-                                } else {
-                                    Text(
-                                        text = stringResource(R.string.no_junk),
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-                        }
-                        if (expandedId == item.id) {
-                            // shortcut: shows the first 200 files only; page it if real users hit more.
-                            items(item.files.take(200), key = { "${item.id}:${it.path}" }) { file ->
-                                val checked = item.isChecked && file.path !in excludedPaths
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    JunkFileIcon(file, item.iconRes)
-                                    Spacer(modifier = Modifier.width(14.dp))
-                                    Text(
-                                        text = if (item.id == "apk_files") file.nameWithoutExtension else file.name,
-                                        fontSize = 14.sp,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = formatStorageBytes(file.length()),
-                                        fontSize = 13.sp,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        modifier = Modifier.padding(end = 12.dp)
-                                    )
-                                    JunkCheck(checked) {
-                                        if (checked) {
-                                            excludedPaths = excludedPaths + file.path
-                                        } else {
-                                            excludedPaths = excludedPaths - file.path
-                                            if (!item.isChecked) categories = categories.map {
-                                                if (it.id == item.id) it.copy(isChecked = true) else it
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-                }
-            }
-        }
+        StorageCleanPhase.OVERVIEW -> JunkResultsState(
+            results = results,
+            sizes = sizes,
+            selected = selected,
+            selectedBytes = selectedBytes,
+            onSelectionChange = { selected = it },
+            onClean = ::startClean
+        )
 
         StorageCleanPhase.CLEANING -> {
-            // Cleaning in-progress view matching clAnimation in activity_remove_junk.xml
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFFFF7000), Color(0xFFFF8D01))
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(24.dp)
-                ) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        strokeWidth = 4.dp,
-                        modifier = Modifier.size(64.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Text(
-                        text = "Cleaning...",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Optimizing storage space",
-                        fontSize = 13.sp,
-                        color = Color.White.copy(alpha = 0.85f)
-                    )
-                }
+            Box(Modifier.fillMaxSize().drawableBackground(R.drawable.layout_progress_background), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = colorResource(R.color.onlyWhite))
             }
         }
 
         StorageCleanPhase.COMPLETED -> {
-            // Reference JunkClearedActivity: activity_junk_cleared.xml
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = stringResource(R.string.remove_junk),
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = onNavigateBack) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            }
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
-                    )
-                },
-                bottomBar = {
-                    Surface(
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .navigationBarsPadding()
-                    ) {
-                        Button(
-                            onClick = onNavigateBack,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp)
-                                .height(48.dp),
-                            shape = RoundedCornerShape(25.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0066FF))
-                        ) {
-                            Text(
-                                text = "Done",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp
-                            )
-                        }
-                    }
-                }
-            ) { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Image(
-                        painter = painterResource(id = R.drawable.img_junk_cleared_done),
-                        contentDescription = "Junk Cleared",
-                        modifier = Modifier.size(88.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
+            Column(
+                Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor)).statusBarsPadding(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(painterResource(R.drawable.img_junk_cleared_done), contentDescription = null, Modifier.padding(top = 30.sdp))
+                Text(formatCleanerSize(freedBytes), style = GalleryText.BodyXXLargeBold, color = colorResource(R.color.black))
+                CleanerEntry.entries.drop(1).forEach { e ->
                     Text(
-                        text = formatStorageBytes(totalFreedBytes),
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = "Your phone is in optimal condition",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    Spacer(modifier = Modifier.height(36.dp))
-
-                    Text(
-                        text = "Release more space",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.align(Alignment.Start)
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Deep clean options matching reference activity_junk_cleared.xml
-                    ReleaseOptionRow(
-                        title = "Duplicate Images",
-                        subtitle = "Find and remove identical photos.",
-                        iconRes = R.drawable.img_system_cleaner_duplicate,
-                        onClick = onNavigateToDuplicates
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    ReleaseOptionRow(
-                        title = "Screenshots",
-                        subtitle = "Manage and delete unwanted screenshots.",
-                        iconRes = R.drawable.img_system_cleaner_screenshot,
-                        onClick = onNavigateToScreenshots
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    ReleaseOptionRow(
-                        title = "Large Video",
-                        subtitle = "Free up storage space for more memories.",
-                        iconRes = R.drawable.img_system_cleaner_large_video,
-                        onClick = onNavigateToLargeVideos
+                        stringResource(e.title),
+                        Modifier.clickable { e.pick({}, onNavigateToDuplicates, onNavigateToScreenshots, onNavigateToLargeVideos)() }
                     )
                 }
             }
@@ -661,87 +254,229 @@ fun RemoveJunkScreen(
     }
 }
 
+/** activity_remove_junk results: collapsing red header with the ticked size, the five rows, Clean / Deep Clean. */
 @Composable
-private fun ReleaseOptionRow(
-    title: String,
-    subtitle: String,
-    iconRes: Int,
-    onClick: () -> Unit
+private fun JunkResultsState(
+    results: List<JunkScanResult>,
+    sizes: Map<String, Long>,
+    selected: Set<String>,
+    selectedBytes: Long,
+    onSelectionChange: (Set<String>) -> Unit,
+    onClean: () -> Unit
 ) {
-    val shape = RoundedCornerShape(14.dp)
+    val white = colorResource(R.color.onlyWhite)
+    var expanded by remember { mutableStateOf(emptySet<String>()) }
+    // RJ.Ooooo00: the header shrinks 350 -> 300 dp over 500 ms when the result binds
+    val headerHeight = remember { Animatable(350f) }
+    LaunchedEffect(Unit) { headerHeight.animateTo(300f, tween(500)) }
+    val subText = with(LocalDensity.current) { 12.sdp.toSp() } // item_remove_junk_sub uses sdp for text
+
+    Box(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        LazyColumn(
+            Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 70.sdp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding())
+        ) {
+            item(key = "header") {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .drawableBackground(R.drawable.layout_progress_image_view)
+                        .statusBarsPadding()
+                        .height(headerHeight.value.dp)
+                ) {
+                    // Expanded header draws no back arrow on device; system Back leaves the route
+                    Text(
+                        stringResource(R.string.storage_clean),
+                        style = GalleryText.BodyXXLargeSemiBold,
+                        color = white,
+                        maxLines = 1,
+                        modifier = Modifier.height(56.dp).wrapContentHeight().padding(start = 16.dp)
+                    )
+                    Column(
+                        Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 50.sdp)
+                            .size(150.sdp)
+                            .drawableBackground(R.drawable.storage_clean_bg_img),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            formatCleanerSizeSpanned(selectedBytes),
+                            style = GalleryText.BodyXXLargeBold.copy(fontSize = 18.ssp),
+                            color = white
+                        )
+                        Text(
+                            stringResource(R.string.junk_found),
+                            style = GalleryText.BodySmallBold,
+                            color = white,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+            results.forEach { r ->
+                val row = JunkRow.of(r.id)
+                val paths = r.files.map { it.path }
+                val isOpen = r.id in expanded && paths.isNotEmpty()
+                item(key = r.id) {
+                    Row(
+                        Modifier
+                            .padding(start = 10.sdp, end = 10.sdp, top = 12.sdp)
+                            .fillMaxWidth()
+                            .height(22.sdp)
+                            .clickable(enabled = paths.isNotEmpty()) {
+                                expanded = if (r.id in expanded) expanded - r.id else expanded + r.id
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(painterResource(row.icon), contentDescription = null, Modifier.size(18.sdp))
+                        Text(
+                            stringResource(row.title),
+                            style = GalleryText.BodyLargeSemiBold,
+                            color = colorResource(R.color.titleColor),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f).padding(horizontal = 8.sdp)
+                        )
+                        if (paths.isEmpty()) {
+                            Text(
+                                stringResource(R.string.no_junk),
+                                style = GalleryText.BodySmallSemiBold,
+                                color = colorResource(R.color.junkCleanerSubTitleColor)
+                            )
+                        } else {
+                            Image(
+                                painterResource(R.drawable.ic_expand_arrow),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(colorResource(R.color.black)),
+                                modifier = Modifier.padding(start = 2.sdp, top = 2.sdp)
+                            )
+                            Text(
+                                formatCleanerSize(junkBytes(paths, sizes)),
+                                style = GalleryText.BodyMediumSemiBold,
+                                color = colorResource(R.color.black),
+                                modifier = Modifier.padding(end = 5.sdp)
+                            )
+                            Image(
+                                painterResource(junkCheckIcon(paths, selected)),
+                                contentDescription = stringResource(row.title),
+                                modifier = Modifier.size(20.sdp).clickable { onSelectionChange(toggleJunkCategory(paths, selected)) }
+                            )
+                        }
+                    }
+                }
+                if (isOpen) {
+                    // shortcut: shows the first 200 files only; page it if real users hit more.
+                    items(r.files.take(200), key = { "${r.id}:${it.path}" }) { file ->
+                        val ticked = file.path in selected
+                        Row(
+                            Modifier.padding(start = 10.sdp, end = 10.sdp, top = 8.sdp).fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            JunkFileIcon(file, row.icon)
+                            Text(
+                                if (row == JunkRow.APK) file.nameWithoutExtension else file.name,
+                                fontFamily = Inter,
+                                fontSize = subText,
+                                color = colorResource(if (ticked) R.color.black else R.color.junkCleanerSubTitleColor),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f).padding(horizontal = 8.sdp)
+                            )
+                            Text(
+                                formatCleanerSize(sizes[file.path] ?: 0L),
+                                fontFamily = Inter,
+                                fontSize = subText,
+                                color = colorResource(R.color.titleColor),
+                                modifier = Modifier.padding(end = 5.sdp)
+                            )
+                            Image(
+                                painterResource(if (ticked) R.drawable.ic_check_new else R.drawable.ic_uncheck_new_sub),
+                                contentDescription = file.name,
+                                modifier = Modifier
+                                    .size(20.sdp)
+                                    .clickable { onSelectionChange(if (ticked) selected - file.path else selected + file.path) }
+                                    .padding(2.sdp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        JunkActionBar(selectedBytes, onClean, Modifier.align(Alignment.BottomCenter))
+    }
+}
+
+/** bottomActionLayout: Clean keeps its grey look; Deep Clean keeps the AD badge (Q2) and dims at 0. Both clean at once. */
+@Composable
+private fun JunkActionBar(selectedBytes: Long, onClean: () -> Unit, modifier: Modifier) {
+    val canClean = selectedBytes > 0
+    val pill = RoundedCornerShape(22.sdp)
     Row(
-        modifier = Modifier
+        modifier
+            .navigationBarsPadding()
+            .padding(start = 19.sdp, end = 19.sdp, bottom = 12.sdp)
             .fillMaxWidth()
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.cardBackground)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.cardBorder, shape = shape)
-            .clickable(onClick = onClick)
-            .padding(14.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .height(38.sdp)
     ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = title,
-            modifier = Modifier.size(46.dp)
-        )
-
-        Spacer(modifier = Modifier.width(14.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
+        Box(
+            Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(end = 4.sdp)
+                .clip(pill)
+                .drawableBackground(R.drawable.bg_remove_junk_clean_disabled)
+                .clickable(enabled = canClean, onClick = onClean),
+            contentAlignment = Alignment.Center
+        ) {
             Text(
-                text = title,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = subtitle,
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
+                stringResource(R.string.clean),
+                fontFamily = Inter,
+                fontWeight = FontWeight.Bold,
+                fontSize = 11.ssp,
+                color = colorResource(R.color.junkCleanerSubTitleColor)
             )
         }
-
-        Icon(
-            painter = painterResource(id = R.drawable.system_cleaner_banner_arrow),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(20.dp)
-        )
-    }
-}
-
-
-
-@Composable
-private fun JunkCheck(checked: Boolean, onToggle: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(22.dp)
-            .clip(CircleShape)
-            .background(if (checked) Color(0xFF0066FF) else Color.Transparent)
-            .border(1.5.dp, if (checked) Color(0xFF0066FF) else Color(0xFFCCCCCC), CircleShape)
-            .clickable(onClick = onToggle),
-        contentAlignment = Alignment.Center
-    ) {
-        if (checked) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Selected",
-                tint = Color.White,
-                modifier = Modifier.size(13.dp)
+        Row(
+            Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(start = 4.sdp)
+                .alpha(if (canClean) 1f else 0.6f)
+                .clip(pill)
+                .drawableBackground(R.drawable.bg_remove_junk_deep_clean)
+                .clickable(enabled = canClean, onClick = onClean)
+                .padding(horizontal = 12.sdp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painterResource(R.drawable.deep_clean_ic),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(colorResource(R.color.onlyWhite))
+            )
+            Text(
+                stringResource(R.string.deep_clean),
+                fontFamily = Inter,
+                fontWeight = FontWeight.Bold,
+                fontSize = 11.ssp,
+                color = colorResource(R.color.onlyWhite),
+                maxLines = 1,
+                modifier = Modifier.padding(start = 5.sdp)
             )
         }
     }
 }
 
-/** APKs show their app icon like the reference; other files show the category icon. */
+/** APKs show their app icon like the reference; other files show the category icon (dy/n). */
 @Composable
-private fun JunkFileIcon(file: java.io.File, fallbackRes: Int) {
+private fun JunkFileIcon(file: File, @DrawableRes fallbackRes: Int) {
     val context = LocalContext.current
     val icon by produceState<android.graphics.drawable.Drawable?>(null, file) {
-        if (file.name.endsWith(".apk", ignoreCase = true)) {
+        if (file.name.endsWith(".apk")) {
             value = withContext(Dispatchers.IO) {
                 try {
                     val pm = context.packageManager
@@ -758,17 +493,8 @@ private fun JunkFileIcon(file: java.io.File, fallbackRes: Int) {
     }
     val d = icon
     if (d != null) {
-        Image(
-            bitmap = d.toBitmap(64, 64).asImageBitmap(),
-            contentDescription = null,
-            modifier = Modifier.size(32.dp).clip(RoundedCornerShape(6.dp))
-        )
+        Image(d.toBitmap(64, 64).asImageBitmap(), contentDescription = null, modifier = Modifier.size(20.sdp))
     } else {
-        Icon(
-            painter = painterResource(id = fallbackRes),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(26.dp)
-        )
+        Image(painterResource(fallbackRes), contentDescription = null, modifier = Modifier.size(20.sdp))
     }
 }

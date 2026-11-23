@@ -3,10 +3,8 @@ package com.quizango.gallery
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.cleaner.CleanerEntry
-import com.quizango.gallery.ui.cleaner.JunkCategory
 import com.quizango.gallery.ui.cleaner.formatCleanerSize
 import com.quizango.gallery.ui.cleaner.formatCleanerSizeSpanned
-import com.quizango.gallery.ui.cleaner.formatStorageBytes
 import com.quizango.gallery.ui.cleaner.formatVideoDuration
 import com.quizango.gallery.ui.cleaner.formatVideoSize
 import com.quizango.gallery.ui.navigation.Screen
@@ -22,14 +20,6 @@ class CleanerTest {
         assertEquals("00:45", formatVideoDuration(45000L))
         assertEquals("01:30", formatVideoDuration(90000L))
         assertEquals("10:05", formatVideoDuration(605000L))
-    }
-
-    @Test
-    fun testFormatStorageBytes() {
-        assertEquals("500 B", formatStorageBytes(500L))
-        assertEquals("12.0 kB", formatStorageBytes(12 * 1024L))
-        assertEquals("45.0 MB", formatStorageBytes(45 * 1024 * 1024L))
-        assertEquals("1.50 GB", formatStorageBytes((1.5 * 1024 * 1024 * 1024L).toLong()))
     }
 
     @Test
@@ -68,19 +58,6 @@ class CleanerTest {
         val isAllSelected = selected.size == allPaths.size
         val nextSelection = if (isAllSelected) emptySet() else allPaths.toSet()
         assertTrue(nextSelection.isEmpty())
-    }
-
-    @Test
-    fun testJunkCategorySumCalculation() {
-        val categories = listOf(
-            JunkCategory("app_cache", "App Cache", "Cache", 50 * 1024 * 1024L, 0, isChecked = true),
-            JunkCategory("apk_files", "APK Files", "APK", 20 * 1024 * 1024L, 0, isChecked = false),
-            JunkCategory("temp_files", "Temporary Files", "Temp", 30 * 1024 * 1024L, 0, isChecked = true)
-        )
-
-        val totalSelected = categories.filter { it.isChecked }.sumOf { it.sizeBytes }
-        val expected = (50 + 30) * 1024 * 1024L
-        assertEquals(expected, totalSelected)
     }
 
     @Test

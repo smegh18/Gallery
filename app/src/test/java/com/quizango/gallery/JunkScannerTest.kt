@@ -1,6 +1,7 @@
 package com.quizango.gallery
 
 import com.quizango.gallery.data.local.JunkScanner
+import com.quizango.gallery.data.local.PathMutationOutcome
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -93,14 +94,20 @@ class JunkScannerTest {
     }
 
     @Test
-    fun cleanDeletesAndSkipsFoldersThatFilledUp() {
+    fun cleanReportsPerPathOutcomesAndSkipsFoldersThatFilledUp() {
         val (root, cache) = tree()
         val r = JunkScanner.scan(root, listOf(cache)).associateBy { it.id }
         val empty = r[JunkScanner.EMPTY_FOLDER]!!.files.single()
         File(empty, "new.txt").writeText("x")                  // no longer empty
-        val freed = JunkScanner.clean(r[JunkScanner.APK]!!.files + r[JunkScanner.APP_CACHE]!!.files + empty)
-        assertEquals(130L, freed)
-        assertFalse(File(root, "Download/app.apk").exists())
+        val apk = File(root, "Download/app.apk").path
+        val gone = File(root, "never-there.tmp").path           // already absent: counts as done
+        val out = JunkScanner.clean(listOf(apk, empty.path, gone, apk))
+        assertEquals(listOf(apk, empty.path, gone), out.map { it.path })
+        assertEquals(
+            listOf(PathMutationOutcome.Status.SUCCESS, PathMutationOutcome.Status.FILE_FAILED, PathMutationOutcome.Status.SUCCESS),
+            out.map { it.status }
+        )
+        assertFalse(File(apk).exists())
         assertTrue(empty.exists())
         assertTrue(File(root, "Android/data/x/other.apk").exists())
     }

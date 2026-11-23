@@ -101,18 +101,17 @@ object JunkScanner {
         )
     }
 
-    /** Deletes the given files; folders only if still empty. Returns bytes actually freed. */
-    fun clean(files: List<File>): Long {
-        var freed = 0L
-        for (f in files) {
-            val size = f.length()
-            val ok = try {
-                if (f.isDirectory) f.list()?.isEmpty() == true && f.delete() else f.delete()
-            } catch (_: SecurityException) {
-                false
-            }
-            if (ok) freed += size
+    /**
+     * Deletes each path once, in order: a folder only while still empty, an already-absent path counts as done.
+     * Junk has no Room rows, so the outcome is SUCCESS or FILE_FAILED; failed paths stay selectable for a retry.
+     */
+    fun clean(paths: List<String>): List<PathMutationOutcome> = paths.distinct().map { path ->
+        val f = File(path)
+        val gone = try {
+            !f.exists() || if (f.isDirectory) f.list()?.isEmpty() == true && f.delete() else f.delete()
+        } catch (_: SecurityException) {
+            false
         }
-        return freed
+        PathMutationOutcome(path, if (gone) PathMutationOutcome.Status.SUCCESS else PathMutationOutcome.Status.FILE_FAILED)
     }
 }
