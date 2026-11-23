@@ -1,25 +1,39 @@
 package com.quizango.gallery.ui.vault
 
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
-import com.quizango.gallery.ui.theme.GalleryBlue
-import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+/** activity_vault_setting rows in reference order: (icon, title, subtitle). Rows 2 and 3 carry a switch, 1 and 4 an arrow. */
+internal val vaultSettingRows = listOf(
+    Triple(R.drawable.ic_change_password, R.string.change_password, R.string.set_a_new_passcode),
+    Triple(R.drawable.ic_pattern, R.string.show_pattern, R.string.display_your_unique_pattern),
+    Triple(R.drawable.ic_fingerprint, R.string.unlock_with_fingerprint, R.string.use_biometrics_for_security),
+    Triple(R.drawable.ic_change_recovery_question, R.string.change_recovery_question, R.string.choose_another_recovery_question)
+)
+
 @Composable
 fun VaultSettingScreen(
     appPreferences: AppPreferences,
@@ -28,188 +42,82 @@ fun VaultSettingScreen(
     onNavigateBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val isPatternMode by appPreferences.isPatternMode.collectAsState(initial = true)
     val isFingerprintEnabled by appPreferences.isFingerprintEnabled.collectAsState(initial = false)
-    val settingsContext = androidx.compose.ui.platform.LocalContext.current
+
     // Only switch on when a fingerprint can actually be used
     fun toggleFingerprint(enable: Boolean) {
-        val reason = if (enable) VaultBiometric.unavailableReason(settingsContext) else null
+        val reason = if (enable) VaultBiometric.unavailableReason(context) else null
         if (reason != null) {
-            android.widget.Toast.makeText(settingsContext, settingsContext.getString(reason), android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(reason), Toast.LENGTH_SHORT).show()
         } else {
             scope.launch { appPreferences.setFingerprintEnabled(enable) }
         }
     }
 
-    Scaffold(
-        topBar = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = "Vault Settings",
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onBackground
+    Column(modifier = Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        SharedMediaToolbar(title = stringResource(R.string.privacy_settings), onBack = onNavigateBack)
+        Column(modifier = Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding()) {
+            vaultSettingRows.forEachIndexed { index, (icon, title, subtitle) ->
+                val label = stringResource(title)
+                val onClick: () -> Unit = when (index) {
+                    0 -> onNavigateToChangePin
+                    1 -> ({ scope.launch { appPreferences.setPatternMode(!isPatternMode) } })
+                    2 -> ({ toggleFingerprint(!isFingerprintEnabled) })
+                    else -> onNavigateToRecoveryQuestion
+                }
+                VaultSettingRow(icon, label, stringResource(subtitle), onClick) {
+                    if (index == 1 || index == 2) {
+                        Switch(
+                            checked = if (index == 1) isPatternMode else isFingerprintEnabled,
+                            onCheckedChange = { if (index == 1) scope.launch { appPreferences.setPatternMode(it) } else toggleFingerprint(it) },
+                            modifier = Modifier.padding(vertical = 10.sdp)
                         )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_back),
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    )
-                )
-                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.ic_inside),
+                            contentDescription = label,
+                            modifier = Modifier.padding(10.sdp)
+                        )
+                    }
+                }
             }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // 1. Change Password (matching activity_vault_setting.xml)
-            VaultSettingRow(
-                iconRes = R.drawable.ic_change_password,
-                title = "Change Password",
-                subtitle = "Set a new passcode",
-                onClick = onNavigateToChangePin,
-                trailingContent = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_inside),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            )
-
-            // 2. Show Pattern (matching activity_vault_setting.xml)
-            VaultSettingRow(
-                iconRes = R.drawable.ic_pattern,
-                title = "Show Pattern",
-                subtitle = "Display your unique pattern",
-                onClick = {
-                    scope.launch { appPreferences.setPatternMode(!isPatternMode) }
-                },
-                trailingContent = {
-                    Switch(
-                        checked = isPatternMode,
-                        onCheckedChange = { isChecked ->
-                            scope.launch { appPreferences.setPatternMode(isChecked) }
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = GalleryBlue
-                        )
-                    )
-                }
-            )
-
-            // 3. Unlock with Fingerprint (matching activity_vault_setting.xml)
-            VaultSettingRow(
-                iconRes = R.drawable.ic_fingerprint,
-                title = "Unlock with Fingerprint",
-                subtitle = "Use biometrics for security",
-                onClick = { toggleFingerprint(!isFingerprintEnabled) },
-                trailingContent = {
-                    Switch(
-                        checked = isFingerprintEnabled,
-                        onCheckedChange = { isChecked -> toggleFingerprint(isChecked) },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = GalleryBlue
-                        )
-                    )
-                }
-            )
-
-            // 4. Change Recovery Question (matching activity_vault_setting.xml)
-            VaultSettingRow(
-                iconRes = R.drawable.ic_change_recovery_question,
-                title = "Change Recovery Question",
-                subtitle = "Choose another recovery question",
-                onClick = onNavigateToRecoveryQuestion,
-                trailingContent = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_inside),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            )
         }
     }
 }
 
+/** One flat row: no card, no divider, borderless ripple. */
 @Composable
 private fun VaultSettingRow(
     iconRes: Int,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
-    trailingContent: @Composable () -> Unit
+    trailing: @Composable () -> Unit
 ) {
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surface,
+    val titleColor = colorResource(R.color.titleColor)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(bounded = false),
+                role = Role.Button,
+                onClick = onClick
+            )
+            .padding(10.sdp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 14.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .background(if (MaterialTheme.colorScheme.isDark) Color(0xFF2A2A2A) else Color(0xFFF2F4F7), RoundedCornerShape(10.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = title,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(14.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = title,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = subtitle,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            trailingContent()
+        Image(
+            painter = painterResource(iconRes),
+            contentDescription = null, // decorative: the title names the row
+            modifier = Modifier.padding(6.sdp)
+        )
+        Column(modifier = Modifier.weight(1f).padding(start = 5.sdp)) {
+            Text(text = title, style = GalleryText.BodyMediumMedium, color = titleColor)
+            Text(text = subtitle, style = GalleryText.BodySmallRegular, color = titleColor)
         }
+        trailing()
     }
 }
