@@ -28,7 +28,7 @@ fun VaultSettingScreen(
     onNavigateBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val isPatternMode by appPreferences.isPatternMode.collectAsState(initial = false)
+    val isPatternMode by appPreferences.isPatternMode.collectAsState(initial = true)
     val isFingerprintEnabled by appPreferences.isFingerprintEnabled.collectAsState(initial = false)
     val settingsContext = androidx.compose.ui.platform.LocalContext.current
     // Only switch on when a fingerprint can actually be used

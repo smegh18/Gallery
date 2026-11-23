@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.quizango.gallery.data.repository.movedPath
+import com.quizango.gallery.ui.vault.VaultGate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -17,6 +18,9 @@ internal fun parseAlbumCovers(entries: Set<String>): Map<String, String> =
 
 /** Missing means no irreversible retention policy was approved; either saved Boolean is preserved exactly. */
 internal fun autoDeleteTrashValue(savedValue: Boolean?): Boolean = savedValue ?: false
+
+/** Show Pattern is on until the user turns it off (S3); untouched existing installs flip to showing the path, accepted as no release exists. */
+internal fun showPatternValue(raw: Boolean?): Boolean = raw ?: true
 
 class AppPreferences(private val context: Context) {
 
@@ -41,6 +45,8 @@ class AppPreferences(private val context: Context) {
         val VAULT_PIN = stringPreferencesKey("vault_pin")
         val VAULT_PATTERN = stringPreferencesKey("vault_pattern")
         val IS_PATTERN_MODE = booleanPreferencesKey("is_vault_pattern_mode")
+        val IS_PRIVATE_LOCK = booleanPreferencesKey("isPrivateLock") // 2.7.2 key names: lock-out flag, first-time secured toast
+        val IS_PRIVATE_TOAST_SHOW = booleanPreferencesKey("isPrivateToastShow")
         val IS_FINGERPRINT_ENABLED = booleanPreferencesKey("is_fingerprint_enabled")
         val STORIES_EDIT_TOOLTIP = booleanPreferencesKey("isStoriesEditToolTip") // 2.7.2 key names (Phase 4)
         val COLLAGE_NEW_EXPLORE = booleanPreferencesKey("collageMakerNewButtonExplore")
@@ -84,7 +90,10 @@ class AppPreferences(private val context: Context) {
     val isOrganizerStripeShown: Flow<Boolean> = context.dataStore.data.map { it[Keys.ORGANIZER_STRIPE_SHOWN] ?: false }
     val vaultPin: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PIN] }
     val vaultPattern: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PATTERN] }
-    val isPatternMode: Flow<Boolean> = context.dataStore.data.map { it[Keys.IS_PATTERN_MODE] ?: false }
+    val isPatternMode: Flow<Boolean> = context.dataStore.data.map { showPatternValue(it[Keys.IS_PATTERN_MODE]) }
+    val isPrivateLock: Flow<Boolean> = context.dataStore.data.map { it[Keys.IS_PRIVATE_LOCK] ?: false }
+    val isPrivateToastShow: Flow<Boolean> = context.dataStore.data.map { it[Keys.IS_PRIVATE_TOAST_SHOW] ?: false }
+    val isVaultLockSet: Flow<Boolean> = context.dataStore.data.map { VaultGate.lockSet(it[Keys.VAULT_PIN], it[Keys.VAULT_PATTERN]) }
     val isFingerprintEnabled: Flow<Boolean> = context.dataStore.data.map { it[Keys.IS_FINGERPRINT_ENABLED] ?: false }
     val vaultQuestion: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_QUESTION] }
     val vaultAnswer: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_ANSWER] }
@@ -101,6 +110,8 @@ class AppPreferences(private val context: Context) {
             if (question.isNullOrEmpty() || answer.isNullOrEmpty()) null else question to answer
         }
     }
+
+    val hasRecoveryQuestion: Flow<Boolean> = vaultRecoveryPairs.map { it.isNotEmpty() }
 
     suspend fun setFirstLaunch(completed: Boolean) {
         context.dataStore.edit { it[Keys.IS_FIRST_LAUNCH] = completed }
@@ -236,6 +247,32 @@ class AppPreferences(private val context: Context) {
     suspend fun setVaultPattern(pattern: String) {
         // Stored as a salted hash; "" clears the pattern
         context.dataStore.edit { it[Keys.VAULT_PATTERN] = if (pattern.isEmpty()) "" else com.quizango.gallery.data.local.VaultSecret.hash(pattern) }
+    }
+
+    suspend fun setPrivateLock(locked: Boolean) {
+        context.dataStore.edit { it[Keys.IS_PRIVATE_LOCK] = locked }
+    }
+
+    suspend fun setPrivateToastShow(shown: Boolean) {
+        context.dataStore.edit { it[Keys.IS_PRIVATE_TOAST_SHOW] = shown }
+    }
+
+    /** One edit: hashes [value] into the chosen lock, clears the other lock and the lock-out flag (L2). */
+    suspend fun saveVaultLock(value: String, pattern: Boolean) {
+        val hashed = com.quizango.gallery.data.local.VaultSecret.hash(value)
+        context.dataStore.edit {
+            it[Keys.VAULT_PIN] = if (pattern) "" else hashed
+            it[Keys.VAULT_PATTERN] = if (pattern) hashed else ""
+            it[Keys.IS_PRIVATE_LOCK] = false
+        }
+    }
+
+    /** L10: wipes both locks in one edit. */
+    suspend fun clearVaultLock() {
+        context.dataStore.edit {
+            it[Keys.VAULT_PIN] = ""
+            it[Keys.VAULT_PATTERN] = ""
+        }
     }
 
     suspend fun setPatternMode(enabled: Boolean) {
