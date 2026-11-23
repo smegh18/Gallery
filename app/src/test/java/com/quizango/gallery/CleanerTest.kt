@@ -4,12 +4,15 @@ import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.cleaner.CleanerEntry
 import com.quizango.gallery.ui.cleaner.JunkCategory
+import com.quizango.gallery.ui.cleaner.formatCleanerSize
+import com.quizango.gallery.ui.cleaner.formatCleanerSizeSpanned
 import com.quizango.gallery.ui.cleaner.formatStorageBytes
 import com.quizango.gallery.ui.cleaner.formatVideoDuration
 import com.quizango.gallery.ui.cleaner.formatVideoSize
 import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.*
 import org.junit.Test
+import java.util.Locale
 
 class CleanerTest {
 
@@ -139,5 +142,40 @@ class CleanerTest {
             listOf(Screen.RemoveJunk, Screen.DuplicateWaiting, Screen.Screenshots, Screen.LargeVideos),
             e.map { it.pick(Screen.RemoveJunk, Screen.DuplicateWaiting, Screen.Screenshots, Screen.LargeVideos) }
         )
+    }
+
+    @Test
+    fun cleanerSizeMatchesReferenceFormatter() {
+        val k = 1024L
+        assertEquals("0 B", formatCleanerSize(0))
+        assertEquals("0 B", formatCleanerSize(-5))
+        assertEquals("1,023 B", formatCleanerSize(1023))
+        assertEquals("1 kB", formatCleanerSize(k))
+        assertEquals("54.5 kB", formatCleanerSize(55808))
+        assertEquals("1.2 kB", formatCleanerSize(1280)) // DecimalFormat HALF_EVEN, one decimal at most
+        assertEquals("23.2 MB", formatCleanerSize((23.2 * k * k).toLong()))
+        assertEquals("1 GB", formatCleanerSize(k * k * k))
+        assertEquals("1.5 GB", formatCleanerSize(3 * k * k * k / 2))
+        assertEquals("2,048 TB", formatCleanerSize(2048 * k * k * k * k))
+        assertEquals("1,024 TB", formatCleanerSize(k * k * k * k * k))
+    }
+
+    @Test
+    fun cleanerSizeIgnoresDisplayLocale() {
+        val saved = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale.GERMANY)
+            assertEquals("1,023 B", formatCleanerSize(1023))
+            assertEquals("23.2 MB", formatCleanerSize((23.2 * 1024 * 1024).toLong()))
+        } finally {
+            Locale.setDefault(saved)
+        }
+    }
+
+    @Test
+    fun cleanerSizeSpannedHalvesOnlyTheUnit() {
+        val s = formatCleanerSizeSpanned(55808)
+        assertEquals("54.5 kB", s.text)
+        assertEquals(listOf(5 to 7), s.spanStyles.map { it.start to it.end })
     }
 }
