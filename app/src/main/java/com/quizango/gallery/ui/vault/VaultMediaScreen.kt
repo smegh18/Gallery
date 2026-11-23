@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +54,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.GalleryApplication
@@ -82,8 +85,38 @@ import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
+
+/**
+ * Lives on the vault's back-stack entry: it is cleared when the entry is popped, not when the viewer, slideshow or
+ * picker opens on top of it or the screen rotates, so decrypted copies live exactly as long as the vault (D6).
+ */
+private class VaultViewCache(private val repository: VaultRepository) : ViewModel() {
+    override fun onCleared() {
+        CoroutineScope(Dispatchers.IO).launch { repository.clearViewCache() }
+    }
+}
+
+/** custom_toast_layout (§7): shield on `ic_toast_bg`; a Compose overlay because custom-view system toasts are deprecated. */
+@Composable
+private fun SecuredToast(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.drawableBackground(R.drawable.ic_toast_bg).padding(8.sdp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(painterResource(R.drawable.ic_secure), contentDescription = null, modifier = Modifier.padding(end = 5.sdp))
+        Text(
+            text = stringResource(R.string.toast_private),
+            style = GalleryText.BodyMediumMedium,
+            color = colorResource(R.color.onlyWhite)
+        )
+    }
+}
 
 /** activity_vault_media (#33): toolbar, day-grouped 3-column grid of decrypted thumbnails, selection bar, empty state. */
 @Composable
@@ -95,7 +128,9 @@ fun VaultMediaScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val mediaRepository = (context.applicationContext as GalleryApplication).mediaRepository
+    val app = context.applicationContext as GalleryApplication
+    val mediaRepository = app.mediaRepository
+    viewModel { VaultViewCache(vaultRepository) }
     // null until the first query returns, so the empty copy never flashes first
     val vaultItems by remember { vaultRepository.getVaultItemsFlow() }.collectAsState(initial = null)
     var selectedPaths by remember { mutableStateOf(setOf<String>()) }
@@ -110,6 +145,17 @@ fun VaultMediaScreen(
     fun openPicker() = onNavigate(Screen.VaultAdd.route)
 
     BackHandler(enabled = selecting) { selectedPaths = emptySet() }
+
+    // First open after setup: clear the flag before showing so it appears once, whatever happens next
+    var showSecured by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (app.preferences.isPrivateToastShow.first()) {
+            app.preferences.setPrivateToastShow(false)
+            showSecured = true
+            delay(3500) // Toast.LENGTH_LONG
+            showSecured = false
+        }
+    }
 
     Box(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
         Column(Modifier.fillMaxSize()) {
@@ -179,6 +225,7 @@ fun VaultMediaScreen(
         ) {
             CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
         }
+        if (showSecured) SecuredToast(Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 64.dp))
     }
 
     pendingUnhide?.let { items ->
