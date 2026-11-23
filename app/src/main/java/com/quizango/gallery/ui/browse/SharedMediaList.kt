@@ -235,7 +235,8 @@ internal fun SharedMediaToolbar(
     onBack: () -> Unit,
     onClose: () -> Unit = {},
     onToggleAll: () -> Unit = {},
-    onInfo: (() -> Unit)? = null
+    onInfo: (() -> Unit)? = null,
+    showToggleAll: Boolean = selecting // the cleaner grids keep Back and always show Select all
 ) {
     Column(
         Modifier
@@ -268,7 +269,7 @@ internal fun SharedMediaToolbar(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f).padding(start = 4.sdp)
             )
-            if (selecting) Text(
+            if (showToggleAll) Text(
                 text = stringResource(if (allSelected) R.string.unselect_all else R.string.select_all),
                 style = GalleryText.BodyMediumMedium,
                 color = colorResource(R.color.colorPrimary),

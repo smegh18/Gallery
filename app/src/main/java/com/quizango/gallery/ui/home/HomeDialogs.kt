@@ -566,9 +566,9 @@ internal fun RenameAlbumDialog(
     }
 }
 
-/** dialog_album_rename_progress (S272/bz/a): spinner and "Modifying N items…"; not cancelable. */
+/** dialog_album_rename_progress (S272/bz/a): spinner and a line such as "Modifying N items…" or "Deleting"; not cancelable. */
 @Composable
-internal fun RenameProgressDialog(count: Int) {
+internal fun ProgressTextDialog(text: String) {
     CommonDialog({}, cancelable = false) {
         Row(
             modifier = Modifier
@@ -579,7 +579,7 @@ internal fun RenameProgressDialog(count: Int) {
         ) {
             CircularProgressIndicator(color = colorResource(R.color.colorPrimary), modifier = Modifier.size(40.dp))
             Text(
-                text = stringResource(R.string.modifying_items, count),
+                text = text,
                 style = GalleryText.BodyXLargeMedium,
                 color = colorResource(R.color.titleColor),
                 modifier = Modifier.padding(start = 15.sdp)

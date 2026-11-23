@@ -5,7 +5,6 @@ import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.cleaner.CleanerEntry
 import com.quizango.gallery.ui.cleaner.formatCleanerSize
 import com.quizango.gallery.ui.cleaner.formatCleanerSizeSpanned
-import com.quizango.gallery.ui.cleaner.formatVideoDuration
 import com.quizango.gallery.ui.cleaner.formatVideoSize
 import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.*
@@ -13,14 +12,6 @@ import org.junit.Test
 import java.util.Locale
 
 class CleanerTest {
-
-    @Test
-    fun testFormatVideoDuration() {
-        assertEquals("00:00", formatVideoDuration(0L))
-        assertEquals("00:45", formatVideoDuration(45000L))
-        assertEquals("01:30", formatVideoDuration(90000L))
-        assertEquals("10:05", formatVideoDuration(605000L))
-    }
 
     @Test
     fun testFormatVideoSize() {

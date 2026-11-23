@@ -30,7 +30,7 @@ interface MediaRepository {
     fun getFavoritesFlow(): Flow<List<MediaItem>>
     fun getRecycleBinFlow(): Flow<List<MediaItem>>
     fun getDuplicatesFlow(): Flow<List<MediaItem>>
-    fun getLargeVideosFlow(minSizeBytes: Long = 10L * 1024L * 1024L): Flow<List<MediaItem>>
+    fun getLargeVideosFlow(minSizeBytes: Long = LARGE_VIDEO_MIN_BYTES): Flow<List<MediaItem>>
     fun getScreenshotsFlow(): Flow<List<MediaItem>>
     fun getAnimatedMediaFlow(): Flow<List<MediaItem>>
     fun getBurstPhotosFlow(): Flow<List<MediaItem>>
@@ -56,6 +56,13 @@ interface MediaRepository {
     /** Renames the folder on disk and moves its rows to the new paths; the new folder path, or null when refused or failed. */
     suspend fun renameFolder(folderPath: String, newName: String): String?
 }
+
+/** LargeVideoViewModel 0x4600000: a video counts as large from 70 MiB. */
+internal const val LARGE_VIDEO_MIN_BYTES = 73_400_320L
+
+/** Large Video list: videos of at least [minBytes], newest first. */
+internal fun largeVideos(media: List<MediaItem>, minBytes: Long = LARGE_VIDEO_MIN_BYTES): List<MediaItem> =
+    media.filter { it.isVideo && it.fileSize >= minBytes }.sortedByDescending { it.dateAdded }
 
 /** VideoPlayerActivity capture name: "IMG_" + yyyyMMdd_ + epoch millis + ".png". */
 internal fun captureFileName(millis: Long): String =
@@ -496,11 +503,7 @@ class MediaRepositoryImpl(
 
     override fun getLargeVideosFlow(minSizeBytes: Long): Flow<List<MediaItem>> {
         return cached("large:$minSizeBytes") { run {
-        activeEntities.map { list ->
-            list.filter { it.mediaType == 2 && it.fileSize >= minSizeBytes }
-                .sortedByDescending { it.fileSize }
-                .map { it.toDomain() }
-        }
+        activeEntities.map { list -> largeVideos(list.filter { it.mediaType == 2 }.map { it.toDomain() }, minSizeBytes) }
     } }
     }
 

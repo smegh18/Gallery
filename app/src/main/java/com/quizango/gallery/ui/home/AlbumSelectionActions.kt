@@ -98,7 +98,7 @@ internal fun rememberAlbumSelectionDialogs(viewModel: HomeViewModel, uiState: Ho
         )
         null -> Unit
     }
-    renaming?.let { RenameProgressDialog(it) }
+    renaming?.let { ProgressTextDialog(stringResource(R.string.modifying_items, it)) }
     addTarget?.let { folder ->
         fun add(move: Boolean) {
             addTarget = null
