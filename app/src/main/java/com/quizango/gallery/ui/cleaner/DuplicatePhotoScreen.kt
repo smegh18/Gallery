@@ -68,8 +68,9 @@ import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.delay
 
-/** A confirmed duplicate delete (DP 1284-1406 `oa/j` Yes): the frozen photos and the Move to Recycle Bin choice. */
-data class DuplicateDeleteRequest(val items: List<MediaItem>, val moveToRecycleBin: Boolean) {
+/** A confirmed duplicate delete (DP 1284-1406 `oa/j` Yes): an immutable photo snapshot and Recycle Bin choice. */
+class DuplicateDeleteRequest(items: List<MediaItem>, val moveToRecycleBin: Boolean) {
+    val items: List<MediaItem> = items.toList()
     val paths: List<String> get() = items.map { it.filePath }
 }
 
@@ -95,6 +96,8 @@ fun DuplicatePhotoScreen(
     mediaRepository: MediaRepository,
     duplicateFinder: DuplicateFinder,
     onNavigateBack: () -> Unit,
+    retrySelection: Set<String> = emptySet(),
+    onRetrySelectionConsumed: () -> Unit = {},
     onDelete: (DuplicateDeleteRequest) -> Unit
 ) {
     val context = LocalContext.current
@@ -108,6 +111,14 @@ fun DuplicatePhotoScreen(
     var keepOne by remember { mutableStateOf(false) }
     // Frozen when Delete Selected is tapped; later selection changes cannot alter what the dialog confirms
     var pending by remember { mutableStateOf<List<MediaItem>?>(null) }
+
+    // A failed destructive mutation is returned here selected, so a retry acts on the same frozen paths.
+    LaunchedEffect(retrySelection) {
+        if (retrySelection.isNotEmpty()) {
+            selected = retrySelection
+            onRetrySelectionConsumed()
+        }
+    }
 
     // Deleted or changed files leave their group: drop them from the selection
     LaunchedEffect(groups) {

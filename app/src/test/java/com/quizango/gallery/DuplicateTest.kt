@@ -7,6 +7,7 @@ import com.quizango.gallery.ui.browse.ListState
 import com.quizango.gallery.ui.browse.listStateOf
 import com.quizango.gallery.ui.browse.pruneSelection
 import com.quizango.gallery.ui.cleaner.DuplicateDeleteRequest
+import com.quizango.gallery.ui.cleaner.DuplicateDeleteProcessCoordinator
 import com.quizango.gallery.ui.cleaner.deleteSelectedLabel
 import com.quizango.gallery.ui.cleaner.duplicateGroupLabel
 import com.quizango.gallery.ui.cleaner.formatDuplicateSize
@@ -14,6 +15,7 @@ import com.quizango.gallery.ui.cleaner.keepOneSelection
 import com.quizango.gallery.ui.cleaner.runDuplicateWaiting
 import com.quizango.gallery.ui.cleaner.selectedDuplicates
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.data.local.PathMutationOutcome
 import org.junit.Assert.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -99,6 +101,15 @@ class DuplicateTest {
     }
 
     @Test
+    fun confirmedRequestCopiesItsPathsBeforeTheProcessStarts() {
+        val original = mutableListOf(createMediaItem(1, "/first.jpg", 1))
+        val request = DuplicateDeleteRequest(original, moveToRecycleBin = true)
+        original += createMediaItem(2, "/later.jpg", 1)
+
+        assertEquals(listOf("/first.jpg"), request.paths)
+    }
+
+    @Test
     fun waitingScansOnceThenDoneThenOpensResultsWhenSuccessEnds() = runBlocking {
         val log = mutableListOf<String>()
         runDuplicateWaiting(
@@ -122,6 +133,66 @@ class DuplicateTest {
     fun testDuplicateCompleteRoute() {
         val route = Screen.DuplicateComplete.createRoute(5, 10485760L)
         assertEquals("duplicates/complete?count=5&size=10485760", route)
+    }
+
+    @Test
+    fun deleteProcessUsesSuccessfulOutcomesOnlyAndLeavesFailuresForRetry() = runBlocking {
+        val first = createMediaItem(1, "/first.jpg", 100)
+        val failed = createMediaItem(2, "/failed.jpg", 200)
+        val request = DuplicateDeleteRequest(listOf(first, failed), moveToRecycleBin = true)
+        var calls = 0
+        val waits = mutableListOf<Long>()
+        var now = 10L
+        val coordinator = DuplicateDeleteProcessCoordinator(request, nowMillis = { now })
+
+        val result = coordinator.run(
+            mutate = {
+                calls += 1
+                now = 1_010L
+                listOf(
+                    PathMutationOutcome("/first.jpg", PathMutationOutcome.Status.SUCCESS),
+                    PathMutationOutcome("/failed.jpg", PathMutationOutcome.Status.METADATA_FAILED)
+                )
+            },
+            wait = { waits += it }
+        )
+        val repeated = coordinator.run(mutate = { error("must not mutate twice") }, wait = { error("must not wait twice") })
+
+        assertEquals(1, calls)
+        assertEquals(listOf(2_000L), waits)
+        assertEquals(listOf(first), result.successfulItems)
+        assertEquals(listOf(failed), result.failedItems)
+        assertEquals(100L, result.freedBytes)
+        assertEquals(result, repeated)
+    }
+
+    @Test
+    fun deleteProcessTreatsMissingOrFailedOutcomesAsUnsuccessful() = runBlocking {
+        val first = createMediaItem(1, "/first.jpg", 100)
+        val missing = createMediaItem(2, "/missing.jpg", 200)
+        val result = DuplicateDeleteProcessCoordinator(
+            DuplicateDeleteRequest(listOf(first, missing), moveToRecycleBin = false),
+            nowMillis = { 0L }
+        ).run(
+            mutate = { listOf(PathMutationOutcome("/first.jpg", PathMutationOutcome.Status.FILE_FAILED)) },
+            wait = {}
+        )
+
+        assertTrue(result.successfulItems.isEmpty())
+        assertEquals(listOf(first, missing), result.failedItems)
+        assertEquals(0L, result.freedBytes)
+    }
+
+    @Test
+    fun cleanupCompleteUsesReferencePluralAndFormattedFreedCopy() {
+        val screen = File("src/main/java/com/quizango/gallery/ui/cleaner/DuplicateCompleteScreen.kt").readText()
+        val plurals = File("src/main/res/values/plurals.xml").readText()
+
+        assertTrue(plurals.contains("<item quantity=\"one\">%d file removed</item>"))
+        assertTrue(plurals.contains("<item quantity=\"other\">%d files removed</item>"))
+        assertTrue(screen.contains("getQuantityString(R.plurals.dup_delete_files_removed"))
+        assertTrue(screen.contains("stringResource(R.string.dup_delete_space_freed"))
+        assertFalse(screen.contains("formatDuplicateSize(freedSizeBytes)} freed"))
     }
 
     private fun createMediaItem(

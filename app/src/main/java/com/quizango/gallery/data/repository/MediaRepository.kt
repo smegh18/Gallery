@@ -17,6 +17,7 @@ import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.shareIn
@@ -43,9 +44,14 @@ interface MediaRepository {
     suspend fun restoreFromTrash(paths: List<String>): List<PathMutationOutcome>
     suspend fun deletePermanently(path: String): PathMutationOutcome
     suspend fun deletePermanently(paths: List<String>): List<PathMutationOutcome>
+    /** File-first recycle retention purge. Failed paths intentionally remain in the recycle flow for retry. */
+    suspend fun purgeExpiredTrash(thresholdTimestamp: Long, limit: Int = 500): List<PathMutationOutcome>
     suspend fun renameMedia(oldPath: String, newName: String): Boolean
     suspend fun copyMediaToFolder(filePath: String, destFolder: String): Boolean
     suspend fun moveMediaToFolder(filePath: String, destFolder: String): Boolean
+    /** Moves [filePath] and returns the actual destination path (including collision suffixes), or null on failure. */
+    suspend fun moveMediaToFolderWithResult(filePath: String, destFolder: String): String? =
+        if (moveMediaToFolder(filePath, destFolder)) File(destFolder, File(filePath).name).path else null
 
     /** Rotates the image file itself 90° clockwise (viewer Rotate, PA.onRotateBitmap) and rescans it. */
     suspend fun rotateImage(path: String): Boolean
@@ -619,6 +625,19 @@ class MediaRepositoryImpl(
         deleteFilesThenRows(paths, ::deleteFileIfPresent) { dao.deleteByPaths(it) }
     }
 
+    override suspend fun purgeExpiredTrash(thresholdTimestamp: Long, limit: Int): List<PathMutationOutcome> = withContext(Dispatchers.IO) {
+        // Do not call GalleryDao.purgeExpiredTrash(): it drops metadata before attempting files.
+        // A bounded batch keeps failures in the recycle flow, ready for a future reconciliation.
+        val expiredPaths = dao.getRecycleBinFlow().first()
+            .asSequence()
+            .filter { it.deletedDate > 0L && it.deletedDate < thresholdTimestamp }
+            .map { it.filePath }
+            .distinct()
+            .take(limit.coerceIn(1, 500))
+            .toList()
+        deleteFilesThenRows(expiredPaths, ::deleteFileIfPresent) { dao.deleteByPaths(it) }
+    }
+
     override suspend fun renameMedia(oldPath: String, newName: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val oldFile = File(oldPath)
@@ -660,18 +679,21 @@ class MediaRepositoryImpl(
         }
     }
 
-    override suspend fun moveMediaToFolder(filePath: String, destFolder: String): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun moveMediaToFolder(filePath: String, destFolder: String): Boolean =
+        moveMediaToFolderWithResult(filePath, destFolder) != null
+
+    override suspend fun moveMediaToFolderWithResult(filePath: String, destFolder: String): String? = withContext(Dispatchers.IO) {
         try {
             val src = File(filePath)
-            if (!src.exists()) return@withContext false
-            val moved = moveIntoFolder(src, File(destFolder)) ?: return@withContext false
+            if (!src.exists()) return@withContext null
+            val moved = moveIntoFolder(src, File(destFolder)) ?: return@withContext null
             if (moved != src) {
                 scanner.scanFiles(moved.path, src.path)
                 dao.deleteByPath(filePath) // the new path comes in with the next sync
             }
-            true
+            moved.path
         } catch (_: Exception) {
-            false
+            null
         }
     }
 

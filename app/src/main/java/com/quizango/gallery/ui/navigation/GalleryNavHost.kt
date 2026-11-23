@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -24,6 +27,8 @@ import com.quizango.gallery.ui.album.AlbumDetailScreen
 import com.quizango.gallery.ui.album.AllAlbumsScreen
 import com.quizango.gallery.ui.cleaner.CleanerScreen
 import com.quizango.gallery.ui.cleaner.DuplicateCompleteScreen
+import com.quizango.gallery.ui.cleaner.DuplicateDeleteProcessScreen
+import com.quizango.gallery.ui.cleaner.DuplicateDeleteRequest
 import com.quizango.gallery.ui.cleaner.DuplicatePhotoScreen
 import com.quizango.gallery.ui.cleaner.DuplicateWaitingScreen
 import com.quizango.gallery.ui.cleaner.LargeVideoScreen
@@ -69,12 +74,16 @@ import com.quizango.gallery.ui.vault.VaultSettingScreen
 import com.quizango.gallery.ui.viewer.MediaViewerScreen
 import com.quizango.gallery.ui.viewer.VideoPlayerScreen
 
+private const val DUPLICATE_DELETE_PROCESS_ROUTE = "duplicates/delete-process"
+
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryNavHost(
     navController: NavHostController,
     app: GalleryApplication
 ) {
+    var pendingDuplicateDelete by remember { mutableStateOf<DuplicateDeleteRequest?>(null) }
+    var retryDuplicatePaths by remember { mutableStateOf(emptySet<String>()) }
     // Short fade + slight slide between screens; plain fade in and out of the splash
     val fromSplash: androidx.compose.animation.AnimatedContentTransitionScope<androidx.navigation.NavBackStackEntry>.() -> Boolean =
         { initialState.destination.route == Screen.Splash.route }
@@ -247,22 +256,45 @@ fun GalleryNavHost(
         }
 
         composable(Screen.Duplicates.route) {
-            val deleteScope = androidx.compose.runtime.rememberCoroutineScope()
             DuplicatePhotoScreen(
                 mediaRepository = app.mediaRepository,
                 duplicateFinder = app.duplicates,
                 onNavigateBack = { navController.popBackStack() },
+                retrySelection = retryDuplicatePaths,
+                onRetrySelectionConsumed = { retryDuplicatePaths = emptySet() },
                 onDelete = { request ->
-                    // shortcut: runs the request here with no process state; 06-06 hands it to the delete-process screen
-                    deleteScope.launch {
-                        if (request.moveToRecycleBin) request.paths.forEach { app.mediaRepository.moveToTrash(it) }
-                        else app.mediaRepository.deletePermanently(request.paths)
-                        navController.navigate(Screen.DuplicateComplete.createRoute(request.items.size, request.items.sumOf { it.fileSize })) {
-                            popUpTo(Screen.Duplicates.route) { inclusive = true }
-                        }
-                    }
+                    pendingDuplicateDelete = request
+                    navController.navigate(DUPLICATE_DELETE_PROCESS_ROUTE) { launchSingleTop = true }
                 }
             )
+        }
+
+        composable(DUPLICATE_DELETE_PROCESS_ROUTE) {
+            val request = pendingDuplicateDelete
+            if (request == null) {
+                LaunchedEffect(Unit) { navController.popBackStack() }
+            } else {
+                DuplicateDeleteProcessScreen(
+                    request = request,
+                    mediaRepository = app.mediaRepository,
+                    onFinished = { result ->
+                        pendingDuplicateDelete = null
+                        if (result.failedItems.isNotEmpty()) {
+                            // Do not make a partial cleanup claim; return remaining paths selected for a safe retry.
+                            retryDuplicatePaths = result.failedItems.mapTo(LinkedHashSet()) { it.filePath }
+                            navController.popBackStack()
+                        } else if (result.successfulItems.isNotEmpty()) {
+                            navController.navigate(
+                                Screen.DuplicateComplete.createRoute(result.successfulItems.size, result.freedBytes)
+                            ) {
+                                popUpTo(Screen.Duplicates.route) { inclusive = true }
+                            }
+                        } else {
+                            navController.popBackStack()
+                        }
+                    }
+                )
+            }
         }
 
         composable(Screen.DuplicateWaiting.route) {
@@ -289,7 +321,11 @@ fun GalleryNavHost(
             DuplicateCompleteScreen(
                 freedFilesCount = count,
                 freedSizeBytes = size,
-                onDoneClick = { navController.popBackStack() }
+                onDoneClick = {
+                    if (!navController.popBackStack(Screen.Cleaner.route, inclusive = false)) {
+                        navController.popBackStack()
+                    }
+                }
             )
         }
 
@@ -618,6 +654,8 @@ fun GalleryNavHost(
         composable(Screen.OrganizerRecycle.route) {
             OrganizerRecycleScreen(
                 mediaRepository = app.mediaRepository,
+                appPreferences = app.preferences,
+                onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

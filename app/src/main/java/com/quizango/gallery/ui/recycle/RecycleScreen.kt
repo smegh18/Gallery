@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +29,8 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.R
+import com.quizango.gallery.data.local.PathMutationOutcome
+import com.quizango.gallery.data.local.successfulPaths
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.MediaItem
@@ -40,15 +43,29 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
 
-/**
- * Calculates remaining retention days (out of 30 days) before auto-deletion.
- */
+private const val RECYCLE_RETENTION_DAYS = 30L
+private const val MILLIS_PER_DAY = 24L * 60L * 60L * 1000L
+
+/** The decoded `30 - elapsed whole days` display value: overdue values deliberately remain negative. */
 fun calculateRemainingDays(deletedDate: Long, currentTimeMs: Long = System.currentTimeMillis()): Int {
-    if (deletedDate <= 0L) return 30
-    val elapsedMs = currentTimeMs - deletedDate
-    val elapsedDays = (elapsedMs / (24 * 60 * 60 * 1000L)).toInt()
-    return maxOf(1, 30 - elapsedDays)
+    if (deletedDate <= 0L) return RECYCLE_RETENTION_DAYS.toInt()
+    return (RECYCLE_RETENTION_DAYS - (currentTimeMs - deletedDate) / MILLIS_PER_DAY).toInt()
 }
+
+/** Strictly older than this instant is expired, matching the DAO's original SQL boundary. */
+fun recycleRetentionThreshold(currentTimeMs: Long = System.currentTimeMillis()): Long =
+    currentTimeMs - RECYCLE_RETENTION_DAYS * MILLIS_PER_DAY
+
+fun shouldShowRecycleDayStrip(autoDeleteEnabled: Boolean): Boolean = autoDeleteEnabled
+
+/** A successful path has left the requested operation; a failed one stays selected for a truthful retry. */
+fun recycleSelectionAfterOutcomes(
+    selectedPaths: Set<String>,
+    outcomes: List<PathMutationOutcome>
+): Set<String> = selectedPaths - outcomes.successfulPaths().toSet()
+
+// shortcut: no-op; Phase 12 / USG-01 owns the recycle usage-access dialog and its session rule.
+internal fun recordRecycleUsageAccessTrigger() = Unit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,15 +83,35 @@ fun RecycleScreen(
     var showRestoreConfirmDialog by remember { mutableStateOf(false) }
     var showEmptyBinConfirmDialog by remember { mutableStateOf(false) }
 
-    var autoDeleteEnabled by remember { mutableStateOf(true) }
+    var autoDeleteEnabled by remember { mutableStateOf(false) }
+    var restorePaths by remember { mutableStateOf<List<String>>(emptyList()) }
+    var deletePaths by remember { mutableStateOf<List<String>>(emptyList()) }
+    var emptyBinPaths by remember { mutableStateOf<List<String>>(emptyList()) }
 
     LaunchedEffect(appPreferences) {
-        appPreferences?.let { prefs ->
-            autoDeleteEnabled = prefs.autoDeleteTrash.first()
+        val enabled = appPreferences?.autoDeleteTrash?.first() ?: false
+        autoDeleteEnabled = enabled
+        // Reconcile only a saved opt-in at screen start. Toggling does not retroactively purge.
+        if (enabled) {
+            mediaRepository.purgeExpiredTrash(recycleRetentionThreshold())
         }
     }
 
+    LaunchedEffect(recycleItems) {
+        selectedPaths = selectedPaths.intersect(recycleItems.mapTo(LinkedHashSet()) { it.filePath })
+    }
+
     val isSelectionMode = selectedPaths.isNotEmpty()
+    val leaveRecycle = {
+        if (isSelectionMode) {
+            selectedPaths = emptySet()
+        } else {
+            recordRecycleUsageAccessTrigger()
+            onNavigateBack()
+        }
+    }
+
+    BackHandler(onBack = leaveRecycle)
 
     Scaffold(
         topBar = {
@@ -82,7 +119,7 @@ fun RecycleScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = if (isSelectionMode) "${selectedPaths.size} Selected" else "Recycle Bin",
+                            text = if (isSelectionMode) "${selectedPaths.size} Selected" else stringResource(R.string.recycle_bin),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onBackground
@@ -91,11 +128,7 @@ fun RecycleScreen(
                     navigationIcon = {
                         IconButton(
                             onClick = {
-                                if (isSelectionMode) {
-                                    selectedPaths = emptySet()
-                                } else {
-                                    onNavigateBack()
-                                }
+                                leaveRecycle()
                             }
                         ) {
                             Icon(
@@ -125,7 +158,10 @@ fun RecycleScreen(
                                 )
                             }
                         } else if (recycleItems.isNotEmpty()) {
-                            IconButton(onClick = { showEmptyBinConfirmDialog = true }) {
+                            IconButton(onClick = {
+                                emptyBinPaths = recycleItems.map { it.filePath }
+                                showEmptyBinConfirmDialog = emptyBinPaths.isNotEmpty()
+                            }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_delete),
                                     contentDescription = "Empty Recycle Bin",
@@ -164,18 +200,21 @@ fun RecycleScreen(
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
-                                    .clickable { showRestoreConfirmDialog = true }
+                                    .clickable {
+                                        restorePaths = selectedPaths.toList()
+                                        showRestoreConfirmDialog = restorePaths.isNotEmpty()
+                                    }
                                     .padding(8.dp)
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_restore),
-                                    contentDescription = "Restore",
+                                    contentDescription = stringResource(R.string.restore),
                                     tint = Color.Unspecified,
                                     modifier = Modifier.size(26.dp)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Restore",
+                                    text = stringResource(R.string.restore),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -186,18 +225,21 @@ fun RecycleScreen(
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
-                                    .clickable { showDeleteConfirmDialog = true }
+                                    .clickable {
+                                        deletePaths = selectedPaths.toList()
+                                        showDeleteConfirmDialog = deletePaths.isNotEmpty()
+                                    }
                                     .padding(8.dp)
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_album_select_delete),
-                                    contentDescription = "Delete",
+                                    contentDescription = stringResource(R.string.delete),
                                     tint = Color.Unspecified,
                                     modifier = Modifier.size(26.dp)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Delete",
+                                    text = stringResource(R.string.delete),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -229,7 +271,7 @@ fun RecycleScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Recycle bin items will be removed after 30 days.",
+                        text = stringResource(R.string.remove_items),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.onBackground,
@@ -274,14 +316,14 @@ fun RecycleScreen(
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Text(
-                            text = "No items",
+                            text = stringResource(R.string.no_items),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No deleted files here. When you remove items from your phone, they'll appear here,",
+                            text = stringResource(R.string.deleting_files),
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
@@ -303,6 +345,7 @@ fun RecycleScreen(
                             item = item,
                             isSelected = isSelected,
                             isSelectionMode = isSelectionMode,
+                            showRetentionDays = shouldShowRecycleDayStrip(autoDeleteEnabled),
                             onClick = {
                                 if (isSelectionMode) {
                                     selectedPaths = if (isSelected) {
@@ -341,7 +384,7 @@ fun RecycleScreen(
                             .padding(22.dp)
                     ) {
                         Text(
-                            text = "Restore items",
+                            text = stringResource(R.string.restore_items),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -370,18 +413,19 @@ fun RecycleScreen(
                                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             ) {
-                                Text("Cancel", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(stringResource(R.string.cancel), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             }
 
                             // Restore button (matching btn_permission)
                             Button(
                                 onClick = {
-                                    val targets = recycleItems.filter { it.filePath in selectedPaths }
                                     scope.launch {
-                                        targets.forEach { mediaRepository.restoreFromTrash(it.filePath) }
-                                        selectedPaths = emptySet()
+                                        val outcomes = mediaRepository.restoreFromTrash(restorePaths)
+                                        selectedPaths = recycleSelectionAfterOutcomes(selectedPaths, outcomes)
                                         showRestoreConfirmDialog = false
-                                        Toast.makeText(context, "Media files restored successfully.", Toast.LENGTH_SHORT).show()
+                                        if (outcomes.isNotEmpty() && outcomes.all { it.succeeded }) {
+                                            Toast.makeText(context, R.string.selected_media_files_successfully_restored, Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 },
                                 modifier = Modifier
@@ -393,7 +437,7 @@ fun RecycleScreen(
                                     contentColor = Color.White
                                 )
                             ) {
-                                Text("Restore", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(stringResource(R.string.restore), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             }
                         }
                     }
@@ -417,14 +461,14 @@ fun RecycleScreen(
                             .padding(22.dp)
                     ) {
                         Text(
-                            text = "Delete items",
+                            text = stringResource(R.string.delete_items),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = "All items will be permanently deleted from your device and cannot be recovered.",
+                            text = stringResource(R.string.delete_items_description),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp
@@ -446,18 +490,19 @@ fun RecycleScreen(
                                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             ) {
-                                Text("Cancel", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(stringResource(R.string.cancel), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             }
 
                             // Delete button (matching permanent delete action)
                             Button(
                                 onClick = {
-                                    val targets = recycleItems.filter { it.filePath in selectedPaths }
                                     scope.launch {
-                                        mediaRepository.deletePermanently(targets.map { it.filePath })
-                                        selectedPaths = emptySet()
+                                        val outcomes = mediaRepository.deletePermanently(deletePaths)
+                                        selectedPaths = recycleSelectionAfterOutcomes(selectedPaths, outcomes)
                                         showDeleteConfirmDialog = false
-                                        Toast.makeText(context, "Media files deleted successfully.", Toast.LENGTH_SHORT).show()
+                                        if (outcomes.isNotEmpty() && outcomes.all { it.succeeded }) {
+                                            Toast.makeText(context, R.string.selected_media_files_successfully_deleted, Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 },
                                 modifier = Modifier
@@ -469,7 +514,7 @@ fun RecycleScreen(
                                     contentColor = Color.White
                                 )
                             ) {
-                                Text("Delete", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(stringResource(R.string.delete), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             }
                         }
                     }
@@ -493,14 +538,14 @@ fun RecycleScreen(
                             .padding(22.dp)
                     ) {
                         Text(
-                            text = "Empty Recycle Bin",
+                            text = stringResource(R.string.delete_items),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = "Are you sure you want to permanently delete all items in the Recycle Bin?",
+                            text = stringResource(R.string.delete_items_description),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp
@@ -521,15 +566,17 @@ fun RecycleScreen(
                                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             ) {
-                                Text("Cancel", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(stringResource(R.string.cancel), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             }
 
                             Button(
                                 onClick = {
                                     scope.launch {
-                                        mediaRepository.deletePermanently(recycleItems.map { it.filePath })
+                                        val outcomes = mediaRepository.deletePermanently(emptyBinPaths)
                                         showEmptyBinConfirmDialog = false
-                                        Toast.makeText(context, "Recycle Bin emptied.", Toast.LENGTH_SHORT).show()
+                                        if (outcomes.isNotEmpty() && outcomes.all { it.succeeded }) {
+                                            Toast.makeText(context, R.string.selected_media_files_successfully_deleted, Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 },
                                 modifier = Modifier
@@ -541,7 +588,7 @@ fun RecycleScreen(
                                     contentColor = Color.White
                                 )
                             ) {
-                                Text("Empty", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(stringResource(R.string.delete), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             }
                         }
                     }
@@ -557,6 +604,7 @@ private fun RecycleGridItem(
     item: MediaItem,
     isSelected: Boolean,
     isSelectionMode: Boolean,
+    showRetentionDays: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
@@ -608,21 +656,23 @@ private fun RecycleGridItem(
             }
         }
 
-        // Remaining Day Count bar (matching item_grid_recycle_media.xml dayCount)
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(Color.Black.copy(alpha = 0.55f))
-                .padding(vertical = 3.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "$remainingDays days left",
-                color = Color.White,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium
-            )
+        // The reference binds this strip only while retention is explicitly enabled.
+        if (showRetentionDays) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(Color.Black.copy(alpha = 0.55f))
+                    .padding(vertical = 3.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "$remainingDays ${stringResource(R.string.days)}",
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
 
         // Selection Checkbox overlay (matching item_grid_recycle_media.xml selected)

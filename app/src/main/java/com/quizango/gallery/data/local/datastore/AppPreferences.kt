@@ -15,6 +15,9 @@ internal fun albumCoverEntry(folder: String, coverPath: String) = folder + '\u00
 internal fun parseAlbumCovers(entries: Set<String>): Map<String, String> =
     entries.mapNotNull { e -> e.indexOf('\u0000').takeIf { it >= 0 }?.let { e.substring(0, it) to e.substring(it + 1) } }.toMap()
 
+/** Missing means no irreversible retention policy was approved; either saved Boolean is preserved exactly. */
+internal fun autoDeleteTrashValue(savedValue: Boolean?): Boolean = savedValue ?: false
+
 class AppPreferences(private val context: Context) {
 
     private object Keys {
@@ -31,6 +34,10 @@ class AppPreferences(private val context: Context) {
         val VAULT_HINT_SEEN = booleanPreferencesKey("isVaultHintToolTip")
         val VAULT_HINT_CLOSED_SESSION = intPreferencesKey("vaultHintClosedSession")
         val AUTO_DELETE_TRASH = booleanPreferencesKey("auto_delete_trash_30_days")
+        val ORGANIZER_SKIP_TOOLTIP = booleanPreferencesKey("isOrgSkipToolTip")
+        val ORGANIZER_STEP_FLOW = intPreferencesKey("organizerStepFlow")
+        val ORGANIZER_BIN_PATHS = stringSetPreferencesKey("organizerBinPathsV1")
+        val ORGANIZER_STRIPE_SHOWN = booleanPreferencesKey("isOrganizerStripeShown")
         val VAULT_PIN = stringPreferencesKey("vault_pin")
         val VAULT_PATTERN = stringPreferencesKey("vault_pattern")
         val IS_PATTERN_MODE = booleanPreferencesKey("is_vault_pattern_mode")
@@ -67,7 +74,14 @@ class AppPreferences(private val context: Context) {
     val pinnedAlbums: Flow<Set<String>> = context.dataStore.data.map { it[Keys.PIN_ALBUM] ?: emptySet() }
     val albumCovers: Flow<Map<String, String>> = context.dataStore.data.map { parseAlbumCovers(it[Keys.ALBUM_COVER] ?: emptySet()) }
     val vaultHintClosedSession: Flow<Int> = context.dataStore.data.map { it[Keys.VAULT_HINT_CLOSED_SESSION] ?: 0 }
-    val autoDeleteTrash: Flow<Boolean> = context.dataStore.data.map { it[Keys.AUTO_DELETE_TRASH] ?: true }
+    /** A new install must never authorize automatic permanent deletion. Existing values are read unchanged. */
+    val autoDeleteTrash: Flow<Boolean> = context.dataStore.data.map { autoDeleteTrashValue(it[Keys.AUTO_DELETE_TRASH]) }
+    /** Read-only reference preference: no decoded code writes this flag. */
+    val isOrgSkipToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.ORGANIZER_SKIP_TOOLTIP] ?: false }
+    /** Intro is shown on first use; 7 is the reference's completed state. */
+    val organizerStepFlow: Flow<Int> = context.dataStore.data.map { it[Keys.ORGANIZER_STEP_FLOW] ?: 1 }
+    val organizerBinPaths: Flow<Set<String>> = context.dataStore.data.map { it[Keys.ORGANIZER_BIN_PATHS] ?: emptySet() }
+    val isOrganizerStripeShown: Flow<Boolean> = context.dataStore.data.map { it[Keys.ORGANIZER_STRIPE_SHOWN] ?: false }
     val vaultPin: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PIN] }
     val vaultPattern: Flow<String?> = context.dataStore.data.map { it[Keys.VAULT_PATTERN] }
     val isPatternMode: Flow<Boolean> = context.dataStore.data.map { it[Keys.IS_PATTERN_MODE] ?: false }
@@ -187,6 +201,31 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setAutoDeleteTrash(enabled: Boolean) {
         context.dataStore.edit { it[Keys.AUTO_DELETE_TRASH] = enabled }
+    }
+
+    suspend fun setOrganizerStepFlow(step: Int) {
+        context.dataStore.edit { it[Keys.ORGANIZER_STEP_FLOW] = step.coerceIn(1, 7) }
+    }
+
+    suspend fun addOrganizerBinPaths(paths: Set<String>, limit: Int = 2000) {
+        context.dataStore.edit { prefs ->
+            val existing = prefs[Keys.ORGANIZER_BIN_PATHS].orEmpty()
+            prefs[Keys.ORGANIZER_BIN_PATHS] = (existing + paths).toList().takeLast(limit.coerceIn(1, 2000)).toSet()
+        }
+    }
+
+    suspend fun removeOrganizerBinPaths(paths: Set<String>) {
+        context.dataStore.edit { prefs -> prefs[Keys.ORGANIZER_BIN_PATHS] = prefs[Keys.ORGANIZER_BIN_PATHS].orEmpty() - paths }
+    }
+
+    suspend fun reconcileOrganizerBinPaths(recyclePaths: Set<String>, limit: Int = 2000) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.ORGANIZER_BIN_PATHS] = (prefs[Keys.ORGANIZER_BIN_PATHS].orEmpty() intersect recyclePaths).take(limit.coerceIn(1, 2000)).toSet()
+        }
+    }
+
+    suspend fun setOrganizerStripeShown(shown: Boolean) {
+        context.dataStore.edit { it[Keys.ORGANIZER_STRIPE_SHOWN] = shown }
     }
 
     suspend fun setVaultPin(pin: String) {

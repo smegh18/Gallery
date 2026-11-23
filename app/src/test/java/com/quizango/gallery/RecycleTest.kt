@@ -2,8 +2,13 @@ package com.quizango.gallery
 
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
+import com.quizango.gallery.data.local.PathMutationOutcome
+import com.quizango.gallery.data.local.datastore.autoDeleteTrashValue
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.recycle.calculateRemainingDays
+import com.quizango.gallery.ui.recycle.recycleRetentionThreshold
+import com.quizango.gallery.ui.recycle.recycleSelectionAfterOutcomes
+import com.quizango.gallery.ui.recycle.shouldShowRecycleDayStrip
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -28,9 +33,36 @@ class RecycleTest {
         val twentyNineDaysAgo = now - (29 * oneDayMs)
         assertEquals(1, calculateRemainingDays(deletedDate = twentyNineDaysAgo, currentTimeMs = now))
 
-        // 45 days elapsed (expired / overdue)
+        // 45 days elapsed stays overdue: the reference has no lower clamp.
         val fortyFiveDaysAgo = now - (45 * oneDayMs)
-        assertEquals(1, calculateRemainingDays(deletedDate = fortyFiveDaysAgo, currentTimeMs = now))
+        assertEquals(-15, calculateRemainingDays(deletedDate = fortyFiveDaysAgo, currentTimeMs = now))
+    }
+
+    @Test
+    fun recycleRetentionUsesExactElapsedCutoffAndOnlyShowsWhileEnabled() {
+        val now = 1_730_000_000_000L
+        val day = 24 * 60 * 60 * 1000L
+        assertEquals(now - 30 * day, recycleRetentionThreshold(now))
+        assertFalse(shouldShowRecycleDayStrip(autoDeleteEnabled = false))
+        assertTrue(shouldShowRecycleDayStrip(autoDeleteEnabled = true))
+    }
+
+    @Test
+    fun absentAutoDeletePreferenceDefaultsOffButSavedValuesArePreserved() {
+        assertFalse(autoDeleteTrashValue(null))
+        assertTrue(autoDeleteTrashValue(true))
+        assertFalse(autoDeleteTrashValue(false))
+    }
+
+    @Test
+    fun recycleActionsKeepFailedPathsSelectedForRetry() {
+        val selected = setOf("success", "file-failed", "metadata-failed")
+        val outcomes = listOf(
+            PathMutationOutcome("success", PathMutationOutcome.Status.SUCCESS),
+            PathMutationOutcome("file-failed", PathMutationOutcome.Status.FILE_FAILED),
+            PathMutationOutcome("metadata-failed", PathMutationOutcome.Status.METADATA_FAILED)
+        )
+        assertEquals(setOf("file-failed", "metadata-failed"), recycleSelectionAfterOutcomes(selected, outcomes))
     }
 
     @Test

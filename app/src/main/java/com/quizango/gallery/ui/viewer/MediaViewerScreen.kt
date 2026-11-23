@@ -60,6 +60,7 @@ import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.R
+import com.quizango.gallery.GalleryApplication
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.domain.model.MediaItem
@@ -109,8 +110,10 @@ fun MediaViewerScreen(
     var videoDurationMs by remember { mutableLongStateOf(0L) }
 
     // Collect media items for this album/folder, recycle bin, vault, or all media
-    val mediaList by remember(folderPath, isRecycle, isVault) {
-        mediaSourceFlow(mediaRepository, vaultRepository, folderPath, isRecycle, isVault)
+    val organizerBinPaths by (context.applicationContext as GalleryApplication).preferences.organizerBinPaths.collectAsState(initial = emptySet())
+    val mediaList by remember(folderPath, isRecycle, isVault, organizerBinPaths) {
+        val source = mediaSourceFlow(mediaRepository, vaultRepository, folderPath, isRecycle, isVault)
+        if (isRecycle && folderPath == "organizer:recycle") source.map { rows -> rows.filter { it.filePath in organizerBinPaths } } else source
     }.collectAsState(initial = emptyList())
 
     val fallbackItem = remember(filePath) {

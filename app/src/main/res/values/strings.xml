@@ -482,4 +482,8 @@ recycle bin"</string>
     <string name="org_folder_create_failed" translatable="false">Folder already exists or failed to create!</string>
     <string name="org_no_actions_to_undo" translatable="false">No actions to undo</string>
     <string name="org_dropdown" translatable="false">Dropdown</string>
+    <string name="organizer_recycle_bin" translatable="false">Delete</string>
+    <string name="organizer_move_failed" translatable="false">Unable to move this file.</string>
+    <string name="organizer_emptying_bin" translatable="false">Deleting</string>
+    <string name="organizer_deleted_count" translatable="false">Deleted %1$d items.</string>
 </resources>

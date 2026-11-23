@@ -2,13 +2,13 @@
 gsd_state_version: "1.0"
 milestone: v2.0
 milestone_name: Reference 2.7.2 parity
-current_phase: 2
-current_phase_name: Onboarding
-status: verifying
-stopped_at: Phase 5 complete, ready to verify Phase 2
-last_updated: "2026-11-23T06:03:51.118Z"
+current_phase: 6
+current_phase_name: Manage and Cleaner
+status: executing
+stopped_at: Phase 6 Plan 13 correction complete; Plan 11 gate next
+last_updated: "2026-11-23T12:55:00.000Z"
 last_activity: 2026-11-23
-last_activity_desc: Phase 5 complete, transitioned to Phase 2
+last_activity_desc: Phase 6 Plans 08-10 and 13 complete; integrated Plan 11 gate next
 state_head: fed36c217fc618d3ff453018ca89df28ce0682d3
 progress:
   total_phases: 13
@@ -25,16 +25,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-13)
 
 **Core value:** a user cannot tell our app from reference 2.7.2: same screens, flows, animations and behaviour.
-**Current focus:** Phase 5 - Viewing and Browsing
+**Current focus:** Phase 6 - Manage and Cleaner
 
 ## Current Position
 
-Phase: 2 of 13 (Onboarding)
-Plan: 5
-Status: Phase complete — ready for verification
-Last activity: 2026-11-23 — Phase 5 complete, transitioned to Phase 2
+Phase: 6 of 13 (Manage and Cleaner)
+Plan: 11
+Status: Executing
+Last activity: 2026-11-23 — Phase 6 Plans 08-10 and 13 complete; Plan 11 gate next
 
-Progress: [████░░░░░░] 38%
+Progress: [████░░░░░░] 41%
 
 ## Performance Metrics
 

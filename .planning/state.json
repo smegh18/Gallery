@@ -31,7 +31,7 @@
     {
       "number": "6",
       "name": "Manage and Cleaner",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "7",
@@ -72,7 +72,7 @@
   "next": {
     "command": "/gsd-progress --next",
     "label": "Advance to the next step (verify)",
-    "reason": "Phase 2 of 13 · 38% · ready to verify"
+    "reason": "Phase 6 of 13 · 41% · Plan 06-11 gate next"
   },
-  "updated_at": "2026-11-23T06:03:51.145Z"
+  "updated_at": "2026-11-23T13:45:00.000Z"
 }
