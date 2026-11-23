@@ -37,6 +37,30 @@ class JunkScannerTest {
     }
 
     @Test
+    fun tempFilesAcceptOnlyLowercaseTmpExtension() {
+        val root = Files.createTempDirectory("storage").toFile()
+        File(root, "a.tmp").writeBytes(ByteArray(7))
+        listOf("a.temp", "b.TMP", "c.Tmp", "tmp", "d.").forEach { File(root, it).writeBytes(ByteArray(3)) }
+        File(root, "dir.tmp/inner").mkdirs()                    // directory named .tmp: never a temp file
+        File(root, "Android/data/x").mkdirs()
+        File(root, "Android/data/x/e.tmp").writeBytes(ByteArray(3)) // other app data: skipped
+        val temp = JunkScanner.scan(root, emptyList()).single { it.id == JunkScanner.TEMP }
+        assertEquals(listOf(File(root, "a.tmp")), temp.files)
+        assertEquals(7L, temp.sizeBytes)
+    }
+
+    @Test
+    fun missingRootsGiveStableEmptyCategories() {
+        val ids = listOf(JunkScanner.APP_CACHE, JunkScanner.APK, JunkScanner.TEMP, JunkScanner.LOG, JunkScanner.EMPTY_FOLDER)
+        val gone = File(Files.createTempDirectory("gone").toFile(), "missing")
+        val aFile = Files.createTempFile("root", ".tmp").toFile()
+        for (r in listOf(JunkScanner.scan(null, emptyList()), JunkScanner.scan(gone, listOf(gone)), JunkScanner.scan(aFile, emptyList()))) {
+            assertEquals(ids, r.map { it.id })
+            assertTrue(r.all { it.files.isEmpty() })
+        }
+    }
+
+    @Test
     fun cleanDeletesAndSkipsFoldersThatFilledUp() {
         val (root, cache) = tree()
         val r = JunkScanner.scan(root, listOf(cache)).associateBy { it.id }
