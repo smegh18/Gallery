@@ -2,38 +2,44 @@ package com.quizango.gallery.ui.vault
 
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.VaultSecret
 import com.quizango.gallery.data.local.datastore.AppPreferences
-import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.Inter
+import com.quizango.gallery.ui.theme.sdp
+import com.quizango.gallery.ui.theme.ssp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -43,7 +49,6 @@ import kotlinx.coroutines.launch
  * draws the state and reports where to go next, so the NavHost owns all routing.
  * [type]: 0 unlock or first setup, 1 Change Password, 2 Change Recovery Question; [openVault] false for the Add to Private gate.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VaultLockScreen(
     appPreferences: AppPreferences,
@@ -143,176 +148,168 @@ fun VaultLockScreen(
     }
     version // read so redraws follow flow changes
     val f = flow
-    val isSettingUp = f != null && f.stage != LockStage.VERIFY
     val usePattern = f?.isPattern == true
     // Vault Settings "Show Pattern": draw the traced line (on by default, S3)
     val showPatternLine by appPreferences.isPatternMode.collectAsState(initial = true)
 
-    // Error shake (STORY-4); removed with the rest of the old chrome in the look task
-    val shakeOffset = remember { Animatable(0f) }
-
     val title = if (f == null) "" else stringResource(f.stepTitle)
     val toolbarTitle = if (f == null) "" else stringResource(f.toolbarTitle)
 
-    // Reference: lock icon and links #0066FF in light mode, white in dark mode
-    val accent = if (MaterialTheme.colorScheme.isDark) Color.White else com.quizango.gallery.ui.theme.GalleryBlueLight
+    val bg = colorResource(R.color.backgroundColor)
+    val titleColor = colorResource(R.color.titleColor)
+    val linkColor = colorResource(R.color.ic_lock_color)
 
-    Scaffold(
-        topBar = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = toolbarTitle,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_back),
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
-                    expandedHeight = 56.dp // reference toolbar height
-                )
-                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { padding ->
+    Column(modifier = Modifier.fillMaxSize().background(bg)) {
+        SharedMediaToolbar(title = toolbarTitle, onBack = onNavigateBack)
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
                 .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_lock),
-                contentDescription = "Lock",
-                tint = accent,
-                modifier = Modifier.size(34.dp)
+            Image(
+                painter = painterResource(R.drawable.ic_lock),
+                contentDescription = null, // decorative
+                modifier = Modifier.padding(top = 40.sdp)
             )
-            Spacer(modifier = Modifier.height(18.dp))
             Text(
                 text = title,
-                fontSize = 18.sp,
-                color = if (MaterialTheme.colorScheme.isDark) Color.White else Color.Black
+                style = GalleryText.BodyXLargeMedium,
+                color = colorResource(R.color.black),
+                modifier = Modifier.padding(top = 15.sdp)
             )
 
             if (usePattern) {
-                Spacer(modifier = Modifier.height(40.dp))
                 PatternPad(
-                    showLine = showPatternLine || isSettingUp,
-                    modifier = Modifier.offset { IntOffset(shakeOffset.value.dp.roundToPx(), 0) },
+                    showPath = showPatternLine,
+                    modifier = Modifier.padding(top = 33.sdp),
                     resetKey = "$title|${f?.stage}",
-                    onComplete = { pattern -> f?.let { handle(it, it.submitPattern(pattern, matcher(it)), pattern) } }
-                )
-            } else {
-                Spacer(modifier = Modifier.height(24.dp))
-                // 4 PIN slots: small dot above a line (reference)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.offset { IntOffset(shakeOffset.value.dp.roundToPx(), 0) }
-                ) {
-                    repeat(4) { i ->
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(43.dp)) {
-                            Box(modifier = Modifier.height(30.dp), contentAlignment = Alignment.Center) {
-                                if (i < entered.length) {
-                                    Box(
-                                        Modifier
-                                            .size(6.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.onBackground)
-                                    )
-                                }
+                    onComplete = { pattern ->
+                        f?.let {
+                            val event = it.submitPattern(pattern, matcher(it))
+                            handle(it, event, pattern)
+                            when (event) {
+                                LockEvent.Success, is LockEvent.Save -> true
+                                is LockEvent.Wrong -> false
+                                else -> null
                             }
-                            HorizontalDivider(thickness = 1.5.dp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f))
                         }
                     }
-                }
-                Spacer(modifier = Modifier.height(18.dp))
-                VaultKeypad(
-                    onDigitClick = { d -> if (entered.length < 4) entered += d },
-                    onBackspace = { if (entered.isNotEmpty()) entered = entered.dropLast(1) },
-                    // Reference checks only when ✓ is pressed
-                    onConfirm = { f?.let { handle(it, it.submitPin(entered, matcher(it)), entered) } }
                 )
+            } else {
+                // Digits and keypad keep their order under RTL
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    Row(modifier = Modifier.padding(top = 20.sdp)) {
+                        val lineColor = colorResource(R.color.vault_divider_color)
+                        val underline = 1.5.dp
+                        repeat(4) { i ->
+                            Box(
+                                modifier = Modifier
+                                    .padding(5.sdp)
+                                    .width(36.sdp)
+                                    .height(30.sdp)
+                                    .drawBehind {
+                                        val y = size.height - underline.toPx() / 2
+                                        drawLine(lineColor, Offset(0f, y), Offset(size.width, y), underline.toPx())
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                // shortcut: the filled dot stays until a device capture shows the reference glyph (A-pin)
+                                if (i < entered.length) Text("●", style = GalleryText.BodyXLargeSemiBold, color = titleColor)
+                            }
+                        }
+                    }
+                    VaultKeypad(
+                        onDigitClick = { d -> if (entered.length < 4) entered += d },
+                        onBackspace = { if (entered.isNotEmpty()) entered = entered.dropLast(1) },
+                        // Reference checks only when the check mark is pressed
+                        onConfirm = { f?.let { handle(it, it.submitPin(entered, matcher(it)), entered) } }
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(if (usePattern) 11.dp else 15.dp))
-            if (isSettingUp) {
-                // "Switch to Pattern" / "Switch to PIN" only while setting up
+            if (f?.showForgot == true) {
+                Text(
+                    text = stringResource(R.string.forgot_password_lock),
+                    style = GalleryText.BodyLargeSemiBold,
+                    color = linkColor,
+                    modifier = Modifier
+                        .padding(10.sdp)
+                        .clickable { onOpenForgot() }
+                        .padding(horizontal = 16.sdp, vertical = 10.sdp)
+                )
+            }
+            if (f?.showSwitch == true) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
+                        .padding(16.sdp)
                         .clickable {
-                            f?.switchMode()
+                            f.switchMode()
                             entered = ""
                             version++
                         }
-                        .padding(8.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(id = if (usePattern) R.drawable.ic_switch_pin else R.drawable.ic_switch_pattern),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.size(24.dp)
+                    Image(
+                        painter = painterResource(if (usePattern) R.drawable.ic_switch_pin else R.drawable.ic_switch_pattern),
+                        contentDescription = null, // decorative, the text names the action
+                        colorFilter = ColorFilter.tint(linkColor)
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = stringResource(if (usePattern) R.string.switch_to_pin else R.string.switch_to_pattern),
-                        fontSize = 16.sp,
+                        style = GalleryText.BodyLargeSemiBold,
+                        color = linkColor,
                         textDecoration = TextDecoration.Underline,
-                        color = MaterialTheme.colorScheme.onBackground
+                        modifier = Modifier.padding(start = 10.sdp)
                     )
                 }
-            } else if (f?.showForgot == true) {
-                Text(
-                    text = stringResource(R.string.forgot_password_lock),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = accent,
-                    modifier = Modifier
-                        .clickable { onOpenForgot() }
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                )
             }
         }
     }
 }
 
-/** 3x3 pattern grid; reports the visited dots as a string like "0367". */
+/** 3x3 pattern grid; reports the visited dots as a string like "0367" and shows the verdict: true green, false red, null neutral. */
 @Composable
 private fun PatternPad(
-    showLine: Boolean,
+    showPath: Boolean,
     modifier: Modifier = Modifier,
     resetKey: Any,
-    onComplete: (String) -> Unit
+    onComplete: (String) -> Boolean?
 ) {
-    val dotColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.92f)
+    val dotColor = colorResource(R.color.titleColor)
+    val neutral = colorResource(R.color.patternColor)
+    val green = colorResource(R.color.green_color_picker)
+    val red = colorResource(R.color.red_color_picker)
     var path by remember(resetKey) { mutableStateOf(listOf<Int>()) }
     var finger by remember(resetKey) { mutableStateOf<Offset?>(null) }
+    var verdict by remember(resetKey) { mutableStateOf<Boolean?>(null) }
+    var lifts by remember(resetKey) { mutableIntStateOf(0) }
     var cell by remember { mutableStateOf(0f) }
+
+    // Reference postDelayed(30 ms) clearPattern after every finished draw
+    LaunchedEffect(lifts) {
+        if (lifts > 0) {
+            delay(30)
+            if (finger == null) {
+                path = emptyList()
+                verdict = null
+            }
+        }
+    }
 
     fun centerOf(i: Int) = Offset(cell * (i % 3) + cell / 2, cell * (i / 3) + cell / 2)
     fun hit(p: Offset): Int? = (0..8).firstOrNull { (centerOf(it) - p).getDistance() < cell * 0.3f }
 
     Canvas(
         modifier = modifier
-            .size(312.dp) // 3 x 104dp, dot spacing taken from the reference
+            .size(260.sdp)
             .pointerInput(resetKey) {
                 // Track from the touch-down point so the first dot always counts
                 awaitEachGesture {
                     val down = awaitFirstDown()
+                    verdict = null
                     path = listOfNotNull(hit(down.position))
                     finger = down.position
                     drag(down.id) { change ->
@@ -320,28 +317,30 @@ private fun PatternPad(
                         finger = change.position
                         hit(change.position)?.let { if (it !in path) path = path + it }
                     }
-                    val done = path.joinToString("")
-                    path = emptyList()
                     finger = null
-                    if (done.isNotEmpty()) onComplete(done)
+                    val done = path.joinToString("")
+                    if (done.isNotEmpty()) {
+                        verdict = onComplete(done)
+                        lifts++
+                    }
                 }
             }
     ) {
         cell = size.width / 3f
-        val line = Color(0xFF1A5BD6)
-        if (!showLine) {
-            for (i in 0..8) drawCircle(dotColor, radius = 6.dp.toPx(), center = centerOf(i))
-            return@Canvas
+        val stateColor = when (verdict) { true -> green; false -> red; null -> neutral }
+        if (showPath) {
+            for (k in 1 until path.size) {
+                drawLine(stateColor, centerOf(path[k - 1]), centerOf(path[k]), strokeWidth = 3.dp.toPx(), cap = StrokeCap.Round)
+            }
+            val last = path.lastOrNull()
+            val f = finger
+            if (last != null && f != null) drawLine(stateColor, centerOf(last), f, strokeWidth = 3.dp.toPx(), cap = StrokeCap.Round)
         }
-        for (k in 1 until path.size) {
-            drawLine(line, centerOf(path[k - 1]), centerOf(path[k]), strokeWidth = 4.dp.toPx(), cap = StrokeCap.Round)
+        for (i in 0..8) {
+            // the activated dot is 28.dp across, the others 12.dp; stealth keeps every dot plain
+            if (showPath && i in path) drawCircle(stateColor, radius = 14.dp.toPx(), center = centerOf(i))
+            else drawCircle(dotColor, radius = 6.dp.toPx(), center = centerOf(i))
         }
-        val last = path.lastOrNull()
-        val f = finger
-        if (last != null && f != null) {
-            drawLine(line, centerOf(last), f, strokeWidth = 4.dp.toPx(), cap = StrokeCap.Round)
-        }
-        for (i in 0..8) drawCircle(if (i in path) line else dotColor, radius = 6.dp.toPx(), center = centerOf(i))
     }
 }
 
@@ -357,42 +356,45 @@ private fun VaultKeypad(
         listOf("7", "8", "9"),
         listOf("BACK", "0", "CONFIRM")
     )
-    // Reference keys: 96dp apart horizontally, 68.5dp vertically
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        rows.forEach { row ->
-            Row {
+    val digit = TextStyle(fontFamily = Inter, fontWeight = FontWeight.W500, fontSize = 18.ssp)
+    val black = colorResource(R.color.black)
+    Column(modifier = Modifier.fillMaxWidth().padding(start = 30.sdp, end = 30.sdp, top = 4.sdp)) {
+        rows.forEachIndexed { r, row ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.sdp, bottom = if (r == rows.lastIndex) 10.sdp else 0.sdp)
+            ) {
                 row.forEach { item ->
-                    Box(
-                        modifier = Modifier
-                            .size(width = 96.dp, height = 68.5.dp)
-                            .clip(CircleShape)
-                            .clickable {
-                                when (item) {
-                                    "BACK" -> onBackspace()
-                                    "CONFIRM" -> onConfirm()
-                                    else -> onDigitClick(item)
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        when (item) {
-                            "BACK" -> Icon(
-                                painter = painterResource(id = R.drawable.ic_backspace),
-                                contentDescription = "Backspace",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            "CONFIRM" -> Icon(
-                                painter = painterResource(id = R.drawable.ic_confirm),
-                                contentDescription = "Confirm",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            else -> Text(
-                                text = item,
-                                fontSize = 24.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier
+                                .width(50.sdp)
+                                .height(47.sdp)
+                                .clickable {
+                                    when (item) {
+                                        "BACK" -> onBackspace()
+                                        "CONFIRM" -> onConfirm()
+                                        else -> onDigitClick(item)
+                                    }
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            when (item) {
+                                "BACK" -> Image(
+                                    painter = painterResource(R.drawable.ic_backspace),
+                                    contentDescription = stringResource(R.string.delete),
+                                    colorFilter = ColorFilter.tint(black),
+                                    modifier = Modifier.padding(7.sdp)
+                                )
+                                "CONFIRM" -> Image(
+                                    painter = painterResource(R.drawable.ic_confirm),
+                                    contentDescription = stringResource(R.string.confirm),
+                                    colorFilter = ColorFilter.tint(black),
+                                    modifier = Modifier.padding(7.sdp)
+                                )
+                                else -> Text(text = item, style = digit, color = colorResource(R.color.titleColor))
+                            }
                         }
                     }
                 }
