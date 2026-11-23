@@ -30,6 +30,7 @@ import com.quizango.gallery.ui.viewer.VIDEO_SPEEDS
 import com.quizango.gallery.ui.viewer.restartsFromZero
 import com.quizango.gallery.ui.viewer.speedLabel
 import androidx.media3.common.Player
+import com.quizango.gallery.ui.viewer.leaveWithVideoTrigger
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
@@ -406,5 +407,15 @@ class MediaViewerTest {
         val offsetAt2xExceeded = clamp(Pair(1000f, -2000f), 2.0f)
         assertEquals(540f, offsetAt2xExceeded.first, 0.001f)
         assertEquals(-1200f, offsetAt2xExceeded.second, 0.001f)
+    }
+
+    @Test
+    fun viewerExitRecordsTheVideoTriggerOnlyAfterAVideoWasShown() {
+        val calls = mutableListOf<String>()
+        leaveWithVideoTrigger(recordsVideo = true, navigate = { calls += "navigate" }, trigger = { calls += "trigger" })
+        assertEquals(listOf("trigger", "navigate"), calls)
+        calls.clear()
+        leaveWithVideoTrigger(recordsVideo = false, navigate = { calls += "navigate" }, trigger = { calls += "trigger" })
+        assertEquals(listOf("navigate"), calls)
     }
 }

@@ -148,6 +148,10 @@ fun MediaViewerScreen(
     }
 
     val currentItem = displayList.getOrElse(pagerState.currentPage.coerceIn(0, displayList.lastIndex)) { fallbackItem }
+    // MediaFullScreenActivity.hasViewedVideo: set once any shown page is a video; exit then records the video trigger
+    val viewedVideo = remember { booleanArrayOf(false) }
+    if (currentItem.isVideo) viewedVideo[0] = true
+    fun exit() = leaveWithVideoTrigger(recordsVideo = viewedVideo[0], navigate = onNavigateBack)
 
     var isCurrentPageZoomed by remember { mutableStateOf(false) }
 
@@ -352,6 +356,7 @@ fun MediaViewerScreen(
     LaunchedEffect(displayList) { if (slideshow) stopSlideshow() }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { if (slideshow) stopSlideshow() }
     BackHandler(enabled = slideshow) { stopSlideshow() }
+    BackHandler(enabled = !slideshow, onBack = ::exit)
     LaunchedEffect(currentExoPlayer, slideshow, slideMuted) {
         currentExoPlayer?.volume = if ((slideshow && slideMuted) || (!slideshow && isVideoMuted)) 0f else 1f
     }
@@ -397,7 +402,7 @@ fun MediaViewerScreen(
                 exoPlayer = if (page == pagerState.currentPage) currentExoPlayer else null,
                 onPlayExternal = { playExternal(viewPath(item)) },
                 onToggleControls = { showControls = !showControls },
-                onDismiss = onNavigateBack,
+                onDismiss = ::exit,
                 onZoomChange = { zoomed ->
                     if (page == pagerState.currentPage) {
                         isCurrentPageZoomed = zoomed
@@ -417,7 +422,7 @@ fun MediaViewerScreen(
                 isShortVideoPlaying = isInlineVideo && isVideoPlaying
             ),
             isFavorite = currentItem.isFavorite,
-            onBack = onNavigateBack,
+            onBack = ::exit,
             onRotate = {
                 val item = currentItem
                 if (!busy) scope.launch {

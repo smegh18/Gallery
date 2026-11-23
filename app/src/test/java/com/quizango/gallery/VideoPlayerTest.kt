@@ -17,6 +17,8 @@ import com.quizango.gallery.ui.viewer.tapZone
 import com.quizango.gallery.ui.viewer.videoErrorMessage
 import com.quizango.gallery.ui.viewer.playsInline
 import com.quizango.gallery.ui.viewer.videoPlaylist
+import com.quizango.gallery.ui.viewer.leaveWithVideoTrigger
+import com.quizango.gallery.ui.viewer.recordVideoUsageAccessTrigger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -107,5 +109,13 @@ class VideoPlayerTest {
         assertEquals(R.string.this_video_format_not_supported, videoErrorMessage(true, PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED))
         assertEquals(R.string.this_video_format_not_supported, videoErrorMessage(true, PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED))
         assertEquals(R.string.something_went_wrong, videoErrorMessage(true, PlaybackException.ERROR_CODE_IO_UNSPECIFIED))
+    }
+
+    @Test
+    fun `player Back records the video usage trigger once, before navigating`() {
+        val calls = mutableListOf<String>()
+        leaveWithVideoTrigger(recordsVideo = true, navigate = { calls += "navigate" }, trigger = { calls += "trigger" })
+        assertEquals(listOf("trigger", "navigate"), calls)
+        assertEquals(Unit, recordVideoUsageAccessTrigger()) // Phase 12 owns the dialog; the hook does nothing yet
     }
 }

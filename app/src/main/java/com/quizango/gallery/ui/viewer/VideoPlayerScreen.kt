@@ -41,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -95,6 +96,15 @@ import kotlin.math.roundToInt
 import androidx.media3.common.MediaItem as ExoMediaItem
 
 private enum class PlayerMenu { SPEED, SUBTITLE, AUDIO }
+
+// shortcut: no-op; Phase 12 (USG-01) shows dialog_usage_access_video here, where 2.7.2 records ta/d.VIDEO.
+internal fun recordVideoUsageAccessTrigger() = Unit
+
+/** Back from the player, or from a viewer that showed a video: the usage-access trigger first, then navigation. */
+internal fun leaveWithVideoTrigger(recordsVideo: Boolean, navigate: () -> Unit, trigger: () -> Unit = ::recordVideoUsageAccessTrigger) {
+    if (recordsVideo) trigger()
+    navigate()
+}
 
 /** One selectable Media3 track for the subtitle / audio pickers. */
 private class TrackChoice(val group: Tracks.Group, val index: Int, val label: String)
@@ -152,6 +162,13 @@ fun VideoPlayerScreen(
         player.stop()
         onNavigateBack()
     }
+    // VideoPlayerActivity.Oooo0oO: Back does nothing while locked, otherwise records the video trigger and leaves
+    fun back() {
+        if (locked) return
+        player.stop()
+        leaveWithVideoTrigger(recordsVideo = true, navigate = onNavigateBack)
+    }
+    BackHandler(onBack = ::back)
 
     DisposableEffect(player) {
         val listener = object : Player.Listener {
@@ -474,7 +491,7 @@ fun VideoPlayerScreen(
                         .padding(horizontal = 4.sdp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    PlayerButton(R.drawable.ic_back, R.string.viewer_back, 6.sdp, onClick = ::close)
+                    PlayerButton(R.drawable.ic_back, R.string.viewer_back, 6.sdp, onClick = ::back)
                     Text(
                         File(currentPath).name,
                         style = GalleryText.BodyLargeSemiBold,
