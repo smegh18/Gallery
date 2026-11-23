@@ -337,4 +337,49 @@
     <string name="places">Lugares</string>
     <string name="view_all">Ver Todo</string>
     <string name="search_deleted">No pudimos ubicar la carpeta que estás buscando. Debe haber sido movida, renombrada o eliminada.</string>
+    <string name="junk_scan_completed_message">"Archivos basura encontrados: 1.40 GB
+¡Escaneo completado!"</string>
+    <string name="tool_bar_remove_junk">Eliminar basura</string>
+    <string name="mb_size">0 MB</string>
+    <string name="cleaning_item">Limpiando....</string>
+    <string name="app_cache">Caché de la aplicación</string>
+    <string name="junk_files_display">Archivos basura</string>
+    <string name="apk_files">Archivos APK</string>
+    <string name="obsolete_apk_files">Archivos APK obsoletos</string>
+    <string name="temp_file">Archivo temporal</string>
+    <string name="old_document">Documentos antiguos</string>
+    <string name="log_files">Archivos de registro</string>
+    <string name="empty_folder">Carpeta vacía</string>
+    <string name="phone_good_condition">Archivos basura limpiados</string>
+    <string name="release_more_space">Libera más espacio ahora</string>
+    <string name="finish">Terminado</string>
+    <string name="permanent_delete_screenshot_title">¿Quieres eliminar las capturas de pantalla?</string>
+    <string name="permanent_delete_screenshot_sub_title">Una vez eliminadas, las capturas de pantalla no se pueden restaurar.</string>
+    <string name="deleting">Eliminando</string>
+    <string name="lottie_text">Espere mientras escaneamos imágenes duplicadas. Esto no tomará mucho tiempo..</string>
+    <string name="group">Grupo</string>
+    <string name="images">Imágenes</string>
+    <string name="please_select_items">Por favor, selecciona medios.</string>
+    <string name="dup_delete_complete_title">Limpieza completada</string>
+    <string name="dup_delete_space_freed">%1$s liberado</string>
+    <string name="remove_items">Los elementos en la papelera de reciclaje se eliminarán después de 30 días.</string>
+    <string name="deleting_files">No hay archivos eliminados aquí. Cuando elimines elementos de tu teléfono, aparecerán aquí,</string>
+    <string name="selected_media_files_successfully_restored">Archivos multimedia restaurados con éxito.</string>
+    <string name="restoring">Restaurando</string>
+    <string name="days">Días</string>
+    <string name="unorganized">Desorganizado</string>
+    <string name="you_can_select_a_photo_to_jump_to">Puedes seleccionar una foto para ir a ella</string>
+    <string name="organize_now">Organiza ahora</string>
+    <string name="str_step_1">Toca para crear un álbum</string>
+    <string name="str_step_2">Toca para añadir fotos al álbum</string>
+    <string name="str_step_3">Desliza a la izquierda para omitir</string>
+    <string name="str_step_4">"Desliza hacia arriba para mover a la
+papelera"</string>
+    <string name="org_create_album">"Crear álbum
+"</string>
+    <string name="undo">Deshacer</string>
+    <string name="organizer_dialog_title">¿Eliminar elemento?</string>
+    <string name="organizer_deleting_select_item">Todos los elementos seleccionados se eliminarán de tu dispositivo y no se podrán recuperar.</string>
+    <string name="organize_your_photos_quickly">Organiza tus fotos rápidamente</string>
+    <string name="wrong_root_selected">Carpeta incorrecta seleccionada, por favor seleccione la carpeta principal de su tarjeta SD</string>
 </resources>

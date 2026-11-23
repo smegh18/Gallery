@@ -345,4 +345,49 @@
     <string name="places">Tempat</string>
     <string name="view_all">Lihat Semua</string>
     <string name="search_deleted">Kami tidak dapat menemui folder yang anda cari. Ia mungkin telah dipindahkan, ditukar nama, atau dipadam.</string>
+    <string name="junk_scan_completed_message">"Fail Sarap Ditemui: 1.40 GB
+Pengimbasan Selesai!"</string>
+    <string name="tool_bar_remove_junk">Buang Sampah</string>
+    <string name="mb_size">0 MB</string>
+    <string name="cleaning_item">Pembersihan....</string>
+    <string name="app_cache">Cache Aplikasi</string>
+    <string name="junk_files_display">Fail Sarap</string>
+    <string name="apk_files">Fail APK</string>
+    <string name="obsolete_apk_files">Fail APK Usang</string>
+    <string name="temp_file">Fail Sementara</string>
+    <string name="old_document">Dokumen Lama</string>
+    <string name="log_files">Fail Log</string>
+    <string name="empty_folder">Folder Kosong</string>
+    <string name="phone_good_condition">Fail sampah telah dibersihkan</string>
+    <string name="release_more_space">Bebaskan lebih ruang sekarang</string>
+    <string name="finish">Selesai</string>
+    <string name="permanent_delete_screenshot_title">Padam tangkapan skrin?</string>
+    <string name="permanent_delete_screenshot_sub_title">Selepas dipadam, tangkapan skrin tidak boleh dipulihkan.</string>
+    <string name="deleting">Memadamkan</string>
+    <string name="lottie_text">Sila tunggu kerana kami sedang mengimbas imej yang berkembar. Ini tidak akan lama.</string>
+    <string name="group">Kumpulan</string>
+    <string name="images">Imej</string>
+    <string name="please_select_items">Sila pilih media.</string>
+    <string name="dup_delete_complete_title">Pembersihan selesai</string>
+    <string name="dup_delete_space_freed">%1$s dibebaskan</string>
+    <string name="remove_items">Item dalam tong kitar akan dikeluarkan selepas 30 hari.</string>
+    <string name="deleting_files">Tiada fail yang dipadamkan di sini. Apabila anda membuang item dari telefon anda, mereka akan muncul di sini,</string>
+    <string name="selected_media_files_successfully_restored">Fail media berjaya dipulihkan.</string>
+    <string name="restoring">Memulihkan</string>
+    <string name="days">Hari</string>
+    <string name="unorganized">Tidak Tersusun</string>
+    <string name="you_can_select_a_photo_to_jump_to">Anda boleh memilih foto untuk melompat ke</string>
+    <string name="organize_now">Susun Sekarang</string>
+    <string name="str_step_1">Ketuk untuk Membuat Album</string>
+    <string name="str_step_2">Ketuk untuk menambah foto ke album</string>
+    <string name="str_step_3">Leret ke kiri untuk melangkau</string>
+    <string name="str_step_4">"Leret ke atas untuk pindahkan ke
+recycle bin"</string>
+    <string name="org_create_album">"Cipta Album
+"</string>
+    <string name="undo">Batal</string>
+    <string name="organizer_dialog_title">Padam item?</string>
+    <string name="organizer_deleting_select_item">Semua item yang dipilih akan dipadamkan dari peranti anda dan tidak boleh dipulihkan.</string>
+    <string name="organize_your_photos_quickly">Susun foto anda dengan cepat</string>
+    <string name="wrong_root_selected">Folder yang salah dipilih, sila pilih folder utama kad SD anda</string>
 </resources>

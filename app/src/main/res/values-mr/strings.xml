@@ -329,4 +329,49 @@
     <string name="places">स्थाने</string>
     <string name="view_all">सर्व पहा</string>
     <string name="search_deleted">आपल्याला आपल्याला शोधत आहात तो फोल्डर आम्ही सापडता येत नाही. तो असा घेतला जाऊ शकतो, नावच बदलले आहे किंवा काढले आहे.</string>
+    <string name="junk_scan_completed_message">"जंक फाइल्स सापडल्या: 1.40 GB
+स्कॅनिंग पूर्ण झाले!"</string>
+    <string name="tool_bar_remove_junk">जंक काढा</string>
+    <string name="mb_size">0 MB</string>
+    <string name="cleaning_item">सफाई....</string>
+    <string name="app_cache">अॅप कॅशे</string>
+    <string name="junk_files_display">जंक फाइल्स</string>
+    <string name="apk_files">APK फाइल्स</string>
+    <string name="obsolete_apk_files">कालबाह्य APK फाइल्स</string>
+    <string name="temp_file">टेम्प फाइल</string>
+    <string name="old_document">जुने दस्तऐवज</string>
+    <string name="log_files">लॉग फाइल्स</string>
+    <string name="empty_folder">रिक्त फोल्डर</string>
+    <string name="phone_good_condition">कचरा फाइल्स स्वच्छ केल्या</string>
+    <string name="release_more_space">आता अधिक जागा मोकळी करा</string>
+    <string name="finish">समाप्त</string>
+    <string name="permanent_delete_screenshot_title">स्क्रीनशॉट हटवायचे आहे का?</string>
+    <string name="permanent_delete_screenshot_sub_title">एकदा हटवल्यानंतर, स्क्रीनशॉट पुनर्संचयित केला जाऊ शकत नाही.</string>
+    <string name="deleting">काढत आहे</string>
+    <string name="lottie_text">कृपया प्रतीक्षा करा कारण आम्ही डुप्लिकेट चित्रे शोधत आहोत. ही वेळ घेणार नाही.</string>
+    <string name="group">गट</string>
+    <string name="images">छायाचित्रे</string>
+    <string name="please_select_items">कृपया मीडिया निवडा.</string>
+    <string name="dup_delete_complete_title">साफसफाई पूर्ण झाली</string>
+    <string name="dup_delete_space_freed">%1$s मोकळे झाले</string>
+    <string name="remove_items">रिसायकल बिनमध्ये आयटम्स 30 दिवसांनी काढले जाणार आहेत.</string>
+    <string name="deleting_files">येथे कोणतीही काढलेली फाइल नाही. आपल्याला आपल्या फोनपासून आयटम्स काढल्यास, ते येथे दिसतील,</string>
+    <string name="selected_media_files_successfully_restored">मीडिया फाइल्स सफलतेच पुनर्स्थापित केली गेली.</string>
+    <string name="restoring">पुनर्स्थापन</string>
+    <string name="days">दिवस</string>
+    <string name="unorganized">अव्यवस्थित</string>
+    <string name="you_can_select_a_photo_to_jump_to">त्यासाठी फोटो निवडा</string>
+    <string name="organize_now">आता आयोजित करा</string>
+    <string name="str_step_1">अल्बम तयार करण्यासाठी टॅप करा</string>
+    <string name="str_step_2">अल्बममध्ये फोटो जोडण्यासाठी टॅप करा</string>
+    <string name="str_step_3">स्किप करण्यासाठी डावीकडे स्वाइप करा</string>
+    <string name="str_step_4">"रीसायकल बिनमध्ये हलवण्यासाठी
+वर स्वाइप करा"</string>
+    <string name="org_create_album">"अल्बम तयार करा
+"</string>
+    <string name="undo">अवरोधित करा</string>
+    <string name="organizer_dialog_title">आयटम हटवा?</string>
+    <string name="organizer_deleting_select_item">सर्व निवडलेले आयटम्स तुमच्या डिव्हाइसवरून हटवले जातील आणि ते पुनर्प्राप्त करता येणार नाहीत.</string>
+    <string name="organize_your_photos_quickly">तुमचे फोटो पटकन व्यवस्थित करा</string>
+    <string name="wrong_root_selected">चुकीचे फोल्डर निवडले गेले आहे, कृपया आपले SD कार्डचे मुख्य फोल्डर निवडा</string>
 </resources>

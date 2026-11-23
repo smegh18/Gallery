@@ -337,4 +337,49 @@
     <string name="places">مکان‌ها</string>
     <string name="view_all">نمایش همه</string>
     <string name="search_deleted">ما نمی‌توانیم پوشه‌ای که دنبالش می‌گردید را پیدا کنیم. احتمالاً منتقل یا حذف شده است.</string>
+    <string name="junk_scan_completed_message">"فایل‌های بیهوده یافت شد: 1.40 گیگابایت
+اسکن کامل شد!"</string>
+    <string name="tool_bar_remove_junk">حذف زباله</string>
+    <string name="mb_size">0 مگابایت</string>
+    <string name="cleaning_item">تمیز کردن....</string>
+    <string name="app_cache">کش اپلیکیشن</string>
+    <string name="junk_files_display">فایل‌های بیهوده</string>
+    <string name="apk_files">فایل‌های APK</string>
+    <string name="obsolete_apk_files">فایل‌های APK منسوخ شده</string>
+    <string name="temp_file">فایل موقت</string>
+    <string name="old_document">اسناد قدیمی</string>
+    <string name="log_files">فایل‌های گزارش</string>
+    <string name="empty_folder">پوشه خالی</string>
+    <string name="phone_good_condition">فایل‌های ناخواسته پاک شدند</string>
+    <string name="release_more_space">هم اکنون فضای بیشتری آزاد کنید</string>
+    <string name="finish">تمام شد</string>
+    <string name="permanent_delete_screenshot_title">آیا می خواهید اسکرین شات ها را حذف کنید؟</string>
+    <string name="permanent_delete_screenshot_sub_title">پس از حذف، اسکرین شات ها قابل بازیابی نیستند.</string>
+    <string name="deleting">در حال حذف</string>
+    <string name="lottie_text">لطفاً صبر کنید زیرا داریم برای تصاویر تکراری اسکن می‌کنیم. این زمان زیادی نخواهد گرفت.</string>
+    <string name="group">گروه</string>
+    <string name="images">تصویر</string>
+    <string name="please_select_items">لطفاً رسانه‌ها را انتخاب کنید.</string>
+    <string name="dup_delete_complete_title">پاکسازی کامل شد</string>
+    <string name="dup_delete_space_freed">%1$s آزاد شد</string>
+    <string name="remove_items">موارد موجود در سبد بازیافت پس از ۳۰ روز حذف خواهند شد.</string>
+    <string name="deleting_files">هیچ فایل حذف شده‌ای در اینجا نیست. وقتی موارد را از تلفن خود حذف می‌کنید، آن‌ها در اینجا نشان داده می‌شوند،</string>
+    <string name="selected_media_files_successfully_restored">فایل‌های رسانه با موفقیت بازیابی شدند.</string>
+    <string name="restoring">بازیابی کردن</string>
+    <string name="days">"روزها "</string>
+    <string name="unorganized">نامرتب</string>
+    <string name="you_can_select_a_photo_to_jump_to">می‌توانید یک عکس را برای رفتن به آن انتخاب کنید</string>
+    <string name="organize_now">همین حالا سازماندهی کنید</string>
+    <string name="str_step_1">برای ایجاد آلبوم ضربه بزنید</string>
+    <string name="str_step_2">برای افزودن عکس‌ها به آلبوم ضربه بزنید</string>
+    <string name="str_step_3">برای رد کردن به چپ بکشید</string>
+    <string name="str_step_4">"برای انتقال به سطل بازیافت
+به بالا بکشید"</string>
+    <string name="org_create_album">"ایجاد آلبوم
+"</string>
+    <string name="undo">بازگشت</string>
+    <string name="organizer_dialog_title">حذف مورد؟</string>
+    <string name="organizer_deleting_select_item">همه موارد انتخاب شده از دستگاه شما حذف می‌شوند و قابل بازیابی نیستند.</string>
+    <string name="organize_your_photos_quickly">عکس های خود را به سرعت سازماندهی کنید</string>
+    <string name="wrong_root_selected">پوشه اشتباه انتخاب شده است، لطفا پوشه اصلی کارت حافظه SD خود را انتخاب کنید</string>
 </resources>

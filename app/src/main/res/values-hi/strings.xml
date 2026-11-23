@@ -345,4 +345,49 @@
     <string name="places">स्थान</string>
     <string name="view_all">सभी देखें</string>
     <string name="search_deleted">हम वह फ़ोल्डर नहीं ढूँढ पा रहे हैं जिसे आप खोज रहे हैं। शायद वह हटा दिया गया है, नाम बदल दिया गया है, या फिर हटा दिया गया है।</string>
+    <string name="junk_scan_completed_message">"जंक फ़ाइलें मिलीं: 1.40 GB
+स्कैनिंग पूरी हुई!"</string>
+    <string name="tool_bar_remove_junk">कचरा हटाएं</string>
+    <string name="mb_size">0 एमबी</string>
+    <string name="cleaning_item">सफाई....</string>
+    <string name="app_cache">एप्लिकेशन कैश</string>
+    <string name="junk_files_display">जंक फ़ाइलें</string>
+    <string name="apk_files">एपीके फ़ाइलें</string>
+    <string name="obsolete_apk_files">अप्रचलित APK फ़ाइलें</string>
+    <string name="temp_file">टेम्प फाइल</string>
+    <string name="old_document">पुराने दस्तावेज़</string>
+    <string name="log_files">लॉग फ़ाइलें</string>
+    <string name="empty_folder">खाली फ़ोल्डर</string>
+    <string name="phone_good_condition">अनचाही फाइलें साफ की गईं</string>
+    <string name="release_more_space">अभी और जगह खाली करें</string>
+    <string name="finish">समाप्त</string>
+    <string name="permanent_delete_screenshot_title">क्या आप स्क्रीनशॉट्स हटाना चाहते हैं?</string>
+    <string name="permanent_delete_screenshot_sub_title">हटाने के बाद, स्क्रीनशॉट्स को पुनः प्राप्त नहीं किया जा सकता।</string>
+    <string name="deleting">हटा रहा है</string>
+    <string name="lottie_text">कृपया प्रतीक्षा करें क्योंकि हम डुप्लिकेट छवियों के लिए स्कैन कर रहे हैं। यह ज्यादा समय नहीं लेगा।</string>
+    <string name="group">समूह</string>
+    <string name="images">छवियां</string>
+    <string name="please_select_items">कृपया मीडिया का चयन करें।</string>
+    <string name="dup_delete_complete_title">सफाई पूरी हुई</string>
+    <string name="dup_delete_space_freed">%1$s खाली किया गया</string>
+    <string name="remove_items">धारावाहिक डिब्बे में आइटम 30 दिनों के बाद हटा दिए जाएंगे।</string>
+    <string name="deleting_files">यहां कोई हटाई गई फ़ाइलें नहीं हैं। जब आप अपने फोन से आइटम हटाते हैं, वे यहां दिखाई देंगे,</string>
+    <string name="selected_media_files_successfully_restored">मीडिया फाइल्स सफलतापूर्वक पुनर्स्थापित केली गई.</string>
+    <string name="restoring">पुनर्स्थापन</string>
+    <string name="days">दिन</string>
+    <string name="unorganized">अव्यवस्थित</string>
+    <string name="you_can_select_a_photo_to_jump_to">उस पर जाने के लिए आप फोटो का चयन कर सकते हैं</string>
+    <string name="organize_now">अभी व्यवस्थित करें</string>
+    <string name="str_step_1">एल्बम बनाने के लिए टैप करें</string>
+    <string name="str_step_2">एल्बम में फ़ोटो जोड़ने के लिए टैप करें</string>
+    <string name="str_step_3">छोड़ने के लिए बाएँ स्वाइप करें</string>
+    <string name="str_step_4">"रिसाइकिल बिन में स्थानांतरित करने के लिए
+ऊपर स्वाइप करें"</string>
+    <string name="org_create_album">"एल्बम बनाएँ
+"</string>
+    <string name="undo">पूर्ववत करें</string>
+    <string name="organizer_dialog_title">आइटम हटाएं?</string>
+    <string name="organizer_deleting_select_item">सभी चयनित आइटम्स आपके डिवाइस से हटा दिए जाएंगे और पुनर्प्राप्त नहीं किए जा सकेंगे।</string>
+    <string name="organize_your_photos_quickly">अपनी फ़ोटो शीघ्रता से व्यवस्थित करें</string>
+    <string name="wrong_root_selected">गलत फ़ोल्डर चयन किया गया है, कृपया अपने SD कार्ड के मुख्य फ़ोल्डर को चुनें</string>
 </resources>

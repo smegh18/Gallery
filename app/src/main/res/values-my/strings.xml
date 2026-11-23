@@ -345,4 +345,49 @@
     <string name="places">နေရာများ</string>
     <string name="view_all">အားလုံးကြည့်ပါ</string>
     <string name="search_deleted">သင်ရှာဖွေနေသည်အကြောင်း သင်ကိုလှုံ့ဆောင်ရေးထားသည့်ဖိုင်ကိုရှာဖွေလို့မရှိသေးပါ။ ဒီနေရာမှ မင်းဖုန်းကို စာပိုင်းများကို ဖယ်ရှားသင့်မှသေချားပြီး သွားသောကိုယ်ပစ္စည်းများကို ရှာဖွေနိုင်သည်။</string>
+    <string name="junk_scan_completed_message">"ဂျန့်ခ်ဖိုင်များ တွေ့ရှိသည်- 1.40 GB
+စကင်ဖတ်ခြင်း ပြီးဆုံးပါပြီ။"</string>
+    <string name="tool_bar_remove_junk">အမှိုက်ဖယ်ရှားပါ</string>
+    <string name="mb_size">0 MB</string>
+    <string name="cleaning_item">သန့်ရှင်းရေး....</string>
+    <string name="app_cache">အက်ပ်ကက်ရှ်</string>
+    <string name="junk_files_display">ဂျန့်ခ်ဖိုင်များ</string>
+    <string name="apk_files">APK ဖိုင်များ</string>
+    <string name="obsolete_apk_files">ခေတ်မမှီတော့သော APK ဖိုင်များ</string>
+    <string name="temp_file">အချိန်ပိုင်းဖိုင်</string>
+    <string name="old_document">ဟောင်းသောစာရွက်စာတမ်းများ</string>
+    <string name="log_files">မှတ်တမ်းဖိုင်များ</string>
+    <string name="empty_folder">ဗလာဖိုလ်ဒါ</string>
+    <string name="phone_good_condition">မလိုအပ်သောဖိုင်များကိုရှင်းလင်းပြီးပါပြီ</string>
+    <string name="release_more_space">အခုတင် ပိုမိုသော အခန်းကွက် ရယူပါ</string>
+    <string name="finish">ပြီးဆုံးပြီ</string>
+    <string name="permanent_delete_screenshot_title">မျက်နှာပြင်ဖမ်းကို ဖျက်မလား?</string>
+    <string name="permanent_delete_screenshot_sub_title">ဖျက်ပြီးပါက ပြန်လည်ရရှိမည်မဟုတ်ပါ။</string>
+    <string name="deleting">ဖျက်ပစ်နေသည်</string>
+    <string name="lottie_text">အသေးစိတ်များအတွက် အခြားသတင်းများကို ရှာဖွေနေသည်ဟု ချိတ်ဆက်ပါ။ ဒီလိုပါတယ်။</string>
+    <string name="group">အုပ်စု</string>
+    <string name="images">ပုံများ</string>
+    <string name="please_select_items">မီးဒီယာများကို ရွေးချယ်ပါ။</string>
+    <string name="dup_delete_complete_title">ရှင်းလင်းမှုပြီးဆုံးပါပြီ</string>
+    <string name="dup_delete_space_freed">%1$s လွတ်မြောက်ခဲ့သည်</string>
+    <string name="remove_items">သင်သည် ပစ္စည်းများကို သက်သက်သာရွိရာနေ့ကို ဖယ်ရှားရန် အချိန်နှင့် ဖယ်ရှားရန် မိမိသက်ဆိုင်သောအခါ ဖယ်ရှားနိုင်သည်။</string>
+    <string name="deleting_files">ဒီမှာ ဖျက်သွားပုံများမရှိသေးပါ။ သင်သည်သင်၏ဖုန်းမှကိုအခုပိုင်းများကို ဖယ်ရှားထားရန်သို့မဟုတ် ဤမူလက်ထရောက်သည်။</string>
+    <string name="selected_media_files_successfully_restored">မီဒီယာ ဖိုင်များကို အောင်မြင်ပြီးခြင်း။</string>
+    <string name="restoring">ပြန်လည်စတင်</string>
+    <string name="days">နေ့များ</string>
+    <string name="unorganized">မစီစဉ်ရသေးသော</string>
+    <string name="you_can_select_a_photo_to_jump_to">သင်ဓာတ်ပုံကို ရွေးချယ်၍ ပုံကို ပြောင်းနိုင်သည်။</string>
+    <string name="organize_now">ယခု စီစဉ်ပါ</string>
+    <string name="str_step_1">Album ဖန်တီးရန် တိုက်ခိုက်ပါ</string>
+    <string name="str_step_2">Album ထဲသို့ဓာတ်ပုံများ ထည့်ရန် တိုက်ခိုက်ပါ</string>
+    <string name="str_step_3">ကျော်ဖို့ ဘယ်ဘက်ကိုဆွဲမည်</string>
+    <string name="str_step_4">"ထပ်ကူးမည့်ပုံးသို့သွားရန်
+အပေါ်ကိုဆွဲမည်"</string>
+    <string name="org_create_album">"အယ်လ်ဘမ်ဖန်တီးပါ
+"</string>
+    <string name="undo">မလုပ်တော့</string>
+    <string name="organizer_dialog_title">အရာကို ဖျက်မည်?</string>
+    <string name="organizer_deleting_select_item">ရွေးချယ်ထားသောအရာများကို သင့်စက်မှ ဖျက်သိမ်းမည်။ ပြန်လည်ရယူ၍ မရနိုင်ပါ။</string>
+    <string name="organize_your_photos_quickly">သင့်ဓာတ်ပုံများကို အမြန်စီစဉ်ပါ။</string>
+    <string name="wrong_root_selected">Folder yang salah dipilih, sila pilih folder utama kad SD anda</string>
 </resources>

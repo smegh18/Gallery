@@ -337,4 +337,49 @@
     <string name="places">Lieux</string>
     <string name="view_all">Tout afficher</string>
     <string name="search_deleted">"Nous n'avons pas pu localiser le dossier que vous recherchez. Il a dû être déplacé, renommé ou supprimé."</string>
+    <string name="junk_scan_completed_message">"Fichiers indésirables trouvés : 1.40 Go
+Analyse terminée !"</string>
+    <string name="tool_bar_remove_junk">Supprimer les déchets</string>
+    <string name="mb_size">0 Mo</string>
+    <string name="cleaning_item">Nettoyage....</string>
+    <string name="app_cache">"Cache de l'application"</string>
+    <string name="junk_files_display">Fichiers indésirables</string>
+    <string name="apk_files">Fichiers APK</string>
+    <string name="obsolete_apk_files">Fichiers APK obsolètes</string>
+    <string name="temp_file">Fichier temporaire</string>
+    <string name="old_document">Anciens documents</string>
+    <string name="log_files">Fichiers journaux</string>
+    <string name="empty_folder">Dossier vide</string>
+    <string name="phone_good_condition">Fichiers indésirables nettoyés</string>
+    <string name="release_more_space">"Libérez plus d'espace maintenant"</string>
+    <string name="finish">Terminé</string>
+    <string name="permanent_delete_screenshot_title">"Voulez-vous supprimer les captures d'écran ?"</string>
+    <string name="permanent_delete_screenshot_sub_title">"Une fois supprimées, les captures d'écran ne peuvent pas être restaurées."</string>
+    <string name="deleting">Suppression en cours</string>
+    <string name="lottie_text">Veuillez patienter pendant que nous analysons les images en double. Cela ne prendra pas longtemps..</string>
+    <string name="group">Groupe</string>
+    <string name="images">Images</string>
+    <string name="please_select_items">Veuillez sélectionner des médias.</string>
+    <string name="dup_delete_complete_title">Nettoyage terminé</string>
+    <string name="dup_delete_space_freed">%1$s libéré</string>
+    <string name="remove_items">Les éléments de la corbeille seront supprimés après 30 jours.</string>
+    <string name="deleting_files">Aucun fichier supprimé ici. Lorsque vous supprimez des éléments de votre téléphone, ils apparaîtront ici,</string>
+    <string name="selected_media_files_successfully_restored">Fichiers multimédias restaurés avec succès.</string>
+    <string name="restoring">Restauration</string>
+    <string name="days">Jours</string>
+    <string name="unorganized">Non organisé</string>
+    <string name="you_can_select_a_photo_to_jump_to">Vous pouvez sélectionner une photo pour y accéder</string>
+    <string name="organize_now">Organiser maintenant</string>
+    <string name="str_step_1">Appuyez pour créer un album</string>
+    <string name="str_step_2">Appuyez pour ajouter des photos dans l album</string>
+    <string name="str_step_3">Glissez vers la gauche pour passer</string>
+    <string name="str_step_4">"Glissez vers le haut pour déplacer dans la
+poubelle"</string>
+    <string name="org_create_album">"Créer un album
+"</string>
+    <string name="undo">Annuler</string>
+    <string name="organizer_dialog_title">"Supprimer l'élément ?"</string>
+    <string name="organizer_deleting_select_item">Tous les éléments sélectionnés seront supprimés de votre appareil et ne pourront pas être récupérés.</string>
+    <string name="organize_your_photos_quickly">Organisez vos photos rapidement</string>
+    <string name="wrong_root_selected">Dossier incorrect sélectionné, veuillez sélectionner le dossier principal de votre carte SD</string>
 </resources>

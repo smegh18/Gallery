@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- R272 values/plurals.xml; no translations in 2.7.2, so English everywhere -->
+    <plurals name="dup_delete_files_removed">
+        <item quantity="other">%d files removed</item>
+        <item quantity="one">%d file removed</item>
+    </plurals>
+</resources>

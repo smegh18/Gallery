@@ -345,4 +345,49 @@
     <string name="places">Tempat</string>
     <string name="view_all">Tampilkan Semua</string>
     <string name="search_deleted">Kami tidak dapat menemukan folder yang Anda cari. Mungkin telah dipindahkan, diubah namanya, atau dihapus.</string>
+    <string name="junk_scan_completed_message">"File Sampah Ditemukan: 1.40 GB
+Pemindaian Selesai!"</string>
+    <string name="tool_bar_remove_junk">Hapus Sampah</string>
+    <string name="mb_size">0 MB</string>
+    <string name="cleaning_item">Membersihkan....</string>
+    <string name="app_cache">Cache Aplikasi</string>
+    <string name="junk_files_display">File Sampah</string>
+    <string name="apk_files">File APK</string>
+    <string name="obsolete_apk_files">File APK Usang</string>
+    <string name="temp_file">File Sementara</string>
+    <string name="old_document">Dokumen Lama</string>
+    <string name="log_files">File Log</string>
+    <string name="empty_folder">Folder Kosong</string>
+    <string name="phone_good_condition">File sampah telah dibersihkan</string>
+    <string name="release_more_space">Bebaskan lebih banyak ruang sekarang</string>
+    <string name="finish">Selesai</string>
+    <string name="permanent_delete_screenshot_title">Ingin menghapus tangkapan layar?</string>
+    <string name="permanent_delete_screenshot_sub_title">Setelah dihapus, tangkapan layar tidak dapat dipulihkan.</string>
+    <string name="deleting">Menghapus</string>
+    <string name="lottie_text">Mohon tunggu karena kami sedang memindai gambar duplikat. Ini tidak akan memakan waktu lama..</string>
+    <string name="group">Grup</string>
+    <string name="images">Gambar</string>
+    <string name="please_select_items">Silakan pilih media.</string>
+    <string name="dup_delete_complete_title">Pembersihan selesai</string>
+    <string name="dup_delete_space_freed">%1$s dibebaskan</string>
+    <string name="remove_items">Item di tempat sampah akan dihapus setelah 30 hari.</string>
+    <string name="deleting_files">Tidak ada file yang dihapus di sini. Ketika Anda menghapus item dari ponsel Anda, mereka akan muncul di sini,</string>
+    <string name="selected_media_files_successfully_restored">File media berhasil dikembalikan.</string>
+    <string name="restoring">Mengembalikan</string>
+    <string name="days">Hari</string>
+    <string name="unorganized">Tidak teratur</string>
+    <string name="you_can_select_a_photo_to_jump_to">Anda dapat memilih foto untuk melompat ke sana</string>
+    <string name="organize_now">Atur Sekarang</string>
+    <string name="str_step_1">Ketuk untuk Membuat Album</string>
+    <string name="str_step_2">Ketuk untuk menambahkan foto ke album</string>
+    <string name="str_step_3">Gesek ke kiri untuk melewati</string>
+    <string name="str_step_4">"Gesek ke atas untuk memindahkan ke
+keranjang sampah"</string>
+    <string name="org_create_album">"Buat Album
+"</string>
+    <string name="undo">Batalkan</string>
+    <string name="organizer_dialog_title">Hapus item?</string>
+    <string name="organizer_deleting_select_item">Semua item yang dipilih akan dihapus dari perangkat Anda dan tidak dapat dipulihkan.</string>
+    <string name="organize_your_photos_quickly">Atur foto Anda dengan cepat</string>
+    <string name="wrong_root_selected">Folder yang salah dipilih, silakan pilih folder utama dari kartu SD Anda</string>
 </resources>

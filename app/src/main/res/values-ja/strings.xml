@@ -345,4 +345,49 @@
     <string name="places">場所</string>
     <string name="view_all">すべて表示</string>
     <string name="search_deleted">検索中のフォルダを見つけることができませんでした。移動されたか、名前が変更されたか、削除された可能性があります。</string>
+    <string name="junk_scan_completed_message">"ジャンクファイルが見つかりました: 1.40 GB
+スキャンが完了しました！"</string>
+    <string name="tool_bar_remove_junk">不要ファイルを削除</string>
+    <string name="mb_size">0 MB</string>
+    <string name="cleaning_item">掃除....</string>
+    <string name="app_cache">アプリのキャッシュ</string>
+    <string name="junk_files_display">ジャンクファイル</string>
+    <string name="apk_files">APKファイル</string>
+    <string name="obsolete_apk_files">古くなったAPKファイル</string>
+    <string name="temp_file">一時ファイル</string>
+    <string name="old_document">古いドキュメント</string>
+    <string name="log_files">ログファイル</string>
+    <string name="empty_folder">空のフォルダ</string>
+    <string name="phone_good_condition">不要なファイルがクリーンされました</string>
+    <string name="release_more_space">今すぐもっとスペースを空けましょう</string>
+    <string name="finish">終了</string>
+    <string name="permanent_delete_screenshot_title">スクリーンショットを削除しますか？</string>
+    <string name="permanent_delete_screenshot_sub_title">削除後、スクリーンショットは復元できません。</string>
+    <string name="deleting">削除中</string>
+    <string name="lottie_text">重複画像をスキャンしていますので、お待ちください。これは時間がかかりません。</string>
+    <string name="group">グループ</string>
+    <string name="images">画像</string>
+    <string name="please_select_items">メディアを選択してください。</string>
+    <string name="dup_delete_complete_title">クリーンアップ完了</string>
+    <string name="dup_delete_space_freed">%1$s 解放済み</string>
+    <string name="remove_items">ごみ箱内のアイテムは30日後に削除されます。</string>
+    <string name="deleting_files">ここには削除されたファイルはありません。アイテムをデバイスから削除すると、ここに表示されます。</string>
+    <string name="selected_media_files_successfully_restored">メディアファイルが正常に復元されました。</string>
+    <string name="restoring">復元</string>
+    <string name="days">日々</string>
+    <string name="unorganized">未整理</string>
+    <string name="you_can_select_a_photo_to_jump_to">ジャンプする写真を選択できます</string>
+    <string name="organize_now">今すぐ整理</string>
+    <string name="str_step_1">アルバムを作成するにはタップ</string>
+    <string name="str_step_2">アルバムに写真を追加するにはタップ</string>
+    <string name="str_step_3">スキップするには左にスワイプ</string>
+    <string name="str_step_4">"リサイクルビンに移動するには
+上にスワイプ"</string>
+    <string name="org_create_album">"アルバムを作成
+"</string>
+    <string name="undo">元に戻す</string>
+    <string name="organizer_dialog_title">アイテムを削除しますか？</string>
+    <string name="organizer_deleting_select_item">選択したすべての項目がデバイスから削除され、復元できなくなります。</string>
+    <string name="organize_your_photos_quickly">写真をすばやく整理する</string>
+    <string name="wrong_root_selected">誤ったフォルダが選択されました。SDカードのメインフォルダを選択してください</string>
 </resources>

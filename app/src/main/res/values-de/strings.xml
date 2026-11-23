@@ -337,4 +337,49 @@
     <string name="places">Orte</string>
     <string name="view_all">Alle anzeigen</string>
     <string name="search_deleted">Wir konnten den von Ihnen gesuchten Ordner nicht finden. Er wurde möglicherweise verschoben, umbenannt oder gelöscht.</string>
+    <string name="junk_scan_completed_message">"Junk-Dateien gefunden: 1.40 GB
+Scan abgeschlossen!"</string>
+    <string name="tool_bar_remove_junk">Müll entfernen</string>
+    <string name="mb_size">0 MB</string>
+    <string name="cleaning_item">Reinigung....</string>
+    <string name="app_cache">App-Cache</string>
+    <string name="junk_files_display">Junk-Dateien</string>
+    <string name="apk_files">APK-Dateien</string>
+    <string name="obsolete_apk_files">Veraltete APK-Dateien</string>
+    <string name="temp_file">Temp-Datei</string>
+    <string name="old_document">alte Dokumente</string>
+    <string name="log_files">Protokolldateien</string>
+    <string name="empty_folder">Leerer Ordner</string>
+    <string name="phone_good_condition">Junk-Dateien bereinigt</string>
+    <string name="release_more_space">Jetzt mehr Speicherplatz freigeben</string>
+    <string name="finish">Fertig</string>
+    <string name="permanent_delete_screenshot_title">Möchten Sie die Screenshots löschen?</string>
+    <string name="permanent_delete_screenshot_sub_title">Einmal gelöscht, können die Screenshots nicht wiederhergestellt werden.</string>
+    <string name="deleting">Löschen</string>
+    <string name="lottie_text">Bitte warten Sie, während wir nach doppelten Bildern scannen. Dies wird nicht lange dauern..</string>
+    <string name="group">Gruppe</string>
+    <string name="images">Bilder</string>
+    <string name="please_select_items">Bitte wählen Sie Medien aus.</string>
+    <string name="dup_delete_complete_title">Bereinigung abgeschlossen</string>
+    <string name="dup_delete_space_freed">%1$s freigegeben</string>
+    <string name="remove_items">Elemente im Papierkorb werden nach 30 Tagen entfernt.</string>
+    <string name="deleting_files">Hier wurden keine gelöschten Dateien gefunden. Wenn Sie Elemente von Ihrem Telefon entfernen, werden sie hier angezeigt.</string>
+    <string name="selected_media_files_successfully_restored">Mediendateien erfolgreich wiederhergestellt.</string>
+    <string name="restoring">Wiederherstellen</string>
+    <string name="days">Tage</string>
+    <string name="unorganized">Unorganisiert</string>
+    <string name="you_can_select_a_photo_to_jump_to">Sie können ein Foto auswählen, um dorthin zu springen</string>
+    <string name="organize_now">Jetzt organisieren</string>
+    <string name="str_step_1">Tippen, um ein Album zu erstellen</string>
+    <string name="str_step_2">Tippen, um Fotos zum Album hinzuzufügen</string>
+    <string name="str_step_3">Nach links wischen, um zu überspringen</string>
+    <string name="str_step_4">"Nach oben wischen, um in den
+Papierkorb zu verschieben"</string>
+    <string name="org_create_album">"Album erstellen
+"</string>
+    <string name="undo">Rückgängig machen</string>
+    <string name="organizer_dialog_title">Element löschen?</string>
+    <string name="organizer_deleting_select_item">Alle ausgewählten Elemente werden von Ihrem Gerät gelöscht und können nicht wiederhergestellt werden.</string>
+    <string name="organize_your_photos_quickly">Organisieren Sie Ihre Fotos schnell</string>
+    <string name="wrong_root_selected">Falscher Ordner ausgewählt, bitte wählen Sie den Hauptordner Ihrer SD-Karte aus</string>
 </resources>

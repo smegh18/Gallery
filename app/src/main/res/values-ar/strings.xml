@@ -337,4 +337,49 @@
     <string name="places">أماكن</string>
     <string name="view_all">عرض الكل</string>
     <string name="search_deleted">لم نتمكن من تحديد موقع المجلد الذي تبحث عنه. قد تم نقله أو إعادة تسميته أو حذفه.</string>
+    <string name="junk_scan_completed_message">"تم العثور على ملفات غير مرغوب فيها: 1.40 جيجابايت
+اكتمل الفحص!"</string>
+    <string name="tool_bar_remove_junk">إزالة الملفات غير المرغوب فيها</string>
+    <string name="mb_size">0 ميجابايت</string>
+    <string name="cleaning_item">تنظيف....</string>
+    <string name="app_cache">ذاكرة التخزين المؤقت للتطبيق</string>
+    <string name="junk_files_display">ملفات غير مرغوب فيها</string>
+    <string name="apk_files">ملفات APK</string>
+    <string name="obsolete_apk_files">ملفات APK المهملة</string>
+    <string name="temp_file">ملف مؤقت</string>
+    <string name="old_document">المستندات القديمة</string>
+    <string name="log_files">ملفات السجل</string>
+    <string name="empty_folder">مجلد فارغ</string>
+    <string name="phone_good_condition">تم تنظيف الملفات غير المرغوب فيها</string>
+    <string name="release_more_space">قم بتحرير المزيد من المساحة الآن</string>
+    <string name="finish">انتهى</string>
+    <string name="permanent_delete_screenshot_title">هل تريد حذف لقطات الشاشة؟</string>
+    <string name="permanent_delete_screenshot_sub_title">بمجرد الحذف، لا يمكن استعادة لقطات الشاشة.</string>
+    <string name="deleting">جارٍ الحذف</string>
+    <string name="lottie_text">يرجى الانتظار حيث نقوم بفحص الصور المكررة. لن يستغرق ذلك وقتًا طويلاً..</string>
+    <string name="group">مجموعة</string>
+    <string name="images">صور</string>
+    <string name="please_select_items">يرجى اختيار الوسائط.</string>
+    <string name="dup_delete_complete_title">اكتمل التنظيف</string>
+    <string name="dup_delete_space_freed">تم تحرير %1$s</string>
+    <string name="remove_items">سيتم إزالة العناصر في سلة المهملات بعد 30 يومًا.</string>
+    <string name="deleting_files">لا يوجد ملفات محذوفة هنا. عندما تقوم بإزالة العناصر من هاتفك، سيتم عرضها هنا،</string>
+    <string name="selected_media_files_successfully_restored">تم استعادة ملفات الوسائط بنجاح.</string>
+    <string name="restoring">استعادة</string>
+    <string name="days">"أيام "</string>
+    <string name="unorganized">غير منظم</string>
+    <string name="you_can_select_a_photo_to_jump_to">يمكنك اختيار صورة للانتقال إليها</string>
+    <string name="organize_now">نظم الآن</string>
+    <string name="str_step_1">اضغط لإنشاء ألبوم</string>
+    <string name="str_step_2">اضغط لإضافة الصور في الألبوم</string>
+    <string name="str_step_3">اسحب لليسار للتخطي</string>
+    <string name="str_step_4">"اسحب للأعلى لنقلها إلى
+سلة المهملات"</string>
+    <string name="org_create_album">"إنشاء ألبوم
+"</string>
+    <string name="undo">تراجع</string>
+    <string name="organizer_dialog_title">حذف العنصر؟</string>
+    <string name="organizer_deleting_select_item">سيتم حذف جميع العناصر المحددة من جهازك ولن يمكن استعادتها.</string>
+    <string name="organize_your_photos_quickly">تنظيم الصور الخاصة بك بسرعة</string>
+    <string name="wrong_root_selected">تم اختيار المجلد الخاطئ، يرجى اختيار المجلد الرئيسي لبطاقة SD الخاصة بك</string>
 </resources>
