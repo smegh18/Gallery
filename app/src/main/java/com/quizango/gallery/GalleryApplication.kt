@@ -37,7 +37,7 @@ class GalleryApplication : Application(), ImageLoaderFactory {
     val moments by lazy { com.quizango.gallery.data.local.MomentScanner(this) }
 
     val vaultRepository: VaultRepository by lazy {
-        VaultRepositoryImpl(this, database.vaultDao(), database.galleryDao())
+        VaultRepositoryImpl(this, database.vaultDao(), database.galleryDao(), scanner)
     }
 
     override fun newImageLoader(): ImageLoader {

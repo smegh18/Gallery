@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import com.quizango.gallery.data.local.VaultCrypto
+import com.quizango.gallery.data.local.mediastore.MediaStoreScanner
+import kotlinx.coroutines.CancellationException
 import java.io.File
 import java.util.UUID
 
@@ -27,10 +29,45 @@ interface VaultRepository {
     suspend fun renameInVault(vaultItem: VaultItem, newName: String): Boolean
 }
 
+/**
+ * Hides [source] without ever losing it (D6): the ciphertext and its row exist before the original is deleted.
+ * Returns false, with the source intact and no ciphertext or row left, if any step fails.
+ */
+internal suspend fun hideFileSafely(
+    source: File,
+    target: File,
+    encrypt: (File, File) -> Unit,
+    insertRow: suspend () -> Unit,
+    deleteRow: suspend () -> Unit,
+    deleteSource: (File) -> Boolean = File::delete
+): Boolean {
+    try {
+        encrypt(source, target)
+    } catch (e: Exception) {
+        target.delete()
+        return false
+    }
+    try {
+        insertRow()
+    } catch (e: Exception) {
+        target.delete()
+        if (e is CancellationException) throw e
+        return false
+    }
+    val deleted = try { deleteSource(source) && !source.exists() } catch (e: Exception) { false }
+    if (!deleted) {
+        // keep the ciphertext if the row cannot be removed, so a row never points at a missing file
+        if (try { deleteRow(); true } catch (e: Exception) { false }) target.delete()
+        return false
+    }
+    return true
+}
+
 class VaultRepositoryImpl(
     private val context: Context,
     private val vaultDao: VaultDao,
-    private val galleryDao: GalleryDao
+    private val galleryDao: GalleryDao,
+    private val scanner: MediaStoreScanner
 ) : VaultRepository {
 
     private val vaultDir: File
@@ -76,13 +113,6 @@ class VaultRepositoryImpl(
             if (!sourceFile.exists()) return@withContext false
 
             val targetFile = File(vaultDir, "${UUID.randomUUID()}_${mediaItem.fileName}")
-            try {
-                sourceFile.inputStream().use { input -> targetFile.outputStream().use { VaultCrypto.encrypt(input, it, key) } }
-            } catch (e: Exception) {
-                targetFile.delete() // never delete the original if encryption failed
-                return@withContext false
-            }
-            sourceFile.delete()
 
             val vaultEntity = VaultEntity(
                 filePath = targetFile.absolutePath,
@@ -100,8 +130,21 @@ class VaultRepositoryImpl(
                 resolution = mediaItem.resolution
             )
 
-            vaultDao.insert(vaultEntity)
-            galleryDao.deleteByPath(mediaItem.filePath)
+            val hidden = hideFileSafely(
+                source = sourceFile,
+                target = targetFile,
+                encrypt = { src, dst -> src.inputStream().use { input -> dst.outputStream().use { VaultCrypto.encrypt(input, it, key) } } },
+                insertRow = { vaultDao.insert(vaultEntity) },
+                deleteRow = { vaultDao.deleteByPaths(listOf(targetFile.absolutePath)) }
+            )
+            if (!hidden) return@withContext false
+            // the file is safely in the vault; a failure below must not report the hide as failed
+            try {
+                galleryDao.deleteByPath(mediaItem.filePath)
+                scanner.scanFiles(mediaItem.filePath) // MIUI keeps showing the old row until it is re-indexed
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+            }
             true
         } catch (_: Exception) {
             false
