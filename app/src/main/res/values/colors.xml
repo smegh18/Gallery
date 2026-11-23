@@ -262,4 +262,15 @@
     <color name="color_success_lottie_blue">#ff0066ff</color>
     <color name="blackTran">#90000000</color>
     <color name="organizer_stripe_color">#ff358f38</color>
+    <!-- Phase 7 Private Vault (R272) -->
+    <color name="red_color_picker">#ed0a3f</color>
+    <color name="security_question_bottom_color">#1e3354</color>
+    <color name="toolbar_bottom_border">#c7d2e3</color>
+    <color name="imagePickerFolderBGColor">#ededed</color>
+    <color name="imagePickerSelectionsBGColor">#ffffff</color>
+    <color name="picker_folder_subtitle_color">#505050</color>
+    <color name="toast_lock">#14c585</color>
+    <color name="security_answer_stroke">#def2ff</color>
+    <color name="ad_title_color">#1e3354</color>
+    <color name="bgColor">#1e1e24</color>
 </resources>

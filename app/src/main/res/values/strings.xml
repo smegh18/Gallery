@@ -50,12 +50,12 @@
     <string name="auto_delete_trash_30_days">Auto delete items after 30 days</string>
 
     <!-- Vault Strings -->
-    <string name="enter_pin">Enter 4-Digit PIN</string>
+    <string name="enter_pin">Enter your PIN</string>
     <string name="confirm_pin">Confirm PIN</string>
     <string name="draw_pattern">Draw Unlock Pattern</string>
-    <string name="switch_to_pattern">Use Pattern</string>
-    <string name="switch_to_pin">Use PIN</string>
-    <string name="forgot_password">Forgot Password?</string>
+    <string name="switch_to_pattern">Switch to Pattern</string>
+    <string name="switch_to_pin">Switch to PIN</string>
+    <string name="forgot_password">Forgot Password</string>
     <string name="security_question">Security Question</string>
     <string name="vault_empty_title">No hidden photos or videos</string>
     <string name="vault_empty_desc">Photos and videos you hide will appear here securely.</string>
@@ -486,4 +486,56 @@ recycle bin"</string>
     <string name="organizer_move_failed" translatable="false">Unable to move this file.</string>
     <string name="organizer_emptying_bin" translatable="false">Deleting</string>
     <string name="organizer_deleted_count" translatable="false">Deleted %1$d items.</string>
+    <!-- Phase 7 Private Vault reference copy (2.7.2) -->
+    <string name="set_pin">Set PIN</string>
+    <string name="re_enter_pin">Re-enter PIN</string>
+    <string name="draw_your_pattern">Draw Your Pattern</string>
+    <string name="re_draw_your_pattern">Re-draw your pattern</string>
+    <string name="forgot_password_lock">Forgot password?</string>
+    <string name="hide_photo_private_permission">Our Private Vault feature lets you store your most sensitive photos and videos securely.</string>
+    <string name="add_item">Add Items</string>
+    <string name="submit">Submit</string>
+    <string name="change_password">Change Password</string>
+    <string name="set_a_new_passcode">Set a new passcode</string>
+    <string name="show_pattern">Show Pattern</string>
+    <string name="display_your_unique_pattern">Display your unique pattern</string>
+    <string name="unlock_with_fingerprint">Unlock with Fingerprint</string>
+    <string name="use_biometrics_for_security">Use biometrics for security</string>
+    <string name="change_recovery_question">Change Recovery Question</string>
+    <string name="choose_another_recovery_question">Choose another recovery question</string>
+    <string name="set_security_question">Set Security Question!</string>
+    <string name="set_security_question_subtitle">The security question lets you reset your password if you forgot in future</string>
+    <string name="set_security_questions_title">Set Security Questions</string>
+    <string name="answer_at_least_Question">Answer at least 3 Question</string>
+    <string name="your_answer">Your answer</string>
+    <string name="next">Next</string>
+    <string name="password_recovery_option">Password Recovery Option</string>
+    <string name="password_recovery_questions">Please answer these questions to reset your password.</string>
+    <string name="confirm">Confirm</string>
+    <string name="privacy_settings">Privacy Settings</string>
+    <string name="password_confirm">The confirm password does not match!</string>
+    <string name="pattern_confirm">The confirm pattern does not match!</string>
+    <string name="pattern_min_4_dots">The pattern must utilise four dots.</string>
+    <string name="wrong_password">Incorrect password!</string>
+    <string name="please_enter_pin">Please enter your pin.</string>
+    <string name="password_changed_successfully">Password changed successfully.</string>
+    <string name="recovery_question_changed_successfully">Recovery question changed successfully.</string>
+    <string name="enter_correct_security_answer">Enter the correct security answer.</string>
+    <string name="please_enter_answer">Please enter an answer!</string>
+    <string name="please_write_an_answer">Please write an answer</string>
+    <string name="toast_private">Your photo is secured with us</string>
+    <string name="unlock_vault">Unlock your private vault.</string>
+    <string name="unhiding">Unhiding</string>
+    <string name="selected_media_files_successfully_unhide">Media files unhidden successfully.</string>
+    <string name="internal_select_add">Add</string>
+    <string name="security_question1">What was your childhood nickname?</string>
+    <string name="security_question2">What is your pet name?</string>
+    <string name="security_question3">Who is your favorite teacher?</string>
+    <string name="security_question4">Who is your favorite actor?</string>
+    <string name="security_question5">Who is your favorite actress?</string>
+    <string name="security_question6">Who is your favorite cricketer?</string>
+    <string name="security_question7">Who is your favorite footballer?</string>
+    <string name="security_question8">Who is your dream job?</string>
+    <string name="security_question9">Who is your sports hero?</string>
+    <string name="security_question10">In what city or town was your first job?</string>
 </resources>

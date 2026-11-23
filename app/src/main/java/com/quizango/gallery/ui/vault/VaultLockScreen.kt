@@ -1,6 +1,7 @@
 package com.quizango.gallery.ui.vault
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntOffset
@@ -73,13 +75,13 @@ fun VaultLockScreen(
         }
     }
     val isSettingUp = loaded && (changeMode || (savedPin.isNullOrEmpty() && savedPattern.isNullOrEmpty()))
-    // Vault Settings "Show Pattern": draw the traced line (off by default, like the reference)
-    val showPatternLine by appPreferences.isPatternMode.collectAsState(initial = false)
+    // Vault Settings "Show Pattern": draw the traced line (on by default, S3)
+    val showPatternLine by appPreferences.isPatternMode.collectAsState(initial = true)
 
     // Error shake (STORY-4); the reference also shows a toast
     val shakeOffset = remember { Animatable(0f) }
-    fun fail(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    fun fail(@StringRes message: Int?) {
+        if (message != null) Toast.makeText(context, context.getString(message), Toast.LENGTH_SHORT).show()
         entered = ""
         scope.launch {
             for (x in listOf(-18f, 18f, -12f, 12f, -6f, 6f, 0f)) shakeOffset.animateTo(x, tween(45))
@@ -105,7 +107,7 @@ fun VaultLockScreen(
                         appPreferences.setVaultPattern("")
                     }
                     if (changeMode) {
-                        Toast.makeText(context, if (usePattern) "Pattern changed" else "Password changed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show()
                         onNavigateBack()
                         return@launch
                     }
@@ -114,7 +116,7 @@ fun VaultLockScreen(
                 }
             } else {
                 firstEntry = null
-                fail(if (usePattern) "The confirm pattern does not match!" else "The confirm password does not match!")
+                fail(if (usePattern) R.string.pattern_confirm else R.string.password_confirm)
             }
         } else {
             val stored = if (usePattern) savedPattern else savedPin
@@ -127,19 +129,19 @@ fun VaultLockScreen(
                     openVault()
                 }
             } else {
-                // shortcut: wrong-pattern toast text not captured from the reference; mirrors "Incorrect password!"
-                fail(if (usePattern) "Incorrect pattern!" else "Incorrect password!")
+                // Reference: a wrong pattern shows no toast, a wrong PIN toasts wrong_password
+                fail(if (usePattern) null else R.string.wrong_password)
             }
         }
     }
 
     val title = when {
         !loaded -> ""
-        usePattern && isSettingUp && firstEntry != null -> "Re-draw your pattern"
-        usePattern -> "Draw Your Pattern"
-        isSettingUp && firstEntry == null -> "Set PIN"
-        isSettingUp -> "Re-enter PIN"
-        else -> "Enter your PIN"
+        usePattern && isSettingUp && firstEntry != null -> stringResource(R.string.re_draw_your_pattern)
+        usePattern -> stringResource(R.string.draw_your_pattern)
+        isSettingUp && firstEntry == null -> stringResource(R.string.set_pin)
+        isSettingUp -> stringResource(R.string.re_enter_pin)
+        else -> stringResource(R.string.enter_pin)
     }
 
     // Reference: lock icon and links #0066FF in light mode, white in dark mode
@@ -151,7 +153,7 @@ fun VaultLockScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Private Vault",
+                            text = stringResource(R.string.private_vault),
                             fontWeight = FontWeight.Medium,
                             fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onBackground
@@ -203,8 +205,8 @@ fun VaultLockScreen(
                     modifier = Modifier.offset { IntOffset(shakeOffset.value.dp.roundToPx(), 0) },
                     resetKey = "$title|${firstEntry != null}",
                     onComplete = { pattern ->
-                        // Reference accepted a 3-dot pattern; shorter limit not observed
-                        if (pattern.length < 3) fail("Connect at least 3 dots") else submit(pattern)
+                        // Reference: four dots minimum only when drawing a new pattern, none when unlocking
+                        if (isSettingUp && firstEntry == null && pattern.length < 4) fail(R.string.pattern_min_4_dots) else submit(pattern)
                     }
                 )
             } else {
@@ -235,7 +237,7 @@ fun VaultLockScreen(
                     onDigitClick = { d -> if (entered.length < 4) entered += d },
                     onBackspace = { if (entered.isNotEmpty()) entered = entered.dropLast(1) },
                     // Reference checks only when ✓ is pressed
-                    onConfirm = { if (entered.length == 4) submit(entered) }
+                    onConfirm = { if (entered.length == 4) submit(entered) else fail(R.string.please_enter_pin) }
                 )
             }
 
@@ -260,7 +262,7 @@ fun VaultLockScreen(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = if (usePattern) "Switch to PIN" else "Switch to Pattern",
+                        text = stringResource(if (usePattern) R.string.switch_to_pin else R.string.switch_to_pattern),
                         fontSize = 16.sp,
                         textDecoration = TextDecoration.Underline,
                         color = MaterialTheme.colorScheme.onBackground
@@ -268,7 +270,7 @@ fun VaultLockScreen(
                 }
             } else if (loaded) {
                 Text(
-                    text = "Forgot password?",
+                    text = stringResource(R.string.forgot_password_lock),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = accent,

@@ -141,4 +141,10 @@
     <color name="other_album_bg_color">#ff333333</color>
     <color name="seekbar_color_bg">#ff5b5d5f</color>
     <color name="op_onboarding_ac_perm_bg">#ff131111</color>
+    <!-- Phase 7 Private Vault (R272) -->
+    <color name="security_question_bottom_color">#ffffff</color>
+    <color name="toolbar_bottom_border">#2a2828</color>
+    <color name="imagePickerFolderBGColor">#212121</color>
+    <color name="imagePickerSelectionsBGColor">#1e1e1e</color>
+    <color name="ad_title_color">#ffffff</color>
 </resources>

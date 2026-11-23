@@ -57,7 +57,7 @@
  ऑल फाईल्स ऍक्सेस हे गुगलसाठीही खूप महत्त्वाचं आहे. या परवानगीची आवश्यकता असलेल्या सर्व अॅप्सना प्रकाशित होण्यापूर्वी Google द्वारे कठोर पुनरावलोकन करणे आवश्यक आहे. कोणताही दुर्भावनापूर्ण अॅप ही परवानगी मिळवू शकत नाही.
 
  जाणून घेण्यासाठी खालील URL वर क्लिक करा अधिकसाठी: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009सेटिंग्ज उघडा</string>
+    <string name="open_settings">\tसेटिंग्ज उघडा</string>
     <string name="select_app_language">भाषा निवडा</string>
     <string name="album_collage_new">नवीन</string>
     <string name="collage_maker_explore_title">कोलाज मेकर</string>
@@ -374,4 +374,55 @@
     <string name="organizer_deleting_select_item">सर्व निवडलेले आयटम्स तुमच्या डिव्हाइसवरून हटवले जातील आणि ते पुनर्प्राप्त करता येणार नाहीत.</string>
     <string name="organize_your_photos_quickly">तुमचे फोटो पटकन व्यवस्थित करा</string>
     <string name="wrong_root_selected">चुकीचे फोल्डर निवडले गेले आहे, कृपया आपले SD कार्डचे मुख्य फोल्डर निवडा</string>
+    <string name="set_pin">पिन सेट करा</string>
+    <string name="re_enter_pin">पिन पुन्हा प्रविष्ट करा</string>
+    <string name="draw_your_pattern">आपल्या पॅटर्न चित्रित करा</string>
+    <string name="re_draw_your_pattern">पुन्हा आपला पॅटर्न चित्रित करा</string>
+    <string name="forgot_password_lock">संकेतशब्द विसरलात?</string>
+    <string name="hide_photo_private_permission">आमच्या खाजगी संग्रहण सुविधेमार्फत आपल्याला आपल्या सर्वात संवेदनशील फोटोंची आणि व्हिडिओंची सुरक्षितपणे संग्रहण करण्याची क्षमता दिली आहे.</string>
+    <string name="add_item">आयटम्स जोडा</string>
+    <string name="submit">सबमिट</string>
+    <string name="change_password">पासवर्ड बदला</string>
+    <string name="set_a_new_passcode">नवीन पॅसकोड सेट करा</string>
+    <string name="show_pattern">पॅटर्न दाखवा</string>
+    <string name="display_your_unique_pattern">आपला विशिष्ट पॅटर्न दाखवा</string>
+    <string name="unlock_with_fingerprint">फिंगरप्रिंटशी अनलॉक करा</string>
+    <string name="use_biometrics_for_security">सुरक्षिततेसाठी बायोमेट्रिक्स वापरा</string>
+    <string name="change_recovery_question">परिश्रम प्रश्न बदला</string>
+    <string name="choose_another_recovery_question">दुसरा परिश्रम प्रश्न निवडा</string>
+    <string name="set_security_question">सुरक्षा प्रश्न सेट करा!</string>
+    <string name="set_security_question_subtitle">सुरक्षा प्रश्न आपल्याला भविष्यात तोडल्यास पासवर्ड रीसेट करण्याची क्षमता देतो</string>
+    <string name="set_security_questions_title">सुरक्षा प्रश्न सेट करा</string>
+    <string name="answer_at_least_Question">किमान 3 प्रश्नांकितक प्रतिसाद द्या</string>
+    <string name="your_answer">तुमचे उत्तर</string>
+    <string name="next">पुढील</string>
+    <string name="password_recovery_option">संकेतशब्द पुनर्प्राप्ती पर्याय</string>
+    <string name="password_recovery_questions">कृपया आपल्या संकेतशब्द पुनर्प्राप्त करण्यासाठी ह्या प्रश्नांच्या उत्तरे द्या.</string>
+    <string name="confirm">पुष्टी करा</string>
+    <string name="privacy_settings">गोपनीयता सेटिंग्ज</string>
+    <string name="password_confirm">पासवर्ड कन्फर्म करण्यात अयोग्य!</string>
+    <string name="pattern_confirm">नमुना कन्फर्म झालेला नाही!</string>
+    <string name="pattern_min_4_dots">नमुना किमान 4 डॉट वापरणे आवश्यक आहे.</string>
+    <string name="wrong_password">चुकीचा संकेतशब्द</string>
+    <string name="please_enter_pin">कृपया आपला पिन प्रविष्ट करा.</string>
+    <string name="password_changed_successfully">संकेतशब्द सफळता सरकवले.</string>
+    <string name="recovery_question_changed_successfully">पुनर्निर्धारण प्रश्न सफळता सरकवला.</string>
+    <string name="enter_correct_security_answer">सुरक्षा उत्तर पुरता द्या.</string>
+    <string name="please_enter_answer">कृपया उत्तर द्या!</string>
+    <string name="please_write_an_answer">कृपया एक उत्तर लिहा</string>
+    <string name="toast_private">तुमची फोटो आमच्यासह सुरक्षित आहे</string>
+    <string name="unlock_vault">आपल्या खाजगी संग्रहाचे किंवदर्याचे लॉक काढा.</string>
+    <string name="unhiding">दाखवणे</string>
+    <string name="selected_media_files_successfully_unhide">मीडिया फाइल्स सफलतेच अनहाइड केली गेली.</string>
+    <string name="internal_select_add">जोडा</string>
+    <string name="security_question1">तुमच्या बालपणाचे दाखवणारे नाव काय होते?</string>
+    <string name="security_question2">तुमच्या पालकांचे नाव काय आहे?</string>
+    <string name="security_question3">तुमच्या प्रिय शिक्षकाचे नाव कोणते होते?</string>
+    <string name="security_question4">तुमचा प्रिय अभिनेता कोणता आहे?</string>
+    <string name="security_question5">तुमची प्रिय अभिनेत्री कोणती आहे?</string>
+    <string name="security_question6">तुमचा प्रिय क्रिकेटपटू कोणता आहे?</string>
+    <string name="security_question7">तुमचा प्रिय फुटबॉलपटू कोणता आहे?</string>
+    <string name="security_question8">तुमच्या स्वप्नातील नोकरी काय आहे?</string>
+    <string name="security_question9">तुमचा क्रीडा आदर्श कोणता आहे?</string>
+    <string name="security_question10">तुमच्या पहिल्या नोकरीच्या शहराचे नाव कोणते आहे?</string>
 </resources>

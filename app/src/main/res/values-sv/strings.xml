@@ -57,7 +57,7 @@
  All Files Access är också av stor betydelse för Google. Alla appar som kräver detta tillstånd måste genomgå en strikt granskning av Google innan de publiceras. Ingen skadlig app kan få denna behörighet.
 
  Klicka på följande URL för att veta för mer: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Öppna inställningar</string>
+    <string name="open_settings">\tÖppna inställningar</string>
     <string name="select_app_language">Välj App Språk</string>
     <string name="album_collage_new">Ny</string>
     <string name="collage_maker_explore_title">Collagetillverkare</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Collage</string>
     <string name="explore_collage_desc">Kombinera dina foton</string>
     <string name="vault">Valv</string>
-    <string name="str_home_favourite">\u0009Favoriter</string>
+    <string name="str_home_favourite">\tFavoriter</string>
     <string name="str_home_Moments">Ögonblick</string>
     <string name="str_home_place">Plats</string>
     <string name="str_home_Recycle_bin">Papperskorg</string>
@@ -389,4 +389,55 @@ Skanning slutförd!"</string>
     <string name="organizer_deleting_select_item">Alla valda objekt kommer att raderas från din enhet och kan inte återställas.</string>
     <string name="organize_your_photos_quickly">Organisera dina foton snabbt</string>
     <string name="wrong_root_selected">Fel mapp vald, vänligen välj huvudmappen på ditt SD-kort</string>
+    <string name="set_pin">Ställ in PIN-kod</string>
+    <string name="re_enter_pin">Ange PIN-kod igen</string>
+    <string name="draw_your_pattern">Rita ditt mönster</string>
+    <string name="re_draw_your_pattern">Rita om ditt mönster</string>
+    <string name="forgot_password_lock">Glömt lösenordet?</string>
+    <string name="hide_photo_private_permission">Vår funktion för Privat Kassaskåp låter dig säkert lagra dina mest känsliga foton och videor.</string>
+    <string name="add_item">Lägg till objekt</string>
+    <string name="submit">Skicka</string>
+    <string name="change_password">Ändra Lösenord</string>
+    <string name="set_a_new_passcode">Ange en ny kod</string>
+    <string name="show_pattern">Visa Mönster</string>
+    <string name="display_your_unique_pattern">Visa ditt unika mönster</string>
+    <string name="unlock_with_fingerprint">Lås upp med Fingeravtryck</string>
+    <string name="use_biometrics_for_security">Använd biometriska data för säkerhet</string>
+    <string name="change_recovery_question">Ändra Återställningsfråga</string>
+    <string name="choose_another_recovery_question">Välj en annan återställningsfråga</string>
+    <string name="set_security_question">Ange Säkerhetsfråga!</string>
+    <string name="set_security_question_subtitle">Säkerhetsfrågan låter dig återställa ditt lösenord om du glömmer det i framtiden</string>
+    <string name="set_security_questions_title">Ange Säkerhetsfrågor</string>
+    <string name="answer_at_least_Question">Besvara åtminstone 3 frågor</string>
+    <string name="your_answer">Ditt svar</string>
+    <string name="next">Nästa</string>
+    <string name="password_recovery_option">Alternativ för återställning av lösenord</string>
+    <string name="password_recovery_questions">Svara på dessa frågor för att återställa ditt lösenord.</string>
+    <string name="confirm">Bekräfta</string>
+    <string name="privacy_settings">Integritetsinställningar</string>
+    <string name="password_confirm">Bekräftelse lösenordet matchar inte!</string>
+    <string name="pattern_confirm">Bekräfta mönstret matchar inte!</string>
+    <string name="pattern_min_4_dots">Mönstret måste använda fyra punkter minst.</string>
+    <string name="wrong_password">Fel lösenord!</string>
+    <string name="please_enter_pin">Vänligen ange din pinkod.</string>
+    <string name="password_changed_successfully">Lösenordet ändrat framgångsrikt.</string>
+    <string name="recovery_question_changed_successfully">Återställningsfrågan ändrad framgångsrikt.</string>
+    <string name="enter_correct_security_answer">Ange korrekt säkerhetssvar.</string>
+    <string name="please_enter_answer">Vänligen ange ett svar!</string>
+    <string name="please_write_an_answer">Vänligen skriv ett svar</string>
+    <string name="toast_private">Ditt foto är säkert hos oss</string>
+    <string name="unlock_vault">Lås upp ditt privata kassaskåp.</string>
+    <string name="unhiding">Visa</string>
+    <string name="selected_media_files_successfully_unhide">Mediefiler osynliga framgångsrikt.</string>
+    <string name="internal_select_add">Lägg till</string>
+    <string name="security_question1">Vad var ditt smeknamn som barn?</string>
+    <string name="security_question2">Vad heter ditt husdjur?</string>
+    <string name="security_question3">Vem var din favoritlärare?</string>
+    <string name="security_question4">Vem är din favoritskådespelare?</string>
+    <string name="security_question5">Vem är din favoritskådespelerska?</string>
+    <string name="security_question6">Vem är din favoritcricketspelare?</string>
+    <string name="security_question7">Vem är din favoritfotbollsspelare?</string>
+    <string name="security_question8">Vad är ditt drömjobb?</string>
+    <string name="security_question9">Vem är din idrottsidol?</string>
+    <string name="security_question10">I vilken stad hade du ditt första jobb?</string>
 </resources>

@@ -57,7 +57,7 @@
  「すべてのファイルへのアクセス」も Google にとって非常に重要です。この許可を必要とするすべてのアプリは、公開前に Google による厳格な審査を受ける必要があります。悪意のあるアプリはこの権限を取得できません。
 
  以下のURLをクリックしてご覧ください 詳細: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009設定を開く</string>
+    <string name="open_settings">\t設定を開く</string>
     <string name="select_app_language">アプリの言語を選択</string>
     <string name="album_collage_new">新規</string>
     <string name="collage_maker_explore_title">コラージュメーカー</string>
@@ -390,4 +390,55 @@
     <string name="organizer_deleting_select_item">選択したすべての項目がデバイスから削除され、復元できなくなります。</string>
     <string name="organize_your_photos_quickly">写真をすばやく整理する</string>
     <string name="wrong_root_selected">誤ったフォルダが選択されました。SDカードのメインフォルダを選択してください</string>
+    <string name="set_pin">PIN を設定</string>
+    <string name="re_enter_pin">PIN を再入力</string>
+    <string name="draw_your_pattern">パターンを描画</string>
+    <string name="re_draw_your_pattern">パターンを再描画</string>
+    <string name="forgot_password_lock">パスワードをお忘れですか？</string>
+    <string name="hide_photo_private_permission">プライベートボールトの機能を使用して、最も機密性の高い写真や動画を安全に保存できます。</string>
+    <string name="add_item">アイテムを追加</string>
+    <string name="submit">提出する</string>
+    <string name="change_password">パスワードを変更する</string>
+    <string name="set_a_new_passcode">新しいパスコードを設定</string>
+    <string name="show_pattern">パターンを表示</string>
+    <string name="display_your_unique_pattern">独自のパターンを表示</string>
+    <string name="unlock_with_fingerprint">指紋で解除</string>
+    <string name="use_biometrics_for_security">セキュリティのために生体認証を使用</string>
+    <string name="change_recovery_question">回復質問を変更</string>
+    <string name="choose_another_recovery_question">別の回復質問を選択</string>
+    <string name="set_security_question">セキュリティ質問を設定！</string>
+    <string name="set_security_question_subtitle">セキュリティ質問を設定すると、将来のためにパスワードをリセットできます</string>
+    <string name="set_security_questions_title">セキュリティ質問を設定</string>
+    <string name="answer_at_least_Question">少なくとも3つの質問に答えてください</string>
+    <string name="your_answer">あなたの回答</string>
+    <string name="next">次</string>
+    <string name="password_recovery_option">パスワード回復オプション</string>
+    <string name="password_recovery_questions">パスワードをリセットするために、これらの質問にお答えください。</string>
+    <string name="confirm">確認</string>
+    <string name="privacy_settings">プライバシー設定</string>
+    <string name="password_confirm">確認用パスワードが一致しません！</string>
+    <string name="pattern_confirm">確認用パターンが一致しません！</string>
+    <string name="pattern_min_4_dots">パターンには最低でも4つのドットを使用する必要があります。</string>
+    <string name="wrong_password">パスワードが間違っています！</string>
+    <string name="please_enter_pin">PINを入力してください。</string>
+    <string name="password_changed_successfully">パスワードが正常に変更されました。</string>
+    <string name="recovery_question_changed_successfully">回復の質問が正常に変更されました。</string>
+    <string name="enter_correct_security_answer">正しいセキュリティ回答を入力してください。</string>
+    <string name="please_enter_answer">回答を入力してください！</string>
+    <string name="please_write_an_answer">回答を記入してください</string>
+    <string name="toast_private">あなたの写真は私たちと安全です</string>
+    <string name="unlock_vault">プライベートボールトを解除してください。</string>
+    <string name="unhiding">表示</string>
+    <string name="selected_media_files_successfully_unhide">メディアファイルが正常に非表示解除されました。</string>
+    <string name="internal_select_add">追加</string>
+    <string name="security_question1">あなたの幼少期のあだ名は何でしたか？</string>
+    <string name="security_question2">あなたのペットの名前は何ですか？</string>
+    <string name="security_question3">お気に入りの先生は誰でしたか？</string>
+    <string name="security_question4">お気に入りの俳優は誰ですか？</string>
+    <string name="security_question5">お気に入りの女優は誰ですか？</string>
+    <string name="security_question6">お気に入りのクリケット選手は誰ですか？</string>
+    <string name="security_question7">お気に入りのサッカー選手は誰ですか？</string>
+    <string name="security_question8">夢の仕事は何ですか？</string>
+    <string name="security_question9">スポーツのアイドルは誰ですか？</string>
+    <string name="security_question10">最初の仕事の都市はどこでしたか？</string>
 </resources>

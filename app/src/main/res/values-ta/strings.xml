@@ -57,7 +57,7 @@
  அனைத்து கோப்புகளும் அணுகல் என்பது கூகுளுக்கு மிகவும் முக்கியத்துவம் வாய்ந்தது. இந்த அனுமதி தேவைப்படும் எல்லா ஆப்ஸும் வெளியிடப்படுவதற்கு முன் கூகுள் கண்டிப்பான மதிப்பாய்வுக்கு உட்படுத்தப்பட வேண்டும். எந்த தீங்கிழைக்கும் பயன்பாடும் இந்த அனுமதியைப் பெற முடியாது.
 
  தெரிந்து கொள்ள பின்வரும் URL ஐ கிளிக் செய்யவும் மேலும் அறிய: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009அமைப்புகளைத் திறக்கவும்</string>
+    <string name="open_settings">\tஅமைப்புகளைத் திறக்கவும்</string>
     <string name="select_app_language">பயன்பாட்டு மொழியைத் தேர்ந்தெடு</string>
     <string name="album_collage_new">புது</string>
     <string name="collage_maker_explore_title">கோலாஜ் தயாரிப்பாளர்</string>
@@ -390,4 +390,55 @@
     <string name="organizer_deleting_select_item">தேர்ந்தெடுக்கப்பட்ட அனைத்து உருப்படிகளும் உங்கள் சாதனத்திலிருந்து அழிக்கப்படும் மற்றும் மீட்க முடியாது.</string>
     <string name="organize_your_photos_quickly">உங்கள் புகைப்படங்களை விரைவாக ஒழுங்கமைக்கவும்</string>
     <string name="wrong_root_selected">தவறான பூட்டு தேர்ந்தெடுக்கப்பட்டது, உங்கள் SD கார்டின் மூல கோப்புறையைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="set_pin">பின் அமை</string>
+    <string name="re_enter_pin">மீண்டும் பின் உள்ளிடவும்</string>
+    <string name="draw_your_pattern">உங்கள் படிமத்தை கம்பியாகுக!</string>
+    <string name="re_draw_your_pattern">மீண்டும் உங்கள் படிமத்தை வரையவும்</string>
+    <string name="forgot_password_lock">கடவுச்சொல் மறந்து விட்டீரா?</string>
+    <string name="hide_photo_private_permission">எங்கள் தனியாக்கப்பட்ட கோபுரம் அதிக உத்தம புகைப்படங்கள் மற்றும் காணொளிகளை உற்பத்திக்கு பதிலளிக்கவும்.</string>
+    <string name="add_item">உருப்படியைச் சேர்க்கவும்</string>
+    <string name="submit">சமர்ப்பிக்கவும்</string>
+    <string name="change_password">கடவுச்சொல் மாற்று</string>
+    <string name="set_a_new_passcode">புதிய கடவுச்சொல் அட்டவணை அமை</string>
+    <string name="show_pattern">மாதிரியைக் காட்டு</string>
+    <string name="display_your_unique_pattern">உங்கள் அதிக வேறுபாடுகளைக் காட்டு</string>
+    <string name="unlock_with_fingerprint">விமர்சித மூலாதாரத்தைப் பயன்படுத்துக</string>
+    <string name="use_biometrics_for_security">பாதுகாப்புக்காக விமர்சித மூலாதாரத்தை பயன்படுத்துக</string>
+    <string name="change_recovery_question">மீள்படிதல் கேள்வி மாற்று</string>
+    <string name="choose_another_recovery_question">மீள்படிதல் கேள்வி வேறொன்றை தெரிவுசெய்க</string>
+    <string name="set_security_question">பாதுகாப்பு கேள்வி அமைக்கவும்!</string>
+    <string name="set_security_question_subtitle">தாங்கள் மௌனமாக விட்டால் எதிர்வரும் மூலம் உங்கள் கடவுச்சொல்லை மீள்படுத்த அத்தகைய கேள்விகள் உங்கள் உதவி செய்வது</string>
+    <string name="set_security_questions_title">பாதுகாப்பு கேள்விகள் அமைக்க</string>
+    <string name="answer_at_least_Question">குறைந்தது 3 கேள்விகளுக்கு பதிலளிக்கவும்</string>
+    <string name="your_answer">உங்கள் பதில்</string>
+    <string name="next">அடுத்தது</string>
+    <string name="password_recovery_option">கடவுச்சொல் மீள்பெறும் விருப்பத்தைத் தேர்வுசெய்க</string>
+    <string name="password_recovery_questions">உங்கள் கடவுச்சொல்லை மீள்பெற இந்த கேள்விகளுக்கு பதிலளிக்கவும்.</string>
+    <string name="confirm">உறுதிசெய்</string>
+    <string name="privacy_settings">தனியுரிமை அமைப்புகள்</string>
+    <string name="password_confirm">உறுதிப்படுத்தும் கடவுச்சொல் பொருந்தவில்லை!</string>
+    <string name="pattern_confirm">உறுதிப்படுத்தும் மாதிரி பொருந்தவில்லை!</string>
+    <string name="pattern_min_4_dots">முதல் நான்கு டாட்களைக் கொண்டு கொள்ள வேண்டும்.</string>
+    <string name="wrong_password">தவறான கடவுச்சொல்!</string>
+    <string name="please_enter_pin">உங்கள் பின் உள்ளிடவும்.</string>
+    <string name="password_changed_successfully">கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டுள்ளது.</string>
+    <string name="recovery_question_changed_successfully">மீட்டமைப்பு கேள்வி வெற்றிகரமாக மாற்றப்பட்டுள்ளது.</string>
+    <string name="enter_correct_security_answer">சரியான பாதுகாப்பு பதிலை உள்ளிடவும்!</string>
+    <string name="please_enter_answer">தயவுசெய்து பதில் உள்ளிடவும்!</string>
+    <string name="please_write_an_answer">ஒரு பதில் எழுதவும்</string>
+    <string name="toast_private">உங்கள் புகைப்படம் எங்களுடன் பாதுகாக்கப்பட்டுள்ளது</string>
+    <string name="unlock_vault">உங்கள் தனியாக்கப்பட்ட கோபுரத்தை அனைத்தும் விரிக்கவும்.</string>
+    <string name="unhiding">காட்டுதல்</string>
+    <string name="selected_media_files_successfully_unhide">மீடியா கோப்புகள் வெற்றியாக மீடியா கோப்புகள் மீட்டெடுக்கப்பட்டன.</string>
+    <string name="internal_select_add">சேர்க்க</string>
+    <string name="security_question1">உங்கள் குழந்தைத் தம்பதி பெயர் என்ன?</string>
+    <string name="security_question2">உங்கள் நாயினத் தெய்வம் பெயர் என்ன?</string>
+    <string name="security_question3">உங்கள் பிடித்த ஆசிரியர் யார்?</string>
+    <string name="security_question4">உங்கள் பிடித்த நடிகர் யார்?</string>
+    <string name="security_question5">உங்கள் பிடித்த நடிகை யார்?</string>
+    <string name="security_question6">உங்கள் பிடித்த கிரிக்கெட் விளையாளர் யார்?</string>
+    <string name="security_question7">உங்கள் பிடித்த கால்பந்து விளையாளர் யார்?</string>
+    <string name="security_question8">உங்கள் கனவு தொழில் என்ன?</string>
+    <string name="security_question9">உங்கள் விளையாட்டு மதிப்பிடிப்பாளர் யார்?</string>
+    <string name="security_question10">உங்கள் முதல் வேலை நகரம் எத்தனாவது?</string>
 </resources>

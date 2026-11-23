@@ -57,7 +57,7 @@
  Akses Semua Fail juga amat penting untuk Google. Semua apl yang memerlukan kebenaran ini mesti menjalani semakan ketat oleh Google sebelum diterbitkan. Tiada apl berniat jahat boleh mendapat kebenaran ini.
 
  Klik URL berikut untuk mengetahui untuk lebih lanjut: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Buka Tetapan</string>
+    <string name="open_settings">\tBuka Tetapan</string>
     <string name="select_app_language">Pilih Bahasa Aplikasi</string>
     <string name="album_collage_new">Baru</string>
     <string name="collage_maker_explore_title">Pembuat Kolaj</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Kolaj</string>
     <string name="explore_collage_desc">Gabungkan foto anda</string>
     <string name="vault">Peti Simpanan</string>
-    <string name="str_home_favourite">\u0009Kegemaran</string>
+    <string name="str_home_favourite">\tKegemaran</string>
     <string name="str_home_Moments">Saat</string>
     <string name="str_home_place">Tempat</string>
     <string name="str_home_Recycle_bin">Tong Kitar Semula</string>
@@ -390,4 +390,55 @@ recycle bin"</string>
     <string name="organizer_deleting_select_item">Semua item yang dipilih akan dipadamkan dari peranti anda dan tidak boleh dipulihkan.</string>
     <string name="organize_your_photos_quickly">Susun foto anda dengan cepat</string>
     <string name="wrong_root_selected">Folder yang salah dipilih, sila pilih folder utama kad SD anda</string>
+    <string name="set_pin">Tetapkan PIN</string>
+    <string name="re_enter_pin">Masukkan semula PIN</string>
+    <string name="draw_your_pattern">Lukis Corak Anda</string>
+    <string name="re_draw_your_pattern">Lukis semula corak anda</string>
+    <string name="forgot_password_lock">Lupa kata laluan?</string>
+    <string name="hide_photo_private_permission">Ciri Kedai Simpanan Peribadi kami membolehkan anda menyimpan foto dan video yang paling sensitif anda dengan selamat.</string>
+    <string name="add_item">Tambah Item</string>
+    <string name="submit">Hantar</string>
+    <string name="change_password">Tukar Kata Laluan</string>
+    <string name="set_a_new_passcode">Tetapkan kod laluan baru</string>
+    <string name="show_pattern">Tunjukkan Corak</string>
+    <string name="display_your_unique_pattern">Paparkan corak unik anda</string>
+    <string name="unlock_with_fingerprint">Buka kunci dengan Cap Jari</string>
+    <string name="use_biometrics_for_security">Guna biometrik untuk keselamatan</string>
+    <string name="change_recovery_question">Tukar Soalan Pemulihan</string>
+    <string name="choose_another_recovery_question">Pilih soalan pemulihan lain</string>
+    <string name="set_security_question">Tetapkan Soalan Keselamatan!</string>
+    <string name="set_security_question_subtitle">Soalan keselamatan membolehkan anda menetapkan semula kata laluan anda jika anda lupa pada masa hadapan</string>
+    <string name="set_security_questions_title">Tetapkan Soalan Keselamatan</string>
+    <string name="answer_at_least_Question">Jawab sekurang-kurangnya 3 Soalan</string>
+    <string name="your_answer">Jawapan anda</string>
+    <string name="next">Seterusnya</string>
+    <string name="password_recovery_option">Pilihan Pemulihan Kata Laluan</string>
+    <string name="password_recovery_questions">Sila jawab soalan-soalan ini untuk menetapkan semula kata laluan anda.</string>
+    <string name="confirm">Sahkan</string>
+    <string name="privacy_settings">Tetapan Privasi</string>
+    <string name="password_confirm">Kata laluan pengesahan tidak sepadan!</string>
+    <string name="pattern_confirm">Pola pengesahan tidak sepadan!</string>
+    <string name="pattern_min_4_dots">Corak mesti menggunakan empat titik sekurang-kurangnya.</string>
+    <string name="wrong_password">Kata laluan salah!</string>
+    <string name="please_enter_pin">Sila masukkan PIN anda.</string>
+    <string name="password_changed_successfully">Kata laluan berjaya ditukar.</string>
+    <string name="recovery_question_changed_successfully">Soalan pemulihan berjaya ditukar.</string>
+    <string name="enter_correct_security_answer">Masukkan jawapan keselamatan yang betul.</string>
+    <string name="please_enter_answer">Sila masukkan jawapan!</string>
+    <string name="please_write_an_answer">Sila tulis jawapan</string>
+    <string name="toast_private">Foto anda selamat bersama kami</string>
+    <string name="unlock_vault">Buka peti peribadi anda.</string>
+    <string name="unhiding">Menunjukkan</string>
+    <string name="selected_media_files_successfully_unhide">Fail media berjaya diundur.</string>
+    <string name="internal_select_add">Tambah</string>
+    <string name="security_question1">Apakah nama gelaran semasa kanak-kanak anda?</string>
+    <string name="security_question2">Apakah nama haiwan kesayangan anda?</string>
+    <string name="security_question3">Siapakah guru kegemaran anda?</string>
+    <string name="security_question4">Siapakah pelakon kegemaran anda?</string>
+    <string name="security_question5">Siapakah pelakon wanita kegemaran anda?</string>
+    <string name="security_question6">Siapakah pemain kriket kegemaran anda?</string>
+    <string name="security_question7">Siapakah pemain bola sepak kegemaran anda?</string>
+    <string name="security_question8">Apakah pekerjaan impian anda?</string>
+    <string name="security_question9">Siapakah idol sukan anda?</string>
+    <string name="security_question10">Di bandar manakah anda mempunyai pekerjaan pertama?</string>
 </resources>

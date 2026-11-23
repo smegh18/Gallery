@@ -57,7 +57,7 @@
  „Dostęp do wszystkich plików” ma również ogromne znaczenie dla Google. Wszystkie aplikacje wymagające tego pozwolenia muszą przed publikacją przejść rygorystyczną kontrolę Google. Żadna złośliwa aplikacja nie może uzyskać tego uprawnienia.
 
  Kliknij poniższy adres URL, aby się dowiedzieć więcej informacji: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Otwórz ustawienia</string>
+    <string name="open_settings">\tOtwórz ustawienia</string>
     <string name="select_app_language">Wybierz język aplikacji</string>
     <string name="album_collage_new">Nowy</string>
     <string name="collage_maker_explore_title">Twórca Kolaży</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Kolaż</string>
     <string name="explore_collage_desc">Połącz swoje zdjęcia</string>
     <string name="vault">Sejf</string>
-    <string name="str_home_favourite">\u0009Ulubione</string>
+    <string name="str_home_favourite">\tUlubione</string>
     <string name="str_home_Moments">Chwile</string>
     <string name="str_home_place">Miejsce</string>
     <string name="str_home_Recycle_bin">Kosz</string>
@@ -389,4 +389,55 @@ Skanowanie zakończone!"</string>
     <string name="organizer_deleting_select_item">Wszystkie wybrane elementy zostaną usunięte z urządzenia i nie będzie można ich odzyskać.</string>
     <string name="organize_your_photos_quickly">Szybkie porządkowanie zdjęć</string>
     <string name="wrong_root_selected">Wybrano niewłaściwy folder, proszę wybrać główny folder karty SD</string>
+    <string name="set_pin">Ustaw PIN</string>
+    <string name="re_enter_pin">Wprowadź PIN ponownie</string>
+    <string name="draw_your_pattern">Narysuj swój wzór</string>
+    <string name="re_draw_your_pattern">Narysuj swój wzór ponownie</string>
+    <string name="forgot_password_lock">Zapomniałeś hasła?</string>
+    <string name="hide_photo_private_permission">Nasza funkcja Prywatnej Skrzyni umożliwia bezpieczne przechowywanie najbardziej wrażliwych zdjęć i filmów.</string>
+    <string name="add_item">Dodaj Elementy</string>
+    <string name="submit">Prześlij</string>
+    <string name="change_password">Zmień Hasło</string>
+    <string name="set_a_new_passcode">Ustaw nowy kod dostępu</string>
+    <string name="show_pattern">Pokaż Wzór</string>
+    <string name="display_your_unique_pattern">Pokaż swój unikalny wzór</string>
+    <string name="unlock_with_fingerprint">Odblokuj za pomocą Odcisku Palca</string>
+    <string name="use_biometrics_for_security">Użyj biometrii dla bezpieczeństwa</string>
+    <string name="change_recovery_question">Zmień Pytanie Awaryjne</string>
+    <string name="choose_another_recovery_question">Wybierz inne pytanie awaryjne</string>
+    <string name="set_security_question">Ustaw pytanie zabezpieczające!</string>
+    <string name="set_security_question_subtitle">Pytanie zabezpieczające pozwala zresetować hasło, jeśli je zapomnisz w przyszłości</string>
+    <string name="set_security_questions_title">Ustaw pytania zabezpieczające</string>
+    <string name="answer_at_least_Question">Odpowiedz na co najmniej 3 pytania</string>
+    <string name="your_answer">Twoja odpowiedź</string>
+    <string name="next">Dalej</string>
+    <string name="password_recovery_option">Opcja odzyskiwania hasła</string>
+    <string name="password_recovery_questions">Proszę odpowiedzieć na te pytania, aby zresetować swoje hasło.</string>
+    <string name="confirm">Potwierdź</string>
+    <string name="privacy_settings">Ustawienia Prywatności</string>
+    <string name="password_confirm">Potwierdzenie hasła nie pasuje!</string>
+    <string name="pattern_confirm">Potwierdzenie wzoru nie pasuje!</string>
+    <string name="pattern_min_4_dots">Wzór musi używać co najmniej czterech kropek.</string>
+    <string name="wrong_password">Nieprawidłowe hasło!</string>
+    <string name="please_enter_pin">Proszę wprowadzić swój PIN.</string>
+    <string name="password_changed_successfully">Hasło zostało pomyślnie zmienione.</string>
+    <string name="recovery_question_changed_successfully">Pytanie o odzyskiwanie zostało pomyślnie zmienione.</string>
+    <string name="enter_correct_security_answer">Wprowadź poprawną odpowiedź zabezpieczającą.</string>
+    <string name="please_enter_answer">Proszę podać odpowiedź!</string>
+    <string name="please_write_an_answer">Proszę napisać odpowiedź</string>
+    <string name="toast_private">Twoje zdjęcie jest u nas bezpieczne</string>
+    <string name="unlock_vault">Odblokuj swoją prywatną skrzynię.</string>
+    <string name="unhiding">Odkrywanie</string>
+    <string name="selected_media_files_successfully_unhide">Pliki multimedialne przywrócone pomyślnie.</string>
+    <string name="internal_select_add">Dodaj</string>
+    <string name="security_question1">Jakie było twoje dziecięce przezwisko?</string>
+    <string name="security_question2">Jak ma na imię twój zwierzak?</string>
+    <string name="security_question3">Kto był twoim ulubionym nauczycielem?</string>
+    <string name="security_question4">Kto jest twoim ulubionym aktorem?</string>
+    <string name="security_question5">Kto jest twoją ulubioną aktorką?</string>
+    <string name="security_question6">Kto jest twoim ulubionym krykiecistą?</string>
+    <string name="security_question7">Kto jest twoim ulubionym piłkarzem?</string>
+    <string name="security_question8">Jaka jest twoja wymarzona praca?</string>
+    <string name="security_question9">Kto jest twoim idolem sportowym?</string>
+    <string name="security_question10">W jakim mieście miałeś swoją pierwszą pracę?</string>
 </resources>

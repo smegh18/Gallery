@@ -57,7 +57,7 @@
  Anche All Files Access è di grande importanza per Google. Tutte le app che richiedono questa autorizzazione devono essere sottoposte a una rigorosa revisione da parte di Google prima di essere pubblicate. Nessuna app dannosa può ottenere questa autorizzazione.
 
  Fare clic sul seguente URL per saperlo per ulteriori informazioni: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Apri impostazioni</string>
+    <string name="open_settings">\tApri impostazioni</string>
     <string name="select_app_language">Seleziona Lingua App</string>
     <string name="album_collage_new">Nuovo</string>
     <string name="collage_maker_explore_title">Creatore di Collage</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Collage</string>
     <string name="explore_collage_desc">Combina le tue foto</string>
     <string name="vault">Cassaforte</string>
-    <string name="str_home_favourite">\u0009Preferiti</string>
+    <string name="str_home_favourite">\tPreferiti</string>
     <string name="str_home_Moments">Momenti</string>
     <string name="str_home_place">Luogo</string>
     <string name="str_home_Recycle_bin">Cestino</string>
@@ -390,4 +390,55 @@ cestino"</string>
     <string name="organizer_deleting_select_item">Tutti gli elementi selezionati verranno eliminati dal dispositivo e non potranno essere recuperati.</string>
     <string name="organize_your_photos_quickly">Organizza rapidamente le tue foto</string>
     <string name="wrong_root_selected">Cartella errata selezionata, per favore seleziona la cartella principale della tua scheda SD</string>
+    <string name="set_pin">Imposta il PIN</string>
+    <string name="re_enter_pin">Reinserisci il PIN</string>
+    <string name="draw_your_pattern">Disegna il tuo modello</string>
+    <string name="re_draw_your_pattern">Ridisegna il tuo modello</string>
+    <string name="forgot_password_lock">Hai dimenticato la password?</string>
+    <string name="hide_photo_private_permission">La nostra funzione Cassetta di Sicurezza Privata ti permette di archiviare in modo sicuro le foto e i video più sensibili.</string>
+    <string name="add_item">Aggiungi Elementi</string>
+    <string name="submit">Invia</string>
+    <string name="change_password">Cambia Password</string>
+    <string name="set_a_new_passcode">Imposta un nuovo codice</string>
+    <string name="show_pattern">Mostra Modello</string>
+    <string name="display_your_unique_pattern">Mostra il tuo modello unico</string>
+    <string name="unlock_with_fingerprint">"Sblocca con l'Impronta Digitale"</string>
+    <string name="use_biometrics_for_security">Usa il riconoscimento biometrico per la sicurezza</string>
+    <string name="change_recovery_question">Cambia Domanda di Recupero</string>
+    <string name="choose_another_recovery_question">"Scegli un'altra domanda di recupero"</string>
+    <string name="set_security_question">Imposta Domanda di Sicurezza!</string>
+    <string name="set_security_question_subtitle">La domanda di sicurezza ti permette di reimpostare la password se la dimentichi in futuro</string>
+    <string name="set_security_questions_title">Imposta Domande di Sicurezza</string>
+    <string name="answer_at_least_Question">Rispondi almeno a 3 domande</string>
+    <string name="your_answer">La tua risposta</string>
+    <string name="next">Prossimo</string>
+    <string name="password_recovery_option">Opzione recupero password</string>
+    <string name="password_recovery_questions">Rispondi a queste domande per reimpostare la tua password.</string>
+    <string name="confirm">Conferma</string>
+    <string name="privacy_settings">Impostazioni di Privacy</string>
+    <string name="password_confirm">La password di conferma non corrisponde!</string>
+    <string name="pattern_confirm">Il modello di conferma non corrisponde!</string>
+    <string name="pattern_min_4_dots">Il modello deve utilizzare almeno quattro punti.</string>
+    <string name="wrong_password">Password errata!</string>
+    <string name="please_enter_pin">Inserisci il tuo PIN.</string>
+    <string name="password_changed_successfully">Password cambiata con successo.</string>
+    <string name="recovery_question_changed_successfully">Domanda di recupero cambiata con successo.</string>
+    <string name="enter_correct_security_answer">Inserisci la risposta di sicurezza corretta.</string>
+    <string name="please_enter_answer">Inserisci una risposta!</string>
+    <string name="please_write_an_answer">Si prega di scrivere una risposta</string>
+    <string name="toast_private">La tua foto è al sicuro con noi</string>
+    <string name="unlock_vault">Sblocca la tua cassetta di sicurezza privata.</string>
+    <string name="unhiding">Visualizzando</string>
+    <string name="selected_media_files_successfully_unhide">File multimediali resi visibili con successo.</string>
+    <string name="internal_select_add">Aggiungi</string>
+    <string name="security_question1">Qual era il tuo soprannome da bambino?</string>
+    <string name="security_question2">Qual è il nome del tuo animale domestico?</string>
+    <string name="security_question3">Chi era il tuo insegnante preferito?</string>
+    <string name="security_question4">Chi è il tuo attore preferito?</string>
+    <string name="security_question5">Chi è la tua attrice preferita?</string>
+    <string name="security_question6">Chi è il tuo giocatore di cricket preferito?</string>
+    <string name="security_question7">Chi è il tuo calciatore preferito?</string>
+    <string name="security_question8">Qual è il tuo lavoro dei sogni?</string>
+    <string name="security_question9">Chi è il tuo idolo sportivo?</string>
+    <string name="security_question10">In quale città è stato il tuo primo lavoro?</string>
 </resources>

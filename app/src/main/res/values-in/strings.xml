@@ -57,7 +57,7 @@
  Akses Semua File juga sangat penting bagi Google. Semua aplikasi yang memerlukan izin ini harus menjalani peninjauan ketat oleh Google sebelum dipublikasikan. Tidak ada aplikasi berbahaya yang bisa mendapatkan izin ini.
 
  Klik URL berikut untuk mengetahuinya untuk lebih lanjut: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009Buka Pengaturan</string>
+    <string name="open_settings">\tBuka Pengaturan</string>
     <string name="select_app_language">Pilih Bahasa Aplikasi</string>
     <string name="album_collage_new">Baru</string>
     <string name="collage_maker_explore_title">Pembuat Kolase</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Kolase</string>
     <string name="explore_collage_desc">Gabungkan foto Anda</string>
     <string name="vault">Brankas</string>
-    <string name="str_home_favourite">\u0009Favorit</string>
+    <string name="str_home_favourite">\tFavorit</string>
     <string name="str_home_Moments">Momen</string>
     <string name="str_home_place">Tempat</string>
     <string name="str_home_Recycle_bin">Tempat Sampah</string>
@@ -390,4 +390,55 @@ keranjang sampah"</string>
     <string name="organizer_deleting_select_item">Semua item yang dipilih akan dihapus dari perangkat Anda dan tidak dapat dipulihkan.</string>
     <string name="organize_your_photos_quickly">Atur foto Anda dengan cepat</string>
     <string name="wrong_root_selected">Folder yang salah dipilih, silakan pilih folder utama dari kartu SD Anda</string>
+    <string name="set_pin">Atur PIN</string>
+    <string name="re_enter_pin">Masukkan ulang PIN</string>
+    <string name="draw_your_pattern">Gambar Pola Anda</string>
+    <string name="re_draw_your_pattern">Gambar ulang pola Anda</string>
+    <string name="forgot_password_lock">Lupa kata sandi?</string>
+    <string name="hide_photo_private_permission">Fitur Brankas Pribadi kami memungkinkan Anda menyimpan foto dan video paling sensitif Anda dengan aman.</string>
+    <string name="add_item">Tambah Item</string>
+    <string name="submit">Kirim</string>
+    <string name="change_password">Ubah Kata Sandi</string>
+    <string name="set_a_new_passcode">Atur kode sandi baru</string>
+    <string name="show_pattern">Tampilkan Pola</string>
+    <string name="display_your_unique_pattern">Tampilkan pola unik Anda</string>
+    <string name="unlock_with_fingerprint">Buka kunci dengan Sidik Jari</string>
+    <string name="use_biometrics_for_security">Gunakan biometrik untuk keamanan</string>
+    <string name="change_recovery_question">Ubah Pertanyaan Pemulihan</string>
+    <string name="choose_another_recovery_question">Pilih pertanyaan pemulihan lainnya</string>
+    <string name="set_security_question">Atur Pertanyaan Keamanan!</string>
+    <string name="set_security_question_subtitle">Pertanyaan keamanan memungkinkan Anda mereset kata sandi jika Anda lupa di masa depan</string>
+    <string name="set_security_questions_title">Atur Pertanyaan Keamanan</string>
+    <string name="answer_at_least_Question">Jawab setidaknya 3 Pertanyaan</string>
+    <string name="your_answer">Jawaban Anda</string>
+    <string name="next">Berikutnya</string>
+    <string name="password_recovery_option">Opsi Pemulihan Kata Sandi</string>
+    <string name="password_recovery_questions">Silakan jawab pertanyaan-pertanyaan ini untuk mereset kata sandi Anda.</string>
+    <string name="confirm">Konfirmasi</string>
+    <string name="privacy_settings">Pengaturan Privasi</string>
+    <string name="password_confirm">Kata sandi konfirmasi tidak cocok!</string>
+    <string name="pattern_confirm">Konfirmasi pola tidak cocok!</string>
+    <string name="pattern_min_4_dots">Pola harus menggunakan empat titik setidaknya.</string>
+    <string name="wrong_password">Kata sandi salah!</string>
+    <string name="please_enter_pin">Silakan masukkan PIN Anda.</string>
+    <string name="password_changed_successfully">Kata sandi berhasil diubah.</string>
+    <string name="recovery_question_changed_successfully">Pertanyaan pemulihan berhasil diubah.</string>
+    <string name="enter_correct_security_answer">Masukkan jawaban keamanan yang benar.</string>
+    <string name="please_enter_answer">Silakan masukkan jawaban!</string>
+    <string name="please_write_an_answer">Silakan tulis jawaban</string>
+    <string name="toast_private">Foto Anda aman bersama kami</string>
+    <string name="unlock_vault">Buka brankas pribadi Anda.</string>
+    <string name="unhiding">Menampilkan</string>
+    <string name="selected_media_files_successfully_unhide">File media berhasil diunhide.</string>
+    <string name="internal_select_add">Tambahkan</string>
+    <string name="security_question1">Apa julukan masa kecil Anda?</string>
+    <string name="security_question2">Apa nama hewan peliharaan Anda?</string>
+    <string name="security_question3">Siapakah guru favorit Anda?</string>
+    <string name="security_question4">Siapakah aktor favorit Anda?</string>
+    <string name="security_question5">Siapakah aktris favorit Anda?</string>
+    <string name="security_question6">Siapakah kriket favorit Anda?</string>
+    <string name="security_question7">Siapakah pemain sepak bola favorit Anda?</string>
+    <string name="security_question8">Apa pekerjaan impian Anda?</string>
+    <string name="security_question9">Siapakah idol olahraga Anda?</string>
+    <string name="security_question10">Di kota mana Anda pertama kali bekerja?</string>
 </resources>

@@ -57,7 +57,7 @@
  Google के लिए ऑल फाइल्स एक्सेस का भी बहुत महत्व है। जिन ऐप्स को इस अनुमति की आवश्यकता है, उन्हें प्रकाशित होने से पहले Google द्वारा कड़ी समीक्षा से गुजरना होगा। कोई भी दुर्भावनापूर्ण ऐप यह अनुमति हासिल नहीं कर सकता.
 
  जानने के लिए निम्न URL पर क्लिक करें अधिक जानकारी के लिए: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\u0009सेटिंग्स खोलें</string>
+    <string name="open_settings">\tसेटिंग्स खोलें</string>
     <string name="select_app_language">ऐप भाषा चुनें</string>
     <string name="album_collage_new">नया</string>
     <string name="collage_maker_explore_title">कोलाज मेकर</string>
@@ -390,4 +390,55 @@
     <string name="organizer_deleting_select_item">सभी चयनित आइटम्स आपके डिवाइस से हटा दिए जाएंगे और पुनर्प्राप्त नहीं किए जा सकेंगे।</string>
     <string name="organize_your_photos_quickly">अपनी फ़ोटो शीघ्रता से व्यवस्थित करें</string>
     <string name="wrong_root_selected">गलत फ़ोल्डर चयन किया गया है, कृपया अपने SD कार्ड के मुख्य फ़ोल्डर को चुनें</string>
+    <string name="set_pin">पिन सेट करें</string>
+    <string name="re_enter_pin">पिन फिर से दर्ज करें</string>
+    <string name="draw_your_pattern">अपना पैटर्न बनाएं</string>
+    <string name="re_draw_your_pattern">अपने पैटर्न को फिर से ड्रा करें</string>
+    <string name="forgot_password_lock">पासवर्ड भूल गए?</string>
+    <string name="hide_photo_private_permission">हमारे प्राइवेट वॉल्ट की सुविधा आपको आपकी सबसे संवेदनशील तस्वीरें और वीडियो सुरक्षित रूप से संग्रहीत करने की अनुमति देती है।</string>
+    <string name="add_item">आइटम जोड़ें</string>
+    <string name="submit">प्रस्तुत</string>
+    <string name="change_password">पासवर्ड बदलें</string>
+    <string name="set_a_new_passcode">नया पासकोड सेट करें</string>
+    <string name="show_pattern">पैटर्न दिखाएं</string>
+    <string name="display_your_unique_pattern">अपना विशिष्ट पैटर्न प्रदर्शित करें</string>
+    <string name="unlock_with_fingerprint">फिंगरप्रिंट से अनलॉक करें</string>
+    <string name="use_biometrics_for_security">सुरक्षा के लिए बायोमेट्रिक्स का उपयोग करें</string>
+    <string name="change_recovery_question">पुनर्प्राप्ति प्रश्न बदलें</string>
+    <string name="choose_another_recovery_question">एक और पुनर्प्राप्ति प्रश्न चुनें</string>
+    <string name="set_security_question">सुरक्षा प्रश्न सेट करें!</string>
+    <string name="set_security_question_subtitle">सुरक्षा प्रश्न आपको भविष्य में अगर आप पासवर्ड भूल जाते हैं तो उसे रीसेट करने की अनुमति देता है</string>
+    <string name="set_security_questions_title">सुरक्षा प्रश्न सेट करें</string>
+    <string name="answer_at_least_Question">कम से कम 3 प्रश्नों का जवाब दें</string>
+    <string name="your_answer">आपका उत्तर</string>
+    <string name="next">अगला</string>
+    <string name="password_recovery_option">पासवर्ड रिकवरी विकल्प</string>
+    <string name="password_recovery_questions">कृपया अपने पासवर्ड रीसेट करने के लिए इन सवालों का जवाब दें।</string>
+    <string name="confirm">पुष्टि करें</string>
+    <string name="privacy_settings">गोपनीयता सेटिंग्स</string>
+    <string name="password_confirm">पासवर्ड की पुष्टि मेल नहीं खाती!</string>
+    <string name="pattern_confirm">पैटर्न की पुष्टि मेल नहीं खाती!</string>
+    <string name="pattern_min_4_dots">पैटर्न में कम से कम चार डॉट होने चाहिए।</string>
+    <string name="wrong_password">गलत पासवर्ड!</string>
+    <string name="please_enter_pin">कृपया अपना पिन दर्ज करें।</string>
+    <string name="password_changed_successfully">पासवर्ड सफलतापूर्वक बदला गया है।</string>
+    <string name="recovery_question_changed_successfully">वसूली प्रश्न सफलतापूर्वक बदल गया है।</string>
+    <string name="enter_correct_security_answer">सही सुरक्षा उत्तर दर्ज करें।</string>
+    <string name="please_enter_answer">कृपया एक उत्तर दर्ज करें!</string>
+    <string name="please_write_an_answer">कृपया एक उत्तर लिखें</string>
+    <string name="toast_private">आपकी फ़ोटो हमारे साथ सुरक्षित है</string>
+    <string name="unlock_vault">अपने प्राइवेट वॉल्ट को खोलें।</string>
+    <string name="unhiding">दिखाना</string>
+    <string name="selected_media_files_successfully_unhide">मीडिया फाइल्स सफलतापूर्वक अनहाइड केली गई.</string>
+    <string name="internal_select_add">जोड़ें</string>
+    <string name="security_question1">आपका बचपन का उपनाम क्या था?</string>
+    <string name="security_question2">आपका पालतू जानवर का नाम क्या है?</string>
+    <string name="security_question3">आपका पसंदीदा शिक्षक कौन थे?</string>
+    <string name="security_question4">आपका पसंदीदा अभिनेता कौन हैं?</string>
+    <string name="security_question5">आपका पसंदीदा अभिनेत्री कौन हैं?</string>
+    <string name="security_question6">आपका पसंदीदा क्रिकेटर कौन हैं?</string>
+    <string name="security_question7">आपका पसंदीदा फुटबॉलर कौन हैं?</string>
+    <string name="security_question8">आपका सपने की नौकरी क्या है?</string>
+    <string name="security_question9">आपका स्पोर्ट्स आदर्श कौन हैं?</string>
+    <string name="security_question10">आपकी पहली नौकरी किस शहर में थी?</string>
 </resources>
