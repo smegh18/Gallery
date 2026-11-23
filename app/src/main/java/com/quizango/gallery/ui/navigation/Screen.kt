@@ -45,7 +45,10 @@ sealed class Screen(val route: String) {
     data object Duplicates : Screen("duplicates")
     data object VaultLock : Screen("vault_lock")
     data object VaultMedia : Screen("vault_media")
-    data object VaultChangeLock : Screen("vault/change_lock")
+    /** Lock opened for Settings (type 1 Change Password, 2 Change Recovery Question) or the Add to Private gate (openVault false). */
+    data object VaultLockFor : Screen("vault/lock/{type}/{openVault}") {
+        fun createRoute(type: Int, openVault: Boolean): String = "vault/lock/$type/$openVault"
+    }
     data object VaultAdd : Screen("vault/add")
     data object Cleaner : Screen("cleaner")
     data object Editor : Screen("editor?path={path}&tab={tab}") {

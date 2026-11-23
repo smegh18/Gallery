@@ -377,15 +377,26 @@ fun GalleryNavHost(
             )
         }
 
-        composable(Screen.VaultChangeLock.route) {
-            VaultLockDestination(navController, app, Screen.VaultChangeLock.route, type = 1, openVault = false)
+        composable(
+            route = Screen.VaultLockFor.route,
+            arguments = listOf(
+                navArgument("type") { type = NavType.IntType },
+                navArgument("openVault") { type = NavType.BoolType }
+            )
+        ) { entry ->
+            VaultLockDestination(
+                navController, app, Screen.VaultLockFor.route,
+                type = entry.arguments?.getInt("type") ?: 0,
+                openVault = entry.arguments?.getBoolean("openVault") ?: true
+            )
         }
 
         composable(Screen.VaultSetting.route) {
             VaultSettingScreen(
                 appPreferences = app.preferences,
-                onNavigateToChangePin = { navController.navigateOnce(Screen.VaultChangeLock.route) },
-                onNavigateToRecoveryQuestion = { navController.navigateOnce(Screen.VaultRecoveryQuestion.route) },
+                onNavigateToChangePin = { navController.navigate(Screen.VaultLockFor.createRoute(1, false)) { launchSingleTop = true } },
+                // S4: Settings never opens the question directly; the lock unlocks first (TYPE 2)
+                onNavigateToRecoveryQuestion = { navController.navigate(Screen.VaultLockFor.createRoute(2, false)) { launchSingleTop = true } },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

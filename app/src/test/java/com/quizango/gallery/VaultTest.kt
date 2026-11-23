@@ -97,5 +97,8 @@ class VaultTest {
         assertEquals("vault/settings", Screen.VaultSetting.route)
         assertEquals("vault/recovery_question", Screen.VaultRecoveryQuestion.route)
         assertEquals("vault/forgot_password", Screen.VaultForgotPassword.route)
+        assertEquals("vault/lock/{type}/{openVault}", Screen.VaultLockFor.route)
+        assertEquals("vault/lock/1/false", Screen.VaultLockFor.createRoute(1, false))
+        assertEquals("vault/lock/2/false", Screen.VaultLockFor.createRoute(2, false))
     }
 }

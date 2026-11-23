@@ -35,7 +35,7 @@ fun VaultSettingScreen(
     fun toggleFingerprint(enable: Boolean) {
         val reason = if (enable) VaultBiometric.unavailableReason(settingsContext) else null
         if (reason != null) {
-            android.widget.Toast.makeText(settingsContext, reason, android.widget.Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(settingsContext, settingsContext.getString(reason), android.widget.Toast.LENGTH_SHORT).show()
         } else {
             scope.launch { appPreferences.setFingerprintEnabled(enable) }
         }
