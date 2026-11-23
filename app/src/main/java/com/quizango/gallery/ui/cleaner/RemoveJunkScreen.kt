@@ -39,6 +39,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
+import androidx.compose.ui.res.colorResource
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.quizango.gallery.ui.home.drawableBackground
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.job
 import com.quizango.gallery.ui.theme.cardBackground
 import com.quizango.gallery.ui.theme.cardBorder
 import com.quizango.gallery.ui.theme.isDark
@@ -83,6 +93,59 @@ fun formatStorageBytes(bytes: Long): String {
     }
 }
 
+/** dx/f: the done text stays up this long before the results open. */
+internal const val JUNK_SCAN_HOLD_MS = 2500L
+
+/** dx/f uses the fixed `junk_scan_completed_message` ("1.40 GB" baked in, Q1), never the measured size. */
+internal fun junkScanStatus(done: Boolean) = if (done) R.string.junk_scan_completed_message else R.string.scanning
+
+/** activity_junk_scan: orange while scanning, red with done_cleaner_lottie once progress reaches 100. */
+@Composable
+private fun JunkScanState(done: Boolean, path: String, onBack: () -> Unit) {
+    val white = colorResource(R.color.onlyWhite)
+    val scanLottie by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.scan_cleaner_lottie))
+    val doneLottie by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.done_cleaner_lottie))
+    Column(
+        Modifier
+            .fillMaxSize()
+            .drawableBackground(if (done) R.drawable.layout_complete_background else R.drawable.layout_progress_background)
+            .padding(bottom = 22.sdp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(Modifier.padding(top = 24.sdp).fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onBack, modifier = Modifier.size(56.dp)) {
+                Image(painterResource(R.drawable.ic_back_white), stringResource(R.string.viewer_back))
+            }
+            Text(stringResource(R.string.remove_junk), style = GalleryText.BodyXXLargeSemiBold, color = white, maxLines = 1)
+        }
+        Column(
+            Modifier.weight(1f).fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (done) LottieAnimation(doneLottie, modifier = Modifier.size(180.sdp))
+            else LottieAnimation(scanLottie, iterations = LottieConstants.IterateForever, modifier = Modifier.size(180.sdp))
+            Text(
+                stringResource(junkScanStatus(done)),
+                style = GalleryText.BodyLargeSemiBold,
+                color = white,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 24.sdp)
+            )
+            if (!done) Text(
+                path.ifBlank { "/storage/emulated/0" },
+                style = GalleryText.BodyMediumRegular,
+                color = white,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                // shortcut: end ellipsis, Compose 1.7 has no MiddleEllipsis; switch when the BOM reaches Compose 1.8
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 6.sdp, start = 24.sdp, end = 24.sdp)
+            )
+        }
+    }
+}
+
 /**
  * Storage Clean Suite with 100% visual and functional parity to reference APK
  * Matches:
@@ -105,7 +168,7 @@ fun RemoveJunkScreen(
     // Saved so Back from a "Release more space" card returns to the result, not a new scan
     var currentPhase by rememberSaveable { mutableStateOf(StorageCleanPhase.SCANNING) }
     var scanningPath by remember { mutableStateOf("/storage/emulated/0") }
-    var scanProgress by remember { mutableFloatStateOf(0f) }
+    var scanProgress by remember { mutableIntStateOf(0) }
     var totalFreedBytes by rememberSaveable { mutableLongStateOf(0L) }
     var totalStorageBytes by remember { mutableLongStateOf(0L) }
     var freeStorageBytes by remember { mutableLongStateOf(0L) }
@@ -127,9 +190,12 @@ fun RemoveJunkScreen(
     var expandedId by remember { mutableStateOf<String?>(null) }
 
     // Real scan (JunkScanner): every size shown comes from files that exist.
+    // Leaving the screen cancels this effect, so a stale scan never reaches the results (and stops walking).
     LaunchedEffect(Unit) {
         if (currentPhase == StorageCleanPhase.COMPLETED) return@LaunchedEffect
         currentPhase = StorageCleanPhase.SCANNING
+        scanProgress = 0
+        val job = coroutineContext.job
         val results = withContext(Dispatchers.IO) {
             try {
                 val stat = StatFs(Environment.getDataDirectory().path)
@@ -139,8 +205,10 @@ fun RemoveJunkScreen(
             var last = 0L
             com.quizango.gallery.data.local.JunkScanner.scan(
                 storageRoot = Environment.getExternalStorageDirectory(),
-                appCacheDirs = listOfNotNull(context.cacheDir, context.externalCacheDir)
+                appCacheDirs = listOfNotNull(context.cacheDir, context.externalCacheDir),
+                onProgress = { scanProgress = it }
             ) { path ->
+                job.ensureActive()
                 val now = System.currentTimeMillis()
                 if (now - last > 80) { scanningPath = path; last = now } // throttle UI updates
             }.associateBy { it.id }
@@ -148,11 +216,10 @@ fun RemoveJunkScreen(
         categories = categories.map { c ->
             val files = results[c.id]?.files.orEmpty()
             val size = files.sumOf { it.length() }
-            // Log files stay unticked by default, as in the reference
+            // Log Files (old documents) stay unticked: Q6 user decision, Clean would delete real documents
             c.copy(files = files, sizeBytes = size, isChecked = size > 0 && c.id != "log_files")
         }
-        scanProgress = 1f
-        delay(1200) // hold "Scanning Completed!" like the reference
+        delay(JUNK_SCAN_HOLD_MS)
         currentPhase = StorageCleanPhase.OVERVIEW
     }
 
@@ -160,147 +227,7 @@ fun RemoveJunkScreen(
     val totalSelectedJunk = selectedFiles.sumOf { it.length() }
 
     when (currentPhase) {
-        StorageCleanPhase.SCANNING -> {
-            // Reference JunkScanActivity layout: activity_junk_scan.xml with layout_progress_background (#FF7000 -> #FF8D01)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            if (scanProgress >= 1f) listOf(Color(0xFFF74734), Color(0xFFEF2915))
-                            else listOf(Color(0xFFFF7000), Color(0xFFFF8D01))
-                        )
-                    )
-                    .statusBarsPadding()
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Toolbar matching activity_junk_scan.xml
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 14.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
-                        Text(
-                            text = stringResource(R.string.remove_junk),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(0.7f))
-
-                    // Animated Scanning Radar / Circle
-                    val infiniteTransition = rememberInfiniteTransition(label = "scanner_pulse")
-                    val pulseScale by infiniteTransition.animateFloat(
-                        initialValue = 0.90f,
-                        targetValue = 1.10f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(800, easing = FastOutSlowInEasing),
-                            repeatMode = RepeatMode.Reverse
-                        ),
-                        label = "pulse"
-                    )
-                    val sweepAngle by infiniteTransition.animateFloat(
-                        initialValue = 0f,
-                        targetValue = 360f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(1200, easing = LinearEasing),
-                            repeatMode = RepeatMode.Restart
-                        ),
-                        label = "sweep"
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .size(180.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.12f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size((140 * pulseScale).dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.20f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (scanProgress >= 1f) {
-                                Box(
-                                    modifier = Modifier.size(54.dp).clip(CircleShape).background(Color.White),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = null,
-                                        tint = Color(0xFFF26A5E),
-                                        modifier = Modifier.size(34.dp)
-                                    )
-                                }
-                            } else {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .rotate(sweepAngle),
-                                    color = Color.White,
-                                    strokeWidth = 3.dp
-                                )
-                                Icon(
-                                    painter = painterResource(id = R.drawable.system_cleaner_main_icon),
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(54.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(36.dp))
-
-                    if (scanProgress >= 1f) {
-                        Text(
-                            text = "Junk Files Found: ${formatStorageBytes(categories.sumOf { it.sizeBytes })}\nScanning Completed!",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                    } else {
-                        Text(
-                            text = "Scanning...",
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if (scanProgress < 1f) Text(
-                        text = scanningPath,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White.copy(alpha = 0.85f),
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        modifier = Modifier.padding(horizontal = 24.dp)
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-            }
-        }
+        StorageCleanPhase.SCANNING -> JunkScanState(scanProgress >= 100, scanningPath, onNavigateBack)
 
         StorageCleanPhase.OVERVIEW -> {
             // Reference RemoveJunkActivity layout: activity_remove_junk.xml
