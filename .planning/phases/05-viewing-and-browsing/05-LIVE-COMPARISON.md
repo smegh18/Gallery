@@ -1,6 +1,8 @@
 # Phase 5 Live Comparison (viewing and browsing)
 
-Status: **partial. Automated gates ran; every device result is PENDING-DEVICE.** No adb device was attached and the Artemis MCP was disconnected when plan 05-08 ran (2026-11-23). Nothing below was observed on a device. Do not copy any PENDING-DEVICE field to a pass, and do not tick the parity checklist, until a device run fills it in.
+Status: **device pass run 2026-11-23 on the Redmi M2006C3MII (Android 11, MIUI), side by side with 2.7.2 on the same phone.** Totals over the 31 entries below: **17 PASS, 4 FAIL, 9 NEEDS-USER, 1 not supplied** (the conditional live-map row). The parity checklist is not ticked: FAIL and NEEDS-USER entries remain.
+
+Fixtures were disposable folders `Pictures/ZZ5View`, `ZZ5Burst/DCIM/Camera` and `ZZ5Video`: photos including `ZZ5_50% off+&.jpg`, a GIF, two geotagged JPEGs, three TIMEBURST frames, and 24 s, 65 s (with a subtitle track), 70 s and 75 s (two audio tracks) videos. They were deleted at the end with their MediaStore rows and the 2.7.2 Recycle Bin and vault copies.
 
 Reference: Gallery 2.7.2 (APK on the device). Reconstruction: `app/build/outputs/apk/debug/app-debug.apk`, package `com.quizango.gallery`. UI-SPEC: `05-UI-SPEC.md`.
 
@@ -8,7 +10,7 @@ Reference: Gallery 2.7.2 (APK on the device). Reconstruction: `app/build/outputs
 
 | Gate | Command | Result |
 |------|---------|--------|
-| Unit suite | `./gradlew.bat :app:testDebugUnitTest -q` | pass: 44 result files, 242 tests, 0 failures, 0 skipped (after fix 08a85d3) |
+| Unit suite | `./gradlew.bat :app:testDebugUnitTest -q` | pass: 242 tests, 0 failures (re-run after the device fixes f64b33b and 760a251) |
 | Debug build | `./gradlew.bat :app:assembleDebug -q` | pass (exit 0) |
 | Strings | `python -I scripts/ref_res.py check-strings` | pass: 24 languages up to date |
 | Colors | `python -I scripts/ref_res.py check-colors` | pass: 213 light / 129 night names match 2.7.2 |
@@ -18,7 +20,7 @@ Reference: Gallery 2.7.2 (APK on the device). Reconstruction: `app/build/outputs
 
 | # | Defect | Reproducer | Owning plan | Failing gate | Expected result | Status |
 |---|--------|-----------|-------------|--------------|-----------------|--------|
-| D1 | Route arguments were decoded twice: androidx.navigation 2.8.8 already percent-decodes path and query arguments (`NavDeepLink` calls `Uri.decode` / `Uri.getQueryParameters`), then the app ran `URLDecoder.decode` again | Search `c++` then View All: query becomes `c  `. Open a photo named `50% off.jpg`: `URLDecoder` throws in the viewer route. A file named `%41.jpg` opens `A.jpg` | 05-01 (viewer, AlbumDetail), 05-03 (player), 05-06 (Place), 05-07 (View All, Color) | `RouteArgsTest`, `BrowseToViewerTracerTest` | Every awkward name round-trips through route build then the navigation decode, and the viewer opens the tapped page | Fixed in 08a85d3. Device recheck PENDING-DEVICE |
+| D1 | Route arguments were decoded twice: androidx.navigation 2.8.8 already percent-decodes path and query arguments (`NavDeepLink` calls `Uri.decode` / `Uri.getQueryParameters`), then the app ran `URLDecoder.decode` again | Search `c++` then View All: query becomes `c  `. Open a photo named `50% off.jpg`: `URLDecoder` throws in the viewer route. A file named `%41.jpg` opens `A.jpg` | 05-01 (viewer, AlbumDetail), 05-03 (player), 05-06 (Place), 05-07 (View All, Color) | `RouteArgsTest`, `BrowseToViewerTracerTest` | Every awkward name round-trips through route build then the navigation decode, and the viewer opens the tapped page | Fixed in 08a85d3. Device recheck PASS: `ZZ5_50% off+&.jpg` opens in the viewer from its folder (`evidence/p5-viewer-awkward-name.png`) |
 
 Manual audit of the Phase 5 diff (`53df7e8..HEAD`, `app/src/main/java`), in place of CodeRabbit:
 
@@ -33,74 +35,91 @@ Manual audit of the Phase 5 diff (`53df7e8..HEAD`, `app/src/main/java`), in plac
 
 ## 3. Row traceability (baseline rows #13, #14, #16-#24)
 
-Result column for every row: **PENDING-DEVICE**.
+Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 
-| Row | Screen | Reconstruction route | Reference evidence / observed flow | Fixtures | Automated gate | Device states to compare | Result |
-|-----|--------|---------------------|-----------------------------------|----------|----------------|--------------------------|--------|
-| #13 | Full-screen viewer (MediaFullScreenActivity) | `viewer?path=&folder=&isRecycle=&isVault=` | `evidence/ref272-viewer-photo.png`, `evidence/ref272-viewer-more-popup.png`; UI-SPEC 1 | Portrait, landscape and GIF photos; a geotagged photo; a photo with `%`, `+` and `&` in its name; recycle and vault items | `MediaViewerTest`, `ViewerZoomTest`, `BrowseToViewerTracerTest` | normal, recycle, vault; glass chrome; icon-only dock; per-image zoom; suggestions delay; More, dialogs; 2 s slideshow; Show on map | PENDING-DEVICE |
-| #14 | Video player (VideoPlayerActivity) and inline short video | `video?path=&folder=...` and the inline player in `viewer` | `evidence/ref272-viewer-short-video-paused.png`, `evidence/ref272-viewer-short-video-playing.png`; UI-SPEC 1.8 and 2 | A video of about 24 s; a video over 60 s; one with two audio tracks; one without subtitles; a corrupt video | `VideoPlayerTest`, `MediaViewerTest` | short video paused to playing, seek, mute, speed, capture, end, swipe away; long video playlist, previous/next, repeat, tracks, rotate, lock, brightness/volume, background, close; audio stops on ownership change | PENDING-DEVICE |
-| #16 | Media list (MediaListActivity) | `album/{bucketId}/{bucketName}` | UI-SPEC 3 and 4 | A folder with a few items; a large folder | `SharedMediaListTest`, `AlbumDetailTest` | pinch 3/4/5 columns, selection and drag, fast scroll, spinner then data, no "No items" flash, entrance animation | PENDING-DEVICE |
-| #17 | Other Albums (AllAlbumActivity) | `all_albums` (no in-app entry; use the route) | UI-SPEC 5 | Several device folders | `AllAlbumsTest`, `AlbumSelectionTest`, `AlbumsTabTest` | cards and counts, album selection bar, Pin, Add to, Delete, Change cover, Rename, Back clears selection | PENDING-DEVICE |
-| #18 | Moments (MomentsActivity) | `moments` | UI-SPEC 6 | Photos that the on-device labeler tags | `DiscoveryBrowseTest`, `MomentScannerTest` | first-run scan header with no "Oops!" flash, cards fill in, empty state, card opens a titled list | PENDING-DEVICE |
-| #19 | Place (MapActivity) | `place?key={key}` | UI-SPEC 7 | Geotagged photos in more than one place; photos with no location | `PlaceScreenTest`, `ExploreTabTest`, `MediaViewerTest` | no-key blank map with usable sheet; permission denied, approximate, precise; marker tap and sheet sync; viewer Show on map | PENDING-DEVICE |
-| #20 | Animated (AnimatedMediaListActivity) | `media/animated` | UI-SPEC 8 | At least one GIF, and a library without GIFs | `DiscoveryBrowseTest` | spinner then grid, six selection slots, viewer pages only animated items, empty copy | PENDING-DEVICE |
-| #21 | Burst (BurstPhotoActivity) | `media/burst` | UI-SPEC 9 | A disposable burst (MIUI `..._TIMEBURST` frames) | `BurstPhotoTest` | single-cover cards "Burst 1..N", a card lists only its frames | PENDING-DEVICE |
-| #22 | Favorites (FavoriteActivity) | `favorites` | UI-SPEC 10 | Two disposable favourites | `FavoritesTest`, `SharedMediaListTest` | four-slot bar, unfavourite prunes at once, "No Favorites" empty state, viewer pages only favourites, no pinch tutorial | PENDING-DEVICE |
-| #23 | Search and View All (SearchActivity, SearchViewAllActivity) | `search`, `search/all?section=&query=` | UI-SPEC 11 | An album, a place and a moment that share a word; a section with more than six matches; a query containing `+` and `%` | `SearchScreenTest`, `RouteArgsTest` | Colors row, previews filter as you type, View All shows every match and Back keeps the query, no keyboard resize, no "Oops!" flash | PENDING-DEVICE |
-| #24 | Search by color (SearchPhotoColorActivity) | `search/color?color=` | UI-SPEC 12 | Photos in the ten swatch colors | `SearchColorTest` | swatch and Choose color Ok open Media Color, four actions only, pager limited to that color, custom non-swatch color shows the empty state | PENDING-DEVICE |
+| Row | Screen | Result | Observed |
+|-----|--------|--------|----------|
+| #13 | Full-screen viewer | **FAIL** | Chrome, dock, More card, dialogs, slide show, delete/hide-next and recycle now match (`p5-viewer-awkward-name`, `p5-viewer-more` vs `r-viewer-photo`, `ref272-viewer-more-popup`). Remaining: **Show on map never appears** on geotagged photos, because no photo location is ever read (see #19). |
+| #14 | Video player and inline short video | **FAIL** | Inline short clip, player chrome, No Repeat and audio ownership pass. Remaining: the **subtitle picker** is a small top dropdown listing only the tracks (`p5-player-subtitle-picker`); 2.7.2 shows a bottom "Subtitle" dialog with a **Disable** row ticked by default and pauses playback (`r-player-subtitle-picker`). 2.7.2 also greys CC out when the file has no subtitles; ours keeps it enabled and toasts. Minor: bottom-row spacing differs (lock 36 vs 60 px from the edge, previous/next 24 px closer to Play). |
+| #16 | Media list | NEEDS-USER | Folder list, headers, spinner then data seen (`p5-medialist`). Pinch 3/4/5, drag-select and fast-scroll drag need multi-touch or held drags that adb `input` cannot do. |
+| #17 | Other Albums | NEEDS-USER | No in-app entry (route only); not reachable without a debug launcher. |
+| #18 | Moments | PASS | Cards from the real library; a card opens a titled list. The first-run scan header was not seen (the scan was already cached). |
+| #19 | Place | **FAIL** | Without a key: no crash, blank map region, the sheet loads (`p5-place-nokey`). But the sheet shows "No items": **the media scan never reads EXIF GPS**, so `latitude`, `longitude` and `placeName` stay 0 or empty. 2.7.2 lists "Minato City 1" and "Paris 1" for the same fixtures (`r-place`). 2.7.2's sheet also peeks higher (top at about 990 px against 1215 px). |
+| #20 | Animated | NEEDS-USER | No in-app entry in ours, nor on 2.7.2's Explore; route only. |
+| #21 | Burst | NEEDS-USER | No in-app entry; route only. The fixture frames were indexed (Photos tab). |
+| #22 | Favorites | PASS | Two favourites listed, four-slot bar (Share, Unfavorite, Add to Private, Delete), unfavourite prunes at once, "No Favorites" empty state (`p5-favorites*`). |
+| #23 | Search and View All | PASS | Colors row; typing `ZZ5` filters Albums; View All is titled "Albums"; Back keeps the query. |
+| #24 | Search by color | PASS | The red swatch opens "Media Color"; selection shows only Share, Favorite, Add to Private, Delete. A custom non-swatch colour was not tried. |
 
 ## 4. State matrices
 
 ### 4.1 Viewer variants (#13, #14)
 
-| State | Rows to exercise | Result |
-|-------|------------------|--------|
-| normal | dock, More card, rename, Rotate, slideshow, Show on map | PENDING-DEVICE |
-| recycle | Restore and Delete only, no edit actions | PENDING-DEVICE |
-| vault | no Add to, no Show on map, no slideshow, vault delete dialog without the Recycle Bin box | PENDING-DEVICE |
+| State | Result | Observed |
+|-------|--------|----------|
+| normal | PASS (after fixes) | Fixed in f64b33b: glass icons were dark blue and the circles 48 dp and overlapping (now white, 36 dp, 8 dp gaps); the background is `backgroundColor` while the chrome shows and black once hidden, as in `r-viewer-hidden`; Delete closed the viewer where 2.7.2 shows the next page (`r-viewer-after-delete`); the dialog said "1 item" where 2.7.2 says "this item"; video More listed Add to where 2.7.2 lists only Rename and Slide show (`r-viewer-video-more`). Slide show: about 2 s per photo, stops at the last one. Show on map: see #19. |
+| recycle | PASS (after fix) | Only Restore and Delete (`p5-viewer-recycle`). Restore or Delete **crashed the app** (ClassCastException in `MediaViewerScreen`, also on the pre-fix HEAD); fixed in f64b33b. Restore now shows the next binned item (`p5-viewer-recycle-after-restore`). |
+| vault | NEEDS-USER | Needs the vault PIN set up; not touched. |
 
 ### 4.2 Video length (#14)
 
-| State | Rows to exercise | Result |
-|-------|------------------|--------|
-| short video (60 s or less) | paused pill, play, seek, mute, five speeds, Capture, ends and stops, Play restarts | PENDING-DEVICE |
-| long video (over 60 s) | centre button opens the player, previous/next toasts at the ends, repeat cycle persists, rotate, lock, brightness/volume, 3 s auto-hide | PENDING-DEVICE |
-| audio ownership | audio stops on page change, Home, Back and close in both players; brightness and orientation restored after the player | PENDING-DEVICE |
+| State | Result | Observed |
+|-------|--------|----------|
+| short video (60 s or less) | PASS (after fix) | The paused pill matches `ref272-viewer-short-video-paused`. **Play did nothing on first open** (the player was released during the first list load); fixed in f64b33b. Playing: seek row, Capture replaces the heart (`p5-short-playing`). Ends at 23-24 s and stops, no loop (`p5-short-ended`). |
+| long video (over 60 s) | **FAIL** | The centre button opens the player; the quick-control card and bars match `r-player-controls`; No Repeat moves on to the next queued video exactly like 2.7.2 (`p5-player-end-norepeat`, `r-player-end-norepeat`). The mute label was inverted ("Unmute" while sound is on; 2.7.2 shows "Mute" with the crossed icon): fixed in 760a251, not re-checked on the device. Open: the subtitle picker (see #14). Not exercised: previous/next end toasts, rotate, lock, brightness/volume swipes, repeat persistence. |
+| audio ownership | PASS | Player: Home pauses it (`dumpsys audio` shows paused), Back releases it. Inline: swiping away releases the player. |
 
 ### 4.3 Library size
 
-| State | Rows to exercise | Result |
-|-------|------------------|--------|
-| small library | every list reaches its populated and its empty state | PENDING-DEVICE |
-| large library | fast scroll in Media list, scan progress in Moments, Search typing latency, no jank on pinch | PENDING-DEVICE |
+| State | Result | Observed |
+|-------|--------|----------|
+| small library | PASS | Fixture folder lists; Favorites populated and empty. |
+| large library | NEEDS-USER | On the real library (hundreds of items) Moments and Search fill in without delay. Fast-scroll drag and pinch jank need a manual check. |
 
 ### 4.4 Theme and locale
 
-| State | Rows to exercise | Result |
-|-------|------------------|--------|
-| light | all eleven rows | PENDING-DEVICE |
-| dark | headers white, divider `#30FFFFFF`, dock and More card, Search toolbar | PENDING-DEVICE |
-| German | long dock labels, toolbar titles | PENDING-DEVICE |
-| Russian | long dock labels, toolbar titles | PENDING-DEVICE |
-| Tamil | glyph height and line clipping in cards and dock | PENDING-DEVICE |
-| Arabic RTL | toolbars mirror, tap and drag selection hit the right cell, dock order, seek bar direction | PENDING-DEVICE |
+| State | Result | Observed |
+|-------|--------|----------|
+| light | PASS | All the screens above. |
+| dark | PASS | In-app Night Mode: dark glass chrome as in `ref272-viewer-photo`, More card `#1E1E1E` (`p5-dark-viewer-more`), Search toolbar. Restored to System Mode. |
+| German | PASS | `p5-de-explore`, `p5-de-favorites-empty`. |
+| Russian | PASS | `p5-ru-favorites-empty`, `p5-ru-player`. |
+| Tamil | PASS | No clipping in the toolbar, stripe or empty state (`p5-ta-place`, `p5-ta-favorites-empty`). |
+| Arabic RTL | PASS | Grid, top bar and dock mirror; the seek bar runs right to left (`p5-ar-short-playing`). Restored to English. |
 
 ### 4.5 Place (#19)
 
-| State | Rows to exercise | Result |
-|-------|------------------|--------|
-| permission denied | stripe shows, no location read, non-location browsing unaffected; deny again opens settings with the toast | PENDING-DEVICE |
-| permission approximate | coarse grant removes the stripe, My Location dot appears | PENDING-DEVICE |
-| permission precise | fine grant removes the stripe, My Location dot appears | PENDING-DEVICE |
-| Place without a Maps key (mandatory) | no crash, blank map region of stable size, sheet loads, cards open scoped media | PENDING-DEVICE |
-| live map, conditional | only if the developer supplies `MAPS_API_KEY` in `local.properties`: tiles, photo markers with name, marker tap animates the camera and scrolls the sheet. Key absent is an accepted state and blocks nothing | PENDING-DEVICE (conditional, not supplied) |
+| State | Result | Observed |
+|-------|--------|----------|
+| permission denied | NEEDS-USER | The runtime dialog is left to the user. |
+| permission approximate | NEEDS-USER | As above. |
+| permission precise | NEEDS-USER | As above. |
+| Place without a Maps key (mandatory) | PASS | No crash, blank map region of stable size, stripe and sheet render (`p5-place-nokey`). "Cards open scoped media" cannot be tested until #19 is fixed. |
+| live map, conditional | not supplied | No `MAPS_API_KEY`; accepted state. |
 
 ### 4.6 Ad slots
 
-| State | Rows to exercise | Result |
-|-------|------------------|--------|
-| collapsed ad slots | every reserved ad slot in the eleven rows stays collapsed (no gap, no placeholder) | PENDING-DEVICE |
+| State | Result | Observed |
+|-------|--------|----------|
+| collapsed ad slots | PASS | No gap or placeholder in the viewer, player, lists, Place or Search (2.7.2 shows banners there). |
 
-## 5. Parity checklist
+## 5. Assumptions settled on the device
 
-`.planning/milestones/v2.7.2-parity/PARITY-CHECKLIST.md` is **unchanged**. Rows 13, 14 and 16-24 stay Ported unchecked until every PENDING-DEVICE field above passes on a device. Verified stays unchecked for Phase 13.
+| Question | 2.7.2 answer | Ours now |
+|----------|--------------|----------|
+| Delete or Hide in the viewer: close, or show the next item? | Stays open and shows the next item for both (`r-viewer-after-delete`, `r-viewer-after-hide`) | Same (f64b33b); closes only when the last page goes |
+| No Repeat at the end | Moves on to the next video in the queue | Same (ExoPlayer REPEAT_MODE_OFF) |
+| Subtitle picker Off row | Yes: "Disable", ticked by default, in a bottom "Subtitle" dialog | Missing (FAIL, open) |
+| Wallpaper and Print on video pages | Not shown: video More is Rename, Slide show | Same (f64b33b removed the extra Add to) |
+
+## 6. Steps for the user
+
+1. **Location permission** (Explore > Place). First revoke location for Gallery in Android Settings > Apps. (a) Tap Allow and choose "Don't allow": the stripe stays and nothing else changes; tap Allow and deny again: app settings open with the toast "Please grant location permission." (b) Revoke, tap Allow, pick "Approximate" and "While using the app": the stripe disappears. (c) Revoke, tap Allow, pick "Precise": the stripe disappears. With no Maps key no My Location dot can show.
+2. **Media list gestures**: in a folder, pinch 3 > 4 > 5 > 3 columns, long-press then drag across rows to range-select, and drag the fast-scroll thumb in a large folder.
+3. **Vault viewer**: with the vault PIN set, hide a disposable photo and open it from the vault: no Add to, no Show on map, no slide show, and the delete dialog without the Recycle Bin box.
+4. **Other Albums, Animated, Burst**: no in-app entry exists; confirm where 2.7.2 exposes them, or add a debug entry to test them.
+5. **Long video extras**: previous/next toasts at the playlist ends, rotate, lock, brightness/volume swipes, repeat mode kept after reopening, and the mute label fix (760a251).
+
+## 7. Parity checklist
+
+`.planning/milestones/v2.7.2-parity/PARITY-CHECKLIST.md` is **unchanged**: #13, #14 and #19 fail and several entries need the user. Verified stays unchecked for Phase 13.
