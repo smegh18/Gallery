@@ -67,6 +67,7 @@ import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.domain.model.VaultItem
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.vault.rememberVaultHideGate
 import com.quizango.gallery.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -261,6 +262,11 @@ fun MediaViewerScreen(
 
     fun toast(@StringRes message: Int) = Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 
+    // Add to Private: lock gate first (D5); the Hide dialog opens only for the photo it was asked for
+    val hideGate = rememberVaultHideGate(onNavigate) { paths ->
+        if (currentItem.filePath in paths) open(ViewerDialogKind.HIDE)
+    }
+
     // ic_full_video_play: check the file plays (corrupt → toast), then open the Video player on the list's videos
     fun playExternal(path: String?) {
         if (path == null) return
@@ -274,7 +280,7 @@ fun MediaViewerScreen(
     fun onDockAction(action: DockAction) {
         when (action) {
             DockAction.SHARE -> currentViewPath?.let { shareMedia(context, it, currentItem.isVideo) }
-            DockAction.PRIVATE -> open(ViewerDialogKind.HIDE)
+            DockAction.PRIVATE -> hideGate(listOf(currentItem.filePath))
             DockAction.EDIT -> {
                 val blocked = editBlockedMessage(currentItem.isAnimatedMedia, isDecodable(currentItem.filePath))
                 if (blocked != null) toast(blocked) else onNavigate(Screen.Editor.createRoute(currentItem.filePath))
@@ -536,6 +542,7 @@ fun MediaViewerScreen(
                         ViewerDialogKind.UNHIDE -> vaultRepository.restoreFromVault(item.toVaultItem())
                         else -> false
                     }
+                    if (ok && (opened.kind == ViewerDialogKind.HIDE || opened.kind == ViewerDialogKind.UNHIDE)) mediaRepository.syncMediaStore()
                     if (!ok) toast(R.string.something_went_wrong)
                     // 2.7.2 stays open on the next page; only the last page closes the viewer
                     else if (displayList.size <= 1) onNavigateBack()
