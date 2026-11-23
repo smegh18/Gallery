@@ -1,135 +1,117 @@
 package com.quizango.gallery.ui.cleaner
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
-import com.quizango.gallery.ui.theme.GalleryBlue
-import kotlinx.coroutines.delay
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
 
 /**
- * Duplicate Waiting Screen reflecting 100% visual and structural parity with
- * reference activity_duplicate_waiting.xml and DuplicateWaitingActivity.java.
- * Background: color_success_lottie_blue (#0066FF).
- * Phase 1: Scanning with progress indicator, "Scanning...", and "This may take a while on large libraries."
- * Phase 2: Scanning Completed with success animation and auto-transition to duplicate results.
+ * DuplicateWaitingActivity (activity_duplicate_waiting): blue screen with a spinner while the fingerprint scan runs,
+ * then the done state (`clDoneAnimation`) plays `success` once and the results replace this screen (`ak/h`).
+ * The done state is a state, not a screen: DuplicateScanningCompleteActivity is not built (Q4).
  */
 @Composable
 fun DuplicateWaitingScreen(
-    scan: suspend (onProgress: (Float) -> Unit) -> Unit,
+    scan: suspend () -> Unit,
     onScanFinished: () -> Unit
 ) {
-    var isScanComplete by remember { mutableStateOf(false) }
-
-    val successComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.success)) // reference @raw/success
-    val lottieProgress by animateLottieCompositionAsState(
-        composition = successComposition,
-        isPlaying = isScanComplete
-    )
+    var done by remember { mutableStateOf(false) }
+    val compositionResult = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.success))
+    val animatable = rememberLottieAnimatable()
+    val finish by rememberUpdatedState(onScanFinished)
 
     LaunchedEffect(Unit) {
-        // Real scan; keep the screen up at least as long as before so it doesn't flash
-        val started = System.currentTimeMillis()
-        scan { }
-        delay((1800 - (System.currentTimeMillis() - started)).coerceAtLeast(0))
-        isScanComplete = true
-        delay(2200) // let @raw/success finish (65 frames at 30 fps)
-        onScanFinished()
+        runDuplicateWaiting(
+            scan = scan,
+            onDone = { done = true },
+            // A composition that fails to load must not strand the user on this screen
+            playSuccess = { runCatching { compositionResult.await() }.getOrNull()?.let { animatable.animate(it) } },
+            onFinished = finish
+        )
     }
 
+    val white = colorResource(R.color.onlyWhite)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(GalleryBlue),
+            .background(colorResource(R.color.color_success_lottie_blue))
+            .padding(14.sdp),
         contentAlignment = Alignment.Center
     ) {
-        AnimatedVisibility(
-            visible = !isScanComplete,
-            enter = fadeIn(),
-            exit = fadeOut()
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
-            ) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    strokeWidth = 3.5.dp,
-                    modifier = Modifier.size(52.dp)
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
+            if (!done) {
+                CircularProgressIndicator(color = white, modifier = Modifier.size(48.dp))
                 Text(
-                    text = stringResource(id = R.string.scanning),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
+                    text = stringResource(R.string.scanning),
+                    style = GalleryText.BodyLargeSemiBold,
+                    color = white,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 18.sdp)
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 Text(
-                    text = stringResource(id = R.string.dup_media_wait_hint),
-                    fontSize = 14.sp,
-                    color = Color.White.copy(alpha = 0.85f),
-                    textAlign = TextAlign.Center
+                    text = stringResource(R.string.dup_media_wait_hint),
+                    style = GalleryText.BodyMediumRegular,
+                    color = white,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.sdp)
                 )
-
-            }
-        }
-
-        AnimatedVisibility(
-            visible = isScanComplete,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
-            ) {
+            } else {
                 LottieAnimation(
-                    composition = successComposition,
-                    progress = { lottieProgress },
-                    modifier = Modifier.size(150.dp)
+                    composition = compositionResult.value,
+                    progress = { animatable.progress },
+                    modifier = Modifier.size(150.sdp)
                 )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 Text(
-                    text = stringResource(id = R.string.scan_complete),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
-                    textAlign = TextAlign.Center
+                    text = stringResource(R.string.scan_complete),
+                    style = GalleryText.BodyLargeSemiBold,
+                    color = white,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 10.sdp)
                 )
             }
         }
     }
+}
+
+/** DW order: the real scan, then the done state, then `success` once; the results open when it ends, never on a timer. */
+internal suspend fun runDuplicateWaiting(
+    scan: suspend () -> Unit,
+    onDone: () -> Unit,
+    playSuccess: suspend () -> Unit,
+    onFinished: () -> Unit
+) {
+    scan()
+    onDone()
+    playSuccess()
+    onFinished()
 }

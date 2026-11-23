@@ -261,7 +261,7 @@ fun GalleryNavHost(
 
         composable(Screen.DuplicateWaiting.route) {
             DuplicateWaitingScreen(
-                scan = { onProgress -> app.duplicates.fingerprints(app.mediaRepository.getActiveMediaFlow().first(), onProgress) },
+                scan = { app.duplicates.fingerprints(app.mediaRepository.getActiveMediaFlow().first()) },
                 onScanFinished = {
                     navController.navigate(Screen.Duplicates.route) {
                         popUpTo(Screen.DuplicateWaiting.route) { inclusive = true }
