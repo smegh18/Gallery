@@ -1,5 +1,6 @@
 package com.quizango.gallery
 
+import com.quizango.gallery.ui.vault.fingerprintToggle
 import com.quizango.gallery.ui.vault.vaultSettingRows
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -16,5 +17,21 @@ class VaultSettingTest {
             ),
             vaultSettingRows
         )
+    }
+
+    @Test
+    fun turningOnWithoutUsableFingerprintWritesNothingAndToasts() {
+        val reason = androidx.biometric.R.string.fingerprint_error_no_fingerprints
+        assertEquals(null to reason, fingerprintToggle(enable = true, reason = reason))
+    }
+
+    @Test
+    fun turningOnWhenUsableSaves() {
+        assertEquals(true to null, fingerprintToggle(enable = true, reason = null))
+    }
+
+    @Test
+    fun turningOffAlwaysSaves() {
+        assertEquals(false to null, fingerprintToggle(enable = false, reason = androidx.biometric.R.string.fingerprint_error_hw_not_present))
     }
 }

@@ -8,16 +8,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
@@ -34,6 +38,10 @@ internal val vaultSettingRows = listOf(
     Triple(R.drawable.ic_change_recovery_question, R.string.change_recovery_question, R.string.choose_another_recovery_question)
 )
 
+/** S6: turning on needs a usable fingerprint. Returns (value to save or null, androidx message id to toast or null). */
+internal fun fingerprintToggle(enable: Boolean, reason: Int?): Pair<Boolean?, Int?> =
+    if (enable && reason != null) null to reason else enable to null
+
 @Composable
 fun VaultSettingScreen(
     appPreferences: AppPreferences,
@@ -46,16 +54,13 @@ fun VaultSettingScreen(
     val isPatternMode by appPreferences.isPatternMode.collectAsState(initial = true)
     val isFingerprintEnabled by appPreferences.isFingerprintEnabled.collectAsState(initial = false)
 
-    // Only switch on when a fingerprint can actually be used
     fun toggleFingerprint(enable: Boolean) {
-        val reason = if (enable) VaultBiometric.unavailableReason(context) else null
-        if (reason != null) {
-            Toast.makeText(context, context.getString(reason), Toast.LENGTH_SHORT).show()
-        } else {
-            scope.launch { appPreferences.setFingerprintEnabled(enable) }
-        }
+        val (write, toast) = fingerprintToggle(enable, if (enable) VaultBiometric.unavailableReason(context) else null)
+        toast?.let { Toast.makeText(context, context.getString(it), Toast.LENGTH_SHORT).show() }
+        write?.let { scope.launch { appPreferences.setFingerprintEnabled(it) } }
     }
 
+    val primary = colorResource(R.color.colorPrimary)
     Column(modifier = Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
         SharedMediaToolbar(title = stringResource(R.string.privacy_settings), onBack = onNavigateBack)
         Column(modifier = Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding()) {
@@ -72,7 +77,12 @@ fun VaultSettingScreen(
                         Switch(
                             checked = if (index == 1) isPatternMode else isFingerprintEnabled,
                             onCheckedChange = { if (index == 1) scope.launch { appPreferences.setPatternMode(it) } else toggleFingerprint(it) },
-                            modifier = Modifier.padding(vertical = 10.sdp)
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = primary,
+                                checkedTrackColor = primary.copy(alpha = 0.3f),
+                                checkedBorderColor = Color.Transparent
+                            ),
+                            modifier = Modifier.padding(vertical = 10.sdp).semantics { contentDescription = label }
                         )
                     } else {
                         Image(
