@@ -69,6 +69,35 @@ class MediaRepositoryMutationTest {
     }
 
     @Test
+    fun absentFileStillCleansItsStaleRow() = runBlocking {
+        val gone = File(root, "gone.jpg").path.also { rows += it }
+        val out = deleteFilesThenRows(listOf(gone), loggedFileDelete, loggedRowDelete).single()
+        assertEquals(Status.SUCCESS, out.status)
+        assertTrue(rows.isEmpty())
+    }
+
+    @Test
+    fun rowFailureAfterFileDeleteIsRecoveredByRetry() = runBlocking {
+        val a = file("a.jpg").also { rows += it }
+        val failed = deleteFilesThenRows(listOf(a), loggedFileDelete) { throw IllegalStateException("db") }.single()
+        assertEquals(Status.METADATA_FAILED, failed.status)
+        assertFalse(File(a).exists())
+        assertEquals(setOf(a), rows) // the row is not claimed as removed
+        val retried = deleteFilesThenRows(listOf(a), loggedFileDelete, loggedRowDelete).single()
+        assertEquals(Status.SUCCESS, retried.status)
+        assertTrue(rows.isEmpty())
+    }
+
+    @Test
+    fun repeatedPathsAreMutatedOnceInInputOrder() = runBlocking {
+        val a = file("a.jpg")
+        val b = file("b.jpg")
+        val out = deleteFilesThenRows(listOf(b, a, b), loggedFileDelete, loggedRowDelete)
+        assertEquals(listOf(b, a), out.map { it.path })
+        assertEquals(listOf("file:$b", "file:$a", "row:$b", "row:$a"), calls)
+    }
+
+    @Test
     fun singleAndBulkShareOneContract() = runBlocking {
         val a = file("a.jpg")
         val stuck = file("stuck.jpg")
