@@ -462,7 +462,7 @@ internal fun Modifier.fallDown(order: Int): Modifier {
 
 /** item_grid_gallery as bound by ka/c. Taps come from the grid's gesture handler; semantics expose them to TalkBack. */
 @Composable
-private fun SharedMediaCell(
+internal fun SharedMediaCell(
     item: MediaItem,
     isSelected: Boolean,
     selecting: Boolean,
