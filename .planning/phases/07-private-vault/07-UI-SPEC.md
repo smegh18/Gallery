@@ -195,6 +195,8 @@ Ours: drop the three fixed questions and the invented "Please select different q
 ---
 
 ## 6. Add Items picker (`R272/layout/activity_select.xml`, `item_picker_folder.xml`, `item_selected.xml`, `IS` TYPE=2 — #37, VLT-02)
+> **Superseded in part by 07-07-PLAN.md (decoded 2.7.2 smali, 2026-11-24):** the grid is 4 columns (`GridLayoutManager(ctx, 4)`), cells use `item_grid_gallery`, the folder row is always shown and the "Choose media" title is hidden; only the selected tray and the Add button toggle at count > 0. Where this section disagrees, 07-07 wins. Device confirmation pending (P4).
+
 
 Replaces `VaultAddMediaScreen`'s Material chrome; keep its data flow. This is **not** `activity_picker_screen` (D1).
 

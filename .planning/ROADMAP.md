@@ -204,7 +204,18 @@ Plans:
   3. Vault settings let the user change the password, and forgot password recovers access through the recovery question, as in 2.7.2.
   4. The in-app media picker used to add media to the vault matches 2.7.2's `activity_picker_screen`.
 
-**Plans**: TBD
+**Plans**: 9 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Tracer: Phase 7 strings/colours/drawables and lock copy; pure VaultLockFlow; Show Pattern default on, lock-state prefs, VaultGate (wave 1)
+- [ ] 07-02-PLAN.md — Tracer: safe hide order with rollback; collision-safe restore; MediaStore re-index (D6) (wave 1)
+- [ ] 07-03-PLAN.md — Tracer: lock on VaultLockFlow with first-setup/unlock/lockout routing; activity_vault_lock look; TYPE 1/2 + IS_OPEN_VAULT=false route, fingerprint prompt (wave 2)
+- [ ] 07-06-PLAN.md — Tracer: vault unhide through MediaSelectionBar/HideMediaDialog/progress; toolbar, delete, empty, FAB, grid; secured toast and cache cleanup (wave 2)
+- [ ] 07-07-PLAN.md — Tracer: activity_select picker (folder-row toolbar, 4 columns) hides safely; folder list, tray, empty; VLT-02 wording fix (D1) (wave 2)
+- [ ] 07-04-PLAN.md — Tracer: free-choice recovery questions on RecoveryQuestionFlow; Forgot Password with the D3 match (wave 3)
+- [ ] 07-05-PLAN.md — Tracer: Privacy Settings rows; Show Pattern default and fingerprint check (wave 3)
+- [ ] 07-08-PLAN.md — Tracer: Add to Private lock gate on Home, media lists and viewer (D5) (wave 3)
+- [ ] 07-09-PLAN.md — Phase close: VER-03 gates, CodeRabbit/unslop, PENDING-DEVICE matrix, deviations, device acceptance (wave 4, not autonomous)
 **UI hint**: yes
 
 ### Phase 8: Create and Edit
