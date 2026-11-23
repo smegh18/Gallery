@@ -519,8 +519,8 @@ fun VideoPlayerScreen(
                         scope.launch { preferences.setNoRepeat(repeat.ordinal) }
                         touch()
                     }
-                    // The label names the current state, as in the reference: Unmute while sound is on
-                    QuickControl(if (muted) R.drawable.ic_video_mute else R.drawable.ic_video_unmute, if (muted) R.string.mute else R.string.unmute) {
+                    // Device-checked on 2.7.2: names the action, "Mute" with the crossed speaker while sound is on
+                    QuickControl(if (muted) R.drawable.ic_video_unmute else R.drawable.ic_video_mute, if (muted) R.string.unmute else R.string.mute) {
                         muted = !muted
                         player.volume = if (muted) 0f else 1f
                         touch()
