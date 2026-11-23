@@ -88,6 +88,8 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 | 36 | VaultForgotPasswordActivity | same | vault/VaultForgotPasswordScreen.kt | [ ] | [ ] |
 | 37 | InternalSelectMediaActivity (picker) | activity_select same as 2.6.7; the changed activity_picker_screen is the collage picker (Phase 8) | vault/VaultAddMediaScreen.kt | [ ] | [ ] |
 
+**Phase 7 known deviations** (rows 32-37; boxes unchanged until the device pass, see `.planning/phases/07-private-vault/07-LIVE-COMPARISON.md`): D2 no Hidden Folder section; D3 Forgot Password answer match is trimmed, case-insensitive and hashed (2.7.2 matches exactly); PIN, pattern and answers stored hashed; no shake on wrong entry (D4); Home lock-icon shared-element transition (`vault_click`) not built; the secured toast is an in-app overlay; picker folder row is the toolbar and the grid has four columns (D1, `activity_select`).
+
 ### A6. Create and edit
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
