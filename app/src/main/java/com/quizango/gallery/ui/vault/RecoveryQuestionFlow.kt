@@ -2,6 +2,7 @@ package com.quizango.gallery.ui.vault
 
 import androidx.annotation.StringRes
 import com.quizango.gallery.R
+import com.quizango.gallery.data.local.VaultSecret
 
 sealed interface RecoveryEvent {
     data class Toast(@StringRes val res: Int) : RecoveryEvent
@@ -48,3 +49,24 @@ private val QUESTION_RES = intArrayOf(
 /** A stored question is its reference id "1".."10"; older builds saved the question text, which maps to null. */
 @StringRes
 fun questionRes(stored: String): Int? = stored.toIntOrNull()?.let { QUESTION_RES.getOrNull(it - 1) }
+
+sealed interface ForgotEvent {
+    data class Toast(@StringRes val res: Int) : ForgotEvent
+    data object Ok : ForgotEvent
+}
+
+/**
+ * Forgot Password answer check. [stored] is the saved answer of the picked question, null when none are stored.
+ * Deliberate deviation D3: 2.7.2 compares exactly; here the answer is trimmed and case-insensitive against the hash,
+ * and an older plain answer is compared the same way.
+ */
+fun forgotAnswerEvent(answer: String, stored: String?): ForgotEvent = when {
+    stored == null -> ForgotEvent.Toast(R.string.something_went_wrong)
+    answer.isBlank() -> ForgotEvent.Toast(R.string.please_write_an_answer)
+    matchesStored(answer, stored) -> ForgotEvent.Ok
+    else -> ForgotEvent.Toast(R.string.enter_correct_security_answer)
+}
+
+private fun matchesStored(answer: String, stored: String): Boolean =
+    if (VaultSecret.isHashed(stored)) VaultSecret.matches(stored, VaultSecret.normalizeAnswer(answer))
+    else answer.trim().equals(stored.trim(), ignoreCase = true)

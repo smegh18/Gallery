@@ -1,7 +1,10 @@
 package com.quizango.gallery
 
+import com.quizango.gallery.data.local.VaultSecret
+import com.quizango.gallery.ui.vault.ForgotEvent
 import com.quizango.gallery.ui.vault.RecoveryEvent
 import com.quizango.gallery.ui.vault.RecoveryQuestionFlow
+import com.quizango.gallery.ui.vault.forgotAnswerEvent
 import com.quizango.gallery.ui.vault.questionRes
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -67,5 +70,30 @@ class RecoveryQuestionFlowTest {
         assertEquals(R.string.security_question10, questionRes("10"))
         assertNull(questionRes("What is your pet name?"))
         assertNull(questionRes("11"))
+    }
+
+    private val hash = VaultSecret.hash(VaultSecret.normalizeAnswer("rex"))
+
+    @Test
+    fun forgotEmptyAnswerToastsPleaseWrite() {
+        assertEquals(ForgotEvent.Toast(R.string.please_write_an_answer), forgotAnswerEvent("", hash))
+        assertEquals(ForgotEvent.Toast(R.string.please_write_an_answer), forgotAnswerEvent("   ", hash))
+    }
+
+    @Test
+    fun forgotMatchesTrimmedCaseInsensitiveAgainstHash() {
+        assertEquals(ForgotEvent.Ok, forgotAnswerEvent(" Rex ", hash))
+        assertEquals(ForgotEvent.Toast(R.string.enter_correct_security_answer), forgotAnswerEvent("rax", hash))
+    }
+
+    @Test
+    fun forgotLegacyPlainAnswerMatchesCaseInsensitively() {
+        assertEquals(ForgotEvent.Ok, forgotAnswerEvent("rex", "Rex"))
+        assertEquals(ForgotEvent.Toast(R.string.enter_correct_security_answer), forgotAnswerEvent("rax", "Rex"))
+    }
+
+    @Test
+    fun forgotWithoutStoredAnswerIsAnIssue() {
+        assertEquals(ForgotEvent.Toast(R.string.something_went_wrong), forgotAnswerEvent("rex", null))
     }
 }
