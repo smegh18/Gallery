@@ -113,4 +113,15 @@ class PlaceScreenTest {
         assertEquals(placeRoute("Paris"), showOnMapRoute(item(1, "Paris")))
         assertNull(showOnMapRoute(item(2)))
     }
+
+    @Test
+    fun syncKeepsReadLocationUntilTheFileChanges() {
+        val old = com.quizango.gallery.data.local.database.entity.MediaEntity("/p/a.jpg", lastDate = 5, isLocation = true, lat = 48.85f, longs = 2.35f, place = "Paris")
+        val same = com.quizango.gallery.data.local.database.entity.MediaEntity("/p/a.jpg", lastDate = 5)
+        assertEquals("Paris", com.quizango.gallery.data.repository.keepLocation(same, old).place)
+        assertTrue(com.quizango.gallery.data.repository.keepLocation(same, old).isLocation)
+        assertFalse(com.quizango.gallery.data.repository.keepLocation(same.copy(lastDate = 6), old).isLocation)
+        assertEquals("Minato City", com.quizango.gallery.data.repository.pickPlaceName(null, " ", "Minato City", "Tokyo"))
+        assertEquals("", com.quizango.gallery.data.repository.pickPlaceName(null, ""))
+    }
 }

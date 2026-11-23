@@ -194,6 +194,19 @@ class MediaStoreScanner(private val context: Context) {
         return videos
     }
 
+    /** EXIF GPS by file path (2.7.2 reads it the same way under All files access, no ACCESS_MEDIA_LOCATION). */
+    fun readLatLong(path: String): FloatArray? = try {
+        FloatArray(2).takeIf { android.media.ExifInterface(path).getLatLong(it) }
+    } catch (e: Exception) { null }
+
+    @Suppress("DEPRECATION") // the blocking call is fine here: sync already runs on Dispatchers.IO
+    fun placeName(lat: Float, lng: Float): String = try {
+        android.location.Geocoder(context, Locale.getDefault()).getFromLocation(lat.toDouble(), lng.toDouble(), 1)
+            ?.firstOrNull()?.let {
+                com.quizango.gallery.data.repository.pickPlaceName(it.subLocality, it.locality, it.subAdminArea, it.adminArea, it.countryName)
+            }.orEmpty()
+    } catch (e: Exception) { "" }
+
     private fun getResolutionLabel(width: Int, height: Int): String {
         val maxDim = maxOf(width, height)
         return when {

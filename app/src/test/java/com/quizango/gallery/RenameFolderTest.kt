@@ -42,6 +42,7 @@ private class FakeDao(rows: List<MediaEntity>) : GalleryDao {
     override suspend fun moveToTrash(path: String, timestamp: Long) = TODO()
     override suspend fun restoreFromTrash(path: String) = TODO()
     override suspend fun setFavorite(path: String, favorite: Boolean) = TODO()
+    override suspend fun setLocation(path: String, lat: Float, lng: Float, place: String) = TODO()
     override suspend fun purgeExpiredTrash(thresholdTimestamp: Long) = TODO()
 }
 

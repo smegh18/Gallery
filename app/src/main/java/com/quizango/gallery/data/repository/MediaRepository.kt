@@ -100,6 +100,14 @@ internal fun placeKey(place: String, lat: Float, lng: Float): String = place.tri
     if (hasCoordinates(lat, lng)) String.format(java.util.Locale.ROOT, "%.4f,%.4f", lat, lng) else ""
 }
 
+/** Keeps the GPS already read for this file version; a changed file (new lastDate) is read again. */
+internal fun keepLocation(scanned: MediaEntity, old: MediaEntity): MediaEntity =
+    if (old.lastDate != scanned.lastDate) scanned
+    else scanned.copy(isLocation = old.isLocation, lat = old.lat, longs = old.longs, place = old.place)
+
+/** 2.7.2 place name (s9/k.OooO): the first non-blank of sub-locality, locality, sub-admin area, admin area, country. */
+internal fun pickPlaceName(vararg parts: String?): String = parts.firstOrNull { !it.isNullOrBlank() }?.trim().orEmpty()
+
 internal fun MediaItem.placeKey(): String = placeKey(placeName, latitude, longitude)
 
 /** [path] after [oldFolder] became [newFolder]: the folder itself and everything under it move, any other path stays. */
@@ -505,7 +513,7 @@ class MediaRepositoryImpl(
             val existing = existingMap[item.filePath]
             val entity = MediaEntity.fromDomain(item)
             if (existing != null) {
-                entity.copy(
+                keepLocation(entity, existing).copy(
                     deletedDate = existing.deletedDate,
                     isFavorite = existing.isFavorite
                 )
@@ -523,6 +531,18 @@ class MediaRepositoryImpl(
             .filter { it.deletedDate == 0L && it.filePath !in scannedPaths && !File(it.filePath).exists() }
             .map { it.filePath }
         if (missing.isNotEmpty()) dao.deleteByPaths(missing)
+        // After the lists are written (PlaceFindService runs later too): EXIF GPS once per file version, then the place name
+        val located = entities.mapNotNull { e ->
+            var r = e
+            if (!r.isLocation && r.mediaType != MediaType.VIDEO.rawCode) {
+                val ll = scanner.readLatLong(r.filePath)
+                r = r.copy(isLocation = true, lat = ll?.get(0) ?: 0f, longs = ll?.get(1) ?: 0f)
+            }
+            // shortcut: a failed lookup (offline) is retried on every sync, for geotagged rows only
+            if (r.place.isEmpty() && hasCoordinates(r.lat, r.longs)) r = r.copy(place = scanner.placeName(r.lat, r.longs))
+            r.takeIf { it != e }
+        }
+        if (located.isNotEmpty()) inTransaction { located.forEach { dao.setLocation(it.filePath, it.lat, it.longs, it.place) } }
     }
 
     override suspend fun setFavorite(path: String, favorite: Boolean) = withContext(Dispatchers.IO) {

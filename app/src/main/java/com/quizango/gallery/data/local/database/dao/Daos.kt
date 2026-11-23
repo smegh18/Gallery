@@ -67,6 +67,10 @@ interface GalleryDao {
     @Query("UPDATE images_table SET isFavorite = :favorite WHERE filePath = :path")
     suspend fun setFavorite(path: String, favorite: Boolean)
 
+    /** Location only, so a favourite or trash change made during the EXIF pass is not overwritten. */
+    @Query("UPDATE images_table SET isLocation = 1, lat = :lat, longs = :lng, place = :place WHERE filePath = :path")
+    suspend fun setLocation(path: String, lat: Float, lng: Float, place: String)
+
     @Query("DELETE FROM images_table WHERE deletedDate > 0 AND deletedDate < :thresholdTimestamp")
     suspend fun purgeExpiredTrash(thresholdTimestamp: Long)
 }
