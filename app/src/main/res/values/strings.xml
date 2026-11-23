@@ -174,9 +174,6 @@
     <!-- Duplicate Finder Suite Strings -->
     <string name="cleaner_duplicate_empty_layout_text">No duplicate photos found</string>
     <string name="no_duplicate_files">Your gallery is clean and organized.</string>
-    <string name="permanent_delete_duplicate_title">Want to delete the duplicate images?</string>
-    <string name="permanent_delete_duplicate_single_title">Want to delete the duplicate image?</string>
-    <string name="permanent_delete_duplicate_sub_title">Once deleted, the duplicate images can’t be restored.</string>
     <string name="dup_media_wait_hint">This may take a while on large libraries.</string>
     <string name="cleanup_complete">Cleanup complete</string>
     <string name="task_completed">Task completed</string>
