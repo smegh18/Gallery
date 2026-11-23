@@ -6,10 +6,13 @@ import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.browse.ListState
 import com.quizango.gallery.ui.browse.listStateOf
 import com.quizango.gallery.ui.browse.pruneSelection
+import com.quizango.gallery.ui.cleaner.DuplicateDeleteRequest
+import com.quizango.gallery.ui.cleaner.deleteSelectedLabel
 import com.quizango.gallery.ui.cleaner.duplicateGroupLabel
 import com.quizango.gallery.ui.cleaner.formatDuplicateSize
 import com.quizango.gallery.ui.cleaner.keepOneSelection
 import com.quizango.gallery.ui.cleaner.runDuplicateWaiting
+import com.quizango.gallery.ui.cleaner.selectedDuplicates
 import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.*
 import kotlinx.coroutines.runBlocking
@@ -60,6 +63,39 @@ class DuplicateTest {
         assertEquals(ListState.LOADING, listStateOf(null, 4))
         assertEquals(ListState.EMPTY, listStateOf(emptyList<List<MediaItem>>(), 4))
         assertEquals(ListState.CONTENT, listStateOf(listOf(listOf(createMediaItem(1, "/a", 1))), 4))
+    }
+
+    @Test
+    fun nothingSelectedOrOnlyStalePathsMeansPleaseSelect() {
+        val groups = listOf(listOf(createMediaItem(1, "/a", 1), createMediaItem(2, "/b", 1)))
+        assertNull(selectedDuplicates(groups, emptySet()))
+        assertNull(selectedDuplicates(groups, setOf("/gone")))
+    }
+
+    @Test
+    fun deleteButtonShowsCountAndKeepsTheAdBadge() {
+        assertEquals("Delete Selected (19 items)", deleteSelectedLabel("Delete Selected", 19, "items"))
+        assertTrue(File("src/main/res/drawable/ic_ads_left.xml").exists())
+        assertTrue(File("src/main/java/com/quizango/gallery/ui/cleaner/DuplicatePhotoScreen.kt").readText().contains("R.drawable.ic_ads_left"))
+    }
+
+    @Test
+    fun confirmationCarriesFrozenPathsAndRecycleChoiceWithoutDeleting() {
+        val groups = listOf(
+            listOf(createMediaItem(1, "/a1", 1), createMediaItem(2, "/a2", 1)),
+            listOf(createMediaItem(3, "/b1", 2), createMediaItem(4, "/b2", 2))
+        )
+        var selected = setOf("/b2", "/a2")
+        val snapshot = selectedDuplicates(groups, selected)!!
+        selected = selected + "/a1" // a later change must not reach the confirmed request
+        val toBin = DuplicateDeleteRequest(snapshot, moveToRecycleBin = true)
+        assertEquals(listOf("/a2", "/b2"), toBin.paths)
+        assertTrue(toBin.moveToRecycleBin)
+        assertFalse(DuplicateDeleteRequest(snapshot, moveToRecycleBin = false).moveToRecycleBin)
+        assertEquals(3, selected.size)
+        // The results screen only hands the request on; deleting belongs to the process step
+        val screen = File("src/main/java/com/quizango/gallery/ui/cleaner/DuplicatePhotoScreen.kt").readText()
+        assertFalse(screen.contains("moveToTrash") || screen.contains("deletePermanently"))
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.cleaner
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,13 +23,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,15 +42,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.DuplicateFinder
@@ -64,13 +60,22 @@ import com.quizango.gallery.ui.browse.SharedMediaToolbar
 import com.quizango.gallery.ui.browse.fallDown
 import com.quizango.gallery.ui.browse.listStateOf
 import com.quizango.gallery.ui.browse.pruneSelection
+import com.quizango.gallery.ui.home.DeleteMediaDialog
 import com.quizango.gallery.ui.home.FastScrollThumb
 import com.quizango.gallery.ui.home.PhotosEmptyState
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+
+/** A confirmed duplicate delete (DP 1284-1406 `oa/j` Yes): the frozen photos and the Move to Recycle Bin choice. */
+data class DuplicateDeleteRequest(val items: List<MediaItem>, val moveToRecycleBin: Boolean) {
+    val paths: List<String> get() = items.map { it.filePath }
+}
+
+/** The selected photos still listed, in display order; null means nothing to delete (please_select_items). */
+internal fun selectedDuplicates(groups: List<List<MediaItem>>, selected: Set<String>): List<MediaItem>? =
+    groups.flatten().filter { it.filePath in selected }.takeIf { it.isNotEmpty() }
 
 /** Keep One Photo on (DP 322-660): every photo except the first of each group. */
 internal fun keepOneSelection(groups: List<List<MediaItem>>): Set<String> =
@@ -90,9 +95,9 @@ fun DuplicatePhotoScreen(
     mediaRepository: MediaRepository,
     duplicateFinder: DuplicateFinder,
     onNavigateBack: () -> Unit,
-    onNavigateToComplete: ((count: Int, sizeBytes: Long) -> Unit)? = null
+    onDelete: (DuplicateDeleteRequest) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val allMedia by remember { mediaRepository.getActiveMediaFlow() }.collectAsState(initial = null)
     // null until the first grouping is in, so the empty copy never flashes first
     val groups by produceState<List<List<MediaItem>>?>(null, allMedia) {
@@ -101,7 +106,8 @@ fun DuplicatePhotoScreen(
     }
     var selected by remember { mutableStateOf(emptySet<String>()) }
     var keepOne by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    // Frozen when Delete Selected is tapped; later selection changes cannot alter what the dialog confirms
+    var pending by remember { mutableStateOf<List<MediaItem>?>(null) }
 
     // Deleted or changed files leave their group: drop them from the selection
     LaunchedEffect(groups) {
@@ -137,67 +143,24 @@ fun DuplicatePhotoScreen(
         }
         if (selected.isNotEmpty()) DeleteSelectedButton(
             count = selected.size,
-            onClick = { showDeleteDialog = true },
+            onClick = {
+                val snapshot = selectedDuplicates(groups.orEmpty(), selected)
+                if (snapshot == null) Toast.makeText(context, context.getString(R.string.please_select_items), Toast.LENGTH_SHORT).show()
+                else pending = snapshot
+            },
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 
-    // Permanent delete confirmation dialog matching dialog_cleaner_permanently_delete.xml
-    if (showDeleteDialog) {
-        val isSingle = selected.size == 1
-        val dialogTitle = if (isSingle) {
-            stringResource(id = R.string.permanent_delete_duplicate_single_title)
-        } else {
-            stringResource(id = R.string.permanent_delete_duplicate_title)
-        }
-
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = {
-                Text(
-                    text = dialogTitle,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+    pending?.let { items ->
+        DeleteMediaDialog(
+            count = items.size,
+            customTitle = stringResource(R.string.deleted_title) + " " + items.size + " " + stringResource(R.string.deleted_items),
+            onConfirm = { toBin ->
+                pending = null
+                onDelete(DuplicateDeleteRequest(items, toBin))
             },
-            text = {
-                Text(
-                    text = stringResource(id = R.string.permanent_delete_duplicate_sub_title),
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDeleteDialog = false
-                        val toDelete = groups.orEmpty().flatten().filter { it.filePath in selected }
-                        scope.launch {
-                            toDelete.forEach { mediaRepository.moveToTrash(it.filePath) }
-                            selected = emptySet()
-                            onNavigateToComplete?.invoke(toDelete.size, toDelete.sumOf { it.fileSize })
-                        }
-                    }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.clean),
-                        color = Color(0xFFE11A1A),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
-                    Text(
-                        text = stringResource(id = R.string.cancel),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(14.dp)
+            onDismiss = { pending = null }
         )
     }
 }

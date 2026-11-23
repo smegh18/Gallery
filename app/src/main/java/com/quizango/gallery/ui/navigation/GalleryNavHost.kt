@@ -247,13 +247,19 @@ fun GalleryNavHost(
         }
 
         composable(Screen.Duplicates.route) {
+            val deleteScope = androidx.compose.runtime.rememberCoroutineScope()
             DuplicatePhotoScreen(
                 mediaRepository = app.mediaRepository,
                 duplicateFinder = app.duplicates,
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToComplete = { count, size ->
-                    navController.navigate(Screen.DuplicateComplete.createRoute(count, size)) {
-                        popUpTo(Screen.Duplicates.route) { inclusive = true }
+                onDelete = { request ->
+                    // shortcut: runs the request here with no process state; 06-06 hands it to the delete-process screen
+                    deleteScope.launch {
+                        if (request.moveToRecycleBin) request.paths.forEach { app.mediaRepository.moveToTrash(it) }
+                        else app.mediaRepository.deletePermanently(request.paths)
+                        navController.navigate(Screen.DuplicateComplete.createRoute(request.items.size, request.items.sumOf { it.fileSize })) {
+                            popUpTo(Screen.Duplicates.route) { inclusive = true }
+                        }
                     }
                 }
             )
