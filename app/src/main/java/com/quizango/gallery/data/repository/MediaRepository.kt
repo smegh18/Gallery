@@ -64,6 +64,12 @@ internal const val LARGE_VIDEO_MIN_BYTES = 73_400_320L
 internal fun largeVideos(media: List<MediaItem>, minBytes: Long = LARGE_VIDEO_MIN_BYTES): List<MediaItem> =
     media.filter { it.isVideo && it.fileSize >= minBytes }.sortedByDescending { it.dateAdded }
 
+/** ScreenshotsViewModel keys PICTURES_SCREENSHOT(S) and DCIM_SCREENSHOT(S). */
+private val SCREENSHOT_DIRS = listOf("Pictures/Screenshot", "Pictures/Screenshots", "DCIM/Screenshot", "DCIM/Screenshots")
+
+/** The reference matches the folder path only, case-sensitively, whatever the file name or media type. */
+internal fun isScreenshotFolder(folderPath: String): Boolean = SCREENSHOT_DIRS.any { folderPath.contains(it) }
+
 /** VideoPlayerActivity capture name: "IMG_" + yyyyMMdd_ + epoch millis + ".png". */
 internal fun captureFileName(millis: Long): String =
     "IMG_" + java.text.SimpleDateFormat("yyyyMMdd_", java.util.Locale.US).format(java.util.Date(millis)) + millis + ".png"
@@ -509,13 +515,7 @@ class MediaRepositoryImpl(
 
     override fun getScreenshotsFlow(): Flow<List<MediaItem>> {
         return cached("shots") { run {
-        activeEntities.map { list ->
-            list.filter {
-                it.folderPath.contains("screenshot", ignoreCase = true) ||
-                it.folderName.contains("screenshot", ignoreCase = true) ||
-                it.fileName.contains("screenshot", ignoreCase = true)
-            }.map { it.toDomain() }
-        }
+        activeEntities.map { list -> list.filter { isScreenshotFolder(it.folderPath) }.map { it.toDomain() } }
     } }
     }
 

@@ -2,7 +2,9 @@ package com.quizango.gallery
 
 import com.quizango.gallery.data.local.PathMutationOutcome
 import com.quizango.gallery.data.local.PathMutationOutcome.Status
+import com.quizango.gallery.R
 import com.quizango.gallery.data.repository.LARGE_VIDEO_MIN_BYTES
+import com.quizango.gallery.data.repository.isScreenshotFolder
 import com.quizango.gallery.data.repository.largeVideos
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
@@ -14,6 +16,7 @@ import com.quizango.gallery.ui.cleaner.runCleanerDelete
 import com.quizango.gallery.ui.home.PhotoRow
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -68,5 +71,35 @@ class CleanerMediaTest {
         assertEquals(listOf(listOf("/a", "/b", "/c")), sent)
         assertEquals(setOf("/b", "/c"), failed)
         assertTrue(runCleanerDelete(listOf("/a")) { listOf(PathMutationOutcome("/a", Status.SUCCESS)) }.isEmpty())
+    }
+
+    @Test
+    fun `screenshots match only the four reference folders, not file names`() {
+        listOf(
+            "/storage/emulated/0/Pictures/Screenshots",
+            "/storage/emulated/0/Pictures/Screenshot",
+            "/storage/emulated/0/DCIM/Screenshots",
+            "/storage/emulated/0/DCIM/Screenshot",
+            "/storage/1234-ABCD/DCIM/Screenshots/Edited"
+        ).forEach { assertTrue(it, isScreenshotFolder(it)) }
+        listOf(
+            "/storage/emulated/0/Pictures/screenshots", // the reference compares case-sensitively
+            "/storage/emulated/0/Screenshots",
+            "/storage/emulated/0/Download",
+            "/storage/emulated/0/Movies/Screenshot"
+        ).forEach { assertFalse(it, isScreenshotFolder(it)) }
+    }
+
+    @Test
+    fun `screenshots grid has four columns and its own permanent-delete copy`() {
+        val shots = CleanerMediaKind.SCREENSHOTS
+        assertEquals(4, shots.columns)
+        assertEquals(R.string.permanent_delete_screenshot_title, shots.confirmTitle)
+        assertEquals(R.string.permanent_delete_screenshot_sub_title, shots.confirmBody)
+        assertEquals(R.string.cleaner_screenshots_empty_layout_text, shots.empty)
+        assertFalse(shots.showsSize)
+        assertEquals(R.string.permanent_delete_video_title, CleanerMediaKind.LARGE_VIDEO.confirmTitle)
+        val rows = sharedMediaRows(listOf(media("s.png", 1, base, MediaType.IMAGE, "/storage/emulated/0/Pictures/Screenshots")))
+        assertEquals(4, sharedRowSpan(rows[0], shots.columns))
     }
 }

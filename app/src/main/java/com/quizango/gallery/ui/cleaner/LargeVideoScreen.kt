@@ -72,18 +72,6 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-fun formatVideoSize(bytes: Long): String {
-    val kb = bytes / 1024.0
-    val mb = kb / 1024.0
-    val gb = mb / 1024.0
-    return when {
-        gb >= 1.0 -> String.format("%.2f GB", gb)
-        mb >= 1.0 -> String.format("%.1f MB", mb)
-        kb >= 1.0 -> String.format("%.0f KB", kb)
-        else -> "$bytes B"
-    }
-}
-
 /** What differs between LargeVideoActivity and ScreenShortActivity; the cell, header and dialog layouts are shared. */
 internal enum class CleanerMediaKind(
     @StringRes val title: Int,
@@ -97,6 +85,10 @@ internal enum class CleanerMediaKind(
     LARGE_VIDEO(
         R.string.tool_bar_large_video, 3, R.string.cleaner_video_empty_layout_text,
         R.string.permanent_delete_video_title, R.string.permanent_delete_video_sub_title, R.color.white, true
+    ),
+    SCREENSHOTS(
+        R.string.tool_bar_screenshot, 4, R.string.cleaner_screenshots_empty_layout_text,
+        R.string.permanent_delete_screenshot_title, R.string.permanent_delete_screenshot_sub_title, R.color.backgroundColor, false
     )
 }
 

@@ -2,6 +2,7 @@ package com.quizango.gallery.ui.discovery
 
 import androidx.annotation.StringRes
 import com.quizango.gallery.R
+import com.quizango.gallery.data.repository.isScreenshotFolder
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
 import java.util.Calendar
@@ -15,11 +16,10 @@ data class Story(val id: String, @StringRes val titleRes: Int, val items: List<M
  */
 object StoryBuilder {
     private const val MAX = 15
-    private val SCREENSHOT_DIRS = listOf("Pictures/Screenshot", "Pictures/Screenshots", "DCIM/Screenshot", "DCIM/Screenshots")
 
     fun build(media: List<MediaItem>, now: Long = System.currentTimeMillis()): List<Story> {
         val photos = media.filter { m ->
-            m.mediaType != MediaType.VIDEO && !m.isAnimated && SCREENSHOT_DIRS.none { m.folderPath.contains(it) }
+            m.mediaType != MediaType.VIDEO && !m.isAnimated && !isScreenshotFolder(m.folderPath)
         }
         val newestFirst = compareByDescending<MediaItem> { it.dateModified }
 

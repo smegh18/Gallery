@@ -5,22 +5,12 @@ import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.ui.cleaner.CleanerEntry
 import com.quizango.gallery.ui.cleaner.formatCleanerSize
 import com.quizango.gallery.ui.cleaner.formatCleanerSizeSpanned
-import com.quizango.gallery.ui.cleaner.formatVideoSize
 import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.Locale
 
 class CleanerTest {
-
-    @Test
-    fun testFormatVideoSize() {
-        assertEquals("500 B", formatVideoSize(500L))
-        assertEquals("500 KB", formatVideoSize(500 * 1024L))
-        assertEquals("1.0 MB", formatVideoSize(1024 * 1024L))
-        assertEquals("70.0 MB", formatVideoSize(70 * 1024 * 1024L))
-        assertEquals("2.00 GB", formatVideoSize(2L * 1024 * 1024 * 1024L))
-    }
 
     @Test
     fun testCleanerSelectionToggle() {
