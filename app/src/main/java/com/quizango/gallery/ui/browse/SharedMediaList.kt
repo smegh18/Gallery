@@ -225,7 +225,7 @@ internal fun SharedMediaList(
 
 /**
  * layout_toolbar: back + title, or close + count + Select all / Unselect all while selecting.
- * [onInfo] shows `propertyBtn` (album selection Info) while selecting.
+ * [onInfo] shows `propertyBtn` (album selection Info) while selecting; [onSettings] shows `settingBtn` otherwise.
  */
 @Composable
 internal fun SharedMediaToolbar(
@@ -236,6 +236,7 @@ internal fun SharedMediaToolbar(
     onClose: () -> Unit = {},
     onToggleAll: () -> Unit = {},
     onInfo: (() -> Unit)? = null,
+    onSettings: (() -> Unit)? = null, // `settingBtn` (vault): shown at the end while not selecting
     showToggleAll: Boolean = selecting // the cleaner grids keep Back and always show Select all
 ) {
     Column(
@@ -283,6 +284,17 @@ internal fun SharedMediaToolbar(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = ripple(bounded = false),
                         onClick = onInfo
+                    )
+                    .padding(2.sdp)
+            )
+            if (!selecting && onSettings != null) Image(
+                painter = painterResource(R.drawable.ic_settings),
+                contentDescription = stringResource(R.string.settings),
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = false),
+                        onClick = onSettings
                     )
                     .padding(2.sdp)
             )
