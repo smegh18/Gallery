@@ -2,6 +2,7 @@ package com.quizango.gallery
 
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
+import com.quizango.gallery.ui.cleaner.CleanerEntry
 import com.quizango.gallery.ui.cleaner.JunkCategory
 import com.quizango.gallery.ui.cleaner.formatStorageBytes
 import com.quizango.gallery.ui.cleaner.formatVideoDuration
@@ -121,5 +122,22 @@ class CleanerTest {
         assertEquals("cleaner/large_videos", Screen.LargeVideos.route)
         assertEquals("cleaner/screenshots", Screen.Screenshots.route)
         assertEquals("cleaner/remove_junk", Screen.RemoveJunk.route)
+    }
+
+    @Test
+    fun systemCleanerEntriesKeepReferenceOrderAndTargets() {
+        val e = CleanerEntry.entries
+        assertEquals(
+            listOf(R.string.remove_junk, R.string.duplicate_images, R.string.tool_bar_screenshot, R.string.tool_bar_large_video),
+            e.map { it.title }
+        )
+        assertEquals(
+            listOf(R.string.txt_cleaner_sub, R.string.txt_sub_duplicate, R.string.txt_sub_screenshot, R.string.txt_sub_large_video),
+            e.map { it.subtitle }
+        )
+        assertEquals(
+            listOf(Screen.RemoveJunk, Screen.DuplicateWaiting, Screen.Screenshots, Screen.LargeVideos),
+            e.map { it.pick(Screen.RemoveJunk, Screen.DuplicateWaiting, Screen.Screenshots, Screen.LargeVideos) }
+        )
     }
 }

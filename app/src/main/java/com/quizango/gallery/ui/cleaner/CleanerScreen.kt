@@ -1,45 +1,57 @@
 package com.quizango.gallery.ui.cleaner
 
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
-import com.quizango.gallery.ui.theme.cardBackground
-import com.quizango.gallery.ui.theme.cardBorder
-import com.quizango.gallery.ui.theme.isDark
-import com.quizango.gallery.ui.theme.screenBackground
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.home.drawableBackground
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
 
-private val ScanNowRed = Color(0xFFE11A1A)
+/** SystemCleanerActivity entries in screen order: the item_remove_junk card, then the systemCleanerRecycler rows. */
+internal enum class CleanerEntry(@DrawableRes val icon: Int, @StringRes val title: Int, @StringRes val subtitle: Int) {
+    REMOVE_JUNK(R.drawable.ic_remove_junk_list, R.string.remove_junk, R.string.txt_cleaner_sub),
+    DUPLICATES(R.drawable.img_system_cleaner_duplicate, R.string.duplicate_images, R.string.txt_sub_duplicate),
+    SCREENSHOTS(R.drawable.img_system_cleaner_screenshot, R.string.tool_bar_screenshot, R.string.txt_sub_screenshot),
+    LARGE_VIDEO(R.drawable.img_system_cleaner_large_video, R.string.tool_bar_large_video, R.string.txt_sub_large_video);
 
-/**
- * SystemCleaner Screen (activity_system_cleaner.xml / SystemCleanerActivity)
- * Features:
- * 1. Top bar: System Cleaner with Back button
- * 2. Remove Junk card with "Scan Now" button -> launches Storage Clean (RemoveJunkScreen)
- * 3. Categories list (systemCleanerRecycler):
- *    - Duplicate Images -> DuplicateWaitingScreen
- *    - Screenshots -> ScreenShortScreen
- *    - Large Video -> LargeVideoScreen
- */
-@OptIn(ExperimentalMaterial3Api::class)
+    /** du/a: card and Scan now -> junk scan, rows pswitch 0/1/2 -> duplicates, screenshots, large videos. */
+    fun <T> pick(junk: T, duplicates: T, screenshots: T, largeVideos: T): T = when (this) {
+        REMOVE_JUNK -> junk
+        DUPLICATES -> duplicates
+        SCREENSHOTS -> screenshots
+        LARGE_VIDEO -> largeVideos
+    }
+}
+
+/** SystemCleanerActivity (activity_system_cleaner, item_system_cleaner; UI-SPEC §1). */
 @Composable
 fun CleanerScreen(
     onNavigateBack: () -> Unit,
@@ -48,169 +60,86 @@ fun CleanerScreen(
     onNavigateToScreenshots: () -> Unit = {},
     onNavigateToRemoveJunk: () -> Unit = {}
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.tool_bar_system_cleaner),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 19.sp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
-            )
-        }
-    ) { paddingValues ->
-        val scrollState = rememberScrollState()
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.screenBackground)
-                .verticalScroll(scrollState)
-                .padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            // 1. Remove Junk Hero Card (item_remove_junk in activity_system_cleaner.xml)
-            val cardShape = RoundedCornerShape(16.dp)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(cardShape)
-                    .background(MaterialTheme.colorScheme.cardBackground)
-                    .border(width = 1.dp, color = MaterialTheme.colorScheme.cardBorder, shape = cardShape)
-                    .clickable(onClick = onNavigateToRemoveJunk)
-                    .padding(14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_remove_junk_list),
-                    contentDescription = "Remove Junk",
-                    modifier = Modifier.size(48.dp)
-                )
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(R.string.remove_junk),
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 15.sp
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = stringResource(R.string.txt_cleaner_sub),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 11.sp,
-                        lineHeight = 15.sp,
-                        maxLines = 2
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
+    val open = { e: CleanerEntry ->
+        e.pick(onNavigateToRemoveJunk, onNavigateToDuplicates, onNavigateToScreenshots, onNavigateToLargeVideos)()
+    }
+    Column(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        SharedMediaToolbar(title = stringResource(R.string.tool_bar_system_cleaner), onBack = onNavigateBack)
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding()) {
+            CleanerCard(CleanerEntry.REMOVE_JUNK, R.color.titleColor, top = 14.sdp, titleEnd = 2.sdp, subtitleEnd = 6.sdp, onClick = open) {
+                val pill = RoundedCornerShape(25.dp)
                 Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(25.dp))
-                        .background(ScanNowRed)
-                        .clickable(onClick = onNavigateToRemoveJunk)
-                        .padding(horizontal = 14.dp, vertical = 8.dp)
+                    Modifier
+                        .padding(start = 18.sdp)
+                        .width(82.sdp)
+                        .padding(vertical = 6.dp) // MaterialButton default insets
+                        .heightIn(min = 36.dp)
+                        .clip(pill)
+                        .background(colorResource(R.color.cleaner_red))
+                        .clickable { open(CleanerEntry.REMOVE_JUNK) }
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.explore_scan_now),
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp
+                        stringResource(R.string.scan_now),
+                        style = GalleryText.BodyMediumSemiBold,
+                        color = colorResource(R.color.onlyWhite),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
-
-            // 2. Categories List (systemCleanerRecycler in activity_system_cleaner.xml)
-            CleanerCategoryCard(
-                iconRes = R.drawable.img_system_cleaner_duplicate,
-                title = "Duplicate Images",
-                subtitle = "Find and remove identical photos.",
-                onClick = onNavigateToDuplicates
-            )
-
-            CleanerCategoryCard(
-                iconRes = R.drawable.img_system_cleaner_screenshot,
-                title = "Screenshots",
-                subtitle = "Manage and delete unwanted screenshots.",
-                onClick = onNavigateToScreenshots
-            )
-
-            CleanerCategoryCard(
-                iconRes = R.drawable.img_system_cleaner_large_video,
-                title = "Large Video",
-                subtitle = "Free up storage space for more memories.",
-                onClick = onNavigateToLargeVideos
-            )
+            CleanerEntry.entries.drop(1).forEach { entry ->
+                CleanerCard(entry, R.color.ic_cleaner_expand_arrow_color, top = 9.sdp, titleEnd = 0.dp, subtitleEnd = 0.dp, onClick = open) {
+                    Image(
+                        painterResource(R.drawable.system_cleaner_banner_arrow),
+                        contentDescription = null,
+                        modifier = Modifier.padding(start = 15.sdp).padding(5.sdp)
+                    )
+                }
+            }
         }
     }
 }
 
+/** layout_shape card: icon centred, title + 2-line subtitle top-anchored, trailing control centred. */
 @Composable
-private fun CleanerCategoryCard(
-    iconRes: Int,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit
+private fun CleanerCard(
+    entry: CleanerEntry,
+    @ColorRes titleColor: Int,
+    top: Dp,
+    titleEnd: Dp,
+    subtitleEnd: Dp,
+    onClick: (CleanerEntry) -> Unit,
+    trailing: @Composable () -> Unit
 ) {
-    val shape = RoundedCornerShape(16.dp)
     Row(
-        modifier = Modifier
+        Modifier
+            .padding(start = 14.sdp, end = 14.sdp, top = top)
             .fillMaxWidth()
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.cardBackground)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.cardBorder, shape = shape)
-            .clickable(onClick = onClick)
-            .padding(14.dp),
+            .clip(RoundedCornerShape(10.sdp))
+            .drawableBackground(R.drawable.layout_shape)
+            .clickable { onClick(entry) }
+            .padding(14.sdp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = title,
-            modifier = Modifier.size(48.dp)
-        )
-
-        Spacer(modifier = Modifier.width(14.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
+        Image(painterResource(entry.icon), contentDescription = null)
+        Column(Modifier.weight(1f).align(Alignment.Top).padding(start = 12.sdp)) {
             Text(
-                text = title,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 15.sp
+                stringResource(entry.title),
+                style = GalleryText.BodyLargeSemiBold,
+                color = colorResource(titleColor),
+                modifier = Modifier.padding(top = 5.sdp, end = titleEnd)
             )
-            Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = subtitle,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 11.sp,
-                lineHeight = 15.sp
+                stringResource(entry.subtitle),
+                style = GalleryText.BodySmallMedium,
+                color = colorResource(R.color.item_cleaner_sub_txt),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 5.sdp, end = subtitleEnd)
             )
         }
-
-        Icon(
-            painter = painterResource(id = R.drawable.system_cleaner_banner_arrow),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(20.dp)
-        )
+        trailing()
     }
 }
-
