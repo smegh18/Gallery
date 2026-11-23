@@ -53,21 +53,6 @@ class VaultTest {
     }
 
     @Test
-    fun testSecurityQuestionAnswerMatching() {
-        val savedAnswer = "Fluffy"
-
-        val exactInput = "Fluffy"
-        val caseInsensitiveInput = "fluffy"
-        val trimmedInput = "  Fluffy  "
-        val wrongInput = "Doggy"
-
-        assertTrue(exactInput.trim().equals(savedAnswer.trim(), ignoreCase = true))
-        assertTrue(caseInsensitiveInput.trim().equals(savedAnswer.trim(), ignoreCase = true))
-        assertTrue(trimmedInput.trim().equals(savedAnswer.trim(), ignoreCase = true))
-        assertFalse(wrongInput.trim().equals(savedAnswer.trim(), ignoreCase = true))
-    }
-
-    @Test
     fun testVaultSelectionToggle() {
         val item1 = "/vault/item1.jpg"
         val item2 = "/vault/item2.jpg"

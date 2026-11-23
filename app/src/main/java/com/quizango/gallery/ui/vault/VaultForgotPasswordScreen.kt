@@ -102,7 +102,7 @@ fun VaultForgotPasswordScreen(
             )
             Spacer(modifier = Modifier.height(72.dp))
 
-            val question = pairs.getOrNull(selected)?.first ?: DEFAULT_SECURITY_QUESTIONS[0]
+            val question = pairs.getOrNull(selected)?.first ?: ""
             Box {
                 Row(
                     modifier = Modifier
