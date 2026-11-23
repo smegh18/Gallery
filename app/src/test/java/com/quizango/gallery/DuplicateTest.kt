@@ -1,11 +1,20 @@
 package com.quizango.gallery
 
+import com.quizango.gallery.data.local.DuplicateFinder
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
+import com.quizango.gallery.ui.browse.ListState
+import com.quizango.gallery.ui.browse.listStateOf
+import com.quizango.gallery.ui.browse.pruneSelection
+import com.quizango.gallery.ui.cleaner.duplicateGroupLabel
 import com.quizango.gallery.ui.cleaner.formatDuplicateSize
+import com.quizango.gallery.ui.cleaner.keepOneSelection
+import com.quizango.gallery.ui.cleaner.runDuplicateWaiting
 import com.quizango.gallery.ui.navigation.Screen
 import org.junit.Assert.*
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import java.io.File
 
 class DuplicateTest {
 
@@ -19,95 +28,58 @@ class DuplicateTest {
     }
 
     @Test
-    fun testDuplicateGroupingByExplicitGroupAndSize() {
-        val item1 = createMediaItem(id = 1, path = "/path/img1.jpg", size = 2000L, dupGroup = 101L)
-        val item2 = createMediaItem(id = 2, path = "/path/img1_copy.jpg", size = 2000L, dupGroup = 101L)
-        val item3 = createMediaItem(id = 3, path = "/path/img2.jpg", size = 5000L, dupGroup = 0L)
-        val item4 = createMediaItem(id = 4, path = "/path/img2_copy.jpg", size = 5000L, dupGroup = 0L)
-        val unique = createMediaItem(id = 5, path = "/path/unique.jpg", size = 7000L, dupGroup = 0L)
-
-        val allMedia = listOf(item1, item2, item3, item4, unique)
-
-        // Heuristic grouping algorithm
-        val explicitGroups = allMedia.filter { it.duplicateGroup != 0L }
-            .groupBy { it.duplicateGroup }
-            .filter { it.value.size > 1 }
-            .values
-            .toList()
-
-        val explicitPaths = explicitGroups.flatten().map { it.filePath }.toSet()
-
-        val sizeGroups = allMedia.filter { it.filePath !in explicitPaths && it.fileSize > 0 }
-            .groupBy { it.fileSize }
-            .filter { it.value.size > 1 }
-            .values
-            .toList()
-
-        val duplicateGroups = (explicitGroups + sizeGroups).distinctBy { group -> group.map { it.filePath }.sorted() }
-
-        assertEquals(2, duplicateGroups.size)
-        // Group 1 has 2 items
-        assertEquals(2, duplicateGroups[0].size)
-        // Group 2 has 2 items
-        assertEquals(2, duplicateGroups[1].size)
-        // Unique item is not in any duplicate group
-        assertFalse(duplicateGroups.flatten().any { it.filePath == unique.filePath })
+    fun groupLabelsAreOneBased() {
+        assertEquals("Group 1 (2 Images)", duplicateGroupLabel("Group", 0, 2, "Images"))
+        assertEquals("Group 4 (3 Images)", duplicateGroupLabel("Group", 3, 3, "Images"))
     }
 
     @Test
-    fun testKeepBestPhotoSelectionLogic() {
-        val itemA1 = createMediaItem(id = 1, path = "/path/A1.jpg", size = 1000L)
-        val itemA2 = createMediaItem(id = 2, path = "/path/A2.jpg", size = 1000L)
-        val itemB1 = createMediaItem(id = 3, path = "/path/B1.jpg", size = 2000L)
-        val itemB2 = createMediaItem(id = 4, path = "/path/B2.jpg", size = 2000L)
-        val itemB3 = createMediaItem(id = 5, path = "/path/B3.jpg", size = 2000L)
-
-        val groups = listOf(listOf(itemA1, itemA2), listOf(itemB1, itemB2, itemB3))
-
-        // When Keep Best Photo is ON:
-        // A1 is kept (unselected), A2 is selected.
-        // B1 is kept (unselected), B2 and B3 are selected.
-        val keepBestSelected = mutableSetOf<String>()
-        groups.forEach { group ->
-            group.drop(1).forEach { keepBestSelected.add(it.filePath) }
-        }
-
-        assertEquals(3, keepBestSelected.size)
-        assertFalse(itemA1.filePath in keepBestSelected)
-        assertTrue(itemA2.filePath in keepBestSelected)
-        assertFalse(itemB1.filePath in keepBestSelected)
-        assertTrue(itemB2.filePath in keepBestSelected)
-        assertTrue(itemB3.filePath in keepBestSelected)
-
-        // When Keep Best Photo is OFF:
-        // All duplicate items are selected
-        val allSelected = mutableSetOf<String>()
-        groups.forEach { group ->
-            group.forEach { allSelected.add(it.filePath) }
-        }
-
-        assertEquals(5, allSelected.size)
-        assertTrue(itemA1.filePath in allSelected)
-        assertTrue(itemB1.filePath in allSelected)
+    fun keepOneSelectsEverythingButTheFirstOfEachGroup() {
+        val a = listOf(createMediaItem(1, "/A1.jpg", 1), createMediaItem(2, "/A2.jpg", 1))
+        val b = listOf(createMediaItem(3, "/B1.jpg", 2), createMediaItem(4, "/B2.jpg", 2), createMediaItem(5, "/B3.jpg", 2))
+        assertEquals(setOf("/A2.jpg", "/B2.jpg", "/B3.jpg"), keepOneSelection(listOf(a, b)))
+        assertEquals(emptySet<String>(), keepOneSelection(emptyList()))
     }
 
     @Test
-    fun testSelectAllAndUnselectAllToggle() {
-        val paths = listOf("/path/1.jpg", "/path/2.jpg", "/path/3.jpg", "/path/4.jpg")
-        val allPathsSet = paths.toSet()
+    fun pathKeysStayUniqueAndSelectionSurvivesAFlowUpdate() {
+        val items = (1L..5L).map { createMediaItem(it, "/p$it.jpg", it, date = it) }
+        val prints = mapOf("/p1.jpg" to "x", "/p2.jpg" to "x", "/p3.jpg" to "y", "/p4.jpg" to "y", "/p5.jpg" to "y")
+        val before = DuplicateFinder.group(items, prints)
+        val paths = before.flatten().map { it.filePath }
+        assertEquals(paths.size, paths.toSet().size)
+        val selected = keepOneSelection(before)
+        // p5 is deleted elsewhere: its group shrinks, the other selections stay
+        val after = DuplicateFinder.group(items.filter { it.filePath != "/p5.jpg" }, prints)
+        val present = after.flatten().map { it.filePath }.toSet()
+        assertEquals(selected - "/p5.jpg", pruneSelection(selected, present))
+    }
 
-        var selected = setOf<String>()
-        val isAllSelected1 = selected.isNotEmpty() && selected.size >= allPathsSet.size
-        assertFalse(isAllSelected1)
+    @Test
+    fun loadingEmptyAndGroupedStatesStayDistinct() {
+        assertEquals(ListState.LOADING, listStateOf(null, 4))
+        assertEquals(ListState.EMPTY, listStateOf(emptyList<List<MediaItem>>(), 4))
+        assertEquals(ListState.CONTENT, listStateOf(listOf(listOf(createMediaItem(1, "/a", 1))), 4))
+    }
 
-        // Select All
-        selected = allPathsSet
-        val isAllSelected2 = selected.isNotEmpty() && selected.size >= allPathsSet.size
-        assertTrue(isAllSelected2)
+    @Test
+    fun waitingScansOnceThenDoneThenOpensResultsWhenSuccessEnds() = runBlocking {
+        val log = mutableListOf<String>()
+        runDuplicateWaiting(
+            scan = { log += "scan" },
+            onDone = { log += "done" },
+            playSuccess = { log += "success" },
+            onFinished = { log += "results" }
+        )
+        assertEquals(listOf("scan", "done", "success", "results"), log)
+    }
 
-        // Unselect All
-        selected = emptySet()
-        assertEquals(0, selected.size)
+    @Test
+    fun waitingHasNoTimerAndNoSeparateCompleteScreen() {
+        val waiting = File("src/main/java/com/quizango/gallery/ui/cleaner/DuplicateWaitingScreen.kt").readText()
+        assertFalse(waiting.contains("delay("))
+        val screens = File("src/main/java/com/quizango/gallery/ui/navigation/Screen.kt").readText()
+        assertFalse(screens.contains("DuplicateScanningComplete"))
     }
 
     @Test
@@ -120,7 +92,8 @@ class DuplicateTest {
         id: Long,
         path: String,
         size: Long,
-        dupGroup: Long = 0L
+        dupGroup: Long = 0L,
+        date: Long = System.currentTimeMillis()
     ): MediaItem {
         return MediaItem(
             id = id,
@@ -129,8 +102,8 @@ class DuplicateTest {
             fileSize = size,
             folderName = "Camera",
             folderPath = "/storage/emulated/0/DCIM/Camera",
-            dateModified = System.currentTimeMillis(),
-            dateTaken = System.currentTimeMillis(),
+            dateModified = date,
+            dateTaken = date,
             mediaType = MediaType.IMAGE,
             duplicateGroup = dupGroup
         )

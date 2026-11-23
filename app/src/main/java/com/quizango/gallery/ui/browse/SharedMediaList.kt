@@ -432,7 +432,7 @@ private fun LazyGridState.mediaPathAt(
 
 /** item_animation_fall_down: fade in, scale 105 % to 100 % and drop in, staggered by [order]. */
 @Composable
-private fun Modifier.fallDown(order: Int): Modifier {
+internal fun Modifier.fallDown(order: Int): Modifier {
     val progress = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
         delay(order * ENTRANCE_STAGGER_MS)

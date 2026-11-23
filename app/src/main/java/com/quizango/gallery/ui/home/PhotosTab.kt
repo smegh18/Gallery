@@ -19,6 +19,7 @@ import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -434,7 +435,11 @@ private fun DrawableBox(@DrawableRes id: Int, modifier: Modifier) {
 
 /** fragment_all_media emptyLayout; the shared list frame passes its per-screen copy. */
 @Composable
-internal fun PhotosEmptyState(@StringRes title: Int = R.string.no_items, @StringRes body: Int? = R.string.no_media_file) {
+internal fun PhotosEmptyState(
+    @StringRes title: Int = R.string.no_items,
+    @StringRes body: Int? = R.string.no_media_file,
+    titleHorizontalPadding: Dp = 0.dp // the cleaner empty titles wrap inside 53.sdp margins
+) {
     Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -446,7 +451,8 @@ internal fun PhotosEmptyState(@StringRes title: Int = R.string.no_items, @String
             text = stringResource(title),
             style = GalleryText.BodyLargeSemiBold,
             color = titleColor,
-            modifier = Modifier.padding(top = 20.sdp, bottom = 10.sdp)
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(start = titleHorizontalPadding, end = titleHorizontalPadding, top = 20.sdp, bottom = 10.sdp)
         )
         if (body != null) Text(
             text = stringResource(body),

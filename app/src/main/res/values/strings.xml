@@ -61,9 +61,9 @@
     <string name="vault_empty_desc">Photos and videos you hide will appear here securely.</string>
 
     <!-- Cleaner Strings -->
-    <string name="scanning">Scanning…</string>
+    <string name="scanning">Scanning...</string>
     <string name="clean_junk">Clean Junk</string>
-    <string name="keep_best_photo">Keep Best Photo</string>
+    <string name="keep_best_photo">Keep One Photo</string>
     <string name="space_saved">Space Saved</string>
 
     <!-- Welcome Screen -->

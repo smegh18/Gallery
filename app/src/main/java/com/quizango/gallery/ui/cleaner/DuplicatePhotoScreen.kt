@@ -1,55 +1,90 @@
 package com.quizango.gallery.ui.cleaner
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.DuplicateFinder
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.MediaItem
-import com.quizango.gallery.ui.theme.GalleryBlue
-import com.quizango.gallery.ui.theme.isDark
-import com.quizango.gallery.ui.theme.settingsDivider
+import com.quizango.gallery.ui.browse.ListState
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.browse.fallDown
+import com.quizango.gallery.ui.browse.listStateOf
+import com.quizango.gallery.ui.browse.pruneSelection
+import com.quizango.gallery.ui.home.FastScrollThumb
+import com.quizango.gallery.ui.home.PhotosEmptyState
+import com.quizango.gallery.ui.home.drawableBackground
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
+
+/** Keep One Photo on (DP 322-660): every photo except the first of each group. */
+internal fun keepOneSelection(groups: List<List<MediaItem>>): Set<String> =
+    groups.flatMapTo(LinkedHashSet()) { group -> group.drop(1).map { it.filePath } }
+
+/** item_duplicate_main title (DP 2179-2300): "Group 1 (2 Images)", numbered from 1. */
+internal fun duplicateGroupLabel(group: String, index: Int, count: Int, images: String): String =
+    "$group ${index + 1} ($count $images)"
 
 /**
- * Duplicate Photo Screen with 100% parity to reference activity_duplicate_photo.xml,
- * item_duplicate_main.xml, item_duplicate_sub.xml, and DuplicatePhotoActivity.java.
- * Features:
- * - 4-column square grid layout (GridLayoutManager spanCount=4)
- * - Group header spanning 4 columns ("Group X (Y images)")
- * - "Keep best photo" toggle preserving the original unselected by default
- * - Top-right "Select All" / "Unselect All" toggle
- * - Authentic ic_check / ic_un_check corner selection indicators
- * - Bottom red delete bar (#E11A1A) with live size & count indicators
- * - Authentic permanent delete confirmation dialog
- * - Seamless transition to DuplicateCompleteScreen
+ * DuplicatePhotoActivity (activity_duplicate_photo, item_duplicate_main, item_duplicate_sub): layout_toolbar,
+ * the Keep One Photo switch (off on open), groups in 4 columns with a fast-scroll thumb, and Delete Selected
+ * while anything is selected. Grouping is the reference fingerprint ([DuplicateFinder.group], cached after the scan).
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DuplicatePhotoScreen(
     mediaRepository: MediaRepository,
@@ -58,349 +93,58 @@ fun DuplicatePhotoScreen(
     onNavigateToComplete: ((count: Int, sizeBytes: Long) -> Unit)? = null
 ) {
     val scope = rememberCoroutineScope()
-    val allMedia by mediaRepository.getActiveMediaFlow().collectAsState(initial = emptyList())
-    var selectedDuplicates by remember { mutableStateOf(setOf<String>()) }
-    var keepBestPhotoEnabled by remember { mutableStateOf(true) }
+    val allMedia by remember { mediaRepository.getActiveMediaFlow() }.collectAsState(initial = null)
+    // null until the first grouping is in, so the empty copy never flashes first
+    val groups by produceState<List<List<MediaItem>>?>(null, allMedia) {
+        val media = allMedia ?: return@produceState
+        value = DuplicateFinder.group(media, duplicateFinder.fingerprints(media))
+    }
+    var selected by remember { mutableStateOf(emptySet<String>()) }
+    var keepOne by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    // Reference rule: same thumbnail fingerprint (see DuplicateFinder); cached, so this is fast after the scan
-    val duplicateGroups: List<List<MediaItem>> by produceState(emptyList(), allMedia) {
-        value = DuplicateFinder.group(allMedia, duplicateFinder.fingerprints(allMedia))
+    // Deleted or changed files leave their group: drop them from the selection
+    LaunchedEffect(groups) {
+        val present = groups?.flatMapTo(HashSet()) { g -> g.map { it.filePath } } ?: return@LaunchedEffect
+        selected = pruneSelection(selected, present)
     }
 
-    // Default selection logic:
-    // If keepBestPhotoEnabled is true, keep the 1st photo in each group unselected and select the rest.
-    // If keepBestPhotoEnabled is false, select all items across all duplicate groups.
-    LaunchedEffect(duplicateGroups, keepBestPhotoEnabled) {
-        val autoSelected = mutableSetOf<String>()
-        duplicateGroups.forEach { group ->
-            if (keepBestPhotoEnabled) {
-                group.drop(1).forEach { autoSelected.add(it.filePath) }
-            } else {
-                group.forEach { autoSelected.add(it.filePath) }
-            }
-        }
-        selectedDuplicates = autoSelected
-    }
-
-    val allDuplicatePaths = remember(duplicateGroups) {
-        duplicateGroups.flatten().map { it.filePath }.toSet()
-    }
-
-    val isAllSelected = selectedDuplicates.isNotEmpty() && selectedDuplicates.size >= allDuplicatePaths.size
-
-    val selectedItems = remember(allMedia, selectedDuplicates) {
-        allMedia.filter { it.filePath in selectedDuplicates }
-    }
-    val selectedBytes = remember(selectedItems) {
-        selectedItems.sumOf { it.fileSize }
-    }
-
-    Scaffold(
-        topBar = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(id = R.string.duplicate_images),
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_back),
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    },
-                    actions = {
-                        if (duplicateGroups.isNotEmpty()) {
-                            TextButton(
-                                onClick = {
-                                    selectedDuplicates = if (isAllSelected) {
-                                        emptySet()
-                                    } else {
-                                        allDuplicatePaths
-                                    }
-                                }
-                            ) {
-                                Text(
-                                    text = if (isAllSelected) {
-                                        stringResource(id = R.string.unselect_all)
-                                    } else {
-                                        stringResource(id = R.string.select_all)
-                                    },
-                                    color = GalleryBlue,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    )
-                )
-                HorizontalDivider(
-                    thickness = 0.5.dp,
-                    color = MaterialTheme.colorScheme.settingsDivider
-                )
-            }
-        },
-        bottomBar = {
-            if (selectedDuplicates.isNotEmpty()) {
-                Surface(
-                    tonalElevation = 6.dp,
-                    color = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    // Edge-to-edge: keep the content above the system navigation bar
-                    Box(Modifier.navigationBarsPadding()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFFE11A1A))
-                                    .clickable { showDeleteDialog = true },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                val sizeText = if (selectedBytes > 0) " (${formatDuplicateSize(selectedBytes)})" else " (${selectedDuplicates.size})"
-                                Text(
-                                    text = "${stringResource(id = R.string.delete_selected)}$sizeText",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            }
-                        }
-                    }
+    Box(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        Column(Modifier.fillMaxSize()) {
+            SharedMediaToolbar(title = stringResource(R.string.duplicate_images), onBack = onNavigateBack)
+            val shown = groups
+            when (listStateOf(shown, 4)) {
+                ListState.LOADING -> Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
                 }
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            if (duplicateGroups.isNotEmpty()) {
-                // Keep Best Photo row matching keepPhotoLayout in activity_duplicate_photo.xml
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.keep_best_photo),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onBackground,
+                ListState.EMPTY -> Box(Modifier.weight(1f).fillMaxWidth()) {
+                    PhotosEmptyState(R.string.cleaner_duplicate_empty_layout_text, R.string.no_duplicate_files, titleHorizontalPadding = 53.sdp)
+                }
+                ListState.CONTENT -> {
+                    KeepOneRow(keepOne) { on ->
+                        keepOne = on
+                        selected = if (on) keepOneSelection(shown.orEmpty()) else emptySet()
+                    }
+                    DuplicateGrid(
+                        groups = shown.orEmpty(),
+                        selected = selected,
+                        onToggle = { path -> selected = if (path in selected) selected - path else selected + path },
                         modifier = Modifier.weight(1f)
                     )
-                    Switch(
-                        checked = keepBestPhotoEnabled,
-                        onCheckedChange = { keepBestPhotoEnabled = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = GalleryBlue
-                        )
-                    )
-                }
-
-                HorizontalDivider(
-                    thickness = 0.5.dp,
-                    color = MaterialTheme.colorScheme.settingsDivider
-                )
-            }
-
-            if (duplicateGroups.isEmpty()) {
-                // Authentic Empty State matching activity_duplicate_photo.xml
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(horizontal = 40.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_empty_img),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(110.dp)
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            text = stringResource(id = R.string.cleaner_duplicate_empty_layout_text),
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = stringResource(id = R.string.no_duplicate_files),
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            } else {
-                // Authentic 4-column Grid matching GridLayoutManager(4) in DuplicatePhotoActivity
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(4),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                ) {
-                    duplicateGroups.forEachIndexed { groupIndex, group ->
-                        // Group Header spanning full 4 columns (item_duplicate_main.xml)
-                        item(
-                            span = { GridItemSpan(4) },
-                            key = "header_$groupIndex"
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 4.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Group ${groupIndex + 1} (${group.size} images)",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                val redundantSize = group.drop(1).sumOf { it.fileSize }
-                                if (redundantSize > 0) {
-                                    Text(
-                                        text = formatDuplicateSize(redundantSize),
-                                        fontSize = 12.sp,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-                        }
-
-                        // Duplicate items spanning 1 column each (item_duplicate_sub.xml)
-                        items(
-                            count = group.size,
-                            key = { "${group[it].filePath}_${groupIndex}_$it" },
-                            span = { GridItemSpan(1) }
-                        ) { itemIndex ->
-                            val item = group[itemIndex]
-                            val isSelected = item.filePath in selectedDuplicates
-                            val isBest = itemIndex == 0 && keepBestPhotoEnabled
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f)
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .clickable {
-                                        selectedDuplicates = if (isSelected) {
-                                            selectedDuplicates - item.filePath
-                                        } else {
-                                            selectedDuplicates + item.filePath
-                                        }
-                                    }
-                            ) {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(item.contentUri)
-                                        .size(300, 300)
-                                        .allowRgb565(true)
-                                        .build(),
-                                    contentDescription = item.fileName,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-
-                                // BEST badge on the first image when keepBestPhotoEnabled is active
-                                if (isBest) {
-                                    Box(
-                                        modifier = Modifier
-                                            .align(Alignment.TopStart)
-                                            .padding(3.dp)
-                                            .clip(RoundedCornerShape(2.dp))
-                                            .background(GalleryBlue)
-                                            .padding(horizontal = 4.dp, vertical = 1.dp)
-                                    ) {
-                                        Text(
-                                            text = "BEST",
-                                            fontSize = 9.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White
-                                        )
-                                    }
-                                }
-
-                                // Selection check indicator (ic_check vs ic_un_check)
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (isSelected) R.drawable.ic_check else R.drawable.ic_un_check
-                                    ),
-                                    contentDescription = if (isSelected) "Selected" else "Unselected",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .padding(3.dp)
-                                        .size(20.dp)
-                                )
-
-                                // Bottom shadow with file size label (item_duplicate_sub.xml)
-                                Box(
-                                    modifier = Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .fillMaxWidth()
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.65f))
-                                            )
-                                        )
-                                        .padding(horizontal = 4.dp, vertical = 2.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = formatDuplicateSize(item.fileSize),
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Color.White,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-                        }
-                    }
                 }
             }
+            Spacer(Modifier.navigationBarsPadding())
         }
+        if (selected.isNotEmpty()) DeleteSelectedButton(
+            count = selected.size,
+            onClick = { showDeleteDialog = true },
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 
     // Permanent delete confirmation dialog matching dialog_cleaner_permanently_delete.xml
     if (showDeleteDialog) {
-        val isSingle = selectedDuplicates.size == 1
+        val isSingle = selected.size == 1
         val dialogTitle = if (isSingle) {
             stringResource(id = R.string.permanent_delete_duplicate_single_title)
         } else {
@@ -428,15 +172,11 @@ fun DuplicatePhotoScreen(
                 TextButton(
                     onClick = {
                         showDeleteDialog = false
-                        val count = selectedDuplicates.size
-                        val totalBytes = selectedBytes
-                        val toDelete = selectedDuplicates.toList()
+                        val toDelete = groups.orEmpty().flatten().filter { it.filePath in selected }
                         scope.launch {
-                            toDelete.forEach { path ->
-                                mediaRepository.moveToTrash(path)
-                            }
-                            selectedDuplicates = emptySet()
-                            onNavigateToComplete?.invoke(count, totalBytes)
+                            toDelete.forEach { mediaRepository.moveToTrash(it.filePath) }
+                            selected = emptySet()
+                            onNavigateToComplete?.invoke(toDelete.size, toDelete.sumOf { it.fileSize })
                         }
                     }
                 ) {
@@ -462,6 +202,156 @@ fun DuplicatePhotoScreen(
     }
 }
 
+/** keepPhotoLayout: "Keep One Photo" and the SwitchCompat (thumb colorPrimary when on). */
+@Composable
+private fun KeepOneRow(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    val primary = colorResource(R.color.colorPrimary)
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 5.sdp).padding(horizontal = 10.sdp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.keep_best_photo),
+            style = GalleryText.BodyMediumMedium,
+            color = colorResource(R.color.titleColor),
+            modifier = Modifier.weight(1f)
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = primary,
+                checkedTrackColor = primary.copy(alpha = 0.3f),
+                checkedBorderColor = Color.Transparent
+            )
+        )
+    }
+}
+
+@Composable
+private fun DuplicateGrid(
+    groups: List<List<MediaItem>>,
+    selected: Set<String>,
+    onToggle: (String) -> Unit,
+    modifier: Modifier
+) {
+    val gridState = rememberLazyGridState()
+    val groupWord = stringResource(R.string.group)
+    val imagesWord = stringResource(R.string.images)
+    // layout_animation runs on the first fill only, as in SharedMediaList
+    var entered by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(1500)
+        entered = true
+    }
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        LazyVerticalGrid(
+            state = gridState,
+            columns = GridCells.Fixed(4),
+            contentPadding = PaddingValues(start = 2.sdp, end = 2.sdp, bottom = 50.sdp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            var order = 0
+            groups.forEachIndexed { index, group ->
+                val headerOrder = order
+                order += group.size + 1
+                item(key = "group:" + group.first().filePath, span = { GridItemSpan(maxLineSpan) }) {
+                    Text(
+                        text = duplicateGroupLabel(groupWord, index, group.size, imagesWord),
+                        style = GalleryText.BodySmallMedium,
+                        color = colorResource(R.color.black),
+                        modifier = (if (entered) Modifier else Modifier.fallDown(headerOrder))
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.sdp, vertical = 4.sdp)
+                    )
+                }
+                items(group.size, key = { group[it].filePath }) { i ->
+                    val item = group[i]
+                    DuplicateCell(
+                        item = item,
+                        isSelected = item.filePath in selected,
+                        onToggle = { onToggle(item.filePath) },
+                        modifier = if (entered) Modifier else Modifier.fallDown(headerOrder + 1 + i)
+                    )
+                }
+            }
+        }
+        FastScrollThumb(gridState, trackHeightPx = constraints.maxHeight)
+    }
+}
+
+/** item_duplicate_sub: square card radius 3.sdp, check top end, the folder name as a shadowed caption. */
+@Composable
+private fun DuplicateCell(item: MediaItem, isSelected: Boolean, onToggle: () -> Unit, modifier: Modifier) {
+    Box(
+        modifier
+            .padding(1.sdp)
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(3.sdp))
+            .toggleable(value = isSelected, role = Role.Checkbox, onValueChange = { onToggle() })
+    ) {
+        AsyncImage(
+            model = item.contentUri,
+            contentDescription = item.fileName,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+        Image(
+            painter = painterResource(if (isSelected) R.drawable.ic_check else R.drawable.ic_un_check),
+            contentDescription = null,
+            modifier = Modifier.align(Alignment.TopEnd).padding(1.sdp)
+        )
+        Text(
+            text = item.folderName,
+            style = GalleryText.BodyXSmallMedium.copy(shadow = Shadow(Color.Black, Offset(2f, 2f), 4f)),
+            color = colorResource(R.color.onlyWhite),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(start = 10.sdp, end = 10.sdp, top = 6.sdp, bottom = 3.sdp)
+        )
+    }
+}
+
+/** delBtnLayout: "Delete Selected (N items)" and the `ic_ads_left` badge (kept by decision Q2; no ad is shown). */
+@Composable
+private fun DeleteSelectedButton(count: Int, onClick: () -> Unit, modifier: Modifier) {
+    Row(
+        modifier = modifier
+            .navigationBarsPadding()
+            .padding(start = 15.sdp, end = 15.sdp, bottom = 10.sdp)
+            .fillMaxWidth()
+            .height(40.sdp)
+            .clip(RoundedCornerShape(25.dp))
+            .drawableBackground(R.drawable.ic_delete_duplicate_btn_selected_bg)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 10.sdp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = deleteSelectedLabel(stringResource(R.string.delete_selected), count, stringResource(R.string.items)),
+            style = GalleryText.BodyXLargeSemiBold,
+            color = colorResource(R.color.onlyWhite),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false)
+        )
+        Image(
+            painter = painterResource(R.drawable.ic_ads_left),
+            contentDescription = null,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+    }
+}
+
+/** DP 546-651: "Delete Selected (19 items)". */
+internal fun deleteSelectedLabel(deleteSelected: String, count: Int, items: String): String = "$deleteSelected ($count $items)"
+
 fun formatDuplicateSize(bytes: Long): String {
     return when {
         bytes >= 1024L * 1024L * 1024L -> "%.2f GB".format(bytes.toDouble() / (1024 * 1024 * 1024))
@@ -470,4 +360,3 @@ fun formatDuplicateSize(bytes: Long): String {
         else -> "$bytes B"
     }
 }
-
