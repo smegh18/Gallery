@@ -2,6 +2,7 @@ package com.quizango.gallery
 
 import com.quizango.gallery.data.local.VaultCrypto
 import com.quizango.gallery.data.repository.hideFileSafely
+import com.quizango.gallery.data.repository.restoreFileSafely
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -73,5 +74,59 @@ class VaultFilesTest {
         assertFalse(ok)
         assertFalse(inserted)
         assertTrue(src.exists()); assertFalse(target.exists())
+    }
+
+    // ---- restore ----
+
+    private val decryptTo: (File, File) -> Unit = { v, t ->
+        if (VaultCrypto.isEncrypted(v)) v.inputStream().use { i -> t.outputStream().use { VaultCrypto.decrypt(i, it, key, jvm) } }
+        else v.copyTo(t, overwrite = true)
+    }
+
+    private fun vaultCopy(): File = vaultTarget().also { encrypt(source("tmp.jpg"), it) }
+
+    @Test
+    fun restoreNeverOverwritesSameNamedFile() {
+        val vf = vaultCopy(); val folder = File(dir, "orig").apply { mkdirs() }
+        val existing = File(folder, "photo.jpg").apply { writeBytes(byteArrayOf(9, 9, 9)) }
+        val out = restoreFileSafely(vf, folder, "photo.jpg", decryptTo)
+        assertEquals("photo(1).jpg", out?.name)
+        assertArrayEquals(byteArrayOf(9, 9, 9), existing.readBytes())
+        assertArrayEquals(plain, out!!.readBytes())
+        assertFalse(vf.exists())
+    }
+
+    @Test
+    fun restoreCreatesMissingFolder() {
+        val vf = vaultCopy(); val folder = File(dir, "gone/deeper")
+        val out = restoreFileSafely(vf, folder, "photo.jpg", decryptTo)
+        assertEquals(File(folder, "photo.jpg"), out)
+        assertArrayEquals(plain, out!!.readBytes())
+    }
+
+    @Test
+    fun restoreDecryptFailureLeavesNoPartialAndKeepsVaultFile() {
+        val vf = vaultCopy(); val folder = File(dir, "orig").apply { mkdirs() }
+        val before = vf.readBytes()
+        val failing: (File, File) -> Unit = { _, t -> t.writeBytes(byteArrayOf(1, 2)); error("boom") }
+        assertEquals(null, restoreFileSafely(vf, folder, "photo.jpg", failing))
+        assertEquals(0, folder.listFiles()!!.size)
+        assertArrayEquals(before, vf.readBytes())
+    }
+
+    @Test
+    fun restoreRemovesCopyWhenVaultFileCannotBeDeleted() {
+        val vf = vaultCopy(); val folder = File(dir, "orig").apply { mkdirs() }
+        assertEquals(null, restoreFileSafely(vf, folder, "photo.jpg", decryptTo, deleteVaultFile = { false }))
+        assertEquals(0, folder.listFiles()!!.size)
+        assertTrue(vf.exists())
+    }
+
+    @Test
+    fun restoreLegacyPlainVaultFileStillCopiesBytes() {
+        val vf = vaultTarget().apply { writeBytes(plain) }; val folder = File(dir, "orig")
+        val out = restoreFileSafely(vf, folder, "photo.jpg", decryptTo)
+        assertArrayEquals(plain, out!!.readBytes())
+        assertFalse(vf.exists())
     }
 }

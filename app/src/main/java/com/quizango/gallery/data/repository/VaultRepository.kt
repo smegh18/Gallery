@@ -63,6 +63,34 @@ internal suspend fun hideFileSafely(
     return true
 }
 
+/**
+ * Restores [vaultFile] into [folder] under a free name (never overwrites). Returns the restored file, or null with
+ * the vault file untouched and no partial or extra copy left in [folder].
+ */
+internal fun restoreFileSafely(
+    vaultFile: File,
+    folder: File,
+    fileName: String,
+    decrypt: (File, File) -> Unit,
+    deleteVaultFile: (File) -> Boolean = File::delete
+): File? {
+    if (!folder.isDirectory && !folder.mkdirs() && !folder.isDirectory) return null
+    val target = uniqueTargetFile(folder, fileName)
+    try {
+        if (!target.createNewFile()) return null // lost a race for the name: keep the other file
+        decrypt(vaultFile, target)
+    } catch (e: Exception) {
+        target.delete()
+        return null
+    }
+    val deleted = try { deleteVaultFile(vaultFile) && !vaultFile.exists() } catch (e: Exception) { false }
+    if (!deleted) {
+        target.delete() // the item stays in the vault, so do not leave a second plain copy
+        return null
+    }
+    return target
+}
+
 class VaultRepositoryImpl(
     private val context: Context,
     private val vaultDao: VaultDao,
@@ -156,20 +184,16 @@ class VaultRepositoryImpl(
             val vaultFile = File(vaultItem.filePath)
             if (!vaultFile.exists()) return@withContext false
 
-            val originalFolder = File(vaultItem.folderPath)
-            if (!originalFolder.exists()) originalFolder.mkdirs()
-
-            val restoredFile = File(originalFolder, vaultItem.fileName)
-            try {
-                decryptTo(vaultFile, restoredFile)
-            } catch (e: Exception) {
-                restoredFile.delete() // keep the vault copy if decryption failed
-                return@withContext false
-            }
-            vaultFile.delete()
+            val restoredFile = restoreFileSafely(vaultFile, File(vaultItem.folderPath), vaultItem.fileName, ::decryptTo)
+                ?: return@withContext false
 
             File(context.cacheDir, "vault_view/${File(vaultItem.filePath).name}").delete() // drop plain cache copy
             vaultDao.deleteByPaths(listOf(vaultItem.filePath))
+            try {
+                scanner.scanFiles(restoredFile.absolutePath)
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+            }
             true
         } catch (_: Exception) {
             false
