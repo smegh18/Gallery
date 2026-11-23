@@ -404,6 +404,7 @@
     <string name="audio_not_available">Audio is not available.</string>
     <string name="video_not_found">Video not found.</string>
     <string name="this_video_format_not_supported">Unsupported video format</string>
+    <string name="disable">Disable</string>
     <string name="subtitle">Subtitle</string>
     <string name="audio_track">Audio track</string>
     <!-- Phase 5 shared media list (§3.4, §10) -->

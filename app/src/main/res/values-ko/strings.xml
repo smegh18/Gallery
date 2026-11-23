@@ -57,7 +57,7 @@
  모든 파일 액세스는 Google에게도 매우 중요합니다. 이 권한이 필요한 모든 앱은 게시되기 전에 Google의 엄격한 검토를 거쳐야 합니다. 어떤 악성 앱도 이 권한을 얻을 수 없습니다.
 
  알고 싶으면 다음 URL을 클릭하세요 자세한 내용: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\t설정 열기</string>
+    <string name="open_settings">\u0009설정 열기</string>
     <string name="select_app_language">앱 언어 선택</string>
     <string name="album_collage_new">새로운</string>
     <string name="collage_maker_explore_title">콜라주 메이커</string>
@@ -318,6 +318,7 @@
     <string name="audio_not_available">오디오를 사용할 수 없습니다.</string>
     <string name="video_not_found">비디오를 찾을 수 없습니다.</string>
     <string name="this_video_format_not_supported">지원되지 않는 비디오 형식</string>
+    <string name="disable">비활성화</string>
     <string name="subtitle">자막</string>
     <string name="audio_track">오디오 트랙</string>
     <string name="unfavorite">즐겨찾기 해제</string>

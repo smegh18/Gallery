@@ -49,7 +49,7 @@
     <string name="allow_access_to_manage_all_files">"Autoriser l'accès pour gérer tous les fichiers"</string>
     <string name="about_permission_title">Pourquoi avons-nous besoin de cette permission ?</string>
     <string name="about_permission_description">"Auparavant, Gallery avait besoin d'accéder à votre stockage pour analyser et afficher les photos et vidéos sur votre appareil. Mais suite à la mise à jour de la politique de sécurité pour Android 11 et versions ultérieures, il est désormais nécessaire d'avoir un Accès à tous les fichiers pour effectuer la même tâche. Nous vous assurons que cette permission ne sera utilisée que pour accéder aux photos et vidéos sur votre appareil et ne sera pas utilisée à d'autres fins. L' Accès à tous les fichiers revêt également une grande importance pour Google. Toutes les applications nécessitant cette permission doivent faire l'objet d'un examen strict par Google avant leur publication. Aucune application malveillante ne peut obtenir cette permission. Cliquez sur l'URL suivante pour en savoir plus : https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\tOuvrir les paramètres</string>
+    <string name="open_settings">\u0009Ouvrir les paramètres</string>
     <string name="select_app_language">"Sélectionner la langue de l'application"</string>
     <string name="album_collage_new">Nouveau</string>
     <string name="collage_maker_explore_title">Créateur de Collages</string>
@@ -310,6 +310,7 @@
     <string name="audio_not_available">Audio non disponible.</string>
     <string name="video_not_found">Vidéo non trouvée.</string>
     <string name="this_video_format_not_supported">Format vidéo non pris en charge</string>
+    <string name="disable">Désactiver</string>
     <string name="subtitle">Sous-titre</string>
     <string name="audio_track">Piste audio</string>
     <string name="unfavorite">Retirer des favoris</string>

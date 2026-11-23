@@ -57,7 +57,7 @@
  Akses Semua File juga sangat penting bagi Google. Semua aplikasi yang memerlukan izin ini harus menjalani peninjauan ketat oleh Google sebelum dipublikasikan. Tidak ada aplikasi berbahaya yang bisa mendapatkan izin ini.
 
  Klik URL berikut untuk mengetahuinya untuk lebih lanjut: https://support.google.com/googleplay/android-developer/answer/10467955"</string>
-    <string name="open_settings">\tBuka Pengaturan</string>
+    <string name="open_settings">\u0009Buka Pengaturan</string>
     <string name="select_app_language">Pilih Bahasa Aplikasi</string>
     <string name="album_collage_new">Baru</string>
     <string name="collage_maker_explore_title">Pembuat Kolase</string>
@@ -165,7 +165,7 @@
     <string name="str_home_collage">Kolase</string>
     <string name="explore_collage_desc">Gabungkan foto Anda</string>
     <string name="vault">Brankas</string>
-    <string name="str_home_favourite">\tFavorit</string>
+    <string name="str_home_favourite">\u0009Favorit</string>
     <string name="str_home_Moments">Momen</string>
     <string name="str_home_place">Tempat</string>
     <string name="str_home_Recycle_bin">Tempat Sampah</string>
@@ -318,6 +318,7 @@
     <string name="audio_not_available">Audio tidak tersedia.</string>
     <string name="video_not_found">Video tidak ditemukan.</string>
     <string name="this_video_format_not_supported">Format video tidak didukung</string>
+    <string name="disable">Nonaktifkan</string>
     <string name="subtitle">Teks Subtitle</string>
     <string name="audio_track">Treki Audio</string>
     <string name="unfavorite">Batal Favorit</string>

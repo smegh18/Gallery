@@ -53,6 +53,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -98,6 +99,10 @@ private enum class PlayerMenu { SPEED, SUBTITLE, AUDIO }
 /** One selectable Media3 track for the subtitle / audio pickers. */
 private class TrackChoice(val group: Tracks.Group, val index: Int, val label: String)
 
+/** 2.7.2 greys out and disables CC when the file has no playable subtitle track. */
+internal fun hasSubtitleTrack(groups: List<Tracks.Group>): Boolean =
+    groups.any { it.type == C.TRACK_TYPE_TEXT && it.isSupported }
+
 /** VideoPlayerActivity (§2): one player for the screen, queued with the source list's videos. */
 @OptIn(UnstableApi::class)
 @Composable
@@ -131,6 +136,7 @@ fun VideoPlayerScreen(
     var interaction by remember { mutableIntStateOf(0) }
     var menu by remember { mutableStateOf<PlayerMenu?>(null) }
     var trackChoices by remember { mutableStateOf<List<TrackChoice>>(emptyList()) }
+    var hasSubtitles by remember { mutableStateOf(false) }
     var details by remember { mutableStateOf(false) }
     var seekShown by remember { mutableStateOf<TapZone?>(null) }
     var seekTick by remember { mutableIntStateOf(0) }
@@ -155,6 +161,7 @@ fun VideoPlayerScreen(
                 mediaItem?.mediaId?.let { currentPath = it }
                 subtitle = ""
             }
+            override fun onTracksChanged(tracks: Tracks) { hasSubtitles = hasSubtitleTrack(tracks.groups) }
             override fun onCues(cueGroup: CueGroup) {
                 subtitle = cueGroup.cues.joinToString("\n") { it.text?.toString().orEmpty() }.trim()
             }
@@ -477,10 +484,13 @@ fun VideoPlayerScreen(
                         modifier = Modifier.weight(1f).padding(start = 4.sdp)
                     )
                     Box(Modifier.padding(start = 6.sdp)) {
-                        PlayerButton(R.drawable.ic_subtitle, R.string.subtitle, 3.sdp, tinted = false) {
+                        PlayerButton(
+                            R.drawable.ic_subtitle, R.string.subtitle, 3.sdp,
+                            Modifier.alpha(if (hasSubtitles) 1f else 0.5f), tinted = false, enabled = hasSubtitles
+                        ) {
+                            player.pause() // 2.7.2 pauses before showing the Subtitle dialog (p0/d) and does not resume
                             openTracks(C.TRACK_TYPE_TEXT, PlayerMenu.SUBTITLE, R.string.subtitle_not_available)
                         }
-                        if (menu == PlayerMenu.SUBTITLE) TrackPopup(trackChoices, { pickTrack(C.TRACK_TYPE_TEXT, it) }) { menu = null }
                     }
                     Box(Modifier.padding(start = 4.sdp)) {
                         PlayerButton(R.drawable.ic_audio_track, R.string.audio_track, 3.sdp, tinted = false) {
@@ -554,6 +564,17 @@ fun VideoPlayerScreen(
         }
     }
 
+    if (menu == PlayerMenu.SUBTITLE) {
+        SubtitleDialog(
+            trackChoices,
+            onDisable = {
+                player.trackSelectionParameters = player.trackSelectionParameters.buildUpon()
+                    .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true).build()
+                menu = null
+            },
+            onPick = { pickTrack(C.TRACK_TYPE_TEXT, it) }
+        ) { menu = null }
+    }
     if (details) {
         val item = source?.firstOrNull { it.filePath == currentPath } ?: fileVideoItem(currentPath)
         val size = player.videoSize
@@ -588,6 +609,7 @@ private fun PlayerButton(
     modifier: Modifier = Modifier,
     tinted: Boolean = true,
     ripple: Boolean = true,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Icon(
@@ -596,6 +618,7 @@ private fun PlayerButton(
         tint = if (tinted) colorResource(R.color.onlyWhite) else Color.Unspecified,
         modifier = modifier
             .clickable(
+                enabled = enabled,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = if (ripple) ripple(bounded = false, color = colorResource(R.color.ripple_color_video)) else null,
                 onClick = onClick
@@ -632,6 +655,39 @@ private fun QuickControl(@DrawableRes icon: Int, @StringRes label: Int, modifier
 }
 
 /** Subtitle / audio picker in the popmenu_video_speed card style, the selected track ticked. */
+/** dialog_audio_track titled Subtitle (p0/d): a bottom card, Disable first, then the tracks; the ticked row is the current one. */
+@Composable
+private fun SubtitleDialog(choices: List<TrackChoice>, onDisable: () -> Unit, onPick: (TrackChoice) -> Unit, onDismiss: () -> Unit) {
+    val white = colorResource(R.color.onlyWhite)
+    val picked = choices.indexOfFirst { it.group.isTrackSelected(it.index) }
+    com.quizango.gallery.ui.home.CommonDialog(onDismiss) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .background(colorResource(R.color.videoPlayerColor), RoundedCornerShape(14.sdp))
+                .padding(bottom = 5.sdp)
+        ) {
+            Text(stringResource(R.string.subtitle), style = GalleryText.BodyXXLargeSemiBold, color = white,
+                modifier = Modifier.padding(start = 12.sdp, top = 12.sdp))
+            Column(Modifier.padding(vertical = 12.sdp)) {
+                val rows = listOf(stringResource(R.string.disable)) + choices.map { it.label }
+                rows.forEachIndexed { i, label ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable { if (i == 0) onDisable() else onPick(choices[i - 1]) }
+                            .padding(horizontal = 12.sdp, vertical = 6.sdp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(label, style = GalleryText.BodyMediumMedium, color = white, modifier = Modifier.weight(1f))
+                        if (i == picked + 1) Icon(painterResource(R.drawable.ic_video_speed_select), null, tint = Color.Unspecified)
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun TrackPopup(choices: List<TrackChoice>, onPick: (TrackChoice) -> Unit, onDismiss: () -> Unit) {
     OptionsPopup(
