@@ -43,6 +43,7 @@ import com.quizango.gallery.domain.model.SortOrder
 import com.quizango.gallery.ui.components.AddToAlbumSheet
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.splash.checkStoragePermissions
+import com.quizango.gallery.ui.vault.rememberVaultHideGate
 import com.quizango.gallery.ui.theme.GalleryBlue
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.settingsDivider
@@ -60,7 +61,9 @@ fun HomeScreen(
     var showCreateAlbumDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showAddToSheet by remember { mutableStateOf(false) }
-    var showHideDialog by remember { mutableStateOf(false) }
+    // Paths the Hide dialog will move; set only once the vault lock gate has passed
+    var hidePaths by remember { mutableStateOf<List<String>?>(null) }
+    val hideGate = rememberVaultHideGate(onNavigate) { hidePaths = it }
     val shareTitle = stringResource(R.string.share)
     val copiedMessage = stringResource(R.string.items_copied_successfully)
     val movedMessage = stringResource(R.string.items_moved_successfully)
@@ -243,7 +246,7 @@ fun HomeScreen(
                         onShare = { shareSelectedMedia(context, uiState.selectedPaths, shareTitle) },
                         onFavorite = { viewModel.toggleFavoriteSelected() },
                         onAddTo = { showAddToSheet = true },
-                        onHide = { showHideDialog = true },
+                        onHide = { hideGate(uiState.selectedPaths.toList()) },
                         onDelete = { showDeleteDialog = true },
                         onCreateAlbum = { showCreateAlbumDialog = true },
                         modifier = Modifier.align(Alignment.BottomCenter)
@@ -306,13 +309,13 @@ fun HomeScreen(
         )
     }
 
-    if (showHideDialog) {
+    hidePaths?.let { paths ->
         HideMediaDialog(
             onConfirm = {
-                showHideDialog = false
-                viewModel.moveSelectedToVault()
+                hidePaths = null
+                viewModel.moveSelectedToVault(paths)
             },
-            onDismiss = { showHideDialog = false }
+            onDismiss = { hidePaths = null }
         )
     }
 

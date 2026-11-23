@@ -347,14 +347,16 @@ class HomeViewModel(
         }
     }
 
-    fun moveSelectedToVault() {
-        val paths = _uiState.value.selectedPaths
-        val items = _uiState.value.mediaList.filter { it.filePath in paths }
+    /** Hides [paths] (the selection the lock gate carried) and re-syncs so Photos updates at once (D6). */
+    fun moveSelectedToVault(paths: List<String>) {
+        val wanted = paths.toSet()
+        val items = _uiState.value.mediaList.filter { it.filePath in wanted }
         val mediaGen = mediaSelectionGen
         viewModelScope.launch {
             items.forEach { item ->
                 vaultRepository.moveToVault(item)
             }
+            mediaRepository.syncMediaStore()
             if (mediaGen == mediaSelectionGen) clearSelection()
         }
     }

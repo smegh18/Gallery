@@ -2,7 +2,9 @@ package com.quizango.gallery
 
 import com.quizango.gallery.data.local.datastore.showPatternValue
 import com.quizango.gallery.ui.vault.VaultGate
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -29,5 +31,13 @@ class VaultGateTest {
         assertTrue(VaultGate.setupFinished(lockSet = true, hasQuestion = true))
         assertFalse(VaultGate.setupFinished(lockSet = true, hasQuestion = false))
         assertFalse(VaultGate.setupFinished(lockSet = false, hasQuestion = true))
+    }
+
+    @Test
+    fun resolveReturnHidesOnlyAfterFinishedSetup() {
+        assertNull(VaultGate.resolveReturn(null, lockSet = true, hasQuestion = true))
+        assertEquals(listOf("a"), VaultGate.resolveReturn(listOf("a"), lockSet = true, hasQuestion = true))
+        assertNull(VaultGate.resolveReturn(listOf("a"), lockSet = false, hasQuestion = true))
+        assertNull(VaultGate.resolveReturn(listOf("a"), lockSet = true, hasQuestion = false))
     }
 }
