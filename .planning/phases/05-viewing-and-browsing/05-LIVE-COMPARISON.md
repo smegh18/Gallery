@@ -40,11 +40,11 @@ Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 | Row | Screen | Result | Observed |
 |-----|--------|--------|----------|
 | #13 | Full-screen viewer | **FAIL** | Chrome, dock, More card, dialogs, slide show, delete/hide-next and recycle now match (`p5-viewer-awkward-name`, `p5-viewer-more` vs `r-viewer-photo`, `ref272-viewer-more-popup`). Remaining: **Show on map never appears** on geotagged photos, because no photo location is ever read (see #19). |
-| #14 | Video player and inline short video | **FAIL** | Inline short clip, player chrome, No Repeat and audio ownership pass. Remaining: the **subtitle picker** is a small top dropdown listing only the tracks (`p5-player-subtitle-picker`); 2.7.2 shows a bottom "Subtitle" dialog with a **Disable** row ticked by default and pauses playback (`r-player-subtitle-picker`). 2.7.2 also greys CC out when the file has no subtitles; ours keeps it enabled and toasts. Minor: bottom-row spacing differs (lock 36 vs 60 px from the edge, previous/next 24 px closer to Play). |
+| #14 | Video player and inline short video | PASS (after fix) | Inline short clip, player chrome, No Repeat and audio ownership pass. Subtitle picker fixed in c18d9a7: a bottom "Subtitle" dialog (dialog_audio_track layout) with **Disable** ticked by default, playback pauses on open, picking the track shows the cue; CC is disabled and dimmed when the file has no subtitle track (device recheck PASS, `p5-player-subtitle-dialog`). Minor, open: bottom-row spacing differs (lock 36 vs 60 px from the edge, previous/next 24 px closer to Play); our dialog uses CommonDialog's 95% width against 2.7.2's ThemeDialog 90%. |
 | #16 | Media list | NEEDS-USER | Folder list, headers, spinner then data seen (`p5-medialist`). Pinch 3/4/5, drag-select and fast-scroll drag need multi-touch or held drags that adb `input` cannot do. |
 | #17 | Other Albums | NEEDS-USER | No in-app entry (route only); not reachable without a debug launcher. |
 | #18 | Moments | PASS | Cards from the real library; a card opens a titled list. The first-run scan header was not seen (the scan was already cached). |
-| #19 | Place | **FAIL** | Without a key: no crash, blank map region, the sheet loads (`p5-place-nokey`). But the sheet shows "No items": **the media scan never reads EXIF GPS**, so `latitude`, `longitude` and `placeName` stay 0 or empty. 2.7.2 lists "Minato City 1" and "Paris 1" for the same fixtures (`r-place`). 2.7.2's sheet also peeks higher (top at about 990 px against 1215 px). |
+| #19 | Place | PASS (after fix) | Fixed in ab84704: sync reads EXIF GPS by file path (as 2.7.2's PlaceFindService; 2.7.2 does not declare ACCESS_MEDIA_LOCATION, All files access covers it) once per file version, then names the place with Geocoder (sub-locality, locality, sub-admin area, admin area, country). Device recheck with two disposable geotagged JPEGs: the sheet lists "Paris 1" and "Minato City 1" like `r-place` (`p5-place-geotagged`); the viewer's More shows Show on map and it opens Place (`p5-viewer-show-on-map`). Open, minor: 2.7.2's sheet peeks higher (top at about 990 px against 1215 px). |
 | #20 | Animated | NEEDS-USER | No in-app entry in ours, nor on 2.7.2's Explore; route only. |
 | #21 | Burst | NEEDS-USER | No in-app entry; route only. The fixture frames were indexed (Photos tab). |
 | #22 | Favorites | PASS | Two favourites listed, four-slot bar (Share, Unfavorite, Add to Private, Delete), unfavourite prunes at once, "No Favorites" empty state (`p5-favorites*`). |
@@ -66,7 +66,7 @@ Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 | State | Result | Observed |
 |-------|--------|----------|
 | short video (60 s or less) | PASS (after fix) | The paused pill matches `ref272-viewer-short-video-paused`. **Play did nothing on first open** (the player was released during the first list load); fixed in f64b33b. Playing: seek row, Capture replaces the heart (`p5-short-playing`). Ends at 23-24 s and stops, no loop (`p5-short-ended`). |
-| long video (over 60 s) | **FAIL** | The centre button opens the player; the quick-control card and bars match `r-player-controls`; No Repeat moves on to the next queued video exactly like 2.7.2 (`p5-player-end-norepeat`, `r-player-end-norepeat`). The mute label was inverted ("Unmute" while sound is on; 2.7.2 shows "Mute" with the crossed icon): fixed in 760a251, not re-checked on the device. Open: the subtitle picker (see #14). Not exercised: previous/next end toasts, rotate, lock, brightness/volume swipes, repeat persistence. |
+| long video (over 60 s) | PASS (after fix) | The centre button opens the player; the quick-control card and bars match `r-player-controls`; No Repeat moves on to the next queued video exactly like 2.7.2 (`p5-player-end-norepeat`, `r-player-end-norepeat`). The mute label was inverted ("Unmute" while sound is on; 2.7.2 shows "Mute" with the crossed icon): fixed in 760a251; the player now shows "Mute" with the crossed icon while sound plays (`p5-player-subtitle-dialog`). Subtitle picker fixed in c18d9a7 (see #14). Not exercised: previous/next end toasts, rotate, lock, brightness/volume swipes, repeat persistence. |
 | audio ownership | PASS | Player: Home pauses it (`dumpsys audio` shows paused), Back releases it. Inline: swiping away releases the player. |
 
 ### 4.3 Library size
@@ -94,7 +94,7 @@ Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 | permission denied | NEEDS-USER | The runtime dialog is left to the user. |
 | permission approximate | NEEDS-USER | As above. |
 | permission precise | NEEDS-USER | As above. |
-| Place without a Maps key (mandatory) | PASS | No crash, blank map region of stable size, stripe and sheet render (`p5-place-nokey`). "Cards open scoped media" cannot be tested until #19 is fixed. |
+| Place without a Maps key (mandatory) | PASS | No crash, blank map region of stable size, stripe and sheet render (`p5-place-nokey`). Since ab84704 the sheet lists Paris and Minato City and Show on map opens Place on the photo's place. |
 | live map, conditional | not supplied | No `MAPS_API_KEY`; accepted state. |
 
 ### 4.6 Ad slots
@@ -109,7 +109,7 @@ Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 |----------|--------------|----------|
 | Delete or Hide in the viewer: close, or show the next item? | Stays open and shows the next item for both (`r-viewer-after-delete`, `r-viewer-after-hide`) | Same (f64b33b); closes only when the last page goes |
 | No Repeat at the end | Moves on to the next video in the queue | Same (ExoPlayer REPEAT_MODE_OFF) |
-| Subtitle picker Off row | Yes: "Disable", ticked by default, in a bottom "Subtitle" dialog | Missing (FAIL, open) |
+| Subtitle picker Off row | Yes: "Disable", ticked by default, in a bottom "Subtitle" dialog | Same (c18d9a7) |
 | Wallpaper and Print on video pages | Not shown: video More is Rename, Slide show | Same (f64b33b removed the extra Add to) |
 
 ## 6. Steps for the user
