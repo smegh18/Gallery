@@ -5,6 +5,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.fadeIn
+import android.widget.Toast
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -71,6 +72,7 @@ import com.quizango.gallery.ui.vault.VaultAddMediaScreen
 import com.quizango.gallery.ui.vault.VaultMediaScreen
 import com.quizango.gallery.ui.vault.VaultRecoveryQuestionScreen
 import com.quizango.gallery.ui.vault.VaultSettingScreen
+import com.quizango.gallery.ui.vault.settingsToast
 import com.quizango.gallery.ui.viewer.MediaViewerScreen
 import com.quizango.gallery.ui.viewer.VideoPlayerScreen
 
@@ -354,20 +356,7 @@ fun GalleryNavHost(
         }
 
         composable(Screen.VaultLock.route) {
-            // VaultLockActivity sets isVaultHintToolTip on open: the Home vault hint never shows again
-            LaunchedEffect(Unit) { app.preferences.setVaultHintToolTip(true) }
-            VaultLockScreen(
-                appPreferences = app.preferences,
-                onNavigate = { route ->
-                    // Keep the lock under Forgot Password so Back returns to it (reference)
-                    if (route == Screen.VaultForgotPassword.route) navController.navigateOnce(route)
-                    // Back to an open vault instead of stacking a second one
-                    else if (!navController.popBackStack(route, inclusive = false)) {
-                        navController.navigate(route) { popUpTo(Screen.VaultLock.route) { inclusive = true } }
-                    }
-                },
-                onNavigateBack = { navController.popBackStack() }
-            )
+            VaultLockDestination(navController, app, Screen.VaultLock.route, type = 0, openVault = true)
         }
 
         composable(Screen.VaultMedia.route) {
@@ -389,12 +378,7 @@ fun GalleryNavHost(
         }
 
         composable(Screen.VaultChangeLock.route) {
-            VaultLockScreen(
-                appPreferences = app.preferences,
-                onNavigate = { route -> navController.navigateOnce(route) },
-                onNavigateBack = { navController.popBackStack() },
-                changeMode = true
-            )
+            VaultLockDestination(navController, app, Screen.VaultChangeLock.route, type = 1, openVault = false)
         }
 
         composable(Screen.VaultSetting.route) {
@@ -407,28 +391,53 @@ fun GalleryNavHost(
         }
 
         composable(Screen.VaultRecoveryQuestion.route) {
+            val scope = androidx.compose.runtime.rememberCoroutineScope()
+            val context = androidx.compose.ui.platform.LocalContext.current
             VaultRecoveryQuestionScreen(
                 appPreferences = app.preferences,
-                onNavigateBack = { navController.popBackStack() },
-                // Reference opens the vault after Submit
+                // VL.o00Ooo: Back closes the question and the lock; with no question saved the half-finished lock is wiped
+                onNavigateBack = {
+                    scope.launch {
+                        if (!app.preferences.hasRecoveryQuestion.first()) app.preferences.clearVaultLock()
+                        val lockId = navController.previousBackStackEntry?.destination?.id
+                        if (lockId != null) navController.popBackStack(lockId, inclusive = true) else navController.popBackStack()
+                    }
+                },
                 onSaved = {
-                    navController.navigate(Screen.VaultMedia.route) {
-                        popUpTo(Screen.VaultRecoveryQuestion.route) { inclusive = true }
+                    scope.launch {
+                        // The lock entry below tells how it was opened (a plain VaultLock route means type 0, open the vault)
+                        val lock = navController.previousBackStackEntry
+                        val lockType = lock?.arguments?.getInt("type") ?: 0
+                        val opensVault = lock?.arguments?.takeIf { it.containsKey("openVault") }?.getBoolean("openVault") ?: true
+                        if (lockType == 0) app.preferences.setPrivateToastShow(true)
+                        val lockId = lock?.destination?.id
+                        if (opensVault) {
+                            navController.navigate(Screen.VaultMedia.route) {
+                                if (lockId != null) popUpTo(lockId) { inclusive = true }
+                            }
+                        } else {
+                            if (lockId != null) navController.popBackStack(lockId, inclusive = true) else navController.popBackStack()
+                            settingsToast(lockType, false)?.let { Toast.makeText(context, context.getString(it), Toast.LENGTH_SHORT).show() }
+                        }
                     }
                 }
             )
         }
 
         composable(Screen.VaultForgotPassword.route) {
+            val scope = androidx.compose.runtime.rememberCoroutineScope()
             VaultForgotPasswordScreen(
                 appPreferences = app.preferences,
-                onAnswerVerified = {
-                    // Replace both the old lock and this screen with a fresh "Set PIN" lock
-                    navController.navigate(Screen.VaultLock.route) {
-                        popUpTo(Screen.VaultLock.route) { inclusive = true }
+                // The screen already wiped the lock: the lock underneath reloads as "Set PIN"
+                onAnswerVerified = { navController.popBackStack() },
+                // VL.o00Oo0: opened by the lockout, Back closes the lock too; opened by the link, Back returns to it
+                onNavigateBack = {
+                    scope.launch {
+                        val lockId = navController.previousBackStackEntry?.destination?.id
+                        if (lockId != null && app.preferences.isPrivateLock.first()) navController.popBackStack(lockId, inclusive = true)
+                        else navController.popBackStack()
                     }
-                },
-                onNavigateBack = { navController.popBackStack() }
+                }
             )
         }
 
@@ -785,4 +794,30 @@ fun GalleryNavHost(
  */
 private fun NavHostController.navigateOnce(route: String) {
     if (!popBackStack(route, inclusive = false)) navigate(route) { launchSingleTop = true }
+}
+
+/** One lock destination for the plain vault route and the Settings / Add to Private routes. */
+@Composable
+private fun VaultLockDestination(navController: NavHostController, app: GalleryApplication, route: String, type: Int, openVault: Boolean) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    // VaultLockActivity sets isVaultHintToolTip on open: the Home vault hint never shows again
+    LaunchedEffect(Unit) { app.preferences.setVaultHintToolTip(true) }
+    VaultLockScreen(
+        appPreferences = app.preferences,
+        type = type,
+        openVault = openVault,
+        onOpenVault = {
+            // Back to an open vault instead of stacking a second one; the vault replaces the lock so Back never returns to it
+            if (!navController.popBackStack(Screen.VaultMedia.route, inclusive = false)) {
+                navController.navigate(Screen.VaultMedia.route) { popUpTo(route) { inclusive = true } }
+            }
+        },
+        onResultOk = { passwordSaved ->
+            navController.popBackStack()
+            settingsToast(type, passwordSaved)?.let { Toast.makeText(context, context.getString(it), Toast.LENGTH_SHORT).show() }
+        },
+        onOpenRecovery = { navController.navigate(Screen.VaultRecoveryQuestion.route) { launchSingleTop = true } },
+        onOpenForgot = { navController.navigate(Screen.VaultForgotPassword.route) { launchSingleTop = true } },
+        onNavigateBack = { navController.popBackStack() }
+    )
 }

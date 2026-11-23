@@ -37,7 +37,8 @@ internal class VaultLockFlow(
     private val openVault: Boolean,
     lockSet: Boolean,
     storedIsPattern: Boolean,
-    private val hasQuestion: Boolean
+    private val hasQuestion: Boolean,
+    wrongCount: Int = 0
 ) {
     var type = type
         private set
@@ -45,7 +46,8 @@ internal class VaultLockFlow(
         private set
     var isPattern = lockSet && storedIsPattern
         private set
-    var wrongCount = 0
+    // Seeded so the count survives the lock leaving composition under Forgot Password
+    var wrongCount = wrongCount
         private set
     private var first: String? = null
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,117 +33,126 @@ import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.VaultSecret
 import com.quizango.gallery.data.local.datastore.AppPreferences
-import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.isDark
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
- * Reference VaultLockActivity: PIN or pattern lock.
- * Setup: "Set PIN" -> "Re-enter PIN" (or "Draw Your Pattern" -> "Re-draw your pattern"), switchable.
- * Unlock: "Enter your PIN" / "Draw Your Pattern" with "Forgot password?". Feedback is by toast, as in the reference.
+ * Reference VaultLockActivity: PIN or pattern lock. Every rule lives in [VaultLockFlow]; this screen only
+ * draws the state and reports where to go next, so the NavHost owns all routing.
+ * [type]: 0 unlock or first setup, 1 Change Password, 2 Change Recovery Question; [openVault] false for the Add to Private gate.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VaultLockScreen(
     appPreferences: AppPreferences,
-    onNavigate: (String) -> Unit,
-    onNavigateBack: () -> Unit,
-    // Change Password: set a new lock; the old one stays until the new one is confirmed
-    changeMode: Boolean = false
+    type: Int = 0,
+    openVault: Boolean = true,
+    onOpenVault: () -> Unit,
+    onResultOk: (passwordSaved: Boolean) -> Unit,
+    onOpenRecovery: () -> Unit,
+    onOpenForgot: () -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var savedPin by remember { mutableStateOf<String?>(null) }
-    var savedPattern by remember { mutableStateOf<String?>(null) }
-    var loaded by remember { mutableStateOf(false) }
-    var usePattern by remember { mutableStateOf(false) }
+    var flow by remember { mutableStateOf<VaultLockFlow?>(null) }
+    var storedPin by remember { mutableStateOf<String?>(null) }
+    var storedPattern by remember { mutableStateOf<String?>(null) }
     var entered by remember { mutableStateOf("") }
-    var firstEntry by remember { mutableStateOf<String?>(null) }
+    // Saved with the entry so the count and the one-time prompt survive Forgot Password covering this screen
+    var wrongCount by rememberSaveable { mutableIntStateOf(0) }
+    var promptShown by rememberSaveable { mutableStateOf(false) }
+    var version by remember { mutableIntStateOf(0) } // the flow is plain Kotlin: bump to redraw after it changes
 
-    LaunchedEffect(Unit) {
-        savedPin = appPreferences.vaultPin.first()
-        savedPattern = appPreferences.vaultPattern.first()
-        usePattern = !changeMode && !savedPattern.isNullOrEmpty()
-        loaded = true
-        // Fingerprint unlock (Vault Settings); PIN/pattern stays available underneath
-        val hasLock = !savedPin.isNullOrEmpty() || !savedPattern.isNullOrEmpty()
-        val activity = context as? androidx.fragment.app.FragmentActivity
-        if (!changeMode && hasLock && activity != null && appPreferences.isFingerprintEnabled.first() &&
-            VaultBiometric.unavailableReason(context) == null
-        ) {
-            VaultBiometric.prompt(activity) { onNavigate(Screen.VaultMedia.route) }
+    fun toast(@StringRes res: Int) = Toast.makeText(context, context.getString(res), Toast.LENGTH_SHORT).show()
+
+    fun route(next: LockNext) {
+        when (next) {
+            LockNext.Vault -> onOpenVault()
+            LockNext.Recovery -> onOpenRecovery()
+            is LockNext.ResultOk -> onResultOk(next.passwordSaved)
+            LockNext.Stay -> version++
         }
     }
-    val isSettingUp = loaded && (changeMode || (savedPin.isNullOrEmpty() && savedPattern.isNullOrEmpty()))
+
+    fun handle(f: VaultLockFlow, event: LockEvent, value: String) {
+        when (event) {
+            is LockEvent.Toast -> {
+                toast(event.res)
+                if (entered.length == 4) entered = "" // a mismatch restarts setup; a short PIN keeps its digits
+            }
+            LockEvent.Clear -> scope.launch { delay(30); entered = "" } // reference clears 30 ms later
+            is LockEvent.Save -> scope.launch {
+                appPreferences.saveVaultLock(event.value, event.pattern)
+                route(f.afterSuccess(passwordSaved = true))
+            }
+            LockEvent.Success -> scope.launch {
+                // Upgrade a plain value saved by an older version to a hash
+                if (!VaultSecret.isHashed(if (f.isPattern) storedPattern else storedPin)) appPreferences.saveVaultLock(value, f.isPattern)
+                entered = ""
+                route(f.afterSuccess(passwordSaved = false))
+            }
+            is LockEvent.Wrong -> {
+                wrongCount = f.wrongCount
+                event.toast?.let { toast(it) }
+                entered = ""
+                if (event.lockOut) scope.launch {
+                    appPreferences.setPrivateLock(true)
+                    onOpenForgot()
+                }
+            }
+        }
+        version++
+    }
+
+    fun matcher(f: VaultLockFlow): (String) -> Boolean =
+        { VaultSecret.matches(if (f.isPattern) storedPattern else storedPin, it) }
+
+    LaunchedEffect(Unit) {
+        val pin = appPreferences.vaultPin.first()
+        val pattern = appPreferences.vaultPattern.first()
+        val lockSet = VaultGate.lockSet(pin, pattern)
+        // L5: after the fifth miss every open goes to Forgot Password, before any fingerprint prompt.
+        // Once Forgot Password wiped the lock there is nothing left to guard, so setup shows instead.
+        if (lockSet && appPreferences.isPrivateLock.first()) {
+            onOpenForgot()
+            return@LaunchedEffect
+        }
+        storedPin = pin
+        storedPattern = pattern
+        val f = VaultLockFlow(
+            type = if (lockSet) type else 0, // L10: a wiped lock restarts as plain setup
+            openVault = openVault,
+            lockSet = lockSet,
+            storedIsPattern = !pattern.isNullOrEmpty(),
+            hasQuestion = appPreferences.hasRecoveryQuestion.first(),
+            wrongCount = wrongCount
+        )
+        flow = f
+        // Fingerprint (Vault Settings) only for a plain unlock; PIN/pattern stays available underneath
+        val activity = context as? androidx.fragment.app.FragmentActivity
+        if (type == 0 && lockSet && !promptShown && activity != null && appPreferences.isFingerprintEnabled.first() &&
+            VaultBiometric.unavailableReason(context) == null
+        ) {
+            promptShown = true
+            delay(600) // reference onCreate postDelayed
+            VaultBiometric.prompt(activity) { route(f.afterSuccess(passwordSaved = false)) }
+        }
+    }
+    version // read so redraws follow flow changes
+    val f = flow
+    val isSettingUp = f != null && f.stage != LockStage.VERIFY
+    val usePattern = f?.isPattern == true
     // Vault Settings "Show Pattern": draw the traced line (on by default, S3)
     val showPatternLine by appPreferences.isPatternMode.collectAsState(initial = true)
 
-    // Error shake (STORY-4); the reference also shows a toast
+    // Error shake (STORY-4); removed with the rest of the old chrome in the look task
     val shakeOffset = remember { Animatable(0f) }
-    fun fail(@StringRes message: Int?) {
-        if (message != null) Toast.makeText(context, context.getString(message), Toast.LENGTH_SHORT).show()
-        entered = ""
-        scope.launch {
-            for (x in listOf(-18f, 18f, -12f, 12f, -6f, 6f, 0f)) shakeOffset.animateTo(x, tween(45))
-        }
-    }
 
-    fun openVault() = onNavigate(Screen.VaultMedia.route)
-
-    fun submit(value: String) {
-        if (isSettingUp) {
-            val first = firstEntry
-            if (first == null) {
-                firstEntry = value
-                entered = ""
-            } else if (value == first) {
-                scope.launch {
-                    // Only one lock type is active at a time
-                    if (usePattern) {
-                        appPreferences.setVaultPattern(value)
-                        appPreferences.setVaultPin("")
-                    } else {
-                        appPreferences.setVaultPin(value)
-                        appPreferences.setVaultPattern("")
-                    }
-                    if (changeMode) {
-                        Toast.makeText(context, context.getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show()
-                        onNavigateBack()
-                        return@launch
-                    }
-                    val hasQuestion = !appPreferences.vaultQuestion.first().isNullOrEmpty()
-                    onNavigate(if (hasQuestion) Screen.VaultMedia.route else Screen.VaultRecoveryQuestion.route)
-                }
-            } else {
-                firstEntry = null
-                fail(if (usePattern) R.string.pattern_confirm else R.string.password_confirm)
-            }
-        } else {
-            val stored = if (usePattern) savedPattern else savedPin
-            if (VaultSecret.matches(stored, value)) {
-                scope.launch {
-                    // Upgrade a plain value saved by an older version to a hash
-                    if (!VaultSecret.isHashed(stored)) {
-                        if (usePattern) appPreferences.setVaultPattern(value) else appPreferences.setVaultPin(value)
-                    }
-                    openVault()
-                }
-            } else {
-                // Reference: a wrong pattern shows no toast, a wrong PIN toasts wrong_password
-                fail(if (usePattern) null else R.string.wrong_password)
-            }
-        }
-    }
-
-    val title = when {
-        !loaded -> ""
-        usePattern && isSettingUp && firstEntry != null -> stringResource(R.string.re_draw_your_pattern)
-        usePattern -> stringResource(R.string.draw_your_pattern)
-        isSettingUp && firstEntry == null -> stringResource(R.string.set_pin)
-        isSettingUp -> stringResource(R.string.re_enter_pin)
-        else -> stringResource(R.string.enter_pin)
-    }
+    val title = if (f == null) "" else stringResource(f.stepTitle)
+    val toolbarTitle = if (f == null) "" else stringResource(f.toolbarTitle)
 
     // Reference: lock icon and links #0066FF in light mode, white in dark mode
     val accent = if (MaterialTheme.colorScheme.isDark) Color.White else com.quizango.gallery.ui.theme.GalleryBlueLight
@@ -153,7 +163,7 @@ fun VaultLockScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = stringResource(R.string.private_vault),
+                            text = toolbarTitle,
                             fontWeight = FontWeight.Medium,
                             fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onBackground
@@ -203,11 +213,8 @@ fun VaultLockScreen(
                 PatternPad(
                     showLine = showPatternLine || isSettingUp,
                     modifier = Modifier.offset { IntOffset(shakeOffset.value.dp.roundToPx(), 0) },
-                    resetKey = "$title|${firstEntry != null}",
-                    onComplete = { pattern ->
-                        // Reference: four dots minimum only when drawing a new pattern, none when unlocking
-                        if (isSettingUp && firstEntry == null && pattern.length < 4) fail(R.string.pattern_min_4_dots) else submit(pattern)
-                    }
+                    resetKey = "$title|${f?.stage}",
+                    onComplete = { pattern -> f?.let { handle(it, it.submitPattern(pattern, matcher(it)), pattern) } }
                 )
             } else {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -237,7 +244,7 @@ fun VaultLockScreen(
                     onDigitClick = { d -> if (entered.length < 4) entered += d },
                     onBackspace = { if (entered.isNotEmpty()) entered = entered.dropLast(1) },
                     // Reference checks only when ✓ is pressed
-                    onConfirm = { if (entered.length == 4) submit(entered) else fail(R.string.please_enter_pin) }
+                    onConfirm = { f?.let { handle(it, it.submitPin(entered, matcher(it)), entered) } }
                 )
             }
 
@@ -248,9 +255,9 @@ fun VaultLockScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .clickable {
-                            usePattern = !usePattern
-                            firstEntry = null
+                            f?.switchMode()
                             entered = ""
+                            version++
                         }
                         .padding(8.dp)
                 ) {
@@ -268,14 +275,14 @@ fun VaultLockScreen(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
-            } else if (loaded) {
+            } else if (f?.showForgot == true) {
                 Text(
                     text = stringResource(R.string.forgot_password_lock),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = accent,
                     modifier = Modifier
-                        .clickable { onNavigate(Screen.VaultForgotPassword.route) }
+                        .clickable { onOpenForgot() }
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
