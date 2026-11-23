@@ -131,8 +131,11 @@ fun MediaViewerScreen(
 
     val isListReady = mediaList.isNotEmpty()
 
+    // Once the opened file has been listed, its absence means it left the list (Recycle Bin, vault), not "not indexed yet"
+    val openedListed = remember(filePath) { booleanArrayOf(false) }
     val displayList = remember(mediaList, fallbackItem) {
-        viewerDisplayList(mediaList, filePath, fallbackItem) { File(filePath).exists() }
+        if (mediaList.any { it.filePath == filePath }) openedListed[0] = true
+        viewerDisplayList(mediaList, filePath, fallbackItem) { !openedListed[0] && File(filePath).exists() }
     }
 
     val targetIndex = remember(displayList, filePath) { viewerTargetIndex(displayList, filePath) }
@@ -172,7 +175,8 @@ fun MediaViewerScreen(
     val isInlineVideo = currentItem.isVideo && playsInline(currentItem.filePath, currentItem.durationMs)
 
     // Video Player lifecycle for active page
-    LaunchedEffect(currentItem.filePath, currentViewPath, isInlineVideo) {
+    // isListReady: device-checked, the player made for the pre-list fallback page was released during the first load
+    LaunchedEffect(currentItem.filePath, currentViewPath, isInlineVideo, isListReady) {
         if (isInlineVideo && currentViewPath != null) {
             // The effect can run twice while the media list loads; the old player goes before a new one exists
             currentExoPlayer?.release()
@@ -375,7 +379,8 @@ fun MediaViewerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(R.color.fullImageBackColor))
+            // 2.7.2: backgroundColor while the chrome shows, fullImageBackColor once it hides
+            .background(colorResource(if (showControls) R.color.backgroundColor else R.color.fullImageBackColor))
     ) {
         // Main Media Horizontal Pager
         HorizontalPager(
@@ -506,8 +511,9 @@ fun MediaViewerScreen(
         }
     }
 
+    // Collected outside the dialog branch: collecting inside it crashed the Recycle Bin viewer (ClassCastException in the slot table)
+    val albums by remember { mediaRepository.getAlbumsFlow() }.collectAsState(initial = emptyList())
     dialog?.let { opened ->
-        val albums by mediaRepository.getAlbumsFlow().collectAsState(initial = emptyList())
         ViewerDialogHost(
             dialog = opened,
             item = currentItem,
@@ -522,13 +528,15 @@ fun MediaViewerScreen(
                         ViewerDialogKind.UNHIDE -> vaultRepository.restoreFromVault(item.toVaultItem())
                         else -> false
                     }
-                    if (ok) onNavigateBack() else toast(R.string.something_went_wrong)
+                    if (!ok) toast(R.string.something_went_wrong)
+                    // 2.7.2 stays open on the next page; only the last page closes the viewer
+                    else if (displayList.size <= 1) onNavigateBack()
                 }
             },
             onDelete = { moveToBin ->
                 confirm(opened) { item ->
                     if (moveToBin) mediaRepository.moveToTrash(item.filePath) else mediaRepository.deletePermanently(item.filePath)
-                    onNavigateBack()
+                    if (displayList.size <= 1) onNavigateBack()
                 }
             },
             onRename = { name ->

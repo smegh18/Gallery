@@ -59,7 +59,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -149,17 +148,20 @@ fun ViewerTopChrome(
 
 @Composable
 private fun ViewerGlassButton(@androidx.annotation.DrawableRes icon: Int, @StringRes label: Int, onClick: () -> Unit) {
-    IconButton(
-        onClick = onClick,
+    // A plain 36.dp circle: IconButton would grow it to the 48.dp minimum and the buttons would overlap (2.7.2: 8.dp gaps)
+    Box(
         modifier = Modifier
             .size(36.dp)
             .clip(androidx.compose.foundation.shape.CircleShape)
             .background(Color(0x8C1C1D21))
+            .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center
     ) {
         Icon(
             painter = painterResource(icon),
             contentDescription = stringResource(label),
-            tint = Color.Unspecified,
+            // media_full_glass_icon on every glass button except the filled (red) favourite
+            tint = if (icon == R.drawable.ic_fav_fill) Color.Unspecified else colorResource(R.color.media_full_glass_icon),
             modifier = Modifier.size(22.dp)
         )
     }
@@ -520,7 +522,8 @@ internal enum class MoreAction(@DrawableRes val icon: Int, @StringRes val label:
  * Show on map. Slide show stays out of the vault, and Wallpaper / Print need a still image to decode.
  */
 internal fun moreActions(isVault: Boolean, isVideo: Boolean, hasPlace: Boolean): List<MoreAction> = buildList {
-    if (!isVault) add(MoreAction.ADD_TO)
+    // A video page already has Add to in its dock (2.7.2 video More: Rename, Slide show)
+    if (!isVault && !isVideo) add(MoreAction.ADD_TO)
     add(MoreAction.RENAME)
     if (!isVault) add(MoreAction.SLIDE_SHOW)
     if (!isVideo) {

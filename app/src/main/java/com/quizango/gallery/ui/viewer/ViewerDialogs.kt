@@ -77,7 +77,13 @@ internal fun ViewerDialogHost(
                 ext = file.extension
             )
         }
-        ViewerDialogKind.DELETE -> DeleteMediaDialog(count = 1, onConfirm = onDelete, onDismiss = onDismiss)
+        ViewerDialogKind.DELETE -> DeleteMediaDialog(
+            count = 1,
+            onConfirm = onDelete,
+            onDismiss = onDismiss,
+            // 2.7.2 viewer: "this item", not the selection bar's "1 item"
+            customTitle = stringResource(R.string.deleted_item_permission)
+        )
         ViewerDialogKind.VAULT_DELETE -> DeleteMediaDialog(
             count = 1,
             onConfirm = { onConfirm() },

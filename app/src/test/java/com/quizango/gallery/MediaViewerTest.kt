@@ -54,6 +54,8 @@ class MediaViewerTest {
             moreActions(isVault = false, isVideo = false, hasPlace = false)
         )
         assertEquals(listOf(MoreAction.RENAME, MoreAction.WALLPAPER, MoreAction.PRINT), moreActions(isVault = true, isVideo = false, hasPlace = true))
+        // Device-checked on 2.7.2: a video page's More has only Rename and Slide show
+        assertEquals(listOf(MoreAction.RENAME, MoreAction.SLIDE_SHOW), moreActions(isVault = false, isVideo = true, hasPlace = false))
     }
 
     @Test
