@@ -51,7 +51,7 @@ fun AlbumDetailScreen(
         .collectAsState<List<MediaItem>, List<MediaItem>?>(initial = null)
     var selected by remember { mutableStateOf(emptySet<String>()) }
     val list = items.orEmpty()
-    val onAction = rememberMediaListActions(mediaRepository, vaultRepository, list, selected) { selected = emptySet() }
+    val onAction = rememberMediaListActions(mediaRepository, vaultRepository, list, selected, onNavigate) { selected = emptySet() }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val preferences = (context.applicationContext as GalleryApplication).preferences

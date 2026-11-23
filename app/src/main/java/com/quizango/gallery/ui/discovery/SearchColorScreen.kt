@@ -57,7 +57,7 @@ fun SearchColorScreen(
         .collectAsState<List<MediaItem>, List<MediaItem>?>(initial = null)
     var selected by remember { mutableStateOf(emptySet<String>()) }
     val list = items.orEmpty()
-    val onAction = rememberMediaListActions(mediaRepository, vaultRepository, list, selected) { selected = emptySet() }
+    val onAction = rememberMediaListActions(mediaRepository, vaultRepository, list, selected, onNavigate) { selected = emptySet() }
 
     SharedMediaList(
         title = stringResource(R.string.media_color),

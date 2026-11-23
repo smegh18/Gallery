@@ -28,7 +28,7 @@ fun FavoritesScreen(
     val items by remember { mediaRepository.getFavoritesFlow() }
         .collectAsState<List<MediaItem>, List<MediaItem>?>(initial = null)
     var selected by remember { mutableStateOf(emptySet<String>()) }
-    val onAction = rememberMediaListActions(mediaRepository, vaultRepository, items.orEmpty(), selected) { selected = emptySet() }
+    val onAction = rememberMediaListActions(mediaRepository, vaultRepository, items.orEmpty(), selected, onNavigate) { selected = emptySet() }
 
     SharedMediaList(
         title = stringResource(R.string.favorites),

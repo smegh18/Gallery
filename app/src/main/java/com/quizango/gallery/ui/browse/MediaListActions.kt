@@ -41,6 +41,7 @@ import com.quizango.gallery.ui.home.deleteActionFor
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.home.shareSelectedMedia
 import com.quizango.gallery.ui.theme.sdp
+import com.quizango.gallery.ui.vault.rememberVaultHideGate
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -119,6 +120,7 @@ internal fun rememberMediaListActions(
     vaultRepository: VaultRepository,
     items: List<MediaItem>,
     selected: Set<String>,
+    onNavigate: (String) -> Unit,
     onDone: () -> Unit
 ): (MediaAction) -> Unit {
     val context = LocalContext.current
@@ -126,6 +128,10 @@ internal fun rememberMediaListActions(
     val scope = rememberCoroutineScope()
     var pending by remember { mutableStateOf<PendingDialog?>(null) }
     fun toast(@StringRes id: Int) = Toast.makeText(context, context.getString(id), Toast.LENGTH_SHORT).show()
+    // Add to Private: lock gate first (D5); items that vanished while setup ran are skipped
+    val hideGate = rememberVaultHideGate(onNavigate) { paths ->
+        items.filter { it.filePath in paths }.takeIf { it.isNotEmpty() }?.let { pending = PendingDialog.Hide(it) }
+    }
 
     when (val dialog = pending) {
         is PendingDialog.Delete -> DeleteMediaDialog(
@@ -205,7 +211,7 @@ internal fun rememberMediaListActions(
                 onDone()
             }
             MediaAction.ADD_TO -> pending = PendingDialog.AddTo(picked)
-            MediaAction.PRIVATE -> pending = PendingDialog.Hide(picked)
+            MediaAction.PRIVATE -> hideGate(picked.map { it.filePath })
             MediaAction.DELETE -> pending = PendingDialog.Delete(picked)
             MediaAction.CREATE_ALBUM -> pending = PendingDialog.CreateAlbum(picked)
             MediaAction.UNHIDE -> Unit // only the vault bar offers it
