@@ -1,7 +1,12 @@
 package com.quizango.gallery
 
 import com.quizango.gallery.data.local.JunkScanner
+import com.quizango.gallery.ui.cleaner.CleanerEntry
 import com.quizango.gallery.ui.cleaner.JUNK_CLEAN_MIN_MS
+import com.quizango.gallery.ui.cleaner.SYSTEM_CLEANER_ROWS
+import com.quizango.gallery.ui.cleaner.formatCleanerSize
+import com.quizango.gallery.ui.navigation.Screen
+import kotlinx.coroutines.runBlocking
 import com.quizango.gallery.ui.cleaner.JUNK_SCAN_HOLD_MS
 import com.quizango.gallery.ui.cleaner.JunkCleanResult
 import com.quizango.gallery.ui.cleaner.StorageCleanPhase
@@ -89,7 +94,7 @@ class RemoveJunkTest {
         val sizes = results.flatMap { it.files }.associate { it.path to it.length() }
         val pdf = File(root, "old1.pdf").path
         val full = File(root, "Full").apply { mkdirs(); File(this, "x").writeText("x") }.path // a folder that filled up
-        val result = runJunkClean(listOf(pdf, full), sizes + (full to 4096L))
+        val result = runBlocking { runJunkClean(listOf(pdf, full), sizes + (full to 4096L)) {} }
         assertEquals(setOf(pdf), result.removed)
         assertEquals(setOf(full), result.failed)
         assertEquals(11L, result.freedBytes)
@@ -113,5 +118,27 @@ class RemoveJunkTest {
     fun everyPathFailingReturnsToResultsInsteadOfCleared() {
         assertEquals(StorageCleanPhase.OVERVIEW, phaseAfterJunkClean(JunkCleanResult(emptySet(), setOf("/a"), 0)))
         assertEquals(StorageCleanPhase.COMPLETED, phaseAfterJunkClean(JunkCleanResult(setOf("/b"), setOf("/a"), 5)))
+    }
+
+    @Test
+    fun onlyACleanThatRemovedSomethingMarksCleanedToday() {
+        val root = Files.createTempDirectory("storage").toFile()
+        val full = File(root, "Full").apply { mkdirs(); File(this, "x").writeText("x") }.path
+        val tmp = File(root, "a.tmp").apply { writeBytes(ByteArray(9)) }.path
+        var marks = 0
+        runBlocking { runJunkClean(listOf(full), mapOf(full to 4096L)) { marks++ } }
+        assertEquals(0, marks)                         // every path failed: no completion signal
+        val done = runBlocking { runJunkClean(listOf(tmp), mapOf(tmp to 9L)) { marks++ } }
+        assertEquals(1, marks)
+        assertEquals("9 B", formatCleanerSize(done.freedBytes)) // Junk cleared shows the shared s9/k text
+    }
+
+    @Test
+    fun junkClearedRowsRouteToDuplicatesScreenshotsAndLargeVideos() {
+        assertEquals(listOf(CleanerEntry.DUPLICATES, CleanerEntry.SCREENSHOTS, CleanerEntry.LARGE_VIDEO), SYSTEM_CLEANER_ROWS)
+        assertEquals(
+            listOf(Screen.DuplicateWaiting, Screen.Screenshots, Screen.LargeVideos),
+            SYSTEM_CLEANER_ROWS.map { it.pick(Screen.RemoveJunk, Screen.DuplicateWaiting, Screen.Screenshots, Screen.LargeVideos) }
+        )
     }
 }

@@ -12,6 +12,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -41,8 +43,10 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.JunkScanResult
 import com.quizango.gallery.data.local.JunkScanner
+import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.data.local.failedPaths
 import com.quizango.gallery.data.local.successfulPaths
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.Inter
@@ -124,10 +128,14 @@ internal data class JunkCleanResult(val removed: Set<String>, val failed: Set<St
 internal fun phaseAfterJunkClean(result: JunkCleanResult) =
     if (result.removed.isEmpty()) StorageCleanPhase.OVERVIEW else StorageCleanPhase.COMPLETED
 
-/** Deletes a frozen snapshot of ticked paths; freed bytes count only paths whose outcome says they are gone. */
-internal fun runJunkClean(snapshot: List<String>, sizes: Map<String, Long>): JunkCleanResult {
+/**
+ * Deletes a frozen snapshot of ticked paths; freed bytes count only paths whose outcome says they are gone.
+ * Cleaned-today (JC isJunkCleanedForToday) is persisted only after the delete, and only when something was removed.
+ */
+internal suspend fun runJunkClean(snapshot: List<String>, sizes: Map<String, Long>, markCleaned: suspend () -> Unit): JunkCleanResult {
     val outcomes = JunkScanner.clean(snapshot)
     val removed = outcomes.successfulPaths()
+    if (removed.isNotEmpty()) markCleaned()
     return JunkCleanResult(removed.toSet(), outcomes.failedPaths().toSet(), junkBytes(removed, sizes))
 }
 
@@ -181,6 +189,7 @@ private fun JunkScanState(done: Boolean, path: String, onBack: () -> Unit) {
 /** Junk scan, results, cleaning and Junk cleared (UI-SPEC §2). Back from any state leaves the route. */
 @Composable
 fun RemoveJunkScreen(
+    appPreferences: AppPreferences,
     onNavigateBack: () -> Unit,
     onNavigateToDuplicates: () -> Unit = {},
     onNavigateToScreenshots: () -> Unit = {},
@@ -239,7 +248,9 @@ fun RemoveJunkScreen(
         scope.launch {
             val result = coroutineScope {
                 // NonCancellable: once deletion starts it runs to the end even if the user leaves
-                val work = async(Dispatchers.IO + NonCancellable) { runJunkClean(snapshot, snapshotSizes) }
+                val work = async(Dispatchers.IO + NonCancellable) {
+                    runJunkClean(snapshot, snapshotSizes) { appPreferences.setJunkCleanedForToday(true) }
+                }
                 delay(JUNK_CLEAN_MIN_MS)
                 work.await()
             }
@@ -267,20 +278,9 @@ fun RemoveJunkScreen(
             phase = StorageCleanPhase.COMPLETED
         }
 
-        StorageCleanPhase.COMPLETED -> {
-            Column(
-                Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor)).statusBarsPadding(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(painterResource(R.drawable.img_junk_cleared_done), contentDescription = null, Modifier.padding(top = 30.sdp))
-                Text(formatCleanerSize(freedBytes), style = GalleryText.BodyXXLargeBold, color = colorResource(R.color.black))
-                CleanerEntry.entries.drop(1).forEach { e ->
-                    Text(
-                        stringResource(e.title),
-                        Modifier.clickable { e.pick({}, onNavigateToDuplicates, onNavigateToScreenshots, onNavigateToLargeVideos)() }
-                    )
-                }
-            }
+        // JC: Back (toolbar or system) finishes the route to the caller; the rows keep Junk cleared under them (aw/b)
+        StorageCleanPhase.COMPLETED -> JunkClearedState(freedBytes, onNavigateBack) { e ->
+            e.pick({}, onNavigateToDuplicates, onNavigateToScreenshots, onNavigateToLargeVideos)()
         }
     }
 }
@@ -326,6 +326,43 @@ private fun JunkCleaningState(cleaningBytes: Long, done: Boolean, onBack: () -> 
                 maxLines = 1,
                 modifier = Modifier.weight(1f).padding(start = 5.sdp)
             )
+        }
+    }
+}
+
+/** activity_junk_cleared: freed size counting up, the caption, and the three System Cleaner rows (dy/d, aw/b). */
+@Composable
+private fun JunkClearedState(freedBytes: Long, onBack: () -> Unit, onOpen: (CleanerEntry) -> Unit) {
+    val black = colorResource(R.color.black)
+    // dx/a: counts 0 -> freed over 800 ms, AccelerateDecelerate; 0 reads "Finished"
+    val count = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { count.animateTo(freedBytes.toFloat(), tween(JUNK_CLEAN_MIN_MS.toInt(), easing = AccelerateDecelerate)) }
+    Column(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        SharedMediaToolbar(title = stringResource(R.string.tool_bar_remove_junk), onBack = onBack)
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding().padding(bottom = 10.sdp)) {
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(painterResource(R.drawable.img_junk_cleared_done), contentDescription = null, Modifier.padding(top = 30.sdp))
+                Text(
+                    if (freedBytes == 0L) stringResource(R.string.finish) else formatCleanerSize(count.value.toLong()),
+                    style = GalleryText.BodyXXLargeBold.copy(fontSize = 18.ssp),
+                    color = black,
+                    modifier = Modifier.padding(top = 12.sdp)
+                )
+                Text(
+                    stringResource(R.string.phone_good_condition),
+                    style = GalleryText.BodyMediumMedium,
+                    color = black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 10.sdp)
+                )
+            }
+            Text(
+                stringResource(R.string.release_more_space),
+                style = GalleryText.BodyLargeBold,
+                color = black,
+                modifier = Modifier.padding(top = 20.sdp, start = 20.sdp)
+            )
+            SystemCleanerRows(onOpen)
         }
     }
 }

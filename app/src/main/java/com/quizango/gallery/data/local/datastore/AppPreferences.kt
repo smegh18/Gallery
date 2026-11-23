@@ -62,7 +62,7 @@ class AppPreferences(private val context: Context) {
     val isVaultHintToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.VAULT_HINT_SEEN] ?: false }
     val isStoriesEditToolTip: Flow<Boolean> = context.dataStore.data.map { it[Keys.STORIES_EDIT_TOOLTIP] ?: false }
     val collageMakerNewButtonExplore: Flow<Boolean> = context.dataStore.data.map { it[Keys.COLLAGE_NEW_EXPLORE] ?: false }
-    // Read-only in Phase 4; Phase 6 writes it from the junk-cleared screen.
+    // Written by Junk cleared (RemoveJunkScreen) once a clean really removed something.
     val isJunkCleanedForToday: Flow<Boolean> = context.dataStore.data.map { it[Keys.JUNK_CLEANED_TODAY] ?: false }
     val pinnedAlbums: Flow<Set<String>> = context.dataStore.data.map { it[Keys.PIN_ALBUM] ?: emptySet() }
     val albumCovers: Flow<Map<String, String>> = context.dataStore.data.map { parseAlbumCovers(it[Keys.ALBUM_COVER] ?: emptySet()) }
@@ -175,6 +175,10 @@ class AppPreferences(private val context: Context) {
 
     suspend fun setStoriesEditToolTip(seen: Boolean) {
         context.dataStore.edit { it[Keys.STORIES_EDIT_TOOLTIP] = seen }
+    }
+
+    suspend fun setJunkCleanedForToday(cleaned: Boolean) {
+        context.dataStore.edit { it[Keys.JUNK_CLEANED_TODAY] = cleaned }
     }
 
     suspend fun setCollageMakerNewButtonExplore(seen: Boolean) {

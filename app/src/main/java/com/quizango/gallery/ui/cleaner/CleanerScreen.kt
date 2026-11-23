@@ -89,15 +89,24 @@ fun CleanerScreen(
                     )
                 }
             }
-            CleanerEntry.entries.drop(1).forEach { entry ->
-                CleanerCard(entry, R.color.ic_cleaner_expand_arrow_color, top = 9.sdp, titleEnd = 0.dp, subtitleEnd = 0.dp, onClick = open) {
-                    Image(
-                        painterResource(R.drawable.system_cleaner_banner_arrow),
-                        contentDescription = null,
-                        modifier = Modifier.padding(start = 15.sdp).padding(5.sdp)
-                    )
-                }
-            }
+            SystemCleanerRows(open)
+        }
+    }
+}
+
+/** systemCleanerRecycler rows; Junk cleared's rv_other_item (dy/d) shows the same three. */
+internal val SYSTEM_CLEANER_ROWS = CleanerEntry.entries.drop(1)
+
+/** item_system_cleaner rows: Duplicate Images, Screenshots, Large Video, each with the banner arrow. */
+@Composable
+internal fun SystemCleanerRows(onClick: (CleanerEntry) -> Unit) {
+    SYSTEM_CLEANER_ROWS.forEach { entry ->
+        CleanerCard(entry, R.color.ic_cleaner_expand_arrow_color, top = 9.sdp, titleEnd = 0.dp, subtitleEnd = 0.dp, onClick = onClick) {
+            Image(
+                painterResource(R.drawable.system_cleaner_banner_arrow),
+                contentDescription = null,
+                modifier = Modifier.padding(start = 15.sdp).padding(5.sdp)
+            )
         }
     }
 }

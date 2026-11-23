@@ -309,6 +309,7 @@ fun GalleryNavHost(
 
         composable(Screen.RemoveJunk.route) {
             RemoveJunkScreen(
+                appPreferences = app.preferences,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToDuplicates = { navController.navigateOnce(Screen.DuplicateWaiting.route) },
                 onNavigateToScreenshots = { navController.navigateOnce(Screen.Screenshots.route) },
