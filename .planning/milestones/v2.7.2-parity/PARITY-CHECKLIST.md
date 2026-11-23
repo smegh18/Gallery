@@ -86,7 +86,7 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 | 34 | VaultSettingActivity | same | vault/VaultSettingScreen.kt | [ ] | [ ] |
 | 35 | VaultRecoveryQuestionActivity | same | vault/VaultRecoveryQuestionScreen.kt | [ ] | [ ] |
 | 36 | VaultForgotPasswordActivity | same | vault/VaultForgotPasswordScreen.kt | [ ] | [ ] |
-| 37 | InternalSelectMediaActivity (picker) | activity_picker_screen CHANGED | vault/VaultAddMediaScreen.kt | [ ] | [ ] |
+| 37 | InternalSelectMediaActivity (picker) | activity_select same as 2.6.7; the changed activity_picker_screen is the collage picker (Phase 8) | vault/VaultAddMediaScreen.kt | [ ] | [ ] |
 
 ### A6. Create and edit
 | # | Reference | Layouts | Ours | Ported | Verified |

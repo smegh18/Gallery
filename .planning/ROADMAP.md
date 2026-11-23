@@ -202,7 +202,7 @@ Plans:
   1. First use walks through PIN or pattern setup and the recovery question, then unlock works by PIN, pattern or fingerprint, all matching 2.7.2.
   2. The vault media screen hides and unhides media and matches 2.7.2.
   3. Vault settings let the user change the password, and forgot password recovers access through the recovery question, as in 2.7.2.
-  4. The in-app media picker used to add media to the vault matches 2.7.2's `activity_picker_screen`.
+  4. The in-app media picker used to add media to the vault matches 2.7.2's `InternalSelectMediaActivity` (`activity_select`).
 
 **Plans**: 9 plans
 

@@ -64,7 +64,7 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 ### Vault
 
 - [ ] **VLT-01**: Vault lock, media, settings, recovery question and forgot password match 2.7.2 (#32–#36).
-- [ ] **VLT-02**: The in-app media picker matches 2.7.2's `activity_picker_screen` (#37).
+- [ ] **VLT-02**: The vault's in-app Add Items media picker matches 2.7.2's `InternalSelectMediaActivity` (`activity_select`) (#37).
 
 ### Create and edit
 
@@ -181,6 +181,7 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 - VER-03 is a gate on every phase 1-13, mapped to Phase 13 for traceability.
 - ALB-02, CLN-01, CLN-03 and SET-01 mention the usage-access prompt. Their screens are ported in Phases 4, 6 and 9, and the dialog with all its triggers is delivered in Phase 12 (USG-01).
 - CLR-01: each phase removes what its replacement obsoletes; Phase 12 is the final sweep.
+- VLT-02 corrected 2026-11-24 per Phase 7 D1: the vault's picker is `InternalSelectMediaActivity` TYPE=2 (`activity_select`). `activity_picker_screen` is the collage picker fragment (S272 `te/d`); its only 2.7.2 change, the `if_inter_medium` font on `tvTitle` and `tvCount`, belongs to EDT-02 in Phase 8.
 
 ---
 *Requirements defined: 2026-11-13*
