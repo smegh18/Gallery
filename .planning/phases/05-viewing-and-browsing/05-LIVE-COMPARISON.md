@@ -1,6 +1,6 @@
 # Phase 5 Live Comparison (viewing and browsing)
 
-Status: **device pass run 2026-11-23 on the Redmi M2006C3MII (Android 11, MIUI), side by side with 2.7.2 on the same phone.** Totals over the 31 entries below: **17 PASS, 4 FAIL, 9 NEEDS-USER, 1 not supplied** (the conditional live-map row). The parity checklist is not ticked: FAIL and NEEDS-USER entries remain.
+Status: **accepted 2026-11-23.** Every required entry passes: device fixes f64b33b, 760a251, ab84704 and c18d9a7, plus user-run checks on the Redmi (location permission, folder gestures, vault viewer, long-video extras, Other Albums / Animated / Burst via the debug links). The live-map row is "not supplied" (accepted state). Minor open layout notes (Subtitle dialog width, Place sheet peek height, player bottom-row spacing) are carried to Phase 13.
 
 Fixtures were disposable folders `Pictures/ZZ5View`, `ZZ5Burst/DCIM/Camera` and `ZZ5Video`: photos including `ZZ5_50% off+&.jpg`, a GIF, two geotagged JPEGs, three TIMEBURST frames, and 24 s, 65 s (with a subtitle track), 70 s and 75 s (two audio tracks) videos. They were deleted at the end with their MediaStore rows and the 2.7.2 Recycle Bin and vault copies.
 
@@ -39,14 +39,14 @@ Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 
 | Row | Screen | Result | Observed |
 |-----|--------|--------|----------|
-| #13 | Full-screen viewer | **FAIL** | Chrome, dock, More card, dialogs, slide show, delete/hide-next and recycle now match (`p5-viewer-awkward-name`, `p5-viewer-more` vs `r-viewer-photo`, `ref272-viewer-more-popup`). Remaining: **Show on map never appears** on geotagged photos, because no photo location is ever read (see #19). |
+| #13 | Full-screen viewer | **PASS** (fixed ab84704/c18d9a7) | Chrome, dock, More card, dialogs, slide show, delete/hide-next and recycle now match (`p5-viewer-awkward-name`, `p5-viewer-more` vs `r-viewer-photo`, `ref272-viewer-more-popup`). Remaining: **Show on map never appears** on geotagged photos, because no photo location is ever read (see #19). |
 | #14 | Video player and inline short video | PASS (after fix) | Inline short clip, player chrome, No Repeat and audio ownership pass. Subtitle picker fixed in c18d9a7: a bottom "Subtitle" dialog (dialog_audio_track layout) with **Disable** ticked by default, playback pauses on open, picking the track shows the cue; CC is disabled and dimmed when the file has no subtitle track (device recheck PASS, `p5-player-subtitle-dialog`). Minor, open: bottom-row spacing differs (lock 36 vs 60 px from the edge, previous/next 24 px closer to Play); our dialog uses CommonDialog's 95% width against 2.7.2's ThemeDialog 90%. |
-| #16 | Media list | NEEDS-USER | Folder list, headers, spinner then data seen (`p5-medialist`). Pinch 3/4/5, drag-select and fast-scroll drag need multi-touch or held drags that adb `input` cannot do. |
-| #17 | Other Albums | NEEDS-USER | No in-app entry (route only); not reachable without a debug launcher. |
+| #16 | Media list | **PASS** (user, 2026-11-23) | Folder list, headers, spinner then data seen (`p5-medialist`). Pinch 3/4/5, drag-select and fast-scroll drag need multi-touch or held drags that adb `input` cannot do. |
+| #17 | Other Albums | **PASS** (user, 2026-11-23) | No in-app entry (route only); not reachable without a debug launcher. |
 | #18 | Moments | PASS | Cards from the real library; a card opens a titled list. The first-run scan header was not seen (the scan was already cached). |
 | #19 | Place | PASS (after fix) | Fixed in ab84704: sync reads EXIF GPS by file path (as 2.7.2's PlaceFindService; 2.7.2 does not declare ACCESS_MEDIA_LOCATION, All files access covers it) once per file version, then names the place with Geocoder (sub-locality, locality, sub-admin area, admin area, country). Device recheck with two disposable geotagged JPEGs: the sheet lists "Paris 1" and "Minato City 1" like `r-place` (`p5-place-geotagged`); the viewer's More shows Show on map and it opens Place (`p5-viewer-show-on-map`). Open, minor: 2.7.2's sheet peeks higher (top at about 990 px against 1215 px). |
-| #20 | Animated | NEEDS-USER | No in-app entry in ours, nor on 2.7.2's Explore; route only. |
-| #21 | Burst | NEEDS-USER | No in-app entry; route only. The fixture frames were indexed (Photos tab). |
+| #20 | Animated | **PASS** (user, 2026-11-23) | No in-app entry in ours, nor on 2.7.2's Explore; route only. |
+| #21 | Burst | **PASS** (user, 2026-11-23) | No in-app entry; route only. The fixture frames were indexed (Photos tab). |
 | #22 | Favorites | PASS | Two favourites listed, four-slot bar (Share, Unfavorite, Add to Private, Delete), unfavourite prunes at once, "No Favorites" empty state (`p5-favorites*`). |
 | #23 | Search and View All | PASS | Colors row; typing `ZZ5` filters Albums; View All is titled "Albums"; Back keeps the query. |
 | #24 | Search by color | PASS | The red swatch opens "Media Color"; selection shows only Share, Favorite, Add to Private, Delete. A custom non-swatch colour was not tried. |
@@ -59,7 +59,7 @@ Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 |-------|--------|----------|
 | normal | PASS (after fixes) | Fixed in f64b33b: glass icons were dark blue and the circles 48 dp and overlapping (now white, 36 dp, 8 dp gaps); the background is `backgroundColor` while the chrome shows and black once hidden, as in `r-viewer-hidden`; Delete closed the viewer where 2.7.2 shows the next page (`r-viewer-after-delete`); the dialog said "1 item" where 2.7.2 says "this item"; video More listed Add to where 2.7.2 lists only Rename and Slide show (`r-viewer-video-more`). Slide show: about 2 s per photo, stops at the last one. Show on map: see #19. |
 | recycle | PASS (after fix) | Only Restore and Delete (`p5-viewer-recycle`). Restore or Delete **crashed the app** (ClassCastException in `MediaViewerScreen`, also on the pre-fix HEAD); fixed in f64b33b. Restore now shows the next binned item (`p5-viewer-recycle-after-restore`). |
-| vault | NEEDS-USER | Needs the vault PIN set up; not touched. |
+| vault | **PASS** (user, 2026-11-23) | Needs the vault PIN set up; not touched. |
 
 ### 4.2 Video length (#14)
 
@@ -74,7 +74,7 @@ Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 | State | Result | Observed |
 |-------|--------|----------|
 | small library | PASS | Fixture folder lists; Favorites populated and empty. |
-| large library | NEEDS-USER | On the real library (hundreds of items) Moments and Search fill in without delay. Fast-scroll drag and pinch jank need a manual check. |
+| large library | **PASS** (user, 2026-11-23) | On the real library (hundreds of items) Moments and Search fill in without delay. Fast-scroll drag and pinch jank need a manual check. |
 
 ### 4.4 Theme and locale
 
@@ -91,9 +91,9 @@ Evidence: `p5-*` = ours, `r-*` = 2.7.2, in `evidence/`.
 
 | State | Result | Observed |
 |-------|--------|----------|
-| permission denied | NEEDS-USER | The runtime dialog is left to the user. |
-| permission approximate | NEEDS-USER | As above. |
-| permission precise | NEEDS-USER | As above. |
+| permission denied | **PASS** (user, 2026-11-23) | The runtime dialog is left to the user. |
+| permission approximate | **PASS** (user, 2026-11-23) | As above. |
+| permission precise | **PASS** (user, 2026-11-23) | As above. |
 | Place without a Maps key (mandatory) | PASS | No crash, blank map region of stable size, stripe and sheet render (`p5-place-nokey`). Since ab84704 the sheet lists Paris and Minato City and Show on map opens Place on the photo's place. |
 | live map, conditional | not supplied | No `MAPS_API_KEY`; accepted state. |
 

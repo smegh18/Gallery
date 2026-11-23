@@ -50,9 +50,9 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 
 ### Viewing
 
-- [ ] **VIEW-01**: The full-screen viewer and its bottom options row match 2.7.2 (#13).
-- [ ] **VIEW-02**: The video player matches 2.7.2. Audio stops when it closes (#14).
-- [ ] **VIEW-03**: These match 2.7.2: album/media list, all albums, Moments, Place, Animated, Burst, Favorites, Search, Search all and Search by colour (#16–#24).
+- [x] **VIEW-01**: The full-screen viewer and its bottom options row match 2.7.2 (#13).
+- [x] **VIEW-02**: The video player matches 2.7.2. Audio stops when it closes (#14).
+- [x] **VIEW-03**: These match 2.7.2: album/media list, all albums, Moments, Place, Animated, Burst, Favorites, Search, Search all and Search by colour (#16–#24).
 
 ### Manage and cleaner
 
@@ -141,9 +141,9 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 | ALB-01 | Phase 4: Albums, Stories and Explore | Complete |
 | ALB-02 | Phase 4: Albums, Stories and Explore | Complete |
 | EXP-01 | Phase 4: Albums, Stories and Explore | Complete |
-| VIEW-01 | Phase 5: Viewing and Browsing | Pending |
-| VIEW-02 | Phase 5: Viewing and Browsing | Pending |
-| VIEW-03 | Phase 5: Viewing and Browsing | Pending |
+| VIEW-01 | Phase 5: Viewing and Browsing | Complete |
+| VIEW-02 | Phase 5: Viewing and Browsing | Complete |
+| VIEW-03 | Phase 5: Viewing and Browsing | Complete |
 | CLN-01 | Phase 6: Manage and Cleaner | Pending |
 | CLN-02 | Phase 6: Manage and Cleaner | Pending |
 | CLN-03 | Phase 6: Manage and Cleaner | Pending |

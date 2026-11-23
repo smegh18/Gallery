@@ -54,18 +54,18 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 ### A3. Viewing
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 13 | MediaFullScreenActivity | activity_media_full_screen CHANGED; item_bottom_option_layout CHANGED | viewer/MediaViewerScreen.kt | [ ] | [ ] |
-| 14 | VideoPlayerActivity | same | viewer/MediaViewerScreen.kt | [ ] | [ ] |
+| 13 | MediaFullScreenActivity | activity_media_full_screen CHANGED; item_bottom_option_layout CHANGED | viewer/MediaViewerScreen.kt | [x] | [ ] |
+| 14 | VideoPlayerActivity | same | viewer/MediaViewerScreen.kt | [x] | [ ] |
 | 15 | StoryViewPhotoActivity | activity_story_view_photo CHANGED; dialog_usage_access_story NEW (dialog_usage_access_story is a no-op hook until Phase 12) | discovery/StoryViewScreen.kt | [x] | [ ] |
-| 16 | MediaListActivity | same | album/AlbumDetailScreen.kt | [ ] | [ ] |
-| 17 | AllAlbumActivity | same | home/AlbumsTab.kt / album | [ ] | [ ] |
-| 18 | MomentsActivity | same; moment_lottie removed | discovery/MomentsScreen.kt | [ ] | [ ] |
-| 19 | MapActivity (Place) | same | (Place list) | [ ] | [ ] |
-| 20 | AnimatedMediaListActivity | same | discovery/AnimatedMediaScreen.kt | [ ] | [ ] |
-| 21 | BurstPhotoActivity | same | discovery/BurstPhotoScreen.kt | [ ] | [ ] |
-| 22 | FavoriteActivity | same | favorites/FavoritesScreen.kt | [ ] | [ ] |
-| 23 | SearchActivity / SearchViewAllActivity | same | search/SearchScreen.kt | [ ] | [ ] |
-| 24 | SearchPhotoColorActivity | same | discovery/SearchColorScreen.kt | [ ] | [ ] |
+| 16 | MediaListActivity | same | album/AlbumDetailScreen.kt | [x] | [ ] |
+| 17 | AllAlbumActivity | same | home/AlbumsTab.kt / album | [x] | [ ] |
+| 18 | MomentsActivity | same; moment_lottie removed | discovery/MomentsScreen.kt | [x] | [ ] |
+| 19 | MapActivity (Place) | same | (Place list) | [x] | [ ] |
+| 20 | AnimatedMediaListActivity | same | discovery/AnimatedMediaScreen.kt | [x] | [ ] |
+| 21 | BurstPhotoActivity | same | discovery/BurstPhotoScreen.kt | [x] | [ ] |
+| 22 | FavoriteActivity | same | favorites/FavoritesScreen.kt | [x] | [ ] |
+| 23 | SearchActivity / SearchViewAllActivity | same | search/SearchScreen.kt | [x] | [ ] |
+| 24 | SearchPhotoColorActivity | same | discovery/SearchColorScreen.kt | [x] | [ ] |
 
 ### A4. Manage and cleaner
 | # | Reference | Layouts | Ours | Ported | Verified |

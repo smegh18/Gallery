@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 2: Onboarding** - Splash, Language, Permission and the new Feature-promo step; Welcome removed
 - [x] **Phase 3: Home Shell and Photos Tab** - 2.7.2 home shell, popup menu, vault hint, exit popup and Photos tab (completed 2026-11-20)
 - [x] **Phase 4: Albums, Stories and Explore** - New Albums tab and story row, stories viewer, and the Explore tab (completed 2026-11-21)
-- [ ] **Phase 5: Viewing and Browsing** - Full-screen viewer, video player and the album, discovery and search lists
+- [x] **Phase 5: Viewing and Browsing** - Full-screen viewer, video player and the album, discovery and search lists (completed 2026-11-23)
 - [ ] **Phase 6: Manage and Cleaner** - System cleaner, duplicate flow, Recycle Bin and Quick Organize
 - [ ] **Phase 7: Private Vault** - Vault lock, media, settings, recovery and the media picker
 - [ ] **Phase 8: Create and Edit** - Photo editor, crop, collage and the creative tools
@@ -148,17 +148,18 @@ Plans:
   4. Moments, Place, Animated, Burst and Favorites each match 2.7.2, including their empty states.
   5. Search, Search all and Search by colour match 2.7.2 and return the same kind of results.
 
-**Plans**: 8 plans
+**Plans**: 8/8 plans complete
 
 Plans:
-- [ ] 05-01-PLAN.md — Import the approved resources and prove the still viewer, per-image zoom and glass chrome tracer (wave 1)
-- [ ] 05-02-PLAN.md — Complete viewer actions, dialogs, suggestions, More and the two-second slideshow (wave 2)
-- [ ] 05-03-PLAN.md — Split short inline video from long/URI playback and deliver the lifecycle-safe dedicated player (wave 3)
-- [ ] 05-04-PLAN.md — Establish the shared media-list frame through Album Detail and expand it to Favorites (wave 4)
-- [ ] 05-05-PLAN.md — Deliver All Albums, Moments, Animated and Burst on the shared browsing behavior (wave 5)
-- [ ] 05-06-PLAN.md — Add Place grouping, optional Maps-key fallback, runtime location permission and viewer map routing (wave 6)
-- [ ] 05-07-PLAN.md — Rebuild Search, six-item section previews, View All and Search by Color (wave 7)
-- [ ] 05-08-PLAN.md — Remediate review/build/device defects and close evidence for every Phase 5 parity row (wave 8)
+- [x] 05-01-PLAN.md — Import the approved resources and prove the still viewer, per-image zoom and glass chrome tracer (wave 1)
+- [x] 05-02-PLAN.md — Complete viewer actions, dialogs, suggestions, More and the two-second slideshow (wave 2)
+- [x] 05-03-PLAN.md — Split short inline video from long/URI playback and deliver the lifecycle-safe dedicated player (wave 3)
+- [x] 05-04-PLAN.md — Establish the shared media-list frame through Album Detail and expand it to Favorites (wave 4)
+- [x] 05-05-PLAN.md — Deliver All Albums, Moments, Animated and Burst on the shared browsing behavior (wave 5)
+- [x] 05-06-PLAN.md — Add Place grouping, optional Maps-key fallback, runtime location permission and viewer map routing (wave 6)
+- [x] 05-07-PLAN.md — Rebuild Search, six-item section previews, View All and Search by Color (wave 7)
+- [x] 05-08-PLAN.md — Remediate review/build/device defects and close evidence for every Phase 5 parity row (wave 8)
+
 **UI hint**: yes
 
 ### Phase 6: Manage and Cleaner
@@ -295,7 +296,7 @@ Phases execute in numeric order: 1 → 2 → 3 → … → 13
 | 2. Onboarding | 5/5 | Complete    | 2026-11-13 |
 | 3. Home Shell and Photos Tab | 6/6 | Complete    | 2026-11-20 |
 | 4. Albums, Stories and Explore | 6/6 | Complete    | 2026-11-21 |
-| 5. Viewing and Browsing | 0/TBD | Not started | - |
+| 5. Viewing and Browsing | 8/8 | Complete    | 2026-11-23 |
 | 6. Manage and Cleaner | 0/TBD | Not started | - |
 | 7. Private Vault | 0/TBD | Not started | - |
 | 8. Create and Edit | 0/TBD | Not started | - |

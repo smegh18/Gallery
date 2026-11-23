@@ -26,7 +26,7 @@
     {
       "number": "5",
       "name": "Viewing and Browsing",
-      "status": "planned"
+      "status": "complete"
     },
     {
       "number": "6",
@@ -70,9 +70,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-execute-phase 5",
-    "label": "Execute Phase 5",
-    "reason": "Eight plans ready, starting with the still-photo viewer"
+    "command": "/gsd-progress --next",
+    "label": "Advance to the next step (verify)",
+    "reason": "Phase 2 of 13 · 38% · ready to verify"
   },
-  "updated_at": "2026-11-21T08:25:49+00:00"
+  "updated_at": "2026-11-23T06:03:51.145Z"
 }
