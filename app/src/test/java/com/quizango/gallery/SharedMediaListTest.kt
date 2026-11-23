@@ -12,6 +12,7 @@ import com.quizango.gallery.ui.browse.toggleAll
 import com.quizango.gallery.ui.browse.mediaListActions
 import com.quizango.gallery.ui.browse.sharedHeaderDate
 import com.quizango.gallery.ui.browse.sharedMediaRows
+import com.quizango.gallery.ui.browse.vaultMediaActions
 import com.quizango.gallery.ui.home.PhotoRow
 import com.quizango.gallery.ui.home.clampColumnCount
 import com.quizango.gallery.ui.home.dayStartOf
@@ -120,5 +121,13 @@ class SharedMediaListTest {
         for (cols in 3..5) rows.forEach { row ->
             assertEquals(if (row is PhotoRow.Header) cols else 1, sharedRowSpan(row, cols))
         }
+    }
+
+    @Test
+    fun vaultBarOffersShareUnhideDelete() {
+        assertEquals(listOf(MediaAction.SHARE, MediaAction.UNHIDE, MediaAction.DELETE), vaultMediaActions())
+        assertEquals(R.drawable.ic_unhide, MediaAction.UNHIDE.icon)
+        assertEquals(R.string.unhide, MediaAction.UNHIDE.label)
+        assertEquals(63, MediaAction.UNHIDE.widthSdp)
     }
 }

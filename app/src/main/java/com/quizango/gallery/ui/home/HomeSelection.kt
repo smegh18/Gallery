@@ -156,6 +156,7 @@ internal fun HomeSelectionBottomBar(
             MediaAction.PRIVATE -> onHide()
             MediaAction.DELETE -> onDelete()
             MediaAction.CREATE_ALBUM -> onCreateAlbum()
+            MediaAction.UNHIDE -> Unit // only the vault bar offers it
         }
     })
 }

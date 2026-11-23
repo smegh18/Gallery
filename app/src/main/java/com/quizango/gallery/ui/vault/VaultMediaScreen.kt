@@ -32,7 +32,14 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.quizango.gallery.GalleryApplication
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.browse.MediaAction
+import com.quizango.gallery.ui.browse.MediaSelectionBar
+import com.quizango.gallery.ui.browse.vaultMediaActions
+import com.quizango.gallery.ui.home.HideMediaDialog
+import com.quizango.gallery.ui.home.ProgressTextDialog
+import com.quizango.gallery.ui.home.shareSelectedMedia
 import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.domain.model.MediaType
 import com.quizango.gallery.domain.model.VaultItem
@@ -55,7 +62,9 @@ fun VaultMediaScreen(
     val vaultItems by vaultRepository.getVaultItemsFlow().collectAsState(initial = emptyList())
     var selectedPaths by remember { mutableStateOf(setOf<String>()) }
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
-    var showUnhideConfirmDialog by remember { mutableStateOf(false) }
+    var pendingUnhide by remember { mutableStateOf<List<VaultItem>?>(null) }
+    var progress by remember { mutableStateOf<Int?>(null) }
+    val mediaRepository = (context.applicationContext as GalleryApplication).mediaRepository
 
     val isSelectionMode = selectedPaths.isNotEmpty()
 
@@ -141,89 +150,21 @@ fun VaultMediaScreen(
         },
         bottomBar = {
             if (isSelectionMode) {
-                Surface(
-                    tonalElevation = 8.dp,
-                    shadowElevation = 8.dp,
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    // Edge-to-edge: keep the content above the system navigation bar
-                    Box(Modifier.navigationBarsPadding()) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // 1. Share Action
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clickable { shareSelectedVaultMedia(context, selectedPaths) }
-                                    .padding(vertical = 4.dp, horizontal = 12.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_home_select_share),
-                                    contentDescription = "Share",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Share",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
+                Column {
+                    MediaSelectionBar(vaultMediaActions(), onAction = { action ->
+                        // actions run on a snapshot of the selection (T-07-20)
+                        val picked = vaultItems.filter { it.filePath in selectedPaths }
+                        if (picked.isNotEmpty()) when (action) {
+                            MediaAction.SHARE -> scope.launch {
+                                val files = picked.mapNotNull { vaultRepository.viewFile(it) }
+                                shareSelectedMedia(context, files.map { it.absolutePath }.toSet(), context.getString(R.string.share))
                             }
-
-                            // 2. Unhide Action (ic_unhide)
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clickable { showUnhideConfirmDialog = true }
-                                    .padding(vertical = 4.dp, horizontal = 12.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_unhide),
-                                    contentDescription = "Unhide",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Unhide",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-
-                            // 3. Delete Action
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clickable { showDeleteConfirmDialog = true }
-                                    .padding(vertical = 4.dp, horizontal = 12.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_album_select_delete),
-                                    contentDescription = "Delete",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Delete",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
+                            MediaAction.UNHIDE -> pendingUnhide = picked
+                            MediaAction.DELETE -> showDeleteConfirmDialog = true
+                            else -> Unit
                         }
-                    }
+                    })
+                    Spacer(Modifier.navigationBarsPadding())
                 }
             }
         },
@@ -316,63 +257,29 @@ fun VaultMediaScreen(
             }
         }
 
-        // Unhide Confirmation Dialog
-        if (showUnhideConfirmDialog) {
-            AlertDialog(
-                onDismissRequest = { showUnhideConfirmDialog = false },
-                shape = RoundedCornerShape(16.dp),
-                containerColor = MaterialTheme.colorScheme.surface,
-                title = {
-                    Text(
-                        text = "Unhide Items",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                },
-                text = {
-                    Text(
-                        text = "Are you sure you want to restore these ${selectedPaths.size} item(s) back to the public gallery?",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                },
-                confirmButton = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = { showUnhideConfirmDialog = false },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(24.dp),
-                            border = BorderStroke(1.dp, GalleryBlue)
-                        ) {
-                            Text("Cancel", color = GalleryBlue, fontWeight = FontWeight.SemiBold)
-                        }
-                        Button(
-                            onClick = {
-                                val targets = vaultItems.filter { it.filePath in selectedPaths }
-                                scope.launch {
-                                    targets.forEach { vaultRepository.restoreFromVault(it) }
-                                    Toast.makeText(context, "Restored ${targets.size} item(s) to gallery", Toast.LENGTH_SHORT).show()
-                                    selectedPaths = emptySet()
-                                    showUnhideConfirmDialog = false
-                                }
-                            },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = GalleryBlue)
-                        ) {
-                            Text("Unhide", color = Color.White, fontWeight = FontWeight.SemiBold)
-                        }
+        pendingUnhide?.let { items ->
+            HideMediaDialog(
+                title = R.string.unhide_items,
+                message = R.string.unhide_item_permission,
+                onConfirm = {
+                    pendingUnhide = null
+                    scope.launch {
+                        progress = R.string.unhiding
+                        val restored = items.count { vaultRepository.restoreFromVault(it) }
+                        mediaRepository.syncMediaStore() // restore only re-indexes the file; the gallery table needs the batch sync (07-02)
+                        progress = null
+                        Toast.makeText(
+                            context,
+                            context.getString(if (restored > 0) R.string.selected_media_files_successfully_unhide else R.string.something_went_wrong),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        selectedPaths = emptySet()
                     }
                 },
-                dismissButton = {}
+                onDismiss = { pendingUnhide = null }
             )
         }
+        progress?.let { ProgressTextDialog(stringResource(it)) }
 
         // Permanent Delete Confirmation Dialog
         if (showDeleteConfirmDialog) {
@@ -498,35 +405,6 @@ private fun VaultGridItem(
         }
     }
 }
-
-private fun shareSelectedVaultMedia(context: Context, paths: Set<String>) {
-    if (paths.isEmpty()) return
-    try {
-        val uris = ArrayList<Uri>()
-        paths.forEach { path ->
-            val file = File(path)
-            if (file.exists()) {
-                val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-                uris.add(uri)
-            }
-        }
-        val shareIntent = if (uris.size == 1) {
-            Intent(Intent.ACTION_SEND).apply {
-                type = "*/*"
-                putExtra(Intent.EXTRA_STREAM, uris.first())
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-        } else {
-            Intent(Intent.ACTION_SEND_MULTIPLE).apply {
-                type = "*/*"
-                putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-        }
-        context.startActivity(Intent.createChooser(shareIntent, "Share Media"))
-    } catch (_: Exception) {}
-}
-
 
 /** "Today", "Yesterday" or "dd MMM yyyy" for a timestamp in seconds or milliseconds. */
 internal fun vaultDateLabel(epoch: Long): String {

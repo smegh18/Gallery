@@ -52,7 +52,8 @@ internal enum class MediaAction(@DrawableRes val icon: Int, @StringRes val label
     ADD_TO(R.drawable.ic_home_select_add, R.string.add_to, 55),
     PRIVATE(R.drawable.ic_home_select_hide, R.string.ad_to_private, 63),
     DELETE(R.drawable.ic_album_select_delete, R.string.delete, 50),
-    CREATE_ALBUM(R.drawable.ic_home_select_create_album, R.string.create_albums, 60)
+    CREATE_ALBUM(R.drawable.ic_home_select_create_album, R.string.create_albums, 60),
+    UNHIDE(R.drawable.ic_unhide, R.string.unhide, 63)
 }
 
 /** True when every selected item is already a favourite, so the slot reads Unfavorite (§3.4). */
@@ -71,6 +72,9 @@ internal fun mediaListActions(allFavorite: Boolean): List<MediaAction> = listOf(
 
 /** Favorites (§10): four slots, never Add to or Create album. */
 internal val FAVORITES_ACTIONS = listOf(MediaAction.SHARE, MediaAction.UNFAVORITE, MediaAction.PRIVATE, MediaAction.DELETE)
+
+/** Vault grid (activity_vault_media): Share, Unhide, Delete; the other three slots stay hidden (A5). */
+internal fun vaultMediaActions(): List<MediaAction> = listOf(MediaAction.SHARE, MediaAction.UNHIDE, MediaAction.DELETE)
 
 /** layout_select_media_bottom with only [actions] shown, in order. */
 @Composable
@@ -204,6 +208,7 @@ internal fun rememberMediaListActions(
             MediaAction.PRIVATE -> pending = PendingDialog.Hide(picked)
             MediaAction.DELETE -> pending = PendingDialog.Delete(picked)
             MediaAction.CREATE_ALBUM -> pending = PendingDialog.CreateAlbum(picked)
+            MediaAction.UNHIDE -> Unit // only the vault bar offers it
         }
     }
 }
