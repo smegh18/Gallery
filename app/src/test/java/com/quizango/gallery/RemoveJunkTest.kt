@@ -1,7 +1,12 @@
 package com.quizango.gallery
 
 import com.quizango.gallery.data.local.JunkScanner
+import com.quizango.gallery.ui.cleaner.JUNK_CLEAN_MIN_MS
 import com.quizango.gallery.ui.cleaner.JUNK_SCAN_HOLD_MS
+import com.quizango.gallery.ui.cleaner.JunkCleanResult
+import com.quizango.gallery.ui.cleaner.StorageCleanPhase
+import com.quizango.gallery.ui.cleaner.canStartJunkClean
+import com.quizango.gallery.ui.cleaner.phaseAfterJunkClean
 import com.quizango.gallery.ui.cleaner.initialJunkSelection
 import com.quizango.gallery.ui.cleaner.junkBytes
 import com.quizango.gallery.ui.cleaner.junkCheckIcon
@@ -91,5 +96,22 @@ class RemoveJunkTest {
         assertFalse(File(pdf).exists())
         assertTrue(File(root, "old2.txt").exists())   // unticked document untouched
         assertTrue(File(root, "a.tmp").exists())      // not in the snapshot
+    }
+
+    @Test
+    fun cleanStartsOnlyFromResultsWithTickedBytes() {
+        assertFalse(canStartJunkClean(StorageCleanPhase.OVERVIEW, 0))
+        assertTrue(canStartJunkClean(StorageCleanPhase.OVERVIEW, 1))
+        // A second tap after the first moved to CLEANING (or later) is ignored
+        for (p in listOf(StorageCleanPhase.SCANNING, StorageCleanPhase.CLEANING, StorageCleanPhase.COMPLETED)) {
+            assertFalse(canStartJunkClean(p, 1024))
+        }
+        assertEquals(800L, JUNK_CLEAN_MIN_MS)
+    }
+
+    @Test
+    fun everyPathFailingReturnsToResultsInsteadOfCleared() {
+        assertEquals(StorageCleanPhase.OVERVIEW, phaseAfterJunkClean(JunkCleanResult(emptySet(), setOf("/a"), 0)))
+        assertEquals(StorageCleanPhase.COMPLETED, phaseAfterJunkClean(JunkCleanResult(setOf("/b"), setOf("/a"), 5)))
     }
 }

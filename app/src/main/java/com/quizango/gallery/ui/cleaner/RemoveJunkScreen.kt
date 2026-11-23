@@ -4,6 +4,7 @@ import android.os.Environment
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +22,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -34,6 +36,7 @@ import androidx.core.graphics.drawable.toBitmap
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.JunkScanResult
@@ -47,12 +50,16 @@ import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.math.PI
+import kotlin.math.cos
 
 /** JunkScanActivity, RemoveJunkActivity (results, cleaning) and JunkClearedActivity as states of one route. */
 enum class StorageCleanPhase { SCANNING, OVERVIEW, CLEANING, COMPLETED }
@@ -62,6 +69,19 @@ internal const val JUNK_SCAN_HOLD_MS = 2500L
 
 /** dx/f uses the fixed `junk_scan_completed_message` ("1.40 GB" baked in, Q1), never the measured size. */
 internal fun junkScanStatus(done: Boolean) = if (done) R.string.junk_scan_completed_message else R.string.scanning
+
+/** RJ.OoooooO: the cleaning size counts down over 800 ms; the cleaning state never closes sooner, even on fast IO. */
+internal const val JUNK_CLEAN_MIN_MS = 800L
+
+/** RJ.Oooooo: the button hint Lottie appears this long after the results bind. */
+private const val JUNK_HINT_DELAY_MS = 3000L
+
+/** android.view.animation.AccelerateDecelerateInterpolator, used by both RJ and dx/a counters. */
+private val AccelerateDecelerate = Easing { (cos((it + 1) * PI) / 2 + 0.5).toFloat() }
+
+/** Clean and Deep Clean act only from the results with a positive ticked size, so a repeated tap cannot start a second delete. */
+internal fun canStartJunkClean(phase: StorageCleanPhase, selectedBytes: Long) =
+    phase == StorageCleanPhase.OVERVIEW && selectedBytes > 0
 
 /** RJ dataMap rows in order (the ads slot before them stays collapsed, D5): dy/m names, dy/g icons. */
 internal enum class JunkRow(val id: String, @StringRes val title: Int, @DrawableRes val icon: Int) {
@@ -99,6 +119,10 @@ internal fun junkBytes(paths: Iterable<String>, sizes: Map<String, Long>): Long 
 
 /** What one Clean did: the paths that are gone, their scanned bytes, and the paths that failed (left ticked to retry). */
 internal data class JunkCleanResult(val removed: Set<String>, val failed: Set<String>, val freedBytes: Long)
+
+/** Junk cleared only when at least one path is really gone; if every path failed, back to the results to retry. */
+internal fun phaseAfterJunkClean(result: JunkCleanResult) =
+    if (result.removed.isEmpty()) StorageCleanPhase.OVERVIEW else StorageCleanPhase.COMPLETED
 
 /** Deletes a frozen snapshot of ticked paths; freed bytes count only paths whose outcome says they are gone. */
 internal fun runJunkClean(snapshot: List<String>, sizes: Map<String, Long>): JunkCleanResult {
@@ -172,6 +196,8 @@ fun RemoveJunkScreen(
     var results by remember { mutableStateOf(emptyList<JunkScanResult>()) }
     var sizes by remember { mutableStateOf(emptyMap<String, Long>()) }
     var selected by remember { mutableStateOf(emptySet<String>()) }
+    var cleaningBytes by remember { mutableLongStateOf(0L) }
+    var cleanDone by remember { mutableStateOf(false) }
 
     // Real scan (JunkScanner): every size shown comes from files that exist.
     // Leaving the screen cancels this effect, so a stale scan never reaches the results (and stops walking).
@@ -204,17 +230,24 @@ fun RemoveJunkScreen(
     val selectedBytes = junkBytes(selected, sizes)
 
     fun startClean() {
-        if (phase != StorageCleanPhase.OVERVIEW || selectedBytes <= 0) return
+        if (!canStartJunkClean(phase, selectedBytes)) return
         val snapshot = selected.toList() // frozen at the tap: later ticks cannot widen the delete
         val snapshotSizes = sizes
+        cleaningBytes = selectedBytes
+        cleanDone = false
         phase = StorageCleanPhase.CLEANING
         scope.launch {
-            // NonCancellable: once deletion starts its result is applied even if the user leaves
-            val result = withContext(Dispatchers.IO + NonCancellable) { runJunkClean(snapshot, snapshotSizes) }
+            val result = coroutineScope {
+                // NonCancellable: once deletion starts it runs to the end even if the user leaves
+                val work = async(Dispatchers.IO + NonCancellable) { runJunkClean(snapshot, snapshotSizes) }
+                delay(JUNK_CLEAN_MIN_MS)
+                work.await()
+            }
             results = results.map { r -> r.copy(files = r.files.filter { it.path !in result.removed }) }
             selected = selected - result.removed
             freedBytes = result.freedBytes
-            phase = if (result.removed.isEmpty()) StorageCleanPhase.OVERVIEW else StorageCleanPhase.COMPLETED
+            if (phaseAfterJunkClean(result) == StorageCleanPhase.OVERVIEW) phase = StorageCleanPhase.OVERVIEW
+            else cleanDone = true // junk_done plays once, then Junk cleared
         }
     }
 
@@ -230,10 +263,8 @@ fun RemoveJunkScreen(
             onClean = ::startClean
         )
 
-        StorageCleanPhase.CLEANING -> {
-            Box(Modifier.fillMaxSize().drawableBackground(R.drawable.layout_progress_background), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = colorResource(R.color.onlyWhite))
-            }
+        StorageCleanPhase.CLEANING -> JunkCleaningState(cleaningBytes, cleanDone, onNavigateBack) {
+            phase = StorageCleanPhase.COMPLETED
         }
 
         StorageCleanPhase.COMPLETED -> {
@@ -254,6 +285,51 @@ fun RemoveJunkScreen(
     }
 }
 
+/** RemoveJunkActivity clAnimation: cleaner_lottie with the ticked size counting down, then junk_done once (dx/j). */
+@Composable
+private fun JunkCleaningState(cleaningBytes: Long, done: Boolean, onBack: () -> Unit, onDoneEnd: () -> Unit) {
+    val white = colorResource(R.color.onlyWhite)
+    val cleaner by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.cleaner_lottie))
+    val doneResult = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.junk_done))
+    val doneAnim = rememberLottieAnimatable()
+    val finish by rememberUpdatedState(onDoneEnd)
+    // RJ.OoooooO: ValueAnimator.ofFloat(checked, 0) over 800 ms, AccelerateDecelerate
+    val count = remember { Animatable(cleaningBytes.toFloat()) }
+    LaunchedEffect(Unit) { count.animateTo(0f, tween(JUNK_CLEAN_MIN_MS.toInt(), easing = AccelerateDecelerate)) }
+    LaunchedEffect(done) {
+        if (!done) return@LaunchedEffect
+        // A composition that fails to load must not strand the user on this state
+        runCatching { doneResult.await() }.getOrNull()?.let { doneAnim.animate(it) }
+        finish()
+    }
+    val sizeText = with(LocalDensity.current) { 35.sdp.toSp() } // txt_scanning_size uses sdp for text
+    Box(Modifier.fillMaxSize()) {
+        LottieAnimation(cleaner, iterations = LottieConstants.IterateForever, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+        Column(Modifier.align(Alignment.BottomCenter).padding(bottom = 50.sdp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                formatCleanerSize(count.value.toLong()),
+                style = GalleryText.BodyXXLargeBold.copy(fontSize = sizeText),
+                color = white,
+                modifier = Modifier.padding(bottom = 10.sdp)
+            )
+            Text(stringResource(R.string.cleaning_item), style = GalleryText.BodyLargeSemiBold, color = white, modifier = Modifier.padding(start = 5.sdp))
+        }
+        if (done) LottieAnimation(doneResult.value, progress = { doneAnim.progress }, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+        Row(Modifier.padding(top = 24.sdp).fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.size(56.dp).clickable(onClick = onBack), contentAlignment = Alignment.Center) {
+                Image(painterResource(R.drawable.ic_back_white), stringResource(R.string.viewer_back))
+            }
+            Text(
+                stringResource(R.string.remove_junk),
+                style = GalleryText.BodyXXLargeSemiBold,
+                color = white,
+                maxLines = 1,
+                modifier = Modifier.weight(1f).padding(start = 5.sdp)
+            )
+        }
+    }
+}
+
 /** activity_remove_junk results: collapsing red header with the ticked size, the five rows, Clean / Deep Clean. */
 @Composable
 private fun JunkResultsState(
@@ -270,6 +346,9 @@ private fun JunkResultsState(
     val headerHeight = remember { Animatable(350f) }
     LaunchedEffect(Unit) { headerHeight.animateTo(300f, tween(500)) }
     val subText = with(LocalDensity.current) { 12.sdp.toSp() } // item_remove_junk_sub uses sdp for text
+    val hint by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.remove_junk_button_animation))
+    var hintReady by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { delay(JUNK_HINT_DELAY_MS); hintReady = true }
 
     Box(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
         LazyColumn(
@@ -406,6 +485,17 @@ private fun JunkResultsState(
                 }
             }
         }
+        if (hintReady && selectedBytes > 0) LottieAnimation(
+            hint,
+            iterations = LottieConstants.IterateForever,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(bottom = 35.dp)
+                .fillMaxWidth()
+                .height(38.sdp)
+                .padding(4.sdp)
+        )
         JunkActionBar(selectedBytes, onClean, Modifier.align(Alignment.BottomCenter))
     }
 }
