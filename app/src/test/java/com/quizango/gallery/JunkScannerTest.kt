@@ -7,6 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
+import java.util.Calendar
 
 class JunkScannerTest {
 
@@ -32,7 +33,7 @@ class JunkScannerTest {
         assertEquals(30L, r[JunkScanner.APP_CACHE]!!.sizeBytes)
         assertEquals(listOf("app.apk"), r[JunkScanner.APK]!!.files.map { it.name })
         assertEquals(listOf("b.tmp"), r[JunkScanner.TEMP]!!.files.map { it.name })
-        assertEquals(listOf("a.log"), r[JunkScanner.LOG]!!.files.map { it.name })
+        assertTrue(r[JunkScanner.LOG]!!.files.isEmpty())           // .log is not an old document
         assertEquals(listOf("Empty"), r[JunkScanner.EMPTY_FOLDER]!!.files.map { it.name })
     }
 
@@ -58,6 +59,37 @@ class JunkScannerTest {
             assertEquals(ids, r.map { it.id })
             assertTrue(r.all { it.files.isEmpty() })
         }
+    }
+
+    @Test
+    fun logFilesHoldOnlyDocumentsOlderThanOneYear() {
+        val now = Calendar.getInstance().apply { set(2026, Calendar.JUNE, 15, 12, 0, 0); set(Calendar.MILLISECOND, 0) }.timeInMillis
+        val cutoff = Calendar.getInstance().apply { timeInMillis = now; add(Calendar.YEAR, -1) }.timeInMillis
+        val root = Files.createTempDirectory("storage").toFile()
+        fun doc(name: String, modified: Long) = File(root, name).apply { writeBytes(ByteArray(4)); setLastModified(modified) }
+        val old = listOf("doc", "docx", "pdf", "txt", "csv", "xls", "xlsx", "ppt", "pptx", "xml", "PDF")
+            .mapIndexed { i, ext -> doc("d$i.$ext", cutoff - 1000) }
+        doc("new.pdf", cutoff + 1000)
+        doc("edge.pdf", cutoff)                                  // not strictly older
+        doc("old.log", cutoff - 1000)
+        doc("old.jpg", cutoff - 1000)
+        val logs = JunkScanner.scan(root, emptyList(), now = now).single { it.id == JunkScanner.LOG }
+        assertEquals(old.toSet(), logs.files.toSet())
+    }
+
+    @Test
+    fun categoriesKeepReferenceOrderAndMatchOnlyTheirOwnFiles() {
+        val (root, cache) = tree()
+        File(root, "Download/UP.APK").writeBytes(ByteArray(9))   // dr/c: exact lowercase "apk"
+        val r = JunkScanner.scan(root, listOf(cache, cache))
+        assertEquals(
+            listOf(JunkScanner.APP_CACHE, JunkScanner.APK, JunkScanner.TEMP, JunkScanner.LOG, JunkScanner.EMPTY_FOLDER),
+            r.map { it.id }
+        )
+        val all = r.flatMap { it.files }
+        assertEquals(all.size, all.toSet().size)
+        assertEquals(listOf("c.bin"), r[0].files.map { it.name })
+        assertEquals(listOf("app.apk"), r[1].files.map { it.name })
     }
 
     @Test

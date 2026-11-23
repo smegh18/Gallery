@@ -1,6 +1,8 @@
 package com.quizango.gallery.data.local
 
 import java.io.File
+import java.util.Calendar
+import java.util.Locale
 
 /** What the junk scan found for one category. */
 data class JunkScanResult(
@@ -19,6 +21,7 @@ object JunkScanner {
     const val APP_CACHE = "app_cache"
     const val APK = "apk_files"
     const val TEMP = "temp_files"
+    /** Shown as "Log Files"; 2.7.2 fills it with old documents (aw/b), not .log files. Id kept for the UI. */
     const val LOG = "log_files"
     const val EMPTY_FOLDER = "empty_folder"
 
@@ -31,18 +34,23 @@ object JunkScanner {
         "alarms", "notifications", "podcasts", "ringtones", "audiobooks", "recordings"
     )
 
+    // aw/b: old-document extensions, compared lowercased
+    private val OLD_DOC_EXT = setOf("doc", "docx", "pdf", "txt", "csv", "xls", "xlsx", "ppt", "pptx", "xml")
+
     // ex/j: the text after the last '.', "" when there is none
     private fun ext(f: File) = f.name.substringAfterLast('.', "")
 
     /**
      * @param storageRoot shared storage root (skips its Android/ folder: other apps' data)
      * @param appCacheDirs this app's own cache folders
+     * @param now clock for the old-document cutoff (now minus one calendar year, dx/e)
      * @param onProgress called with [PROGRESS_STEPS] as the categories complete
      * @param onPath called with each folder as it is scanned, for the live readout
      */
     fun scan(
         storageRoot: File?,
         appCacheDirs: List<File>,
+        now: Long = System.currentTimeMillis(),
         onProgress: (Int) -> Unit = {},
         onPath: (String) -> Unit = {}
     ): List<JunkScanResult> {
@@ -51,6 +59,7 @@ object JunkScanner {
             dir.walkTopDown().filter { it.isFile }.toList()
         }.distinct()
         onProgress(PROGRESS_STEPS[0])
+        val docCutoff = Calendar.getInstance().apply { timeInMillis = now; add(Calendar.YEAR, -1) }.timeInMillis
         val apks = mutableListOf<File>()
         val temps = mutableListOf<File>()
         val logs = mutableListOf<File>()
@@ -68,9 +77,9 @@ object JunkScanner {
                     if (f.isFile) {
                         val ext = ext(f)
                         when {
-                            ext.equals("apk", ignoreCase = true) -> apks += f
+                            ext == "apk" -> apks += f // dr/c case 2: exact lowercase
                             ext == "tmp" -> temps += f // dr/c case 4: exact lowercase, no .temp
-                            ext.equals("log", ignoreCase = true) -> logs += f
+                            ext.lowercase(Locale.ROOT) in OLD_DOC_EXT && f.lastModified() < docCutoff -> logs += f
                         }
                     } else if (f != storageRoot && f.list()?.isEmpty() == true &&
                         !(f.parentFile == storageRoot && f.name.lowercase() in PROTECTED_TOP)
