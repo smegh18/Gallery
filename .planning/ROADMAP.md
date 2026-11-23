@@ -174,7 +174,20 @@ Plans:
   3. The Recycle Bin uses the changed 2.7.2 item layout with days left, restore, delete and empty all working.
   4. Quick Organize and Organizer Recycle show 2.7.2's changed stripe and intro steps.
 
-**Plans**: TBD
+**Plans**: 11 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — System Cleaner entry, Phase 6 resources and exact shared size formatting (wave 1)
+- [ ] 06-02-PLAN.md — Exact junk predicates and Junk Scan/done state (wave 2)
+- [ ] 06-03-PLAN.md — Junk results, opt-in cleaning and Junk Cleared completion (wave 3)
+- [ ] 06-04-PLAN.md — Large Videos, Screenshots and deferred video usage hooks (wave 2)
+- [ ] 06-05-PLAN.md — Duplicate waiting/done, grouped photos and delete selection (wave 2)
+- [ ] 06-06-PLAN.md — Duplicate delete process, truthful completion and route closure (wave 4)
+- [ ] 06-07-PLAN.md — Changed Recycle Bin, retention, actions and usage hook (wave 4)
+- [ ] 06-08-PLAN.md — Quick Organizer pager, album row, gestures and Undo core (wave 2)
+- [ ] 06-09-PLAN.md — Decoded persisted Organizer intro steps 1-7 (wave 5)
+- [ ] 06-10-PLAN.md — Organizer Recycle and one-time All Photos stripe routing (wave 6)
+- [ ] 06-11-PLAN.md — Integrated gates, correction-plan routing and safe device parity evidence (wave 7)
 **UI hint**: yes
 
 ### Phase 7: Private Vault
