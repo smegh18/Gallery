@@ -41,9 +41,10 @@ internal fun nextOrganizerPath(visiblePaths: List<String>, currentPath: String):
     return visiblePaths.getOrNull(index + 1) ?: visiblePaths.getOrNull(index - 1)
 }
 
-internal fun nextOrganizerTutorialStep(step: Int, action: OrganizerAction): Int = when {
-    step == 5 && action is OrganizerAction.Skip -> 6
-    step == 6 && action is OrganizerAction.Trash -> 7
+/** 2.7.2 oo0o0Oo: a swipe on the tutorial layer only advances it (left 5 -> 6, up 6 -> 7); no photo is skipped or trashed. */
+internal fun nextOrganizerTutorialStep(step: Int, swipe: OrganizerSwipe): Int = when {
+    step == 5 && swipe == OrganizerSwipe.LEFT -> 6
+    step == 6 && swipe == OrganizerSwipe.UP -> 7
     else -> step
 }
 

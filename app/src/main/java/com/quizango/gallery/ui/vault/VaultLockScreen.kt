@@ -83,12 +83,10 @@ fun VaultLockScreen(
     }
 
     fun handle(f: VaultLockFlow, event: LockEvent, value: String) {
+        entered = pinAfterSubmit(entered, event) // before any save or delay, so a quick second Confirm finds no digits
         when (event) {
-            is LockEvent.Toast -> {
-                toast(event.res)
-                if (entered.length == 4) entered = "" // a mismatch restarts setup; a short PIN keeps its digits
-            }
-            LockEvent.Clear -> scope.launch { delay(30); entered = "" } // reference clears 30 ms later
+            is LockEvent.Toast -> toast(event.res)
+            LockEvent.Clear -> Unit
             is LockEvent.Save -> scope.launch {
                 appPreferences.saveVaultLock(event.value, event.pattern)
                 route(f.afterSuccess(passwordSaved = true))
@@ -96,13 +94,11 @@ fun VaultLockScreen(
             LockEvent.Success -> scope.launch {
                 // Upgrade a plain value saved by an older version to a hash
                 if (!VaultSecret.isHashed(if (f.isPattern) storedPattern else storedPin)) appPreferences.saveVaultLock(value, f.isPattern)
-                entered = ""
                 route(f.afterSuccess(passwordSaved = false))
             }
             is LockEvent.Wrong -> {
                 wrongCount = f.wrongCount
                 event.toast?.let { toast(it) }
-                entered = ""
                 if (event.lockOut) scope.launch {
                     appPreferences.setPrivateLock(true)
                     onOpenForgot()

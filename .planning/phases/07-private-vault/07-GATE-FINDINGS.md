@@ -53,3 +53,24 @@ Unslop cannot judge device rendering. Spacing, glyph and look remain a side-by-s
 | F4 | CodeRabbit CLI not installed | Open: owed | See CodeRabbit section |
 
 No accepted finding, so no correction plan 07-10+ was written. No app source file is in this plan's commits.
+
+## CodeRabbit review 2026-11-25
+
+Command: `coderabbit review --committed --base-commit 04c2447 --dir app --agent` (Phase 6 + Phase 7 diff, 11 major findings; CR-8..CR-11 are Phase 7, CR-1..CR-7 are in 06-GATE-FINDINGS.md). The CLI has now run, so F4 above is no longer owed; CodeRabbit was not re-run on the fixes. Nothing committed.
+
+| ID | Finding | Disposition | Files changed | Test added |
+|---|---|---|---|---|
+| CR-8 | Picker Add shows the full-success toast and closes when some `moveToVault` calls failed; failed files are lost from the selection | Fixed: per-item results through `vaultBatchFailures`; the single `syncMediaStore` for the batch is kept; full success toasts `selected_media_files_successfully_hide` and calls `onDone`; any failure toasts `something_went_wrong`, keeps the failed paths picked and the picker open. No string added: 2.7.2 strings.xml has no partial-result key | `ui/vault/VaultAddMediaScreen.kt` | `VaultPickerStateTest.aVaultBatchTriesEveryItemOnceAndReturnsTheFailuresInOrder` |
+| CR-9 | Two quick Confirm taps on Forgot Password run two `clearVaultLock()` resets; the second completion pops the lock below | Fixed: `resetting` flag set before the reset launches; `onAnswerVerified` pops only while the Forgot entry is current (`popIfCurrent`), so a reset finishing after Back pops nothing | `ui/vault/VaultForgotPasswordScreen.kt`, `ui/navigation/GalleryNavHost.kt` | None (UI race guard) |
+| CR-10 | Vault batch delete ignores each `deleteFromVault` result, reports success and clears the selection | Fixed: success toast only when every item was deleted, otherwise `something_went_wrong`; the failed items stay selected | `ui/vault/VaultMediaScreen.kt` | Covered by the `vaultBatchFailures` test above |
+| CR-11 | First setup Confirm leaves the digits in `entered` until a 30 ms delayed clear; a second quick Confirm saves the PIN without a second entry | Fixed: `pinAfterSubmit` consumes the digits synchronously for every outcome except a too-short PIN. This also closes the same window on Save and Success, where a second Confirm during the DataStore write could save or route twice. The 30 ms PIN clear was dropped (about two frames); the pattern pad keeps its 30 ms clear | `ui/vault/VaultLockFlow.kt`, `ui/vault/VaultLockScreen.kt` | `VaultLockFlowTest.aQuickSecondConfirmCannotSaveTheFirstSetupEntry`, `VaultLockFlowTest.everyConfirmOutcomeConsumesTheDigitsExceptATooShortPin` |
+
+Gate results after the fixes:
+
+| Gate | Result |
+|---|---|
+| `./gradlew.bat :app:testDebugUnitTest -q` | PASS: 54 suites, 346 tests, 0 failures, 0 errors, 0 skipped |
+| `./gradlew.bat :app:assembleDebug -q` | PASS (`app/build/outputs/apk/debug/app-debug.apk`) |
+| `git diff --check -- app` | PASS |
+
+Not re-run: `check-strings` / `check-colors` (no resource files changed). Open note, not in the review: vault Unhide still toasts success when any item was restored and clears the whole selection (same class as CR-10). Device acceptance is still pending.

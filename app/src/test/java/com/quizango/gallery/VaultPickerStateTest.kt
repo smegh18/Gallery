@@ -3,6 +3,8 @@ package com.quizango.gallery
 import com.quizango.gallery.ui.vault.pickerAddEvent
 import com.quizango.gallery.ui.vault.pickerBarsVisible
 import com.quizango.gallery.ui.vault.togglePicked
+import com.quizango.gallery.ui.vault.vaultBatchFailures
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -29,5 +31,14 @@ class VaultPickerStateTest {
         assertEquals(R.string.please_select_items, pickerAddEvent(0))
         assertNull(pickerAddEvent(1))
         assertNull(pickerAddEvent(2))
+    }
+
+    @Test
+    fun aVaultBatchTriesEveryItemOnceAndReturnsTheFailuresInOrder() = runBlocking {
+        val tried = mutableListOf<String>()
+        val failed = vaultBatchFailures(listOf("a", "b", "c", "d"), { "/$it" }) { tried += it; it != "b" && it != "d" }
+        assertEquals(listOf("a", "b", "c", "d"), tried) // a failure does not stop the rest
+        assertEquals(listOf("/b", "/d"), failed) // these stay picked; only an empty list is a full success
+        assertTrue(vaultBatchFailures(listOf("a"), { it }) { true }.isEmpty())
     }
 }

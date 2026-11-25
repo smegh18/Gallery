@@ -6,7 +6,7 @@ import com.quizango.gallery.R
 /** What the lock screen must do after one submitted PIN or pattern. */
 internal sealed interface LockEvent {
     data class Toast(@StringRes val res: Int) : LockEvent
-    /** Wipe the entered PIN or drawn pattern (the screen delays this by 30 ms like the reference). */
+    /** Wipe the entered PIN or drawn pattern (the pattern pad clears 30 ms later like the reference, the PIN at once). */
     data object Clear : LockEvent
     /** Persist [value] (the screen hashes it) as the PIN or pattern lock, then call [VaultLockFlow.afterSuccess]. */
     data class Save(val value: String, val pattern: Boolean) : LockEvent
@@ -26,6 +26,13 @@ internal sealed interface LockNext {
 }
 
 internal enum class LockStage { VERIFY, SETUP_FIRST, SETUP_CONFIRM }
+
+/**
+ * The PIN digits left once a Confirm was handled. Every outcome consumes them at once, so a second quick Confirm cannot
+ * submit the same digits again (the first setup entry would save as its own confirmation); a too-short PIN keeps them.
+ */
+internal fun pinAfterSubmit(entered: String, event: LockEvent): String =
+    if (event is LockEvent.Toast && entered.length < 4) entered else ""
 
 /**
  * Pure model of the 2.7.2 VaultLockActivity (rules L2-L4, L6-L8, L10).

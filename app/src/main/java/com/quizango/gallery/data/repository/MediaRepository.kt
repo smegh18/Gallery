@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -283,6 +285,8 @@ class MediaRepositoryImpl(
     private val scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + Dispatchers.Default)
     private val flows = java.util.concurrent.ConcurrentHashMap<String, Flow<*>>()
     private val activeEntities by lazy { dao.getAllActiveMediaFlow().shared() }
+    // Trash, restore and the retention purge take turns: a restore can never commit between purge's expiry snapshot and its file delete
+    private val trashLock = Mutex()
 
     private fun <T> Flow<T>.shared() =
         flowOn(Dispatchers.Default).shareIn(scope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), replay = 1)
@@ -610,13 +614,13 @@ class MediaRepositoryImpl(
     override suspend fun moveToTrash(path: String): PathMutationOutcome = moveToTrash(listOf(path)).single()
 
     override suspend fun moveToTrash(paths: List<String>): List<PathMutationOutcome> = withContext(Dispatchers.IO) {
-        updateRows(paths) { dao.moveToTrash(it) }
+        trashLock.withLock { updateRows(paths) { dao.moveToTrash(it) } }
     }
 
     override suspend fun restoreFromTrash(path: String): PathMutationOutcome = restoreFromTrash(listOf(path)).single()
 
     override suspend fun restoreFromTrash(paths: List<String>): List<PathMutationOutcome> = withContext(Dispatchers.IO) {
-        updateRows(paths) { dao.restoreFromTrash(it) }
+        trashLock.withLock { updateRows(paths) { dao.restoreFromTrash(it) } }
     }
 
     override suspend fun deletePermanently(path: String): PathMutationOutcome = deletePermanently(listOf(path)).single()
@@ -628,14 +632,16 @@ class MediaRepositoryImpl(
     override suspend fun purgeExpiredTrash(thresholdTimestamp: Long, limit: Int): List<PathMutationOutcome> = withContext(Dispatchers.IO) {
         // Do not call GalleryDao.purgeExpiredTrash(): it drops metadata before attempting files.
         // A bounded batch keeps failures in the recycle flow, ready for a future reconciliation.
-        val expiredPaths = dao.getRecycleBinFlow().first()
-            .asSequence()
-            .filter { it.deletedDate > 0L && it.deletedDate < thresholdTimestamp }
-            .map { it.filePath }
-            .distinct()
-            .take(limit.coerceIn(1, 500))
-            .toList()
-        deleteFilesThenRows(expiredPaths, ::deleteFileIfPresent) { dao.deleteByPaths(it) }
+        trashLock.withLock {
+            val expiredPaths = dao.getRecycleBinFlow().first()
+                .asSequence()
+                .filter { it.deletedDate > 0L && it.deletedDate < thresholdTimestamp }
+                .map { it.filePath }
+                .distinct()
+                .take(limit.coerceIn(1, 500))
+                .toList()
+            deleteFilesThenRows(expiredPaths, ::deleteFileIfPresent) { dao.deleteByPaths(it) }
+        }
     }
 
     override suspend fun renameMedia(oldPath: String, newName: String): Boolean = withContext(Dispatchers.IO) {

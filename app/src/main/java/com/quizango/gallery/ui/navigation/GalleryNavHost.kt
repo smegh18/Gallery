@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -271,10 +272,11 @@ fun GalleryNavHost(
             )
         }
 
-        composable(DUPLICATE_DELETE_PROCESS_ROUTE) {
+        composable(DUPLICATE_DELETE_PROCESS_ROUTE) { entry ->
             val request = pendingDuplicateDelete
             if (request == null) {
-                LaunchedEffect(Unit) { navController.popBackStack() }
+                // A restored entry has no request and closes itself; after onFinished the exit transition lands here too
+                LaunchedEffect(Unit) { navController.popIfCurrent(entry) }
             } else {
                 DuplicateDeleteProcessScreen(
                     request = request,
@@ -435,12 +437,13 @@ fun GalleryNavHost(
             )
         }
 
-        composable(Screen.VaultForgotPassword.route) {
+        composable(Screen.VaultForgotPassword.route) { entry ->
             val scope = androidx.compose.runtime.rememberCoroutineScope()
             VaultForgotPasswordScreen(
                 appPreferences = app.preferences,
-                // The screen already wiped the lock: the lock underneath reloads as "Set PIN"
-                onAnswerVerified = { navController.popBackStack() },
+                // The screen already wiped the lock: the lock underneath reloads as "Set PIN".
+                // A reset that finishes after Back already left this screen must not pop the one below.
+                onAnswerVerified = { navController.popIfCurrent(entry) },
                 // VL.o00Oo0: opened by the lockout, Back closes the lock too; opened by the link, Back returns to it
                 onNavigateBack = {
                     scope.launch {
@@ -805,6 +808,11 @@ fun GalleryNavHost(
  */
 private fun NavHostController.navigateOnce(route: String) {
     if (!popBackStack(route, inclusive = false)) navigate(route) { launchSingleTop = true }
+}
+
+/** Pops [entry] only while it is still on top, so a late callback from a screen already left never pops the next one. */
+private fun NavHostController.popIfCurrent(entry: NavBackStackEntry) {
+    if (currentBackStackEntry == entry) popBackStack()
 }
 
 /** One lock destination for the plain vault route and the Settings / Add to Private routes. */

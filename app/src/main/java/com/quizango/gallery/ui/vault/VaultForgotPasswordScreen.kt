@@ -37,6 +37,7 @@ fun VaultForgotPasswordScreen(
     val pairs by appPreferences.vaultRecoveryPairs.collectAsState(initial = emptyList())
     var selected by remember { mutableIntStateOf(0) }
     var answer by remember { mutableStateOf("") }
+    var resetting by remember { mutableStateOf(false) } // set before the reset launches, so a second tap cannot start another
 
     // System Back takes the toolbar Back path (the lock-aware routing in the NavHost)
     BackHandler { onNavigateBack() }
@@ -90,12 +91,16 @@ fun VaultForgotPasswordScreen(
                     .clip(RoundedCornerShape(25.sdp))
                     .background(colorResource(R.color.dark_blue))
                     .clickable(role = Role.Button) {
+                        if (resetting) return@clickable
                         // Only a right answer touches stored state; every toast leaves the lock as it is
                         when (val event = forgotAnswerEvent(answer, pairs.getOrNull(selected)?.second)) {
                             is ForgotEvent.Toast -> Toast.makeText(context, context.getString(event.res), Toast.LENGTH_SHORT).show()
-                            ForgotEvent.Ok -> scope.launch {
-                                appPreferences.clearVaultLock()
-                                onAnswerVerified()
+                            ForgotEvent.Ok -> {
+                                resetting = true
+                                scope.launch {
+                                    appPreferences.clearVaultLock()
+                                    onAnswerVerified()
+                                }
                             }
                         }
                     }

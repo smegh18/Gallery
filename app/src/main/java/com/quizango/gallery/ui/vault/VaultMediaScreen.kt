@@ -255,10 +255,10 @@ fun VaultMediaScreen(
                 pendingDelete = null
                 scope.launch {
                     progress = R.string.deleting
-                    items.forEach { vaultRepository.deleteFromVault(it) }
+                    val failed = vaultBatchFailures(items, VaultItem::filePath) { vaultRepository.deleteFromVault(it) }
                     progress = null
-                    toast(R.string.selected_media_files_successfully_deleted)
-                    selectedPaths = emptySet()
+                    toast(if (failed.isEmpty()) R.string.selected_media_files_successfully_deleted else R.string.something_went_wrong)
+                    selectedPaths = failed.toSet() // the failed items stay selected for a retry
                 }
             },
             onDismiss = { pendingDelete = null }

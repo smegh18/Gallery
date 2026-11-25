@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.input.pointer.positionChange
@@ -90,9 +91,9 @@ fun QuickOrganizerScreen(
         } else onNavigateBack()
     }
 
-    suspend fun advanceTutorial(action: OrganizerAction) {
-        val next = nextOrganizerTutorialStep(organizerStep, action)
-        if (next != organizerStep) app.preferences.setOrganizerStepFlow(next)
+    fun swipeTutorial(swipe: OrganizerSwipe) {
+        val next = nextOrganizerTutorialStep(organizerStep, swipe)
+        if (next != organizerStep) scope.launch { app.preferences.setOrganizerStepFlow(next) }
     }
 
     val visibleItems = remember(allMedia, actionState.completedPaths) { allMedia.filterNot { it.filePath in actionState.completedPaths } }
@@ -131,7 +132,6 @@ fun QuickOrganizerScreen(
         actionState = recordOrganizerAction(actionState, action, outcome)
         if (outcome.succeeded) {
             if (action is OrganizerAction.Trash) app.preferences.addOrganizerBinPaths(setOf(action.path))
-            advanceTutorial(action)
             advanceAfter(action.path)
         }
         else feedback = context.getString(R.string.organizer_move_failed)
@@ -140,7 +140,6 @@ fun QuickOrganizerScreen(
         val item = currentItem ?: return
         val action = OrganizerAction.Skip(item.filePath)
         actionState = actionState.copy(history = actionState.history + action, completedPaths = actionState.completedPaths + item.filePath)
-        scope.launch { advanceTutorial(action) }
         advanceAfter(item.filePath)
     }
     fun moveCurrentToTrash() {
@@ -192,15 +191,25 @@ fun QuickOrganizerScreen(
             } finally { busy = false }
         }
     }
+    // 2.7.2 cr/c: leaving the album dialog at step 3 without a new album closes the organizer; reopening shows the dialog again
+    fun dismissCreateAlbum() {
+        showCreateAlbum = false
+        if (organizerStep == 3) onNavigateBack()
+    }
+    LaunchedEffect(organizerStep) { if (organizerStep == 3) showCreateAlbum = true }
+
     fun createAlbum(name: String) {
         val folder = File(albumRoots().first(), name)
         val success = try { folder.mkdirs() } catch (_: Exception) { false }
+        // Toasted here, not through feedback: a failure at step 3 leaves the screen in the same tap
+        Toast.makeText(context, if (success) R.string.org_folder_created else R.string.org_folder_create_failed, Toast.LENGTH_SHORT).show()
+        if (!success) return dismissCreateAlbum()
         showCreateAlbum = false
-        feedback = context.getString(if (success) R.string.org_folder_created else R.string.org_folder_create_failed)
-        if (success) scope.launch {
-            mediaRepository.syncMediaStore()
+        scope.launch {
+            // Saved before the sync, like 2.7.2 o000oOoO, so leaving mid-sync cannot strand the tutorial at step 3
             val next = organizerTutorialStepAfterCreate(organizerStep, true)
             if (next != organizerStep) app.preferences.setOrganizerStepFlow(next)
+            mediaRepository.syncMediaStore()
         }
     }
 
@@ -259,15 +268,15 @@ fun QuickOrganizerScreen(
                 HorizontalPager(state = pagerState, modifier = Modifier.weight(1f).fillMaxWidth(), userScrollEnabled = !busy && organizerStep == 7) { page ->
                     val item = visibleItems.getOrNull(page)
                     if (item != null) {
-                        var horizontalDrag by remember(item.filePath) { mutableFloatStateOf(0f) }
-                        var verticalDrag by remember(item.filePath) { mutableFloatStateOf(0f) }
                         Box(Modifier.fillMaxSize().pointerInput(item.filePath, busy, organizerStep) {
-                            detectDragGestures(onDragEnd = {
-                                if (verticalDrag < -80f && organizerStep in setOf(6, 7)) moveCurrentToTrash()
-                                else if (horizontalDrag < -80f && organizerStep in setOf(5, 7)) skipCurrent()
-                                verticalDrag = 0f
-                                horizontalDrag = 0f
-                            }) { change, drag -> change.consume(); horizontalDrag += drag.x; verticalDrag += drag.y }
+                            // Before step 7 the tutorial overlay takes every touch, so only step 7 swipes reach the photo
+                            detectOrganizerSwipe { swipe ->
+                                if (organizerStep == 7) when (swipe) {
+                                    OrganizerSwipe.UP -> moveCurrentToTrash()
+                                    OrganizerSwipe.LEFT -> skipCurrent()
+                                    else -> Unit
+                                }
+                            }
                         }, contentAlignment = Alignment.Center) {
                             AsyncImage(model = item.contentUri, contentDescription = item.fileName, modifier = Modifier.fillMaxSize().padding(10.dp), contentScale = ContentScale.Fit)
                             if (busy) CircularProgressIndicator(Modifier.align(Alignment.Center), color = colorResource(R.color.colorPrimary))
@@ -293,9 +302,10 @@ fun QuickOrganizerScreen(
         onClose = { scope.launch { app.preferences.setOrganizerStepFlow(7) } },
         onOrganizeNow = { scope.launch { app.preferences.setOrganizerStepFlow(2) } },
         onCreateAlbum = ::openCreateAlbum,
-        onAlbumTap = { albums.firstOrNull()?.let { tapAlbum(it, 1) } }
+        onAlbumTap = { albums.firstOrNull()?.let { tapAlbum(it, 1) } },
+        onSwipe = ::swipeTutorial
     )
-    if (showCreateAlbum) CreateAlbumDialog(onCreate = ::createAlbum, onDismiss = { showCreateAlbum = false })
+    if (showCreateAlbum) CreateAlbumDialog(onCreate = ::createAlbum, onDismiss = ::dismissCreateAlbum)
     if (showBackDeletePrompt) {
         AlertDialog(
             onDismissRequest = { showBackDeletePrompt = false; onNavigateBack() },
@@ -329,6 +339,17 @@ fun QuickOrganizerScreen(
     }
 }
 
+/** One swipe per finished drag; every drag counts from zero, so a cancelled one never adds to the next. */
+private suspend fun PointerInputScope.detectOrganizerSwipe(onSwipe: (OrganizerSwipe) -> Unit) {
+    var dx = 0f
+    var dy = 0f
+    detectDragGestures(onDragStart = { dx = 0f; dy = 0f }, onDragEnd = { onSwipe(organizerSwipeFromDelta(dx, dy)) }) { change, drag ->
+        change.consume()
+        dx += drag.x
+        dy += drag.y
+    }
+}
+
 @Composable
 private fun OrganizerAlbumCell(name: String, cover: Any?, create: Boolean, selected: Boolean, enabled: Boolean = true, onClick: () -> Unit) {
     Column(Modifier.width(78.dp).clickable(enabled = enabled, onClick = onClick).padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -343,10 +364,14 @@ private fun OrganizerTutorialOverlay(
     onClose: () -> Unit,
     onOrganizeNow: () -> Unit,
     onCreateAlbum: () -> Unit,
-    onAlbumTap: () -> Unit
+    onAlbumTap: () -> Unit,
+    onSwipe: (OrganizerSwipe) -> Unit
 ) {
     if (step !in 1..6) return
-    Box(Modifier.fillMaxSize().background(Color(0xCC000000)).clickable(enabled = true, onClick = {})) {
+    // 2.7.2 clThree/clFour (cr/f): the full-screen step 5/6 layers take the swipe themselves
+    Box(Modifier.fillMaxSize().background(Color(0xCC000000)).clickable(enabled = true, onClick = {}).pointerInput(step) {
+        if (step in 5..6) detectOrganizerSwipe(onSwipe)
+    }) {
         when (step) {
             1 -> Column(Modifier.align(Alignment.Center).fillMaxWidth().padding(horizontal = 30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {

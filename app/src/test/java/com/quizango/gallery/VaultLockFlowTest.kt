@@ -4,6 +4,7 @@ import com.quizango.gallery.ui.vault.LockEvent
 import com.quizango.gallery.ui.vault.LockNext
 import com.quizango.gallery.ui.vault.LockStage
 import com.quizango.gallery.ui.vault.VaultLockFlow
+import com.quizango.gallery.ui.vault.pinAfterSubmit
 import com.quizango.gallery.ui.vault.settingsToast
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -150,5 +151,26 @@ class VaultLockFlowTest {
         assertEquals(R.string.recovery_question_changed_successfully, settingsToast(2, false))
         assertNull(settingsToast(0, true))
         assertNull(settingsToast(1, false))
+    }
+
+    @Test
+    fun aQuickSecondConfirmCannotSaveTheFirstSetupEntry() {
+        val f = setup()
+        val first = f.submitPin("1234", never)
+        val left = pinAfterSubmit("1234", first)
+        assertEquals("", left)
+        // The second tap finds no digits: it toasts instead of saving "1234" as its own confirmation
+        assertEquals(LockEvent.Toast(R.string.please_enter_pin), f.submitPin(left, never))
+        assertEquals(LockStage.SETUP_CONFIRM, f.stage)
+    }
+
+    @Test
+    fun everyConfirmOutcomeConsumesTheDigitsExceptATooShortPin() {
+        assertEquals("12", pinAfterSubmit("12", LockEvent.Toast(R.string.please_enter_pin)))
+        assertEquals("", pinAfterSubmit("1235", LockEvent.Toast(R.string.password_confirm)))
+        assertEquals("", pinAfterSubmit("1234", LockEvent.Clear))
+        assertEquals("", pinAfterSubmit("1234", LockEvent.Save("1234", pattern = false)))
+        assertEquals("", pinAfterSubmit("1234", LockEvent.Success))
+        assertEquals("", pinAfterSubmit("1234", LockEvent.Wrong(R.string.wrong_password, lockOut = false)))
     }
 }

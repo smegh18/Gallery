@@ -58,14 +58,20 @@ class OrganizerTest {
     }
 
     @Test
-    fun tutorialTransitionsFollowOnlyTheDecodedActions() {
-        val skip = OrganizerAction.Skip("/a.jpg")
-        val trash = OrganizerAction.Trash("/b.jpg")
-        assertEquals(6, nextOrganizerTutorialStep(5, skip))
-        assertEquals(5, nextOrganizerTutorialStep(5, trash))
-        assertEquals(6, nextOrganizerTutorialStep(6, skip))
-        assertEquals(7, nextOrganizerTutorialStep(6, trash))
-        assertEquals(7, nextOrganizerTutorialStep(7, skip))
+    fun tutorialSwipesAdvanceOnlyTheirOwnStep() {
+        assertEquals(6, nextOrganizerTutorialStep(5, OrganizerSwipe.LEFT))
+        assertEquals(5, nextOrganizerTutorialStep(5, OrganizerSwipe.UP))
+        assertEquals(5, nextOrganizerTutorialStep(5, OrganizerSwipe.NONE))
+        assertEquals(6, nextOrganizerTutorialStep(6, OrganizerSwipe.LEFT))
+        assertEquals(7, nextOrganizerTutorialStep(6, OrganizerSwipe.UP))
+        assertEquals(4, nextOrganizerTutorialStep(4, OrganizerSwipe.LEFT))
+        assertEquals(7, nextOrganizerTutorialStep(7, OrganizerSwipe.UP))
+    }
+
+    @Test
+    fun aMostlyLeftSwipeWithUpwardDriftSkipsAndNeverTrashes() {
+        assertEquals(OrganizerSwipe.LEFT, organizerSwipeFromDelta(-300f, -85f))
+        assertEquals(OrganizerSwipe.UP, organizerSwipeFromDelta(-30f, -85f))
     }
 
     @Test

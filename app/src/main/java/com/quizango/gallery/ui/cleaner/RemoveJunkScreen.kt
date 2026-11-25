@@ -485,8 +485,8 @@ private fun JunkResultsState(
                     }
                 }
                 if (isOpen) {
-                    // shortcut: shows the first 200 files only; page it if real users hit more.
-                    items(r.files.take(200), key = { "${r.id}:${it.path}" }) { file ->
+                    // Every file, so each one the category tick selects can be seen and unticked (the list is lazy)
+                    items(r.files, key = { "${r.id}:${it.path}" }) { file ->
                         val ticked = file.path in selected
                         Row(
                             Modifier.padding(start = 10.sdp, end = 10.sdp, top = 8.sdp).fillMaxWidth(),

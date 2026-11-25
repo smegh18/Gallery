@@ -29,3 +29,27 @@ The reviewed Phase 6 scope included cleaner and junk screens, large video/screen
 ## Device availability
 
 `adb devices -l` reports one authorized wireless device: model `M2006C3MII`, product/device `cattail`. A disposable fixture root is not present in the gate record. The device acceptance task is therefore pending and must remain a human checkpoint.
+
+## CodeRabbit review 2026-11-25
+
+Command: `coderabbit review --committed --base-commit 04c2447 --dir app --agent` (Phase 6 + Phase 7 diff, 11 major findings; CR-1..CR-7 are Phase 6, CR-8..CR-11 are in 07-GATE-FINDINGS.md). Each finding was checked against the code and, where it changes visible flow, against decoded 2.7.2 smali. CodeRabbit was not re-run on the fixes. Nothing committed.
+
+| ID | Finding | Disposition | Files changed | Test added |
+|---|---|---|---|---|
+| CR-1 | `purgeExpiredTrash` snapshots expired paths, then deletes; a restore committing in between could have its restored file purged | Fixed: one `Mutex` (`trashLock`) in `MediaRepositoryImpl` serializes `moveToTrash`, `restoreFromTrash` and `purgeExpiredTrash`; purge takes its snapshot and deletes inside the lock | `data/repository/MediaRepository.kt` | None: `MediaRepositoryImpl` needs a Context-backed `MediaStoreScanner` (no Robolectric); the file-first contract stays covered by `MediaRepositoryMutationTest` |
+| CR-2 | Organizer drag counters reset only in `onDragEnd`, so a cancelled 65 px drag plus a 20 px drag could trash | Fixed: one `detectOrganizerSwipe` helper, per-drag locals zeroed in `onDragStart` (a cancelled or restarted gesture never carries over); the decision now uses the existing `organizerSwipeFromDelta` (dominant axis, as 2.7.2 cr/f classifies), so a mostly-left swipe with upward drift skips instead of trashing | `ui/discovery/QuickOrganizerScreen.kt` | `OrganizerTest.aMostlyLeftSwipeWithUpwardDriftSkipsAndNeverTrashes` (the reset itself is gesture wiring; no Compose UI test infra) |
+| CR-3 | Expanded junk list showed `take(200)` while the category tick selects every file | Fixed: cap and `shortcut:` comment removed; the list is lazy (one walk per category, so keys stay unique) | `ui/cleaner/RemoveJunkScreen.kt` | None (UI list) |
+| CR-4 | Steps 5/6 overlay intercepted all input, so the tutorial swipes never reached the pager (tutorial stuck at step 5) | Fixed per 2.7.2: `clThree`/`clFour` are full-screen layers whose cr/f listener consumes the touch and `oo0o0Oo` only saves the next step (left 5 -> 6, up 6 -> 7; no skip, no trash). The overlay now takes the swipe itself; `nextOrganizerTutorialStep` takes a swipe; the action-driven advance (unreachable under the overlay) was removed; tap steps keep their controls | `ui/discovery/QuickOrganizerScreen.kt`, `ui/discovery/OrganizerActions.kt`, `OrganizerTest.kt` | `OrganizerTest.tutorialSwipesAdvanceOnlyTheirOwnStep` (replaces `tutorialTransitionsFollowOnlyTheDecodedActions`) |
+| CR-5 | Opening the album dialog saved step 3; dismissal or a failed `mkdirs()` left a control-less step 3, restored on reopen | Fixed per 2.7.2, not "back to step 2": cr/c case 3 finishes the organizer when the dialog closes at step 3 without an album (cancel, Back, or a failed create through the dismiss listener), and onCreate pswitch_3 reopens the dialog at step 3. Port: dismissal or failure at step 3 toasts and leaves; a restored step 3 reopens the dialog; step 4 is saved before the MediaStore sync, as o000oOoO saves it right after `mkdirs` | `ui/discovery/QuickOrganizerScreen.kt` | None (UI flow; `organizerTutorialStepAfterCreate` already tested) |
+| CR-6 | Partial junk clean still opens Junk Cleared with no way back to the failed files | Rejected: 2.7.2 opens Junk Cleared after every clean (dx/j -> dx/g case 0xd, no failure branch, and it reports the ticked size). The port already reports only removed bytes and returns to the results with the failures ticked when nothing was removed (06-03 decision). No false success, no data at risk: failed files stay on disk and the next scan lists them again | None | None |
+| CR-7 | `onFinished` clears `pendingDuplicateDelete` before navigating; the exiting Delete Process entry then pops the new top (Duplicates or Duplicate Complete) | Fixed: new `popIfCurrent(entry)` in the NavHost; the process entry pops only while it is still on top, and a restored entry with no request still dismisses itself | `ui/navigation/GalleryNavHost.kt` | None (navigation race guard) |
+
+Gate results after the fixes:
+
+| Gate | Result |
+|---|---|
+| `./gradlew.bat :app:testDebugUnitTest -q` | PASS: 54 suites, 346 tests, 0 failures, 0 errors, 0 skipped |
+| `./gradlew.bat :app:assembleDebug -q` | PASS (`app/build/outputs/apk/debug/app-debug.apk`) |
+| `git diff --check -- app` | PASS |
+
+Not re-run: `check-strings` / `check-colors` (no resource files changed). Open note, outside CR-1: `syncMediaStore` writes back the `deletedDate` it read at the start of the sync and does not take `trashLock`, so a restore during a sync can be overwritten if that row also changed. Device acceptance (G6-03) is still pending.

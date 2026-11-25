@@ -75,6 +75,10 @@ internal fun pickerBarsVisible(pickedCount: Int): Boolean = pickedCount > 0
 @StringRes
 internal fun pickerAddEvent(pickedCount: Int): Int? = if (pickedCount == 0) R.string.please_select_items else null
 
+/** Runs [op] once per item of a confirmed vault batch, in order and past any failure; the paths it failed on, to retry. */
+internal suspend fun <T> vaultBatchFailures(items: List<T>, path: (T) -> String, op: suspend (T) -> Boolean): List<String> =
+    items.filterNot { op(it) }.map(path)
+
 /** activity_select (InternalSelectMediaActivity TYPE=2, #37): folder row, 4-column grid, Add. */
 @Composable
 fun VaultAddMediaScreen(
@@ -107,10 +111,17 @@ fun VaultAddMediaScreen(
         busy = true
         val snapshot = picked.mapNotNull { known[it] } // T-07-22: acts on the ordered snapshot taken at the tap
         scope.launch {
-            val hidden = snapshot.count { vaultRepository.moveToVault(it) }
+            val failed = vaultBatchFailures(snapshot, MediaItem::filePath) { vaultRepository.moveToVault(it) }
             mediaRepository.syncMediaStore() // one re-index for the batch (07-02)
-            toast(if (hidden > 0) R.string.selected_media_files_successfully_hide else R.string.something_went_wrong)
-            onDone()
+            if (failed.isEmpty()) {
+                toast(R.string.selected_media_files_successfully_hide)
+                onDone()
+            } else {
+                // 2.7.2 has no partial-result copy; the hidden ones leave the grid, the failed ones stay picked for a retry
+                toast(R.string.something_went_wrong)
+                picked = failed
+                busy = false
+            }
         }
     }
 
