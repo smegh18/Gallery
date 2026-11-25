@@ -28,11 +28,12 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Shared 2.7.2 drawables, strings, theme and Lottie assets (completed 2026-11-13)
 - [ ] **Phase 2: Onboarding** - Splash, Language, Permission and the new Feature-promo step; Welcome removed
-- [x] **Phase 3: Home Shell and Photos Tab** - 2.7.2 home shell, popup menu, vault hint, exit popup and Photos tab (completed 2026-11-20)
+- [x] **Phase 3: Home Shell and Photos Tab** - 2.7.2 home shell, popup menu, vault hint, exit popup and Photos tab
+ (completed 2026-11-20)
 - [x] **Phase 4: Albums, Stories and Explore** - New Albums tab and story row, stories viewer, and the Explore tab (completed 2026-11-21)
 - [x] **Phase 5: Viewing and Browsing** - Full-screen viewer, video player and the album, discovery and search lists (completed 2026-11-23)
-- [ ] **Phase 6: Manage and Cleaner** - System cleaner, duplicate flow, Recycle Bin and Quick Organize
-- [ ] **Phase 7: Private Vault** - Vault lock, media, settings, recovery and the media picker
+- [x] **Phase 6: Manage and Cleaner** - System cleaner, duplicate flow, Recycle Bin and Quick Organize (completed 2026-11-25; device pass deferred to Phase 13)
+- [x] **Phase 7: Private Vault** - Vault lock, media, settings, recovery and the media picker (completed 2026-11-25; device pass deferred to Phase 13)
 - [ ] **Phase 8: Create and Edit** - Photo editor, crop, collage and the creative tools
 - [ ] **Phase 9: Settings and System** - Settings, Theme, About, Pro screen, notifications, external intents and deep links
 - [ ] **Phase 10: Floating Sidebar** - Over-other-apps edge handle with the quick-tools sidebar
@@ -174,22 +175,22 @@ Plans:
   3. The Recycle Bin uses the changed 2.7.2 item layout with days left, restore, delete and empty all working.
   4. Quick Organize and Organizer Recycle show 2.7.2's changed stripe and intro steps.
 
-**Plans**: 13 plans
+**Plans**: 13/13 plans complete (06-11 device task skipped by user decision 2026-11-25)
 
 Plans:
-- [ ] 06-01-PLAN.md — System Cleaner entry, Phase 6 resources and exact shared size formatting (wave 1)
-- [ ] 06-02-PLAN.md — Exact junk predicates and Junk Scan/done state (wave 2)
-- [ ] 06-03-PLAN.md — Junk results, opt-in cleaning and Junk Cleared completion (wave 3)
-- [ ] 06-04-PLAN.md — Large Videos, Screenshots and deferred video usage hooks (wave 2)
-- [ ] 06-05-PLAN.md — Duplicate waiting/done, grouped photos and delete selection (wave 2)
-- [ ] 06-06-PLAN.md — Duplicate delete process, truthful completion and route closure (wave 4)
-- [ ] 06-07-PLAN.md — Changed Recycle Bin, retention, actions and usage hook (wave 4)
-- [ ] 06-08-PLAN.md — Quick Organizer pager, album row, gestures and Undo core (wave 2)
-- [ ] 06-09-PLAN.md — Decoded persisted Organizer intro steps 1-7 (wave 5)
-- [ ] 06-10-PLAN.md — Organizer Recycle and one-time All Photos stripe routing (wave 6)
-- [ ] 06-11-PLAN.md — Integrated gates, correction-plan routing and safe device parity evidence (wave 7)
-  - [ ] 06-12-PLAN.md — Per-path permanent-delete, trash and restore outcomes (wave 2 prerequisite)
-- [ ] 06-13-PLAN.md — Preserve actual collision path for Organizer move undo (wave 8 correction)
+- [x] 06-01-PLAN.md — System Cleaner entry, Phase 6 resources and exact shared size formatting (wave 1)
+- [x] 06-02-PLAN.md — Exact junk predicates and Junk Scan/done state (wave 2)
+- [x] 06-03-PLAN.md — Junk results, opt-in cleaning and Junk Cleared completion (wave 3)
+- [x] 06-04-PLAN.md — Large Videos, Screenshots and deferred video usage hooks (wave 2)
+- [x] 06-05-PLAN.md — Duplicate waiting/done, grouped photos and delete selection (wave 2)
+- [x] 06-06-PLAN.md — Duplicate delete process, truthful completion and route closure (wave 4)
+- [x] 06-07-PLAN.md — Changed Recycle Bin, retention, actions and usage hook (wave 4)
+- [x] 06-08-PLAN.md — Quick Organizer pager, album row, gestures and Undo core (wave 2)
+- [x] 06-09-PLAN.md — Decoded persisted Organizer intro steps 1-7 (wave 5)
+- [x] 06-10-PLAN.md — Organizer Recycle and one-time All Photos stripe routing (wave 6)
+- [x] 06-11-PLAN.md — Integrated gates, correction-plan routing and safe device parity evidence (wave 7)
+  - [x] 06-12-PLAN.md — Per-path permanent-delete, trash and restore outcomes (wave 2 prerequisite)
+- [x] 06-13-PLAN.md — Preserve actual collision path for Organizer move undo (wave 8 correction)
 **UI hint**: yes
 
 ### Phase 7: Private Vault
@@ -204,18 +205,18 @@ Plans:
   3. Vault settings let the user change the password, and forgot password recovers access through the recovery question, as in 2.7.2.
   4. The in-app media picker used to add media to the vault matches 2.7.2's `InternalSelectMediaActivity` (`activity_select`).
 
-**Plans**: 9 plans
+**Plans**: 9/9 plans complete (07-09 device task skipped by user decision 2026-11-25)
 
 Plans:
-- [ ] 07-01-PLAN.md — Tracer: Phase 7 strings/colours/drawables and lock copy; pure VaultLockFlow; Show Pattern default on, lock-state prefs, VaultGate (wave 1)
-- [ ] 07-02-PLAN.md — Tracer: safe hide order with rollback; collision-safe restore; MediaStore re-index (D6) (wave 1)
-- [ ] 07-03-PLAN.md — Tracer: lock on VaultLockFlow with first-setup/unlock/lockout routing; activity_vault_lock look; TYPE 1/2 + IS_OPEN_VAULT=false route, fingerprint prompt (wave 2)
-- [ ] 07-06-PLAN.md — Tracer: vault unhide through MediaSelectionBar/HideMediaDialog/progress; toolbar, delete, empty, FAB, grid; secured toast and cache cleanup (wave 2)
-- [ ] 07-07-PLAN.md — Tracer: activity_select picker (folder-row toolbar, 4 columns) hides safely; folder list, tray, empty; VLT-02 wording fix (D1) (wave 2)
-- [ ] 07-04-PLAN.md — Tracer: free-choice recovery questions on RecoveryQuestionFlow; Forgot Password with the D3 match (wave 3)
-- [ ] 07-05-PLAN.md — Tracer: Privacy Settings rows; Show Pattern default and fingerprint check (wave 3)
-- [ ] 07-08-PLAN.md — Tracer: Add to Private lock gate on Home, media lists and viewer (D5) (wave 3)
-- [ ] 07-09-PLAN.md — Phase close: VER-03 gates, CodeRabbit/unslop, PENDING-DEVICE matrix, deviations, device acceptance (wave 4, not autonomous)
+- [x] 07-01-PLAN.md — Tracer: Phase 7 strings/colours/drawables and lock copy; pure VaultLockFlow; Show Pattern default on, lock-state prefs, VaultGate (wave 1)
+- [x] 07-02-PLAN.md — Tracer: safe hide order with rollback; collision-safe restore; MediaStore re-index (D6) (wave 1)
+- [x] 07-03-PLAN.md — Tracer: lock on VaultLockFlow with first-setup/unlock/lockout routing; activity_vault_lock look; TYPE 1/2 + IS_OPEN_VAULT=false route, fingerprint prompt (wave 2)
+- [x] 07-06-PLAN.md — Tracer: vault unhide through MediaSelectionBar/HideMediaDialog/progress; toolbar, delete, empty, FAB, grid; secured toast and cache cleanup (wave 2)
+- [x] 07-07-PLAN.md — Tracer: activity_select picker (folder-row toolbar, 4 columns) hides safely; folder list, tray, empty; VLT-02 wording fix (D1) (wave 2)
+- [x] 07-04-PLAN.md — Tracer: free-choice recovery questions on RecoveryQuestionFlow; Forgot Password with the D3 match (wave 3)
+- [x] 07-05-PLAN.md — Tracer: Privacy Settings rows; Show Pattern default and fingerprint check (wave 3)
+- [x] 07-08-PLAN.md — Tracer: Add to Private lock gate on Home, media lists and viewer (D5) (wave 3)
+- [x] 07-09-PLAN.md — Phase close: VER-03 gates, CodeRabbit/unslop, PENDING-DEVICE matrix, deviations, device acceptance (wave 4, not autonomous)
 **UI hint**: yes
 
 ### Phase 8: Create and Edit
@@ -323,8 +324,8 @@ Phases execute in numeric order: 1 → 2 → 3 → … → 13
 | 3. Home Shell and Photos Tab | 6/6 | Complete    | 2026-11-20 |
 | 4. Albums, Stories and Explore | 6/6 | Complete    | 2026-11-21 |
 | 5. Viewing and Browsing | 8/8 | Complete    | 2026-11-23 |
-| 6. Manage and Cleaner | 0/TBD | Not started | - |
-| 7. Private Vault | 0/TBD | Not started | - |
+| 6. Manage and Cleaner | 13/13 | Complete (device pass in Phase 13) | 2026-11-25 |
+| 7. Private Vault | 9/9 | Complete (device pass in Phase 13) | 2026-11-25 |
 | 8. Create and Edit | 0/TBD | Not started | - |
 | 9. Settings and System | 0/TBD | Not started | - |
 | 10. Floating Sidebar | 0/TBD | Not started | - |

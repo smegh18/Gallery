@@ -17,11 +17,11 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 
 ### Onboarding
 
-- [ ] **ONB-01**: First run goes Splash → Language → Permission → Feature promo → Home, with no Welcome screen (#1–#5).
-- [ ] **ONB-02**: The splash screen matches 2.7.2's `activity_splash` (#1).
-- [ ] **ONB-03**: The language screen matches 2.7.2's `activity_app_language` (#3).
-- [ ] **ONB-04**: The permission screen and its new "permission needed" dialog match 2.7.2 (#4).
-- [ ] **ONB-05**: The user sees the "Get more from your Gallery" feature-promo step. Enable asks for Phone and Display-over-other-apps; Not now skips (#5).
+- [x] **ONB-01**: First run goes Splash → Language → Permission → Feature promo → Home, with no Welcome screen (#1–#5).
+- [x] **ONB-02**: The splash screen matches 2.7.2's `activity_splash` (#1).
+- [x] **ONB-03**: The language screen matches 2.7.2's `activity_app_language` (#3).
+- [x] **ONB-04**: The permission screen and its new "permission needed" dialog match 2.7.2 (#4).
+- [x] **ONB-05**: The user sees the "Get more from your Gallery" feature-promo step. Enable asks for Phone and Display-over-other-apps; Not now skips (#5).
 
 ### Home shell
 
@@ -56,15 +56,15 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 
 ### Manage and cleaner
 
-- [ ] **CLN-01**: The system cleaner, junk scan / remove / cleared, large videos and screenshots screens match 2.7.2, including the video usage-access prompt (#25–#28).
-- [ ] **CLN-02**: The duplicate flow (waiting → complete → photos → delete process → delete complete) matches 2.7.2 (#29).
-- [ ] **CLN-03**: The Recycle Bin matches 2.7.2's changed item layout and its usage-access prompt (#30).
-- [ ] **CLN-04**: Quick Organize and Organizer Recycle match 2.7.2's changed stripe and intro steps (#31).
+- [x] **CLN-01**: The system cleaner, junk scan / remove / cleared, large videos and screenshots screens match 2.7.2, including the video usage-access prompt (#25–#28).
+- [x] **CLN-02**: The duplicate flow (waiting → complete → photos → delete process → delete complete) matches 2.7.2 (#29).
+- [x] **CLN-03**: The Recycle Bin matches 2.7.2's changed item layout and its usage-access prompt (#30).
+- [x] **CLN-04**: Quick Organize and Organizer Recycle match 2.7.2's changed stripe and intro steps (#31).
 
 ### Vault
 
-- [ ] **VLT-01**: Vault lock, media, settings, recovery question and forgot password match 2.7.2 (#32–#36).
-- [ ] **VLT-02**: The vault's in-app Add Items media picker matches 2.7.2's `InternalSelectMediaActivity` (`activity_select`) (#37).
+- [x] **VLT-01**: Vault lock, media, settings, recovery question and forgot password match 2.7.2 (#32–#36).
+- [x] **VLT-02**: The vault's in-app Add Items media picker matches 2.7.2's `InternalSelectMediaActivity` (`activity_select`) (#37).
 
 ### Create and edit
 
@@ -129,11 +129,11 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 | FND-02 | Phase 1: Foundation | Complete |
 | FND-03 | Phase 1: Foundation | Complete |
 | FND-04 | Phase 1: Foundation | Complete |
-| ONB-01 | Phase 2: Onboarding | Pending |
-| ONB-02 | Phase 2: Onboarding | Pending |
-| ONB-03 | Phase 2: Onboarding | Pending |
-| ONB-04 | Phase 2: Onboarding | Pending |
-| ONB-05 | Phase 2: Onboarding | Pending |
+| ONB-01 | Phase 2: Onboarding | Complete |
+| ONB-02 | Phase 2: Onboarding | Complete |
+| ONB-03 | Phase 2: Onboarding | Complete |
+| ONB-04 | Phase 2: Onboarding | Complete |
+| ONB-05 | Phase 2: Onboarding | Complete |
 | HOME-01 | Phase 3: Home Shell and Photos Tab | Complete |
 | HOME-02 | Phase 3: Home Shell and Photos Tab | Complete |
 | HOME-03 | Phase 3: Home Shell and Photos Tab | Complete |
@@ -144,12 +144,12 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 | VIEW-01 | Phase 5: Viewing and Browsing | Complete |
 | VIEW-02 | Phase 5: Viewing and Browsing | Complete |
 | VIEW-03 | Phase 5: Viewing and Browsing | Complete |
-| CLN-01 | Phase 6: Manage and Cleaner | Pending |
-| CLN-02 | Phase 6: Manage and Cleaner | Pending |
-| CLN-03 | Phase 6: Manage and Cleaner | Pending |
-| CLN-04 | Phase 6: Manage and Cleaner | Pending |
-| VLT-01 | Phase 7: Private Vault | Pending |
-| VLT-02 | Phase 7: Private Vault | Pending |
+| CLN-01 | Phase 6: Manage and Cleaner | Complete |
+| CLN-02 | Phase 6: Manage and Cleaner | Complete |
+| CLN-03 | Phase 6: Manage and Cleaner | Complete |
+| CLN-04 | Phase 6: Manage and Cleaner | Complete |
+| VLT-01 | Phase 7: Private Vault | Complete |
+| VLT-02 | Phase 7: Private Vault | Complete |
 | EDT-01 | Phase 8: Create and Edit | Pending |
 | EDT-02 | Phase 8: Create and Edit | Pending |
 | EDT-03 | Phase 8: Create and Edit | Pending |

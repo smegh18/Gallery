@@ -70,23 +70,25 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 ### A4. Manage and cleaner
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 25 | SystemCleanerActivity | same | cleaner/CleanerScreen.kt | [ ] | [ ] |
-| 26 | JunkScan / RemoveJunk / JunkCleared | same | cleaner/RemoveJunkScreen.kt | [ ] | [ ] |
-| 27 | LargeVideoActivity | same; dialog_usage_access_video NEW | cleaner/LargeVideoScreen.kt | [ ] | [ ] |
-| 28 | ScreenShortActivity | same | cleaner/ScreenShortScreen.kt | [ ] | [ ] |
-| 29 | DuplicateWaiting / ScanningComplete / Photo / DeleteProcess / DeleteComplete | same | cleaner/Duplicate*.kt | [ ] | [ ] |
-| 30 | RecycleActivity | item_grid_recycle_media CHANGED; dialog_usage_access_recycle NEW | recycle/RecycleScreen.kt | [ ] | [ ] |
-| 31 | OrganizerActivity / OrganizerRecycleActivity | layout_organizer_stripe, organize_intro_step_layout CHANGED; organizer Lotties removed | discovery/QuickOrganizer*.kt | [ ] | [ ] |
+| 25 | SystemCleanerActivity | same | cleaner/CleanerScreen.kt | [x] | [ ] |
+| 26 | JunkScan / RemoveJunk / JunkCleared | same | cleaner/RemoveJunkScreen.kt | [x] | [ ] |
+| 27 | LargeVideoActivity | same; dialog_usage_access_video NEW | cleaner/LargeVideoScreen.kt | [x] | [ ] |
+| 28 | ScreenShortActivity | same | cleaner/ScreenShortScreen.kt | [x] | [ ] |
+| 29 | DuplicateWaiting / ScanningComplete / Photo / DeleteProcess / DeleteComplete | same | cleaner/Duplicate*.kt | [x] | [ ] |
+| 30 | RecycleActivity | item_grid_recycle_media CHANGED; dialog_usage_access_recycle NEW | recycle/RecycleScreen.kt | [x] | [ ] |
+| 31 | OrganizerActivity / OrganizerRecycleActivity | layout_organizer_stripe, organize_intro_step_layout CHANGED; organizer Lotties removed | discovery/QuickOrganizer*.kt | [x] | [ ] |
 
 ### A5. Vault
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 32 | VaultLockActivity | same | vault/VaultLockScreen.kt | [ ] | [ ] |
-| 33 | VaultMediaActivity | same | vault/VaultMediaScreen.kt | [ ] | [ ] |
-| 34 | VaultSettingActivity | same | vault/VaultSettingScreen.kt | [ ] | [ ] |
-| 35 | VaultRecoveryQuestionActivity | same | vault/VaultRecoveryQuestionScreen.kt | [ ] | [ ] |
-| 36 | VaultForgotPasswordActivity | same | vault/VaultForgotPasswordScreen.kt | [ ] | [ ] |
-| 37 | InternalSelectMediaActivity (picker) | activity_select same as 2.6.7; the changed activity_picker_screen is the collage picker (Phase 8) | vault/VaultAddMediaScreen.kt | [ ] | [ ] |
+| 32 | VaultLockActivity | same | vault/VaultLockScreen.kt | [x] | [ ] |
+| 33 | VaultMediaActivity | same | vault/VaultMediaScreen.kt | [x] | [ ] |
+| 34 | VaultSettingActivity | same | vault/VaultSettingScreen.kt | [x] | [ ] |
+| 35 | VaultRecoveryQuestionActivity | same | vault/VaultRecoveryQuestionScreen.kt | [x] | [ ] |
+| 36 | VaultForgotPasswordActivity | same | vault/VaultForgotPasswordScreen.kt | [x] | [ ] |
+| 37 | InternalSelectMediaActivity (picker) | activity_select same as 2.6.7; the changed activity_picker_screen is the collage picker (Phase 8) | vault/VaultAddMediaScreen.kt | [x] | [ ] |
+
+**Phases 6-7 Ported without the device pass** (user decision 2026-11-25: skip Artemis/device checks and continue): rows 25-37 are ticked Ported on automated gates (unit tests, assembleDebug, string/colour checks, CodeRabbit). The device matrices in `06-LIVE-COMPARISON.md` and `07-LIVE-COMPARISON.md` stay PENDING-DEVICE and move to Phase 13; Verified stays unticked.
 
 **Phase 7 known deviations** (rows 32-37; boxes unchanged until the device pass, see `.planning/phases/07-private-vault/07-LIVE-COMPARISON.md`): D2 no Hidden Folder section; D3 Forgot Password answer match is trimmed, case-insensitive and hashed (2.7.2 matches exactly); PIN, pattern and answers stored hashed; no shake on wrong entry (D4); Home lock-icon shared-element transition (`vault_click`) not built; the secured toast is an in-app overlay; picker folder row is the toolbar and the grid has four columns (D1, `activity_select`).
 
