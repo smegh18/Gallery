@@ -1,76 +1,71 @@
 # HANDOFF: Gallery app, milestone v2.0 (reference 2.7.2 parity)
 
-Written 2026-11-13 by Claude Code for Antigravity to continue this work.
+Updated 2026-11-25 by Claude Code. The session was paused mid-work so it can continue on another computer.
 
 ## What this project is
 - Android gallery app in Kotlin, Jetpack Compose and Material 3, single module `app`, package `com.quizango.gallery`. Repo `E:/Gallery`, branch `main`, remote `https://github.com/smegh18/Gallery.git`.
-- It is a rebuild of a reference app, `albums.gallery.photo.folder.picasa.app.web.gallery`. Our app matched reference **2.6.7**. The current goal is **100% parity with reference 2.7.2**: every screen, flow, animation and behaviour.
+- It rebuilds the reference app `albums.gallery.photo.folder.picasa.app.web.gallery`. The goal is **100% parity with reference 2.7.2**: every screen, flow, animation and behaviour.
+- Planning uses GSD in `.planning/`: `ROADMAP.md` (13 phases), `REQUIREMENTS.md`, `STATE.md`, and `milestones/v2.7.2-parity/PARITY-CHECKLIST.md` (53 rows, each with Ported and Verified boxes).
+
+## Active goal (user instruction, 2026-11-25)
+"Skip artemis check and complete all rest of work." So: no Artemis or device checks. Finish Phases 8-12 (porting), then run Phase 13's quality gates without Artemis. Device acceptance (VER-01, VER-02, every Verified box) stays open for a later device session.
 
 ## Where things stand
-- Main is ahead of origin with Phase 3 complete and Phase 4 implemented through Plan 04-06 (quality gates passed, device checkpoint prepped).
-- Planning is done with GSD (get-shit-done) in `.planning/`:
-  - `PROJECT.md`: milestone goal and approach.
-  - `REQUIREMENTS.md`: 46 requirement IDs with traceability.
-  - `ROADMAP.md`: 13 phases.
-  - `STATE.md`: current position.
-  - `milestones/v2.7.2-parity/PARITY-CHECKLIST.md`: **the master list of 53 screens**, each with Ported and Verified boxes, plus the decisions and flows to verify. Rows #1-#10 and #15 are marked **Ported**.
-  - `phases/01-foundation/`: Complete and verified.
-  - `phases/02-onboarding/`: Complete and verified.
-  - `phases/03-home-shell-and-photos-tab/`: Complete and verified.
-  - `phases/04-albums-stories-and-explore/`: Plans 04-01 to 04-06 implemented. Automated gates, CodeRabbit review, unslop audit, and device harness (`ZZPhase4Test` with 6 images, reset first-run states) are ready. Task 3 on-device human verification pending.
-- **Phase 4 Summary:**
-  - Plan 04-01: Removed legacy carousel/media-type lists, imported 2.7.2 drawables and colors, rebuilt `HomeAlbumCard`.
-  - Plan 04-02: 2.7.2 story row with blue rings, press-scale animation, and Playzen cross-promo circle.
-  - Plan 04-03: Fullscreen Stories viewer with slow zoom (3000 ms), split-tap navigation, hold-to-pause, Edit tooltip, and ad outline placeholder.
-  - Plan 04-04: Rebuilt Explore tab matching 2.7.2 sections; album selection mode with 5-action bottom bar and pin to top.
-  - Plan 04-05: Change cover via shared `MediaPicker`, on-disk folder rename with progress dialog and atomic Room row migration, and `AlbumPropertyDialog`.
-  - Plan 04-06: CodeRabbit review fixes (atomicity, accessibility semantics, localized cancel, selection generation tracking), unslop audit, checklist ticks (rows #8, #9, #15), Playzen brand-art listing, and on-device test album setup.
+- **Phases 1-7: complete.** Phases 6 and 7 were closed on 2026-11-25 on automated gates only. Their device matrices (`06-LIVE-COMPARISON.md`, `07-LIVE-COMPARISON.md`) stay PENDING-DEVICE and move to Phase 13. Checklist rows 25-37 are ticked Ported, not Verified (see the note above "Phase 7 known deviations" in the checklist).
+- **CodeRabbit on Phases 6-7.** The CLI is installed now. Running `coderabbit review --committed --base-commit 04c2447 --dir app --agent` found 11 major issues: the expired-trash purge racing a restore, Organizer drag and tutorial bugs, the junk list capped at 200 and partial-clean handling, a Duplicate Delete Process pop race, and vault batch results being ignored, plus double-submit races in Forgot Password and PIN confirm. 10 are fixed. CR-6 was rejected because 2.7.2 opens Junk Cleared after every clean, and our port only reports the bytes it actually removed. Unit tests (346) and `assembleDebug` pass after the fixes. Details are in the "CodeRabbit review 2026-11-25" section of `06-GATE-FINDINGS.md` and `07-GATE-FINDINGS.md`. Two smaller issues the fixer noticed are still open, so they come first:
+  - Vault Unhide still toasts success when only some items were restored, and it clears the whole selection. This is the same kind of bug as CR-10, in `ui/vault/VaultMediaScreen.kt`.
+  - `syncMediaStore` writes back the `deletedDate` it read at the start of the sync without holding `trashLock`, so a restore during a sync can be overwritten. This is in `data/repository/MediaRepository.kt`.
+  - CodeRabbit has not re-reviewed the fixes.
+- **Phases 8-12: not started.** Research for all five began but was stopped at the pause before any file was saved, so it has to be redone. Write one file per phase: `.planning/phases/08-create-and-edit/08-RESEARCH.md`, `09-settings-and-system/09-RESEARCH.md`, `10-floating-sidebar/10-RESEARCH.md`, `11-after-call-and-install-screens/11-RESEARCH.md` and `12-usage-access-and-cleanup/12-RESEARCH.md`. The five are independent, so they can run in parallel. The brief for each: read the phase section in ROADMAP (including any "Carried in" items), its requirement IDs and checklist rows, and the decoded reference (below). Compare that with our code, then write sections 1-7: scope, reference contract per screen, ours versus reference, resources to import, pitfalls, plan breakdown with file ownership and waves, and assumptions.
 
-## Next step
-- Complete Task 3 on-device verification for Phase 4 on Redmi M2006C3MII.
-- Remove disposable test album `ZZPhase4Test` from `/sdcard/Pictures/` via ADB.
-- Mark Phase 4 complete and kick off **Phase 5: Full-Screen Media Viewer and Video Player (VIE-01, VIE-02, VIE-03)**.
+## Next steps
+1. Set up the new computer (next section) and check that the gates pass.
+2. Finish any CodeRabbit finding marked open, then rerun the gates.
+3. Research Phases 8-12 (see above), then plan and build them in order. For each phase:
+   - run `./gradlew.bat :app:testDebugUnitTest -q`, `./gradlew.bat :app:assembleDebug -q`, `python -I scripts/ref_res.py check-strings` and `check-colors`;
+   - run a CodeRabbit review (`coderabbit review --committed --base-commit <phase start> --dir app --agent`; the free tier allows 3 reviews per rolling hour) and an unslop audit of the changed screens;
+   - tick Ported in PARITY-CHECKLIST.md, but not Verified.
+4. Phase 13 without Artemis: confirm the VER-03 gates for every phase, then update ROADMAP, REQUIREMENTS and STATE.
 
-## How to read the reference app (source of truth)
-See `tooling-setup.md`.
-- **Reference APK:** `reference/gallery-2.7.2.apk`. It is git-ignored, so it exists only on this computer. The phone has 2.7.2 installed.
-- **Decoded copies:** `%TEMP%/ref272/dec` holds the 2.7.2 smali and resources. `%TEMP%/ref267/dec` holds 2.6.7. They live in `C:/Users/megh/AppData/Local/Temp/`. If they are gone, re-decode with apktool (`C:/apktool/apktool.BAT d -f -o dec base.apk`).
-- **Decompiling:** use apktool for smali, and aapt2 at `%LOCALAPPDATA%/Android/Sdk/build-tools/36.1.0/aapt2.exe` for `dump resources` to resolve `0x7f…` ids. jadx is NOT installed. REA's jadx backend is not configured, but its apktool backend works.
-- `scripts/ref_res.py`:
-  - `sync-strings` pulls the 2.7.2 translations for keys added to `values/strings.xml`.
-  - `check-strings` and `check-colors` are parity gates.
-  - Always run it as `python -I`.
+## Setup on a new computer
+- Install JDK 17 or later, Android SDK 36 with build-tools 36.1.0 (for aapt2), Python 3, apktool 2.12.x, adb, and the CodeRabbit CLI (then `coderabbit auth login`).
+- `local.properties` is untracked. It needs `sdk.dir=<Android SDK path>` and, optionally, `MAPS_API_KEY=` for the Place map.
+- **The reference APK is not in git.** `reference/` is git-ignored, so copy `reference/gallery-2.7.2.apk` (41 MB) from the old computer, or pull it from the test phone (tooling-setup.md, step 1). `gallery.apk` (2.6.7) is tracked.
+- Decode both versions in Git Bash. The scripts read these default paths:
+  ```bash
+  mkdir -p "$TEMP/ref272" && cp reference/gallery-2.7.2.apk "$TEMP/ref272/base.apk"
+  (cd "$TEMP/ref272" && apktool d -f -o dec base.apk && "$LOCALAPPDATA/Android/Sdk/build-tools/36.1.0/aapt2.exe" dump resources base.apk > res272.txt)
+  mkdir -p "$TEMP/ref267" && cp gallery.apk "$TEMP/ref267/base.apk"
+  (cd "$TEMP/ref267" && apktool d -f -s -o dec base.apk)
+  ```
+- **Then fix the tab spelling, or `check-strings` falsely reports 20 languages as stale.** A fresh apktool decode writes a backslash followed by a real TAB where our files have `\t`:
+  ```bash
+  python -I -c "
+  import glob, os
+  for p in glob.glob(os.path.join(os.environ['TEMP'], 'ref272/dec/res/values*/strings.xml')):
+      s = open(p, encoding='utf-8').read()
+      open(p, 'w', encoding='utf-8', newline='').write(s.replace(chr(92) + chr(9), chr(92) + 't'))
+  "
+  python -I scripts/ref_res.py check-strings   # expect: strings: 24 languages up to date
+  python -I scripts/ref_res.py check-colors    # expect: colors: 226 light / 134 night names match 2.7.2
+  ```
+- Reference layout in the decode: app screens are under `smali/albums/gallery/photo/folder/picasa/app/web/gallery/presentation/<feature>/`, with obfuscated helpers in short-named sibling packages across `smali`, `smali_classes2` and `smali_classes3`. The library screens are `com/collage/activities`, `com/canhub/cropper`, `com/grow/common/utilities/subscription` (the PayWall) and `com/baselibrary`. Resolve hex resource ids with `res/values/public.xml` or `res272.txt`.
 
 ## Rules the user set (follow them)
-- **Coding style ("Ponytail"):** make the smallest complete change and reuse existing code and patterns. No speculative abstractions. New non-trivial logic gets one small unit test. Comment only the *why*.
-- **Quality gate for every phase:**
-  - `./gradlew.bat :app:testDebugUnitTest -q`
-  - `./gradlew.bat :app:assembleDebug -q`
-  - a CodeRabbit review (`coderabbit review --committed --base-commit <phase-start> --agent`). The free tier allows about 3 reviews per window, and more than 150 files gets split with `--dir`.
-  - an unslop audit of the changed screens
-- **Commit message trailer:** every commit message ends with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. This was the convention so far, so adjust it if you sign your own commits. Only commit or push when the user asks; the user usually says "Commit and push".
-- **Parity rule:** where 2.7.2 leaves a string in English, ours stays English.
-- **Brand art:** the reference brand art (launcher icons, splash, about logo, `app_icon_lottie`, promo photos) is kept for now by user decision. It must be replaced before any store build; this is tracked in STATE.md.
-- **Ads and billing:** stay placeholders. Usage-access prompts copy the UI only and send no data.
-- **Talking to the user:** short and plain. Lead with the outcome, and confirm before anything destructive. Never tap Install on reference-app ads.
+- **Coding style ("Ponytail"):** make the smallest complete change and reuse existing code and patterns. Add no speculative abstractions. New non-trivial logic gets one small unit test. Comment only the *why*.
+- **Quality gate for every phase (VER-03):** unit tests, `assembleDebug`, CodeRabbit with no open findings, and an unslop audit of the changed screens.
+- **Commits:** commit or push only when the user asks. Every commit message ends with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- **Parity rule:** where 2.7.2 leaves a string in English, ours stays English. Port strings by their reference keys, then run `python -I scripts/ref_res.py sync-strings` for the translations.
+- **Ads, billing and usage data:** ads stay placeholders, there is no real billing, and the usage-access prompts copy the UI only and send no data. Reference brand art must be replaced before any store build (tracked in STATE.md).
+- **Talking to the user:** short and plain. Lead with the outcome, and confirm before anything destructive.
 
-## Device testing
-- **Phone:** Redmi M2006C3MII, Android 11, wireless adb (`adb devices`). It runs **MIUI with system dark mode**.
-- **Our app:** debug build installed. `adb install -r app/build/outputs/apk/debug/app-debug.apk` works because it uses the same debug key. **Then run `adb shell cmd package compile -m speed-profile -f com.quizango.gallery`**: otherwise every launch takes about 10 s with a black screen, because ART verifies uncompiled debug dex. Store installs are compiled at install time. Launch with `adb shell monkey -p com.quizango.gallery -c android.intent.category.LAUNCHER 1`. The first launch after an install takes about 10 s.
-- **Commands:**
-  - screenshots: `adb exec-out screencap -p > x.png`
-  - Git Bash needs `MSYS_NO_PATHCONV=1` for `/sdcard` paths
-- **Leftover test data:** the folder `Pictures/ZZDupTest` on the phone is test data from the duplicate check. The user can delete it.
-- **Artemis MCP:** the Android automation tool, planned for Phase 13 side-by-side verification.
-
-## Deferred items (already assigned to later phases)
-- **Phase 3:** the All Media photo grid draws in only half the screen width. Also, "No Albums Found" flashes during the first load.
-- **Phase 6:** the hard-coded "N freed" text and the `sp` sizes on the duplicate delete-complete screen.
-- **Phase 13:** clipping and RTL checks in ar, ru and ta.
-- **Phases 2-9:** about 175 UI labels are hard-coded in English. Each screen phase switches its labels to reference string resources.
-- **Settings and floating screens:** the in-app Dark theme now reaches XML through AppCompat DayNight. Re-check it when porting those screens.
+## Device testing (for the later device pass)
+- Phone: Redmi M2006C3MII, Android 11, MIUI with system dark mode, wireless adb. Reference 2.7.2 is installed on it.
+- Install with `adb install -r app/build/outputs/apk/debug/app-debug.apk`, then run `adb shell cmd package compile -m speed-profile -f com.quizango.gallery`. Without the compile step, a cold start takes about 10 s.
+- Destructive checks run only inside a recorded disposable fixture folder such as `Pictures/ZZPhase7Test-*`. The procedures are in `07-09-SUMMARY.md` and `06-11-PLAN.md`.
 
 ## Gotchas learned
-- **GSD worktree executors** are created from the last **pushed** commit. Start each one with `git merge --ff-only main`, then copy `local.properties` (untracked, holds `sdk.dir`) into the worktree. Remove leftover worktree folders with a `\\?\` path, because of Windows path-length limits.
-- **Android 11 drawable crash:** it rejects `<item android:drawable="@null"/>` in layer-lists, which is why `splash_bg` was edited. Imported vectors with aapt-split gradients (`$name__0.xml`) must be inlined.
-- **Theme application:** do not re-apply the theme on every activity start, because it causes an AppCompat recreate loop. It is applied once in `GalleryApplication.onCreate`.
+- **Android 11 drawable rules:** it crashes on `<item android:drawable="@null"/>` in layer-lists, and imported vectors with aapt-split gradients (`$name__0.xml`) must be inlined.
+- **Theme:** the theme is applied once in `GalleryApplication.onCreate`. Re-applying it on every activity start causes an AppCompat recreate loop.
+- **GSD worktree executors** start from the last pushed commit. Run `git merge --ff-only main` in each one and copy `local.properties` into it.
+- **Disk space:** the old computer's C: drive had only about 3 GB free (Gradle caches and `%TEMP%` decodes live there).

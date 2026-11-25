@@ -31,17 +31,17 @@
     {
       "number": "6",
       "name": "Manage and Cleaner",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "number": "7",
       "name": "Private Vault",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "8",
       "name": "Create and Edit",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "9",
@@ -70,9 +70,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-progress --next",
-    "label": "Advance to the next step (verify)",
-    "reason": "Phase 6 of 13 · 41% · Plan 06-11 gate next"
+    "command": "/gsd-plan-phase 8",
+    "label": "Research and plan Phase 8 (Create and Edit)",
+    "reason": "Phase 8 of 13 · 54% · research not saved yet; see HANDOFF.md"
   },
-  "updated_at": "2026-11-23T13:45:00.000Z"
+  "updated_at": "2026-11-25T19:30:00.000Z"
 }
