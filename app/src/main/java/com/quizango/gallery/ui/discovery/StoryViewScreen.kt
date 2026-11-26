@@ -64,6 +64,8 @@ import androidx.compose.ui.window.PopupProperties
 import coil.compose.AsyncImage
 import com.quizango.gallery.R
 import com.quizango.gallery.domain.model.MediaItem
+import com.quizango.gallery.ui.components.UsageAccessKind
+import com.quizango.gallery.ui.components.UsageAccessQueue
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.home.shareSelectedMedia
 import com.quizango.gallery.ui.theme.GalleryText
@@ -117,8 +119,8 @@ fun kenBurnsZoomIn(photoOrdinal: Int): Boolean = photoOrdinal % 2 == 0
 /** Android's AccelerateDecelerateInterpolator, which the zoom animators use. */
 private val AccelerateDecelerate = Easing { t -> (cos((t + 1) * PI) / 2 + 0.5).toFloat() }
 
-// shortcut: no-op until Phase 12 (USG-01) builds dialog_usage_access_story and its session rule (S272/ta/f, ta/d.STORY)
-internal fun recordStoryUsageAccessTrigger() {}
+/** 2.7.2 queues ta/d.STORY on the viewer's Back; Home tries that prompt on its next resume. */
+internal fun recordStoryUsageAccessTrigger() = UsageAccessQueue.queueForHome(UsageAccessKind.STORY)
 
 /** Reference story title: the photo's date, e.g. "04 Nov 2026". */
 private fun storyDate(item: MediaItem): String {

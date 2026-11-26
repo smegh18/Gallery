@@ -35,6 +35,8 @@ import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
+import com.quizango.gallery.ui.components.UsageAccessKind
+import com.quizango.gallery.ui.components.UsageAccessQueue
 import com.quizango.gallery.ui.home.formatDuration
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
@@ -64,8 +66,8 @@ fun recycleSelectionAfterOutcomes(
     outcomes: List<PathMutationOutcome>
 ): Set<String> = selectedPaths - outcomes.successfulPaths().toSet()
 
-// shortcut: no-op; Phase 12 / USG-01 owns the recycle usage-access dialog and its session rule.
-internal fun recordRecycleUsageAccessTrigger() = Unit
+/** 2.7.2 queues ta/d.RECYCLE when the Recycle Bin closes; Home tries that prompt on its next resume. */
+internal fun recordRecycleUsageAccessTrigger() = UsageAccessQueue.queueForHome(UsageAccessKind.RECYCLE)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
