@@ -228,7 +228,7 @@ internal val LocalOpenedFromOutside = compositionLocalOf { false }
 
 /**
  * HA.o000o0O0 show rules (UI-SPEC 1.4): never after an outside entry, and held while a start-up dialog
- * ([startDialogShowing]: the notification permission request today; Phases 10 and 12 add theirs) is up.
+ * ([startDialogShowing]: the notification permission request, the usage-access prompt or the floating-button offer) is up.
  */
 internal fun shouldShowVaultHint(
     session: Int,

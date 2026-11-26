@@ -493,4 +493,10 @@ confidentialité en un seul endroit"</string>
     <string name="try_it_now">Essayez-le maintenant</string>
     <string name="app_scan_open">Ouvrir</string>
     <string name="app_scan_done">Fait</string>
+    <string name="at_always_off_description">Désactive le bouton flottant et masque tous les raccourcis rapides.</string>
+    <string name="at_always_on_description">Maintient le bouton flottant actif pour un accès rapide sur chaque écran.</string>
+    <string name="floating_button_settings_disclaimer">Vous pouvez activer/désactiver cette fonctionnalité à tout moment depuis les Paramètres selon vos préférences.</string>
+    <string name="quick_access_floating_button_description">"Cette fonctionnalité est disponible sur l'écran d'accueil. Appuyez simplement sur le bouton flottant pour l'utiliser."</string>
+    <string name="quick_access_floating_button_title">"Bouton flottant d'accès rapide"</string>
+    <string name="str_home_cleaner">Nettoyeur</string>
 </resources>

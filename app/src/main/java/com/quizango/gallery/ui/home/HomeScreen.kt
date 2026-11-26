@@ -79,7 +79,8 @@ fun HomeScreen(
     val albumSelecting = uiState.selectedAlbums.isNotEmpty()
     val anySelecting = uiState.isSelectionMode || albumSelecting
     // The usage-access prompt holds the vault hint until it closes (HA isUsageAccessPopupShowingOnHome)
-    val usagePromptShowing = homeUsageAccessPrompt()
+    var usageChecked by remember { mutableStateOf(false) }
+    val usagePromptShowing = homeUsageAccessPrompt(onChecked = { usageChecked = true })
     val openedFromOutside = LocalOpenedFromOutside.current
     // HA.OoooOoO: Android 13+ asks for notifications as Home starts (not after an outside entry) and the vault hint
     // waits for the answer; once notifications may show, the Quick Actions notification is scheduled (bw/h 16)
@@ -96,9 +97,14 @@ fun HomeScreen(
         if (notificationAskPending) notificationAsk.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         else QuickActionsNotification.schedule(context)
     }
+    // Phase 10: 2.7.2 offers the floating button after the notification request and Home's usage-access check, so the
+    // start dialogs never stack; the offer, like them, holds the vault hint until it closes (isVaultHintShowPending)
+    val floatingOffer = com.quizango.gallery.ui.floating.rememberFloatingButtonOffer(uiState.sessionCount)
+    val floatingOfferReady = !notificationAskPending && usageChecked && !usagePromptShowing
     val showVaultHint = !anySelecting && shouldShowVaultHint(
         uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context),
-        openedFromOutside = openedFromOutside, startDialogShowing = notificationAskPending || usagePromptShowing
+        openedFromOutside = openedFromOutside,
+        startDialogShowing = notificationAskPending || usagePromptShowing || floatingOffer.isShowing
     )
 
     // HA.Oooo0oO order: vault hint, then the ⋮ popup (its focusable window eats Back itself), then selection,
@@ -319,6 +325,7 @@ fun HomeScreen(
             PinchTutorialOverlay(onGotIt = { viewModel.dismissPinchTip() })
         }
     }
+    if (floatingOfferReady) com.quizango.gallery.ui.floating.FloatingButtonOfferDialog(floatingOffer)
 
     if (showSortDialog) {
         SortDialog(

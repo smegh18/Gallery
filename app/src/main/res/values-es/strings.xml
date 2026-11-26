@@ -493,4 +493,10 @@ privacidad en un solo lugar"</string>
     <string name="try_it_now">Prueba ahora</string>
     <string name="app_scan_open">Abierto</string>
     <string name="app_scan_done">Hecho</string>
+    <string name="at_always_off_description">Desactiva el botón flotante y oculta todos los accesos directos rápidos.</string>
+    <string name="at_always_on_description">Mantiene el botón flotante activo para un acceso rápido en cada pantalla.</string>
+    <string name="floating_button_settings_disclaimer">Puedes activar/desactivar esta función en cualquier momento desde Configuración según tu preferencia.</string>
+    <string name="quick_access_floating_button_description">Esta función está disponible en la pantalla de inicio. Simplemente toca el botón flotante para usarla.</string>
+    <string name="quick_access_floating_button_title">Botón flotante de acceso rápido</string>
+    <string name="str_home_cleaner">Limpiador</string>
 </resources>

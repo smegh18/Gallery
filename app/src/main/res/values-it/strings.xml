@@ -501,4 +501,10 @@ privacy in un unico posto"</string>
     <string name="try_it_now">Provalo Ora</string>
     <string name="app_scan_open">Aprire</string>
     <string name="app_scan_done">Fatto</string>
+    <string name="at_always_off_description">Disattiva il pulsante flottante e nasconde tutte le scorciatoie rapide.</string>
+    <string name="at_always_on_description">Mantiene attivo il pulsante flottante per un accesso rapido su ogni schermata.</string>
+    <string name="floating_button_settings_disclaimer">Puoi attivare/disattivare questa funzione in qualsiasi momento dalle Impostazioni in base alle tue preferenze.</string>
+    <string name="quick_access_floating_button_description">Questa funzione è disponibile nella schermata principale. Basta toccare il pulsante fluttuante per usarla.</string>
+    <string name="quick_access_floating_button_title">Pulsante fluttuante di accesso rapido</string>
+    <string name="str_home_cleaner">Pulitore</string>
 </resources>

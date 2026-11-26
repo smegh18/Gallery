@@ -170,11 +170,13 @@ internal const val HOME_USAGE_CHECK_DELAY_MS = 700L
 /**
  * HomeActivity's usage-access check (HA.OoooOoo): [HOME_USAGE_CHECK_DELAY_MS] after Home resumes, once Home has window
  * focus and no prompt is up, the prompt a story, video or Recycle Bin exit queued is tried, then the Home one. Returns
- * true while a prompt is up: Home holds its vault hint until it closes (isUsageAccessPopupShowingOnHome).
+ * true while a prompt is up: Home holds its vault hint until it closes (isUsageAccessPopupShowingOnHome). [onChecked]
+ * runs once a check has run, shown or not: Home holds the floating-button offer until then, as HA does.
  */
 @Composable
-fun homeUsageAccessPrompt(): Boolean {
+fun homeUsageAccessPrompt(onChecked: () -> Unit = {}): Boolean {
     val context = LocalContext.current
+    val latestOnChecked by rememberUpdatedState(onChecked)
     val preferences = (context.applicationContext as GalleryApplication).preferences
     var shown by rememberSaveable { mutableStateOf<UsageAccessKind?>(null) }
     val windowInfo = LocalWindowInfo.current
@@ -186,7 +188,10 @@ fun homeUsageAccessPrompt(): Boolean {
                 snapshotFlow { windowInfo.isWindowFocused }.first { it }
                 delay(HOME_USAGE_CHECK_DELAY_MS)
             }
-            if (shown != null) return@repeatOnLifecycle // a prompt is already up (restored); the queued one waits
+            if (shown != null) { // a prompt is already up (restored); the queued one waits
+                latestOnChecked()
+                return@repeatOnLifecycle
+            }
             val session = preferences.sessionCount.first()
             val state = UsagePromptState(
                 session = session,
@@ -199,6 +204,7 @@ fun homeUsageAccessPrompt(): Boolean {
                 preferences.setUsageAccessShownSession(home = kind == UsageAccessKind.HOME, session)
                 shown = kind
             }
+            latestOnChecked()
         }
     }
     shown?.let { kind ->

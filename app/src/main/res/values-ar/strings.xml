@@ -493,4 +493,10 @@
     <string name="try_it_now">جربها الآن</string>
     <string name="app_scan_open">يفتح</string>
     <string name="app_scan_done">منتهي</string>
+    <string name="at_always_off_description">تعطيل الزر العائم وإخفاء جميع الاختصارات السريعة.</string>
+    <string name="at_always_on_description">يحافظ على الزر العائم نشطًا للوصول السريع على كل شاشة.</string>
+    <string name="floating_button_settings_disclaimer">يمكنك تشغيل/إيقاف هذه الميزة في أي وقت من الإعدادات حسب تفضيلاتك.</string>
+    <string name="quick_access_floating_button_description">هذه الميزة متاحة على الشاشة الرئيسية. ما عليك سوى النقر على الزر العائم لاستخدامها.</string>
+    <string name="quick_access_floating_button_title">زر الوصول السريع العائم</string>
+    <string name="str_home_cleaner">منظف</string>
 </resources>

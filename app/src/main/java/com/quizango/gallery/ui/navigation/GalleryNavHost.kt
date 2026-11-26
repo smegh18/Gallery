@@ -83,7 +83,8 @@ private const val DUPLICATE_DELETE_PROCESS_ROUTE = "duplicates/delete-process"
 @Composable
 fun GalleryNavHost(
     navController: NavHostController,
-    app: GalleryApplication
+    app: GalleryApplication,
+    startRoute: String = Screen.Splash.route // Home when the floating sidebar opens a screen (no splash, as in 2.7.2)
 ) {
     var pendingDuplicateDelete by remember { mutableStateOf<DuplicateDeleteRequest?>(null) }
     var retryDuplicatePaths by remember { mutableStateOf(emptySet<String>()) }
@@ -93,7 +94,7 @@ fun GalleryNavHost(
     com.quizango.gallery.ui.gs.GsAppEffects(navController) // Phase 11
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route,
+        startDestination = startRoute,
         enterTransition = {
             if (fromSplash()) fadeIn(tween(350))
             else fadeIn(tween(220)) + slideInHorizontally(tween(260)) { it / 10 }
@@ -796,7 +797,9 @@ fun GalleryNavHost(
                 onOpenQuickInfoSettings = com.quizango.gallery.ui.gs.rememberQuickInfoSettingsOpener {
                     navController.navigateOnce(Screen.GsSetting.route)
                 },
-                onOpenFloatingSettings = {}, // wired when Phase 10 merges
+                onOpenFloatingSettings = com.quizango.gallery.ui.floating.rememberFloatingSettingsEntry {
+                    navController.navigateOnce(Screen.FloatingSetting.route)
+                },
                 onOpenInstallSettings = com.quizango.gallery.ui.gs.rememberInstallSettingsOpener {
                     navController.navigateOnce(Screen.IuSetting.route)
                 }
@@ -819,6 +822,10 @@ fun GalleryNavHost(
         }
         composable(Screen.IuSetting.route) {
             com.quizango.gallery.ui.gs.IuSettingScreen(app.preferences, onNavigateBack = { navController.popBackStack() })
+        }
+        // Phase 10
+        composable(Screen.FloatingSetting.route) {
+            com.quizango.gallery.ui.floating.FloatingSettingScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }

@@ -500,4 +500,10 @@
     <string name="try_it_now">இப்போது முயற்சிக்கவும்</string>
     <string name="app_scan_open">திற</string>
     <string name="app_scan_done">முடிந்தது</string>
+    <string name="at_always_off_description">மிதக்கும் பொத்தானை முடக்கி அனைத்து விரைவு குறுக்கு வழிகளையும் மறைக்கிறது.</string>
+    <string name="at_always_on_description">ஒவ்வொரு திரையிலும் விரைவான அணுகலுக்காக மிதக்கும் பொத்தானை செயலில் வைத்திருக்கிறது.</string>
+    <string name="floating_button_settings_disclaimer">உங்கள் விருப்பத்திற்கேற்ப அமைப்புகளிலிருந்து எப்போது வேண்டுமானாலும் இந்த அம்சத்தை இயக்க/அணைக்கலாம்.</string>
+    <string name="quick_access_floating_button_description">இந்த அம்சம் முகப்புத் திரையில் கிடைக்கிறது. பயன்படுத்த மிதக்கும் பொத்தானைத் தட்டவும்.</string>
+    <string name="quick_access_floating_button_title">விரைவு அணுகல் மிதக்கும் பொத்தான்</string>
+    <string name="str_home_cleaner">சுத்திகரிப்பான்</string>
 </resources>

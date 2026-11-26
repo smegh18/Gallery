@@ -501,4 +501,10 @@
     <string name="try_it_now">Попробуйте сейчас</string>
     <string name="app_scan_open">Открыть</string>
     <string name="app_scan_done">Сделанный</string>
+    <string name="at_always_off_description">Отключает плавающую кнопку и скрывает все быстрые ярлыки.</string>
+    <string name="at_always_on_description">Оставляет плавающую кнопку активной для быстрого доступа на каждом экране.</string>
+    <string name="floating_button_settings_disclaimer">Вы можете включить/выключить эту функцию в любое время в Настройках по своему усмотрению.</string>
+    <string name="quick_access_floating_button_description">Эта функция доступна на главном экране. Просто нажмите на плавающую кнопку, чтобы использовать её.</string>
+    <string name="quick_access_floating_button_title">Плавающая кнопка быстрого доступа</string>
+    <string name="str_home_cleaner">Очиститель</string>
 </resources>

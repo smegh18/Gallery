@@ -469,4 +469,10 @@
     <string name="try_it_now">ابھی آزمائیں</string>
     <string name="app_scan_open">کھولیں۔</string>
     <string name="app_scan_done">ہو گیا</string>
+    <string name="at_always_off_description">فلوٹنگ بٹن کو غیر فعال کرتا ہے اور تمام فوری شارٹ کٹ چھپا دیتا ہے۔</string>
+    <string name="at_always_on_description">ہر اسکرین پر فوری رسائی کے لیے فلوٹنگ بٹن کو فعال رکھتا ہے۔</string>
+    <string name="floating_button_settings_disclaimer">آپ اپنی ترجیحات کے مطابق کسی بھی وقت سیٹنگز سے اس خصوصیت کو آن/آف کر سکتے ہیں۔</string>
+    <string name="quick_access_floating_button_description">یہ خصوصیت ہوم اسکرین پر دستیاب ہے۔ استعمال کرنے کے لیے صرف فلوٹنگ بٹن پر ٹیپ کریں۔</string>
+    <string name="quick_access_floating_button_title">فوری رسائی فلوٹنگ بٹن</string>
+    <string name="str_home_cleaner">کلینر</string>
 </resources>

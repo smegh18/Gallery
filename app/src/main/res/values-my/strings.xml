@@ -500,4 +500,10 @@
     <string name="try_it_now">ယခု စမ်းကြည့်ပါ</string>
     <string name="app_scan_open">ဖွင့်သည်။</string>
     <string name="app_scan_done">ပြီးပြီ။</string>
+    <string name="at_always_off_description">floating button ကို ပိတ်ထားပြီး 모든 快速捷径 隐藏합니다。</string>
+    <string name="at_always_on_description">မည်သည့်စျင်နား၌မဆို လွတ်လပ်စွာအသုံးပြုနိုင်ရန် floating button ကို အမြဲသက်ဝင်နေစေသည်။</string>
+    <string name="floating_button_settings_disclaimer">သင့်နှစ်သက်မှုအလိုက် ဆက်တင်များမှ မည်သည့်အချိန်တွင်မဆို ဤအင်္ဂါရပ်ကို ဖွင့်/ပိတ်နိုင်သည်။</string>
+    <string name="quick_access_floating_button_description">ဤအင်္ဂါရပ်သည် ပင်မစခရင်တွင် ရရှိနိုင်သည်။ အသုံးပြုရန် ပေါ်လာသော ခလုတ်ကို နှိပ်ပါ။</string>
+    <string name="quick_access_floating_button_title">အမြန်ဝင်ရောက်ခွင့် ပေါ်လာသော ခလုတ်</string>
+    <string name="str_home_cleaner">သန့်ရှင်းရေး</string>
 </resources>

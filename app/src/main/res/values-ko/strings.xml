@@ -500,4 +500,10 @@
     <string name="try_it_now">지금 사용해보기</string>
     <string name="app_scan_open">열려 있는</string>
     <string name="app_scan_done">완료</string>
+    <string name="at_always_off_description">플로팅 버튼을 비활성화하고 모든 빠른 단축키를 숨깁니다.</string>
+    <string name="at_always_on_description">모든 화면에서 빠르게 접근할 수 있도록 플로팅 버튼을 활성 상태로 유지합니다.</string>
+    <string name="floating_button_settings_disclaimer">설정에서 선호도에 따라 언제든지 이 기능을 켜거나 끌 수 있습니다.</string>
+    <string name="quick_access_floating_button_description">이 기능은 홈 화면에서 사용할 수 있습니다. 플로팅 버튼을 탭하기만 하면 사용할 수 있습니다.</string>
+    <string name="quick_access_floating_button_title">빠른 액세스 플로팅 버튼</string>
+    <string name="str_home_cleaner">클리너</string>
 </resources>

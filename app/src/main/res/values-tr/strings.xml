@@ -485,4 +485,10 @@ bir yerde gizlilik"</string>
     <string name="try_it_now">Şimdi Deneyin</string>
     <string name="app_scan_open">Açık</string>
     <string name="app_scan_done">Tamamlamak</string>
+    <string name="at_always_off_description">Kayan düğmeyi devre dışı bırakır ve tüm hızlı kısayolları gizler.</string>
+    <string name="at_always_on_description">Her ekranda hızlı erişim için kayan düğmeyi aktif tutar.</string>
+    <string name="floating_button_settings_disclaimer">"Tercihinize göre Ayarlar'dan istediğiniz zaman bu özelliği AÇIK/KAPALI yapabilirsiniz."</string>
+    <string name="quick_access_floating_button_description">Bu özellik Ana ekranda mevcuttur. Kullanmak için sadece kayan düğmeye dokunun.</string>
+    <string name="quick_access_floating_button_title">Hızlı erişim kayan düğme</string>
+    <string name="str_home_cleaner">Temizleyici</string>
 </resources>

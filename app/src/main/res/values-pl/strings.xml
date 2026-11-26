@@ -499,4 +499,10 @@ prywatność w jednym miejscu"</string>
     <string name="try_it_now">Wypróbuj teraz</string>
     <string name="app_scan_open">Otwarte</string>
     <string name="app_scan_done">Zrobione</string>
+    <string name="at_always_off_description">Wyłącza przycisk pływający i ukrywa wszystkie szybkie skróty.</string>
+    <string name="at_always_on_description">Utrzymuje aktywny przycisk pływający, aby zapewnić szybki dostęp na każdym ekranie.</string>
+    <string name="floating_button_settings_disclaimer">Możesz włączyć/wyłączyć tę funkcję w dowolnym momencie w Ustawieniach zgodnie ze swoimi preferencjami.</string>
+    <string name="quick_access_floating_button_description">Ta funkcja jest dostępna na ekranie głównym. Po prostu dotknij pływającego przycisku, aby z niej skorzystać.</string>
+    <string name="quick_access_floating_button_title">Pływający przycisk szybkiego dostępu</string>
+    <string name="str_home_cleaner">Czyściciel</string>
 </resources>

@@ -501,4 +501,10 @@
     <string name="try_it_now">今すぐ試す</string>
     <string name="app_scan_open">開ける</string>
     <string name="app_scan_done">終わり</string>
+    <string name="at_always_off_description">フローティングボタンを無効にし、すべてのクイックショートカットを非表示にします。</string>
+    <string name="at_always_on_description">すべての画面で素早くアクセスできるよう、フローティングボタンを常に有効にします。</string>
+    <string name="floating_button_settings_disclaimer">設定から、お好みに応じていつでもこの機能をオン/オフにできます。</string>
+    <string name="quick_access_floating_button_description">この機能はホーム画面で利用できます。フローティングボタンをタップするだけで使用できます。</string>
+    <string name="quick_access_floating_button_title">クイックアクセスフローティングボタン</string>
+    <string name="str_home_cleaner">クリーナー</string>
 </resources>

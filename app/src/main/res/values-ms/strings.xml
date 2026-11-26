@@ -500,4 +500,10 @@ privasi di satu tempat"</string>
     <string name="try_it_now">Cuba Sekarang</string>
     <string name="app_scan_open">Buka</string>
     <string name="app_scan_done">Selesai</string>
+    <string name="at_always_off_description">Nyahaktifkan butang terapung dan sembunyikan semua pintasan pantas.</string>
+    <string name="at_always_on_description">Menjadikan butang terapung sentiasa aktif untuk akses cepat pada setiap skrin.</string>
+    <string name="floating_button_settings_disclaimer">Anda boleh menghidupkan/mematikan ciri ini pada bila-bila masa dari Tetapan mengikut pilihan anda.</string>
+    <string name="quick_access_floating_button_description">Ciri ini tersedia di skrin utama. Hanya ketik butang terapung untuk menggunakannya.</string>
+    <string name="quick_access_floating_button_title">Butang terapung akses pantas</string>
+    <string name="str_home_cleaner">Pembersih</string>
 </resources>

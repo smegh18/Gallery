@@ -603,4 +603,11 @@ recycle bin"</string>
     <string name="iu_service_notification_text">Monitoring app changes</string>
     <string name="iu_service_channel_name">Package</string>
     <string name="iu_launch_failed">Failed to launch application</string>
+    <!-- Phase 10 Floating sidebar (R272) -->
+    <string name="at_always_off_description">Disable the floating button and hide all quick shortcuts.</string>
+    <string name="at_always_on_description">Keeps the floating button active for quick access on every screen.</string>
+    <string name="floating_button_settings_disclaimer">You can turn this feature ON/OFF anytime from Settings based on your preference.</string>
+    <string name="quick_access_floating_button_description">This feature is available on the Home screen. Just tap the floating button to use it.</string>
+    <string name="quick_access_floating_button_title">Quick Access Floating Button</string>
+    <string name="str_home_cleaner">Cleaner</string>
 </resources>

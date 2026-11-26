@@ -39,6 +39,8 @@
         </intent>
     </queries>
 
+    <!-- Phase 10: the floating sidebar's specialUse foreground service and boot restart use the three permissions above -->
+
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
@@ -177,6 +179,30 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+        <!-- Phase 10: floating sidebar -->
+        <service
+            android:name=".ui.floating.FloatingButtonService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Floating quick access button overlay" />
+        </service>
+        <!-- Not exported: the system still delivers boot and package-replaced broadcasts; other apps cannot poke it -->
+        <receiver
+            android:name=".ui.floating.FloatingBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+        <activity
+            android:name=".ui.floating.OverlayGuideActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@style/Theme.NewGallery.Guide" />
 
     </application>
 

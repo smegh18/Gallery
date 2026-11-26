@@ -499,4 +499,10 @@ sekretess på ett ställe"</string>
     <string name="try_it_now">Prova nu</string>
     <string name="app_scan_open">Öppna</string>
     <string name="app_scan_done">Gjort</string>
+    <string name="at_always_off_description">Inaktiverar den flytande knappen och döljer alla snabblänkar.</string>
+    <string name="at_always_on_description">Håller den flytande knappen aktiv för snabb åtkomst på varje skärm.</string>
+    <string name="floating_button_settings_disclaimer">Du kan aktivera/inaktivera denna funktion när som helst från Inställningar enligt dina preferenser.</string>
+    <string name="quick_access_floating_button_description">Denna funktion är tillgänglig på startsidan. Tryck bara på den flytande knappen för att använda den.</string>
+    <string name="quick_access_floating_button_title">Flytande snabbåtkomstknapp</string>
+    <string name="str_home_cleaner">Rengörare</string>
 </resources>

@@ -485,4 +485,10 @@
     <string name="try_it_now">आता प्रयत्न करा</string>
     <string name="app_scan_open">उघडा</string>
     <string name="app_scan_done">झाले</string>
+    <string name="at_always_off_description">फ्लोटिंग बटण निष्क्रिय करते आणि सर्व जलद शॉर्टकट लपवते.</string>
+    <string name="at_always_on_description">प्रत्येक स्क्रीनवर जलद प्रवेशासाठी फ्लोटिंग बटण सक्रिय ठेवते.</string>
+    <string name="floating_button_settings_disclaimer">तुम्ही तुमच्या आवडीनुसार सेटिंग्जमधून कधीही ही वैशिष्ट्ये चालू/बंद करू शकता.</string>
+    <string name="quick_access_floating_button_description">ही वैशिष्ट्ये होम स्क्रीनवर उपलब्ध आहे. वापरण्यासाठी फक्त फ्लोटिंग बटणावर टॅप करा.</string>
+    <string name="quick_access_floating_button_title">द्रुत प्रवेश फ्लोटिंग बटण</string>
+    <string name="str_home_cleaner">क्लीनर</string>
 </resources>

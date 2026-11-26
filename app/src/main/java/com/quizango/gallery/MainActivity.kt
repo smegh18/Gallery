@@ -25,6 +25,8 @@ import androidx.navigation.compose.rememberNavController
 import com.quizango.gallery.ui.external.ExternalPickScreen
 import com.quizango.gallery.ui.external.PickRequest
 import com.quizango.gallery.ui.external.pickKind
+import com.quizango.gallery.ui.floating.FloatingButtons
+import com.quizango.gallery.ui.floating.isSidebarRoute
 import com.quizango.gallery.ui.home.LocalOpenedFromOutside
 import com.quizango.gallery.ui.navigation.EXTRA_NOTIFICATION_ACTION
 import com.quizango.gallery.ui.navigation.EXTRA_SHORTCUT_ROUTE
@@ -55,6 +57,11 @@ class MainActivity : AppCompatActivity() {
         val app = application as GalleryApplication
         val pick = pickRequestOf(intent)
         if (pick == null && savedInstanceState == null) accept(intent)
+        // Phase 10: a screen opened from the floating sidebar starts on Home (no splash) with the screen over it.
+        // This activity is exported, so only a sidebar tool's own route is accepted (never e.g. vault_media past the lock).
+        val floatingRoute = runCatching { intent.getStringExtra(FloatingButtons.EXTRA_ROUTE) }.getOrNull()
+            ?.takeIf { pick == null && isSidebarRoute(it) }
+        if (floatingRoute != null) openedFromOutside = true
 
         setContent {
             val themeMode by app.preferences.themeMode.collectAsState(initial = 2)
@@ -74,8 +81,13 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         val navController = rememberNavController()
                         CompositionLocalProvider(LocalOpenedFromOutside provides openedFromOutside) {
-                            GalleryNavHost(navController = navController, app = app)
+                            GalleryNavHost(
+                                navController = navController,
+                                app = app,
+                                startRoute = if (floatingRoute != null) Screen.Home.route else Screen.Splash.route
+                            )
                         }
+                        if (floatingRoute != null && savedInstanceState == null) LaunchedEffect(Unit) { navController.navigate(floatingRoute) }
                         val entry = pendingEntry
                         LaunchedEffect(entry) {
                             if (entry != null) openEntry(entry, navController, app)
