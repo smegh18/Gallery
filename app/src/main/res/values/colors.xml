@@ -276,4 +276,28 @@
     <!-- Phase 08 -->
     <color name="wallpaper_bg">#88ffffff</color>
     <color name="wallpaper_apply_button">#ff1e3354</color>
+    <color name="picker_toolbar_color">#ffffffff</color>
+    <color name="toolbar_bottom_border_collage">#ffc7d2e3</color>
+    <color name="disableTabTextColor">#ff000000</color>
+    <color name="selectedTabTextColor">#ff0066ff</color>
+    <color name="bg_vertical_separator">#ff2a2a30</color>
+    <color name="bg_collage_main_bottom_option">#ffffffff</color>
+    <color name="grid_select_bg">#ffc7d2e3</color>
+    <color name="Drop">#ff101015</color>
+    <color name="white_only">#ffffffff</color>
+    <color name="buttonTextColor">@color/white</color>
+    <color name="itemsColor">#ff323232</color>
+    <color name="lineColor">#ff292929</color>
+    <color name="border_gray_color_collage">#ffc7d2e3</color>
+    <color name="color_list_border">#1adddada</color>
+    <color name="bg_text_editor_option">#ffffffff</color>
+    <color name="text_sticker_input_bg_border">#ffc7d2e3</color>
+    <color name="mColorPrimary">@color/mainAppColor</color>
+    <color name="collage_layout_tab_bg">#ffe3eff8</color>
+    <color name="txtColor">#ff606060</color>
+    <color name="background_option_disable">#ff000000</color>
+    <color name="strokeColor">#ff8a8a8a</color>
+    <color name="aspect_ratio_disable_color">#ffc7d2e3</color>
+    <color name="seekbar_thumb_border_color">#ffdbdbdb</color>
+    <color name="seekbar_disable_line">#ffdbdbdb</color>
 </resources>

@@ -147,4 +147,18 @@
     <color name="imagePickerFolderBGColor">#212121</color>
     <color name="imagePickerSelectionsBGColor">#1e1e1e</color>
     <color name="ad_title_color">#ffffff</color>
+    <!-- Phase 08 -->
+    <color name="picker_toolbar_color">#ff000000</color>
+    <color name="toolbar_bottom_border_collage">#00000000</color>
+    <color name="disableTabTextColor">#ff737376</color>
+    <color name="selectedTabTextColor">#ffffffff</color>
+    <color name="bg_collage_main_bottom_option">#ff1e1e1e</color>
+    <color name="grid_select_bg">#ff1e1e24</color>
+    <color name="bg_text_editor_option">#ff1e1e1e</color>
+    <color name="text_sticker_input_bg_border">#1affffff</color>
+    <color name="mColorPrimary">@color/colorPrimary</color>
+    <color name="collage_layout_tab_bg">#ff1e1e1e</color>
+    <color name="background_option_disable">#ff8e8e91</color>
+    <color name="seekbar_thumb_border_color">#ffffffff</color>
+    <color name="seekbar_disable_line">#33ffffff</color>
 </resources>

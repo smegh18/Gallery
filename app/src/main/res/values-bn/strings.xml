@@ -409,4 +409,9 @@
     <string name="home_screen">হোম স্ক্রীন</string>
     <string name="home_lock_screen">হোম এবং লক স্ক্রীন</string>
     <string name="apply_set_wallpaper">ওয়ালপেপার সফলভাবে আপডেট করা হয়েছে।</string>
+    <string name="blur_bg">ঝাপসা পটভূমি</string>
+    <string name="exit_without_saving">আপনার ডিজিটাল পরিচয় প্রকাশ করুন</string>
+    <string name="are_you_sure_you_want_to_discard_changes_message">সেকেন্ডের মধ্যে আপনার অনন্য এআই অবতার পরিচয় তৈরি করুন।</string>
+    <string name="other">অন্যান্য</string>
+    <string name="snapchat">স্ন্যাপচ্যাট</string>
 </resources>

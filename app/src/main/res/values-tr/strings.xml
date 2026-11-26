@@ -445,4 +445,9 @@ Tarama Tamamlandı!"</string>
     <string name="home_screen">Ana Ekran</string>
     <string name="home_lock_screen">Ana Sayfa ve Kilit Ekranı</string>
     <string name="apply_set_wallpaper">Duvar kağıdı başarıyla güncellendi.</string>
+    <string name="blur_bg">Arkaplanı Bulanıklaştır</string>
+    <string name="exit_without_saving">Dijital Kimliğinizi Serbest Bırakın</string>
+    <string name="are_you_sure_you_want_to_discard_changes_message">Benzersiz yapay zeka avatar kimliğinizi saniyeler içinde oluşturun.</string>
+    <string name="other">Diğer</string>
+    <string name="snapchat">Snapchat</string>
 </resources>
