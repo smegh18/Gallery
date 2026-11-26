@@ -236,11 +236,11 @@ fun VaultMediaScreen(
                 pendingUnhide = null
                 scope.launch {
                     progress = R.string.unhiding
-                    val restored = items.count { vaultRepository.restoreFromVault(it) }
+                    val failed = vaultBatchFailures(items, VaultItem::filePath) { vaultRepository.restoreFromVault(it) }
                     mediaRepository.syncMediaStore() // restore only re-indexes the file; the gallery table needs the batch sync (07-02)
                     progress = null
-                    toast(if (restored > 0) R.string.selected_media_files_successfully_unhide else R.string.something_went_wrong)
-                    selectedPaths = emptySet()
+                    toast(if (failed.isEmpty()) R.string.selected_media_files_successfully_unhide else R.string.something_went_wrong)
+                    selectedPaths = failed.toSet() // the failed items stay selected for a retry
                 }
             },
             onDismiss = { pendingUnhide = null }

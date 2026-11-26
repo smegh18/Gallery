@@ -285,7 +285,8 @@ class MediaRepositoryImpl(
     private val scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + Dispatchers.Default)
     private val flows = java.util.concurrent.ConcurrentHashMap<String, Flow<*>>()
     private val activeEntities by lazy { dao.getAllActiveMediaFlow().shared() }
-    // Trash, restore and the retention purge take turns: a restore can never commit between purge's expiry snapshot and its file delete
+    // Trash, restore, favourite, the retention purge and sync's row rewrite take turns: none commits inside another's read-then-write.
+    // Not reentrant: nothing that holds it may call syncMediaStore or setFavorite.
     private val trashLock = Mutex()
 
     private fun <T> Flow<T>.shared() =
@@ -570,29 +571,33 @@ class MediaRepositoryImpl(
 
     override suspend fun syncMediaStore() = withContext(Dispatchers.IO) {
         val scanned = scanner.scanMedia()
-        val existingMap = dao.getAllMedia().associateBy { it.filePath }
-        val entities = scanned.map { item ->
-            val existing = existingMap[item.filePath]
-            val entity = MediaEntity.fromDomain(item)
-            if (existing != null) {
-                keepLocation(entity, existing).copy(
-                    deletedDate = existing.deletedDate,
-                    isFavorite = existing.isFavorite
-                )
-            } else {
-                entity
+        // Read-modify-write under trashLock: a trash, restore or favourite landing mid-sync is never overwritten by the stale row
+        val entities = trashLock.withLock {
+            val existingMap = dao.getAllMedia().associateBy { it.filePath }
+            val entities = scanned.map { item ->
+                val existing = existingMap[item.filePath]
+                val entity = MediaEntity.fromDomain(item)
+                if (existing != null) {
+                    keepLocation(entity, existing).copy(
+                        deletedDate = existing.deletedDate,
+                        isFavorite = existing.isFavorite
+                    )
+                } else {
+                    entity
+                }
             }
+            // Write only new or changed rows; rewriting everything re-emits every list in the app
+            val changed = entities.filter { it != existingMap[it.filePath] }
+            if (changed.isNotEmpty()) dao.insertAll(changed)
+            // Drop rows for files deleted outside the app (they showed as blank tiles).
+            // Recycle-bin rows (deletedDate > 0) are kept.
+            val scannedPaths = scanned.mapTo(HashSet()) { it.filePath }
+            val missing = existingMap.values
+                .filter { it.deletedDate == 0L && it.filePath !in scannedPaths && !File(it.filePath).exists() }
+                .map { it.filePath }
+            if (missing.isNotEmpty()) dao.deleteByPaths(missing)
+            entities
         }
-        // Write only new or changed rows; rewriting everything re-emits every list in the app
-        val changed = entities.filter { it != existingMap[it.filePath] }
-        if (changed.isNotEmpty()) dao.insertAll(changed)
-        // Drop rows for files deleted outside the app (they showed as blank tiles).
-        // Recycle-bin rows (deletedDate > 0) are kept.
-        val scannedPaths = scanned.mapTo(HashSet()) { it.filePath }
-        val missing = existingMap.values
-            .filter { it.deletedDate == 0L && it.filePath !in scannedPaths && !File(it.filePath).exists() }
-            .map { it.filePath }
-        if (missing.isNotEmpty()) dao.deleteByPaths(missing)
         // After the lists are written (PlaceFindService runs later too): EXIF GPS once per file version, then the place name
         val located = entities.mapNotNull { e ->
             var r = e
@@ -608,7 +613,7 @@ class MediaRepositoryImpl(
     }
 
     override suspend fun setFavorite(path: String, favorite: Boolean) = withContext(Dispatchers.IO) {
-        dao.setFavorite(path, favorite)
+        trashLock.withLock { dao.setFavorite(path, favorite) }
     }
 
     override suspend fun moveToTrash(path: String): PathMutationOutcome = moveToTrash(listOf(path)).single()
