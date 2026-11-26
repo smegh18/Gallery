@@ -76,6 +76,7 @@ fun FeaturePromoScreen(
             true
         }
         if (hasOverlay) {
+            com.quizango.gallery.ui.floating.FloatingButtons.enable(context) // Phase 10: 2.7.2's Enable turns the floating button on
             scope.launch {
                 appPreferences.setOnboardingCompleted(true)
                 onNavigateToHome()
@@ -95,6 +96,7 @@ fun FeaturePromoScreen(
                 )
                 overlayLauncher.launch(intent)
             } else {
+                com.quizango.gallery.ui.floating.FloatingButtons.enable(context) // Phase 10
                 scope.launch {
                     appPreferences.setOnboardingCompleted(true)
                     onNavigateToHome()

@@ -76,7 +76,9 @@ fun HomeScreen(
     var titleBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     val albumSelecting = uiState.selectedAlbums.isNotEmpty()
     val anySelecting = uiState.isSelectionMode || albumSelecting
-    val showVaultHint = !anySelecting && shouldShowVaultHint(
+    // Phase 10: the floating-button offer holds the vault hint until it closes (isVaultHintShowPending)
+    val floatingOffer = com.quizango.gallery.ui.floating.rememberFloatingButtonOffer(uiState.sessionCount)
+    val showVaultHint = !anySelecting && !floatingOffer.isShowing && shouldShowVaultHint(
         uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context)
     )
 
@@ -297,6 +299,7 @@ fun HomeScreen(
             PinchTutorialOverlay(onGotIt = { viewModel.dismissPinchTip() })
         }
     }
+    com.quizango.gallery.ui.floating.FloatingButtonOfferDialog(floatingOffer)
 
     if (showSortDialog) {
         SortDialog(

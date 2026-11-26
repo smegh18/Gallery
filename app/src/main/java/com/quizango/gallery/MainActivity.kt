@@ -13,7 +13,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.quizango.gallery.ui.floating.FloatingButtons
 import com.quizango.gallery.ui.navigation.GalleryNavHost
+import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryTheme
 import com.quizango.gallery.ui.theme.applyNightMode
 
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         val app = application as GalleryApplication
+        // Phase 10: a screen opened from the floating sidebar starts on Home (no splash) with the screen over it
+        val floatingRoute = intent.getStringExtra(FloatingButtons.EXTRA_ROUTE)
 
         setContent {
             val themeMode by app.preferences.themeMode.collectAsState(initial = 2)
@@ -40,7 +44,8 @@ class MainActivity : AppCompatActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    GalleryNavHost(navController = navController, app = app)
+                    GalleryNavHost(navController = navController, app = app, startRoute = if (floatingRoute != null) Screen.Home.route else Screen.Splash.route)
+                    if (floatingRoute != null && savedInstanceState == null) LaunchedEffect(Unit) { navController.navigate(floatingRoute) }
                 }
             }
         }

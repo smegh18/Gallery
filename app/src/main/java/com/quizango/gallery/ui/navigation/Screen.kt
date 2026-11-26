@@ -135,4 +135,7 @@ sealed class Screen(val route: String) {
             return "creative/color_splash?path=$encoded"
         }
     }
+
+    // Phase 10
+    data object FloatingSetting : Screen("floating_setting")
 }

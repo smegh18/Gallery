@@ -83,7 +83,8 @@ private const val DUPLICATE_DELETE_PROCESS_ROUTE = "duplicates/delete-process"
 @Composable
 fun GalleryNavHost(
     navController: NavHostController,
-    app: GalleryApplication
+    app: GalleryApplication,
+    startRoute: String = Screen.Splash.route // Home when the floating sidebar opens a screen (no splash, as in 2.7.2)
 ) {
     var pendingDuplicateDelete by remember { mutableStateOf<DuplicateDeleteRequest?>(null) }
     var retryDuplicatePaths by remember { mutableStateOf(emptySet<String>()) }
@@ -92,7 +93,7 @@ fun GalleryNavHost(
         { initialState.destination.route == Screen.Splash.route }
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route,
+        startDestination = startRoute,
         enterTransition = {
             if (fromSplash()) fadeIn(tween(350))
             else fadeIn(tween(220)) + slideInHorizontally(tween(260)) { it / 10 }
@@ -798,6 +799,11 @@ fun GalleryNavHost(
             AboutScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+
+        // Phase 10
+        composable(Screen.FloatingSetting.route) {
+            com.quizango.gallery.ui.floating.FloatingSettingScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }
