@@ -495,4 +495,20 @@ papelera"</string>
     <string name="bg_height">Altura de fondo</string>
     <string name="keyboard">Teclado</string>
     <string name="Something_went_wrong_message">¡Ups! Algo salió mal</string>
+    <string name="remove_n_background">"Eliminar
+fondo"</string>
+    <string name="color_bg">"Salpicadura
+de color"</string>
+    <string name="Ins_story">Historia en IG</string>
+    <string name="cover">Portada</string>
+    <string name="font_styles">Estilos de fuente</string>
+    <string name="outofmemory_msg">Memoria no disponible para cargar la imagen</string>
+    <string name="file_not_found">¡Archivo no encontrado!</string>
+    <string name="toast_file">No se puede editar archivos svg.</string>
+    <string name="heif_image_toast">No se puede editar la imagen HEIF.</string>
+    <string name="tap_to_auto_remove_bg">Toque para eliminar automáticamente el fondo</string>
+    <string name="tap_to_blur_bg">Toque para desenfocar el fondo</string>
+    <string name="tap_to_color_splash_bg">Toque para cambiar el fondo a gris</string>
+    <string name="explore_stickers">Explorar Pegatinas</string>
+    <string name="no_stickers">Sin Pegatinas</string>
 </resources>

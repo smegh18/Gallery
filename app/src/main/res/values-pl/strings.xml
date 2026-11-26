@@ -499,4 +499,20 @@ Skanowanie zakończone!"</string>
     <string name="bg_height">Wysokość tła</string>
     <string name="keyboard">Klawiatura</string>
     <string name="Something_went_wrong_message">Oops! Coś poszło nie tak</string>
+    <string name="remove_n_background">"Usuń
+Tło"</string>
+    <string name="color_bg">"Kolor
+Chlupać"</string>
+    <string name="Ins_story">Opowieść na Insta</string>
+    <string name="cover">Okładka</string>
+    <string name="font_styles">Style czcionek</string>
+    <string name="outofmemory_msg">Pamięć niedostępna do wczytania obrazu</string>
+    <string name="file_not_found">Plik nie znaleziony!</string>
+    <string name="toast_file">Nie można edytować plików svg.</string>
+    <string name="heif_image_toast">Nie można edytować obrazu HEIF.</string>
+    <string name="tap_to_auto_remove_bg">Dotknij, aby automatycznie usunąć tło</string>
+    <string name="tap_to_blur_bg">Dotknij, aby rozmyć tło</string>
+    <string name="tap_to_color_splash_bg">Dotknij, aby zmienić tło na szare</string>
+    <string name="explore_stickers">Przeglądaj naklejki</string>
+    <string name="no_stickers">Brak naklejek</string>
 </resources>

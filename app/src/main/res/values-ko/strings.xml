@@ -499,4 +499,20 @@
     <string name="bg_height">배경 높이</string>
     <string name="keyboard">키보드</string>
     <string name="Something_went_wrong_message">어이쿠! 뭔가 잘못되었습니다</string>
+    <string name="remove_n_background">"배경
+제거"</string>
+    <string name="color_bg">"컬러
+스플래시"</string>
+    <string name="Ins_story">인스타그램 스토리</string>
+    <string name="cover">커버</string>
+    <string name="font_styles">글꼴 스타일</string>
+    <string name="outofmemory_msg">이미지를 로드할 메모리가 없습니다</string>
+    <string name="file_not_found">파일을 찾을 수 없습니다!</string>
+    <string name="toast_file">SVG 파일을 편집할 수 없습니다.</string>
+    <string name="heif_image_toast">HEIF 이미지를 편집할 수 없습니다.</string>
+    <string name="tap_to_auto_remove_bg">배경 자동 제거하려면 탭</string>
+    <string name="tap_to_blur_bg">배경을 흐리게 하려면 탭</string>
+    <string name="tap_to_color_splash_bg">배경을 회색으로 변경하려면 탭</string>
+    <string name="explore_stickers">스티커 탐색</string>
+    <string name="no_stickers">스티커 없음</string>
 </resources>

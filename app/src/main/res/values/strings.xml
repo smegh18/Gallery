@@ -607,4 +607,27 @@ recycle bin"</string>
     <string name="collage_ratio_post" translatable="false">Post</string>
     <string name="collage_ratio_cover" translatable="false">Cover</string>
     <string name="collage_ratio_header" translatable="false">Header</string>
+    <string name="new_edit">New</string>
+    <string name="remove_n_background">"Remove
+Background"</string>
+    <string name="color_bg">"Color
+Splash"</string>
+    <string name="IG_1">IG 1:1</string>
+    <string name="IG_2">IG 4:5</string>
+    <string name="Ins_story">Ins Story</string>
+    <string name="cover">Cover</string>
+    <string name="IG_3">5:4</string>
+    <string name="ab">AB</string>
+    <string name="font_styles">Font Styles</string>
+    <string name="outofmemory_msg">memory not available to load image</string>
+    <string name="file_not_found">File not found!</string>
+    <string name="toast_file">Unable to edit svg files.</string>
+    <string name="heif_image_toast">Unable to edit heif image.</string>
+    <string name="tap_to_auto_remove_bg">Tap to auto Remove background</string>
+    <string name="tap_to_blur_bg">Tap to blur Background</string>
+    <string name="tap_to_color_splash_bg">Tap to change background in to gray</string>
+    <string name="explore_stickers">Explore Stickers</string>
+    <string name="no_stickers">No Stickers</string>
+    <string name="editor_redo" translatable="false">Redo</string>
+    <string name="editor_add_text" translatable="false">Add text</string>
 </resources>

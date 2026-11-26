@@ -470,4 +470,20 @@
     <string name="bg_height">پس منظر کی اونچائی</string>
     <string name="keyboard">کی بورڈ</string>
     <string name="Something_went_wrong_message">اوہ نہیں! کچھ غلط ہو گیا</string>
+    <string name="remove_n_background">"پس منظر
+ہٹائیں"</string>
+    <string name="color_bg">"رنگ
+اسپلاش"</string>
+    <string name="Ins_story">آئی جی کہانی</string>
+    <string name="cover">کور</string>
+    <string name="font_styles">فونٹ انداز</string>
+    <string name="outofmemory_msg">تصویر لوڈ کرنے کے لئے یادگار دستیاب نہیں ہے</string>
+    <string name="file_not_found">فائل نہیں ملی!</string>
+    <string name="toast_file">SVG فائلز میں ترتیب نہیں لگا سکا۔</string>
+    <string name="heif_image_toast">HEIF تصویر کو مرتب کرنے میں ناکام.</string>
+    <string name="tap_to_auto_remove_bg">پس منظر کو خودکار ہٹانے کے لئے ٹیپ کریں</string>
+    <string name="tap_to_blur_bg">پس منظر کو دھندلا کرنے کے لئے ٹیپ کریں</string>
+    <string name="tap_to_color_splash_bg">پس منظر کو ہلکے سے سیاہ کرنے کے لئے ٹیپ کریں</string>
+    <string name="explore_stickers">اسٹکرز کا کھوج کریں</string>
+    <string name="no_stickers">کوئی اسٹکر نہیں</string>
 </resources>

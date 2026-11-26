@@ -484,4 +484,20 @@
     <string name="bg_height">पृष्ठभूमी उंची</string>
     <string name="keyboard">कीबोर्ड</string>
     <string name="Something_went_wrong_message">अरेरे! काहीतरी चुकलं</string>
+    <string name="remove_n_background">"पार्श्वभूमि
+काढा"</string>
+    <string name="color_bg">"कलर
+स्प्लॅश"</string>
+    <string name="Ins_story">Ins गोष्ट</string>
+    <string name="cover">कवर</string>
+    <string name="font_styles">फोंट स्टाइल्स</string>
+    <string name="outofmemory_msg">प्रतिमा लोड करण्यासाठी मेमोरी उपलब्ध नाही</string>
+    <string name="file_not_found">फाइल सापडत नाही!</string>
+    <string name="toast_file">SVG फाइल्स संपादित करू शकत नाही.</string>
+    <string name="heif_image_toast">HEIF चित्र संपादित करण्यात अक्षम.</string>
+    <string name="tap_to_auto_remove_bg">स्वयंचलितपणे पार्श्वचित्र हटवण्यासाठी टॅप करा</string>
+    <string name="tap_to_blur_bg">पार्श्वचित्र हटवायला टॅप करा</string>
+    <string name="tap_to_color_splash_bg">पार्श्वचित्राला ग्रे मध्ये बदलण्यासाठी टॅप करा</string>
+    <string name="explore_stickers">स्टिकर्स शोधा</string>
+    <string name="no_stickers">कोणतेही स्टिकर्स नाहीत</string>
 </resources>

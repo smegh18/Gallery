@@ -450,4 +450,17 @@ Tarama Tamamlandı!"</string>
     <string name="are_you_sure_you_want_to_discard_changes_message">Benzersiz yapay zeka avatar kimliğinizi saniyeler içinde oluşturun.</string>
     <string name="other">Diğer</string>
     <string name="snapchat">Snapchat</string>
+    <string name="remove_n_background">Arkaplanı Kaldır</string>
+    <string name="color_bg">Renk Sıçraması</string>
+    <string name="Ins_story">Ins Hikayesi</string>
+    <string name="cover">Kapak</string>
+    <string name="font_styles">Yazı Stilleri</string>
+    <string name="outofmemory_msg">resmi yüklemek için bellek yok</string>
+    <string name="file_not_found">Dosya bulunamadı!</string>
+    <string name="toast_file">SVG dosyaları düzenlenemiyor.</string>
+    <string name="tap_to_auto_remove_bg">Arka planı otomatik olarak kaldırmak için dokunun</string>
+    <string name="tap_to_blur_bg">Arkaplanı bulanıklaştırmak için dokunun</string>
+    <string name="tap_to_color_splash_bg">Arka planı griye çevirmek için dokunun</string>
+    <string name="explore_stickers">Çıkartmaları Keşfedin</string>
+    <string name="no_stickers">Etiket yok</string>
 </resources>

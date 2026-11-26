@@ -484,4 +484,20 @@
     <string name="bg_height">પૃષ્ઠભૂમિની ઉંચાઈ</string>
     <string name="keyboard">કીબોર્ડ</string>
     <string name="Something_went_wrong_message">હું! કંઈક ખોટું થયું</string>
+    <string name="remove_n_background">"બેકગ્રાઉન્ડ
+દૂર કરો"</string>
+    <string name="color_bg">"કલર
+સ્પ્લેશ"</string>
+    <string name="Ins_story">ઈન્સ્ટા સ્ટોરી</string>
+    <string name="cover">કવર</string>
+    <string name="font_styles">ફોન્ટ શૈલીઓ</string>
+    <string name="outofmemory_msg">ચિત્ર લોડ કરવા માટે મેમરી ઉપલબ્ધ નથી</string>
+    <string name="file_not_found">ફાઇલ મળી નથી!</string>
+    <string name="toast_file">SVG ફાઈલોને એડિટ કરવામાં અસમર્થ.</string>
+    <string name="heif_image_toast">હેઇફ છબીને સુધારી શકાય નહિં.</string>
+    <string name="tap_to_auto_remove_bg">બેકગ્રાઉન્ડ આપોઆપ દૂર કરવા માટે ટેપ કરો</string>
+    <string name="tap_to_blur_bg">બેકગ્રાઉન્ડને બ્લર કરવા માટે ટેપ કરો</string>
+    <string name="tap_to_color_splash_bg">બેકગ્રાઉન્ડને ગ્રેમાં બદલવા માટે ટેપ કરો</string>
+    <string name="explore_stickers">સ્ટીકરોની શોધખોળ કરો</string>
+    <string name="no_stickers">કોઈ સ્ટિકર્સ નથી</string>
 </resources>

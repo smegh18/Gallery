@@ -500,4 +500,20 @@
     <string name="bg_height">पृष्ठभूमि की ऊँचाई</string>
     <string name="keyboard">कीबोर्ड</string>
     <string name="Something_went_wrong_message">अरे! कुछ गलत हुआ</string>
+    <string name="remove_n_background">"बैकग्राउंड
+हटाएं"</string>
+    <string name="color_bg">"रंग
+स्प्लैश"</string>
+    <string name="Ins_story">इंस्टा स्टोरी</string>
+    <string name="cover">कवर</string>
+    <string name="font_styles">फ़ॉन्ट स्टाइल्स</string>
+    <string name="outofmemory_msg">चित्र लोड करने के लिए मेमोरी उपलब्ध नहीं है</string>
+    <string name="file_not_found">फ़ाइल नहीं मिली!</string>
+    <string name="toast_file">SVG फ़ाइलें संपादित करने में असमर्थ।</string>
+    <string name="heif_image_toast">HEIF छवि को संपादित करने में असमर्थ.</string>
+    <string name="tap_to_auto_remove_bg">बैकग्राउंड को स्वच्छ करने के लिए टैप करें</string>
+    <string name="tap_to_blur_bg">बैकग्राउंड को ब्लर करने के लिए टैप करें</string>
+    <string name="tap_to_color_splash_bg">बैकग्राउंड को ग्रे में बदलने के लिए टैप करें</string>
+    <string name="explore_stickers">स्टिकर खोजें</string>
+    <string name="no_stickers">कोई स्टिकर नहीं</string>
 </resources>

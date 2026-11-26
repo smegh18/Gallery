@@ -505,4 +505,25 @@
     <string name="bg_height">Высота фона</string>
     <string name="keyboard">Клавиатура</string>
     <string name="Something_went_wrong_message">Упс! Что-то пошло не так</string>
+    <string name="new_edit">Новый</string>
+    <string name="remove_n_background">"Удалить
+фон"</string>
+    <string name="color_bg">"Цвет
+фон"</string>
+    <string name="IG_1">IG 1:1</string>
+    <string name="IG_2">IG 4:5</string>
+    <string name="Ins_story">История Ins</string>
+    <string name="cover">Обложка</string>
+    <string name="IG_3">5:4</string>
+    <string name="ab">AB</string>
+    <string name="font_styles">Стили шрифта</string>
+    <string name="outofmemory_msg">Память недоступна для загрузки изображения</string>
+    <string name="file_not_found">Файл не найден!</string>
+    <string name="toast_file">Не удалось редактировать svg файлы.</string>
+    <string name="heif_image_toast">Невозможно редактировать изображение heif.</string>
+    <string name="tap_to_auto_remove_bg">Нажмите, чтобы автоматически удалить фон</string>
+    <string name="tap_to_blur_bg">Нажмите, чтобы размыть фон</string>
+    <string name="tap_to_color_splash_bg">Нажмите, чтобы сделать фон серым</string>
+    <string name="explore_stickers">Изучить стикеры</string>
+    <string name="no_stickers">Нет стикеров</string>
 </resources>

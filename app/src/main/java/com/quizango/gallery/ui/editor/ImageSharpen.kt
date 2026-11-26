@@ -3,13 +3,13 @@ package com.quizango.gallery.ui.editor
 import android.graphics.Bitmap
 
 /**
- * Sharpen with a 3x3 Laplacian kernel: out = c + k * (4c - up - down - left - right).
- * [amount] is the slider value 0..100; 100 means k = 1. Alpha and edge pixels are kept.
+ * GPUImageSharpenFilter's kernel: out = c + k * (4c - up - down - left - right), k = [amount] / 100.
+ * The Sharpen filter uses 200 (k = 2), the Adjust ruler -100..100 (a negative k softens). Alpha and edge pixels are kept.
  */
 object ImageSharpen {
 
     fun sharpenPixels(src: IntArray, width: Int, height: Int, amount: Float): IntArray {
-        val k = (amount / 100f).coerceIn(0f, 1f)
+        val k = (amount / 100f).coerceIn(-1f, 2f)
         if (k == 0f || width < 3 || height < 3) return src.copyOf()
         val out = src.copyOf()
         for (y in 1 until height - 1) {
@@ -31,7 +31,7 @@ object ImageSharpen {
     }
 
     fun sharpen(bitmap: Bitmap, amount: Float): Bitmap {
-        if (amount <= 0f) return bitmap
+        if (amount == 0f) return bitmap
         val w = bitmap.width
         val h = bitmap.height
         val px = IntArray(w * h).also { bitmap.getPixels(it, 0, w, 0, 0, w, h) }

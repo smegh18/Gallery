@@ -495,4 +495,20 @@
     <string name="bg_height">ارتفاع الخلفية</string>
     <string name="keyboard">لوحة المفاتيح</string>
     <string name="Something_went_wrong_message">عذرًا! حدث خطأ ما</string>
+    <string name="remove_n_background">"إزالة
+الخلفية"</string>
+    <string name="color_bg">"تظليل
+اللون"</string>
+    <string name="Ins_story">قصة إنستغرام</string>
+    <string name="cover">غلاف</string>
+    <string name="font_styles">أنماط الخطوط</string>
+    <string name="outofmemory_msg">الذاكرة غير متوفرة لتحميل الصورة</string>
+    <string name="file_not_found">الملف غير موجود!</string>
+    <string name="toast_file">غير قادر على تحرير ملفات svg.</string>
+    <string name="heif_image_toast">غير قادر على تحرير الصورة بتنسيق HEIF.</string>
+    <string name="tap_to_auto_remove_bg">انقر لإزالة الخلفية تلقائيًا</string>
+    <string name="tap_to_blur_bg">انقر لتحريف الخلفية</string>
+    <string name="tap_to_color_splash_bg">انقر لتغيير الخلفية إلى اللون الرمادي</string>
+    <string name="explore_stickers">استكشاف الملصقات</string>
+    <string name="no_stickers">لا توجد ملصقات</string>
 </resources>

@@ -503,4 +503,20 @@ keranjang sampah"</string>
     <string name="bg_height">Tinggi Bg</string>
     <string name="keyboard">Keyboard</string>
     <string name="Something_went_wrong_message">Ups! ada yang salah</string>
+    <string name="remove_n_background">"Hapus
+Latar Belakang"</string>
+    <string name="color_bg">"Percikan
+Warna"</string>
+    <string name="Ins_story">Cerita Ins</string>
+    <string name="cover">Sampul</string>
+    <string name="font_styles">Gaya Font</string>
+    <string name="outofmemory_msg">Memori tidak tersedia untuk memuat gambar</string>
+    <string name="file_not_found">File tidak ditemukan!</string>
+    <string name="toast_file">Tidak dapat mengedit file svg.</string>
+    <string name="heif_image_toast">Tidak dapat mengedit gambar HEIF.</string>
+    <string name="tap_to_auto_remove_bg">Ketuk untuk menghapus latar belakang secara otomatis</string>
+    <string name="tap_to_blur_bg">Ketuk untuk memburamkan latar belakang</string>
+    <string name="tap_to_color_splash_bg">Ketuk untuk mengubah latar belakang menjadi abu-abu</string>
+    <string name="explore_stickers">Jelajahi Stiker</string>
+    <string name="no_stickers">Tidak Ada Stiker</string>
 </resources>

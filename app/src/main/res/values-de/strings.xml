@@ -495,4 +495,20 @@ Papierkorb zu verschieben"</string>
     <string name="bg_height">Hintergrundhöhe</string>
     <string name="keyboard">Tastatur</string>
     <string name="Something_went_wrong_message">Ups! Etwas ist schiefgelaufen</string>
+    <string name="remove_n_background">"Hintergrund
+entfernt"</string>
+    <string name="color_bg">"Farb
+spritzer"</string>
+    <string name="Ins_story">Ins Story</string>
+    <string name="cover">Cover</string>
+    <string name="font_styles">Schriftarten</string>
+    <string name="outofmemory_msg">Speicher nicht verfügbar, um Bild zu laden</string>
+    <string name="file_not_found">Datei nicht gefunden!</string>
+    <string name="toast_file">SVG-Dateien können nicht bearbeitet werden</string>
+    <string name="heif_image_toast">Kann das HEIF-Bild nicht bearbeiten.</string>
+    <string name="tap_to_auto_remove_bg">Tippen Sie zum automatischen Entfernen des Hintergrunds</string>
+    <string name="tap_to_blur_bg">Tippen Sie, um den Hintergrund zu verwischen</string>
+    <string name="tap_to_color_splash_bg">Tippen Sie, um den Hintergrund in Grau zu ändern</string>
+    <string name="explore_stickers">Sticker erkunden</string>
+    <string name="no_stickers">Keine Sticker</string>
 </resources>

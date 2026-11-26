@@ -499,4 +499,20 @@ Skanning slutförd!"</string>
     <string name="bg_height">Bakgrundshöjd</string>
     <string name="keyboard">Tangentbord</string>
     <string name="Something_went_wrong_message">Oops! Något gick fel</string>
+    <string name="remove_n_background">"Ta bort
+Bakgrund"</string>
+    <string name="color_bg">"Färg
+stänk"</string>
+    <string name="Ins_story">Ins Story</string>
+    <string name="cover">Omslag</string>
+    <string name="font_styles">Typsnittsstilar</string>
+    <string name="outofmemory_msg">Minnet inte tillgängligt för att ladda bilden</string>
+    <string name="file_not_found">Filen hittades inte!</string>
+    <string name="toast_file">Det går inte att redigera svg-filer.</string>
+    <string name="heif_image_toast">Kan inte redigera HEIF-bilden.</string>
+    <string name="tap_to_auto_remove_bg">Tryck för att automatiskt ta bort bakgrunden</string>
+    <string name="tap_to_blur_bg">Tryck för att sudda ut bakgrunden</string>
+    <string name="tap_to_color_splash_bg">Tryck för att ändra bakgrunden till grå</string>
+    <string name="explore_stickers">Utforska klistermärken</string>
+    <string name="no_stickers">Inga klistermärken</string>
 </resources>

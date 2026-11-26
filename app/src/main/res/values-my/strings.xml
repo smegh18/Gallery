@@ -500,4 +500,20 @@
     <string name="bg_height">အနက်အရောင် အမြင့်</string>
     <string name="keyboard">ကီးဘုတ်</string>
     <string name="Something_went_wrong_message">Oops! ဘာမှားခဲ့တယ်</string>
+    <string name="remove_n_background">"မြင့်နေ
+နေသည်"</string>
+    <string name="color_bg">"အရောင်
+သင်္ကြန်း"</string>
+    <string name="Ins_story">Ins Story</string>
+    <string name="cover">ကာဗွန်</string>
+    <string name="font_styles">ဖောင့်ချုပ်စတိုင်ရှင်များ</string>
+    <string name="outofmemory_msg">ပုံတင်ခြင်းအတွက် မော်ဒယ်အရမ်းတွင် မည်သည့် သင်္ချာ ရရှိနိုင်ပါဘူး</string>
+    <string name="file_not_found">ဖိုင်မတွေ့ရှိပါ!</string>
+    <string name="toast_file">SVG ဖိုင်များ ပြင်ဆင်ရန် မရပ်တန်း</string>
+    <string name="heif_image_toast">HEIF ပုံတစ်ခုကို ပြင်ဆင်နိုင်နေပါသည်။</string>
+    <string name="tap_to_auto_remove_bg">ပုံနှိပ်ရန် ဘယ်ဖြစ်ကြမလဲဆိုတာ</string>
+    <string name="tap_to_blur_bg">ပုံနှိပ်ရန် ပြောင်းပြသော ပုံနှိပ်</string>
+    <string name="tap_to_color_splash_bg">ပုံနှိပ်ရန် ပြောင်းပြခြင်းသို့ ပြောင်းမြင်းသော ပုံနှိပ်</string>
+    <string name="explore_stickers">အကြွှန်ရောင်စတင်ရန်</string>
+    <string name="no_stickers">အကြွှန်ရောင်မရှိသေးပါ</string>
 </resources>

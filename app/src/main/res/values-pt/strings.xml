@@ -499,4 +499,20 @@ Verificação concluída!"</string>
     <string name="bg_height">Altura do Fundo</string>
     <string name="keyboard">Teclado</string>
     <string name="Something_went_wrong_message">Упс! Что-то пошло не так</string>
+    <string name="remove_n_background">"Remover
+Fundo"</string>
+    <string name="color_bg">"Cores
+Salpicar"</string>
+    <string name="Ins_story">História do Instagram</string>
+    <string name="cover">Capa</string>
+    <string name="font_styles">Estilos de Fonte</string>
+    <string name="outofmemory_msg">Memória não disponível para carregar imagem</string>
+    <string name="file_not_found">Ficheiro não encontrado!</string>
+    <string name="toast_file">Não é possível editar arquivos SVG.</string>
+    <string name="heif_image_toast">Não é possível editar a imagem HEIF.</string>
+    <string name="tap_to_auto_remove_bg">Toque para remover automaticamente o fundo</string>
+    <string name="tap_to_blur_bg">Toque para desfocar o fundo</string>
+    <string name="tap_to_color_splash_bg">Toque para mudar o fundo para cinza</string>
+    <string name="explore_stickers">Explorar Adesivos</string>
+    <string name="no_stickers">Sem Adesivos</string>
 </resources>

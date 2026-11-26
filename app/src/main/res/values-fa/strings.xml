@@ -495,4 +495,20 @@
     <string name="bg_height">ارتفاع پس‌زمینه</string>
     <string name="keyboard">صفحه کلید</string>
     <string name="Something_went_wrong_message">اوه! مشکلی پیش آمده است</string>
+    <string name="remove_n_background">"حذف
+پس زمینه"</string>
+    <string name="color_bg">"پراکندگی
+رنگ"</string>
+    <string name="Ins_story">استوری اینستاگرام</string>
+    <string name="cover">کاور</string>
+    <string name="font_styles">استایل‌های فونت</string>
+    <string name="outofmemory_msg">حافظه برای بارگذاری تصویر در دسترس نیست</string>
+    <string name="file_not_found">پرونده یافت نشد!</string>
+    <string name="toast_file">قادر به ویرایش فایل‌های svg نیست.</string>
+    <string name="heif_image_toast">قادر به ویرایش تصویر HEIF نیست.</string>
+    <string name="tap_to_auto_remove_bg">برای حذف خودکار پس‌زمینه لمس کنید</string>
+    <string name="tap_to_blur_bg">برای محو کردن پس‌زمینه لمس کنید</string>
+    <string name="tap_to_color_splash_bg">برای تغییر پس‌زمینه به خاکستری لمس کنید</string>
+    <string name="explore_stickers">استیکرها را کاوش کنید</string>
+    <string name="no_stickers">بدون استیکر</string>
 </resources>

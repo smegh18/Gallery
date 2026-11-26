@@ -211,9 +211,9 @@ fun SearchScreen(
     )
 }
 
-/** layout_search_toolbar: back, the `search_back` field with hint, clear or search icon, divider. */
+/** layout_search_toolbar: back, the `search_back` field with hint, clear or search icon, divider. Also the sticker picker's. */
 @Composable
-private fun SearchToolbar(query: String, onQueryChange: (String) -> Unit, onBack: () -> Unit) {
+internal fun SearchToolbar(query: String, onQueryChange: (String) -> Unit, onBack: () -> Unit, hint: Int = R.string.search) {
     val keyboard = LocalSoftwareKeyboardController.current
     Column(
         Modifier
@@ -258,7 +258,7 @@ private fun SearchToolbar(query: String, onQueryChange: (String) -> Unit, onBack
                     decorationBox = { field ->
                         Box(contentAlignment = Alignment.CenterStart) {
                             if (query.isEmpty()) Text(
-                                stringResource(R.string.search),
+                                stringResource(hint),
                                 style = GalleryText.BodySmallMedium,
                                 color = colorResource(R.color.hintLanguageColor),
                                 maxLines = 1

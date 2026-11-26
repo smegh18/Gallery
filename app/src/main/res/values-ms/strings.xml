@@ -500,4 +500,20 @@ recycle bin"</string>
     <string name="bg_height">Tinggi Bg</string>
     <string name="keyboard">Papan Kekunci</string>
     <string name="Something_went_wrong_message">Oops! Sesuatu yang salah</string>
+    <string name="remove_n_background">"Alih
+Latar Belakang"</string>
+    <string name="color_bg">"Warna
+Percikan"</string>
+    <string name="Ins_story">Cerita Ins</string>
+    <string name="cover">Kulit</string>
+    <string name="font_styles">Gaya Fon</string>
+    <string name="outofmemory_msg">Memori tidak tersedia untuk memuat gambar</string>
+    <string name="file_not_found">Fail tidak dijumpai!</string>
+    <string name="toast_file">Tidak dapat mengedit fail svg.</string>
+    <string name="heif_image_toast">Tidak dapat mengedit gambar HEIF.</string>
+    <string name="tap_to_auto_remove_bg">Ketik untuk auto Alihkan latar belakang</string>
+    <string name="tap_to_blur_bg">Ketik untuk kaburkan latar belakang</string>
+    <string name="tap_to_color_splash_bg">Ketik untuk menukar latar belakang menjadi kelabu</string>
+    <string name="explore_stickers">Meneroka Stiker</string>
+    <string name="no_stickers">Tiada Stiker</string>
 </resources>

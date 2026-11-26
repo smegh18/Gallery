@@ -500,4 +500,20 @@
     <string name="bg_height">பின்னணி உயரம்</string>
     <string name="keyboard">தட்டச்சு</string>
     <string name="Something_went_wrong_message">உப்பு! ஏதோ தவறு வந்தது</string>
+    <string name="remove_n_background">"பின்னலை
+அகற்று"</string>
+    <string name="color_bg">"வண்ண
+அழகு"</string>
+    <string name="Ins_story">கதை</string>
+    <string name="cover">மேல்</string>
+    <string name="font_styles">எழுத்து பாணிகள்</string>
+    <string name="outofmemory_msg">படத்தை ஏற்றுவதற்கான நினைவகம் கிடைக்கவில்லை</string>
+    <string name="file_not_found">கோப்பு காணப்படவில்லை!</string>
+    <string name="toast_file">SVG கோப்புகளை திருத்த இயலாது.</string>
+    <string name="heif_image_toast">HEIF படத்தை திருத்த முடியாது.</string>
+    <string name="tap_to_auto_remove_bg">பின்னோக்கிய பின்னால் பகுதியை அகற்ற</string>
+    <string name="tap_to_blur_bg">பின்னோக்கிய பின்னால் பகுதியை புரளவும்</string>
+    <string name="tap_to_color_splash_bg">பின்னோக்கிய பின்னால் பகுதியை பருவத்தில் மாற்றவும்</string>
+    <string name="explore_stickers">ஸ்டிக்கர்களை அறியுங்கள்</string>
+    <string name="no_stickers">ஸ்டிக்கர்கள் இல்லை</string>
 </resources>

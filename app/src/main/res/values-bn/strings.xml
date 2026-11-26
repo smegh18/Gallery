@@ -414,4 +414,17 @@
     <string name="are_you_sure_you_want_to_discard_changes_message">সেকেন্ডের মধ্যে আপনার অনন্য এআই অবতার পরিচয় তৈরি করুন।</string>
     <string name="other">অন্যান্য</string>
     <string name="snapchat">স্ন্যাপচ্যাট</string>
+    <string name="remove_n_background">পটভূমি সরান</string>
+    <string name="color_bg">কালার স্প্ল্যাশ</string>
+    <string name="Ins_story">ইনস স্টোরি</string>
+    <string name="cover">আবরণ</string>
+    <string name="font_styles">ফন্ট শৈলী</string>
+    <string name="outofmemory_msg">ইমেজ লোড করার জন্য মেমরি উপলব্ধ নয়</string>
+    <string name="file_not_found">ফাইল পাওয়া যায়নি!</string>
+    <string name="toast_file">svg ফাইলগুলি সম্পাদনা করতে অক্ষম৷</string>
+    <string name="tap_to_auto_remove_bg">স্বয়ংক্রিয়ভাবে পটভূমি সরাতে আলতো চাপুন৷</string>
+    <string name="tap_to_blur_bg">পটভূমি অস্পষ্ট করতে আলতো চাপুন</string>
+    <string name="tap_to_color_splash_bg">ব্যাকগ্রাউন্ড ধূসর করতে ট্যাপ করুন</string>
+    <string name="explore_stickers">স্টিকারগুলি অন্বেষণ করুন৷</string>
+    <string name="no_stickers">স্টিকার নেই</string>
 </resources>

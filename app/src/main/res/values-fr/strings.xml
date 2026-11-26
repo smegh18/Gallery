@@ -495,4 +495,20 @@ poubelle"</string>
     <string name="bg_height">Hauteur de fond</string>
     <string name="keyboard">Clavier</string>
     <string name="Something_went_wrong_message">"Oups ! quelque chose s'est mal passé"</string>
+    <string name="remove_n_background">"Supprimer
+l'arrière-plan"</string>
+    <string name="color_bg">"Éclaboussure
+de couleur"</string>
+    <string name="Ins_story">Histoire Insta</string>
+    <string name="cover">Couverture</string>
+    <string name="font_styles">Styles de police</string>
+    <string name="outofmemory_msg">"Mémoire non disponible pour charger l'image"</string>
+    <string name="file_not_found">Fichier introuvable !</string>
+    <string name="toast_file">Impossible de modifier les fichiers svg.</string>
+    <string name="heif_image_toast">"Impossible de modifier l'image HEIF."</string>
+    <string name="tap_to_auto_remove_bg">"Appuyez pour supprimer automatiquement l'arrière-plan"</string>
+    <string name="tap_to_blur_bg">"Appuyez pour estomper l'arrière-plan"</string>
+    <string name="tap_to_color_splash_bg">"Appuyez pour changer l'arrière-plan en gris"</string>
+    <string name="explore_stickers">Explorer les autocollants</string>
+    <string name="no_stickers">"Pas d'autocollants"</string>
 </resources>

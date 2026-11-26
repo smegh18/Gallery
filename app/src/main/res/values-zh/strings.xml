@@ -452,4 +452,17 @@
     <string name="are_you_sure_you_want_to_discard_changes_message">在几秒钟内生成您独特的 AI 头像身份。</string>
     <string name="other">其他</string>
     <string name="snapchat">Snapchat</string>
+    <string name="remove_n_background">删除背景</string>
+    <string name="color_bg">色彩飞溅</string>
+    <string name="Ins_story">Ins 故事</string>
+    <string name="cover">覆盖</string>
+    <string name="font_styles">字体样式</string>
+    <string name="outofmemory_msg">内存不足，无法加载图像</string>
+    <string name="file_not_found">未找到文件！</string>
+    <string name="toast_file">无法编辑 svg 文件。</string>
+    <string name="tap_to_auto_remove_bg">点按即可自动删除背景</string>
+    <string name="tap_to_blur_bg">点击模糊背景</string>
+    <string name="tap_to_color_splash_bg">点击将背景更改为灰色</string>
+    <string name="explore_stickers">探索贴纸</string>
+    <string name="no_stickers">禁止贴纸</string>
 </resources>

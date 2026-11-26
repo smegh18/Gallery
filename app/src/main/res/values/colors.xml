@@ -300,4 +300,15 @@
     <color name="aspect_ratio_disable_color">#ffc7d2e3</color>
     <color name="seekbar_thumb_border_color">#ffdbdbdb</color>
     <color name="seekbar_disable_line">#ffdbdbdb</color>
+    <color name="alignSvgColor">#ff292d32</color>
+    <color name="align_trans">#60000000</color>
+    <color name="dark_blue_trans">#400066ff</color>
+    <color name="dark_red">#ffff0000</color>
+    <color name="short_video_bottom_bg">#e6ffffff</color>
+    <color name="textAlignBackground">#ffffffff</color>
+    <color name="edit_view_line">#ffbfd4e4</color>
+    <color name="text_line_color">#50bfd4e4</color>
+    <color name="transparent_color">#ffedf4ff</color>
+    <color name="FilterBodarColor">#800066ff</color>
+    <color name="crop_image_view_background">#bb000000</color>
 </resources>

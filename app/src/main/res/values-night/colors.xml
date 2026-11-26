@@ -161,4 +161,9 @@
     <color name="background_option_disable">#ff8e8e91</color>
     <color name="seekbar_thumb_border_color">#ffffffff</color>
     <color name="seekbar_disable_line">#33ffffff</color>
+    <color name="alignSvgColor">#ffffffff</color>
+    <color name="short_video_bottom_bg">#d9000000</color>
+    <color name="textAlignBackground">#ff35373b</color>
+    <color name="edit_view_line">#20ffffff</color>
+    <color name="transparent_color">#ff35373b</color>
 </resources>

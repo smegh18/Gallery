@@ -500,4 +500,20 @@
     <string name="bg_height">背景高さ</string>
     <string name="keyboard">キーボード</string>
     <string name="Something_went_wrong_message">おっと！何かがうまくいかなかった</string>
+    <string name="remove_n_background">"背景を
+削除"</string>
+    <string name="color_bg">"カラースプ
+ラッシュ"</string>
+    <string name="Ins_story">Ins ストーリー</string>
+    <string name="cover">カバー</string>
+    <string name="font_styles">フォントスタイル</string>
+    <string name="outofmemory_msg">画像を読み込むためのメモリが利用できません</string>
+    <string name="file_not_found">ファイルが見つかりません！</string>
+    <string name="toast_file">SVGファイルを編集できません。</string>
+    <string name="heif_image_toast">HEIF 画像を編集できません。</string>
+    <string name="tap_to_auto_remove_bg">背景を自動で削除するにはタップ</string>
+    <string name="tap_to_blur_bg">背景をぼかすにはタップ</string>
+    <string name="tap_to_color_splash_bg">背景をグレーに変更するにはタップ</string>
+    <string name="explore_stickers">ステッカーを探索</string>
+    <string name="no_stickers">ステッカーなし</string>
 </resources>
