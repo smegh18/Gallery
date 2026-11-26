@@ -36,6 +36,7 @@ import com.quizango.gallery.ui.navigation.isDeepLink
 import com.quizango.gallery.ui.navigation.notificationEntry
 import com.quizango.gallery.ui.navigation.shortcutEntry
 import com.quizango.gallery.ui.theme.GalleryTheme
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 
 // AppCompatActivity (a FragmentActivity, so BiometricPrompt still works) applies the in-app theme and language to XML resources too
@@ -107,7 +108,6 @@ class MainActivity : AppCompatActivity() {
         navController.currentBackStackEntryFlow.first {
             runCatching { navController.getBackStackEntry(Screen.Home.route) }.isSuccess
         }
-        pendingEntry = null
         val entry = runCatching {
             val data = intent.data
             when {
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     notificationEntry(intent.getStringExtra(EXTRA_NOTIFICATION_ACTION), app.preferences.isJunkCleanedForToday.first())
                 else -> shortcutEntry(intent.getStringExtra(EXTRA_SHORTCUT_ROUTE))
             }
-        }.getOrNull()
+        }.onFailure { if (it is CancellationException) throw it }.getOrNull() // a cancelled read must not fall back to Home
         navController.popBackStack(Screen.Home.route, inclusive = false)
         when (entry) {
             is Entry.Open -> navController.navigate(entry.route) { launchSingleTop = true }
@@ -131,6 +131,8 @@ class MainActivity : AppCompatActivity() {
                 .onFailure { Toast.makeText(this, R.string.browser_not_available, Toast.LENGTH_SHORT).show() }
             null -> Unit // Home
         }
+        // Cleared only now: clearing earlier changes the LaunchedEffect key and cancels this dispatch mid-read
+        if (pendingEntry === intent) pendingEntry = null
     }
 
     /** ExternalSelectMediaActivity's filter: GET_CONTENT / PICK; the caller's mime type and ALLOW_MULTIPLE are only read. */
