@@ -108,4 +108,11 @@ class HomeShellTest {
         assertTrue(show(8, closed = 4))
         assertFalse(show(4, perm = false))
     }
+
+    @Test
+    fun vaultHintSkipsOutsideEntriesAndWaitsForStartDialogs() {
+        assertFalse(shouldShowVaultHint(4, false, 0, true, openedFromOutside = true)) // notification, deep link, shortcut
+        assertFalse(shouldShowVaultHint(4, false, 0, true, startDialogShowing = true)) // notification permission request up
+        assertTrue(shouldShowVaultHint(4, false, 0, true, openedFromOutside = false, startDialogShowing = false))
+    }
 }
