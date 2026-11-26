@@ -273,4 +273,30 @@
     <color name="security_answer_stroke">#def2ff</color>
     <color name="ad_title_color">#1e3354</color>
     <color name="bgColor">#1e1e24</color>
+    <!-- Phase 09 -->
+    <color name="premium_bg_start">#ffc78e00</color>
+    <color name="premium_bg_end">#ffe4a324</color>
+    <color name="premium_line">#ff873900</color>
+    <color name="white_only">#ffffffff</color>
+    <color name="lib_white">#ffffffff</color>
+    <color name="lib_white_for_slider">#ffffffff</color>
+    <color name="paywall_background_light">#ffffffff</color>
+    <color name="paywall_background_dark">#ff000000</color>
+    <color name="paywall_title_light">#ff000000</color>
+    <color name="paywall_title_dark">#ffffffff</color>
+    <color name="paywall_subtitle_light">#ff7588a7</color>
+    <color name="paywall_subtitle_dark">#ff7588a7</color>
+    <color name="paywall_slider_title_light">#ff000000</color>
+    <color name="paywall_slider_title_dark">#ffffffff</color>
+    <color name="paywall_slider_desc_light">#ff515151</color>
+    <color name="paywall_slider_desc_dark">#ff7b93b2</color>
+    <color name="paywall_button_light">#ff3478f6</color>
+    <color name="paywall_button_dark">#ff3478f6</color>
+    <color name="paywall_font_default_light">#ff7588a7</color>
+    <color name="paywall_font_default_dark">#ff7588a7</color>
+    <color name="paywall_font_normal_light">#ff1e3354</color>
+    <color name="paywall_font_normal_dark">#ffffffff</color>
+    <color name="rate_desc_color">#ff777777</color>
+    <!-- dialog_rate_us tvDesc: a literal in the reference layout, no colour name -->
+    <color name="rate_best_text">#ff109142</color>
 </resources>

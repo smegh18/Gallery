@@ -790,7 +790,11 @@ fun GalleryNavHost(
             SettingsScreen(
                 appPreferences = app.preferences,
                 onNavigate = { route -> navController.navigateOnce(route) },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                // wired when Phase 10/11 merge
+                onOpenQuickInfoSettings = {},
+                onOpenFloatingSettings = {},
+                onOpenInstallSettings = {}
             )
         }
 
@@ -798,6 +802,11 @@ fun GalleryNavHost(
             AboutScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+
+        // Phase 09
+        composable(Screen.Pro.route) {
+            com.quizango.gallery.ui.settings.ProScreen(onClose = { navController.popBackStack() })
         }
     }
 }

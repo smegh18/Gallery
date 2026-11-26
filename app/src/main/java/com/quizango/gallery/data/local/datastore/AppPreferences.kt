@@ -305,4 +305,14 @@ class AppPreferences(private val context: Context) {
             it[Keys.VAULT_ANSWER_3] = com.quizango.gallery.data.local.VaultSecret.hash(com.quizango.gallery.data.local.VaultSecret.normalizeAnswer(a3))
         }
     }
+
+    // Phase 09
+    private val appInsightsKey = booleanPreferencesKey("app_insights_enabled") // 2.7.2 key (x/a), default on
+
+    /** Settings "Share app usage stats": only the choice is kept; no usage data is collected or sent. */
+    val appInsightsEnabled: Flow<Boolean> = context.dataStore.data.map { it[appInsightsKey] ?: true }
+
+    suspend fun setAppInsightsEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[appInsightsKey] = enabled }
+    }
 }

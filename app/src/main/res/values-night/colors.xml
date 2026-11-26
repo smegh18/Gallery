@@ -147,4 +147,6 @@
     <color name="imagePickerFolderBGColor">#212121</color>
     <color name="imagePickerSelectionsBGColor">#1e1e1e</color>
     <color name="ad_title_color">#ffffff</color>
+    <!-- Phase 09 -->
+    <color name="lib_white_for_slider">#ff000000</color>
 </resources>

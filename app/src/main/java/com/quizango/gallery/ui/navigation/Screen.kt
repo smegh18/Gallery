@@ -135,4 +135,7 @@ sealed class Screen(val route: String) {
             return "creative/color_splash?path=$encoded"
         }
     }
+
+    // Phase 09
+    data object Pro : Screen("pro") // PayWallActivity (activity_subscription_purchase)
 }
