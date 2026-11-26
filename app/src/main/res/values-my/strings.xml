@@ -441,4 +441,15 @@
     <string name="security_question8">သင့်အကြိုက်ဆုံး အလုပ်အကိုင်</string>
     <string name="security_question9">သင့်အကြိုက်ဆုံး အားကိုကြားရွေးချယ်သူ</string>
     <string name="security_question10">သင့်ပထမအလုပ်အကိုင်ကို တစ်ချို့ မြို့မှာ</string>
+    <string name="always_off">အမြဲတမ်းပိတ်ထားပါ။</string>
+    <string name="always_on">အမြဲတမ်းဖွင့်ထားသည်။</string>
+    <string name="at_always_off_description">floating button ကို ပိတ်ထားပြီး 모든 快速捷径 隐藏합니다。</string>
+    <string name="at_always_on_description">မည်သည့်စျင်နား၌မဆို လွတ်လပ်စွာအသုံးပြုနိုင်ရန် floating button ကို အမြဲသက်ဝင်နေစေသည်။</string>
+    <string name="floating_button_settings_disclaimer">သင့်နှစ်သက်မှုအလိုက် ဆက်တင်များမှ မည်သည့်အချိန်တွင်မဆို ဤအင်္ဂါရပ်ကို ဖွင့်/ပိတ်နိုင်သည်။</string>
+    <string name="gallery">ဓာတ်ပုံခန်းမ</string>
+    <string name="gallery_allow_display">ပြစ်မှု ပြင်ဆင်ဆောင်ရန် ခွင့်ပြုရန်</string>
+    <string name="quick_access_floating_button_description">ဤအင်္ဂါရပ်သည် ပင်မစခရင်တွင် ရရှိနိုင်သည်။ အသုံးပြုရန် ပေါ်လာသော ခလုတ်ကို နှိပ်ပါ။</string>
+    <string name="quick_access_floating_button_title">အမြန်ဝင်ရောက်ခွင့် ပေါ်လာသော ခလုတ်</string>
+    <string name="quick_access_settings">အမြန်ဝင်ရောက်ခွင့် ဆက်တင်များ</string>
+    <string name="str_home_cleaner">သန့်ရှင်းရေး</string>
 </resources>

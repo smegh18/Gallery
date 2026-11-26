@@ -433,4 +433,15 @@ recycle bin"</string>
     <string name="security_question8">Ano ang iyong pangarap na trabaho?</string>
     <string name="security_question9">Sino ang iyong iniidolo sa sports?</string>
     <string name="security_question10">Saang lungsod mo unang trabaho?</string>
+    <string name="always_off">Palaging OFF</string>
+    <string name="always_on">Palaging ON</string>
+    <string name="at_always_off_description">I-disable ang floating button at itago ang lahat ng quick shortcuts.</string>
+    <string name="at_always_on_description">Pinananatiling aktibo ang floating button para sa mabilis na access sa bawat screen.</string>
+    <string name="floating_button_settings_disclaimer">Maaari mong i-ON/OFF ang feature na ito anumang oras mula sa Settings ayon sa iyong kagustuhan.</string>
+    <string name="gallery">Gallery</string>
+    <string name="gallery_allow_display">Pahintulutan ang Display ng Gallery</string>
+    <string name="quick_access_floating_button_description">Available ang feature na ito sa Home screen. I-tap lang ang floating button para magamit ito.</string>
+    <string name="quick_access_floating_button_title">Quick Access Floating Button</string>
+    <string name="quick_access_settings">Quick Access Settings</string>
+    <string name="str_home_cleaner">Panlinis</string>
 </resources>

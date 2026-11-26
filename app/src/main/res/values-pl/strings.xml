@@ -440,4 +440,15 @@ Skanowanie zakończone!"</string>
     <string name="security_question8">Jaka jest twoja wymarzona praca?</string>
     <string name="security_question9">Kto jest twoim idolem sportowym?</string>
     <string name="security_question10">W jakim mieście miałeś swoją pierwszą pracę?</string>
+    <string name="always_off">Zawsze WYŁĄCZONY</string>
+    <string name="always_on">Zawsze WŁĄCZONY</string>
+    <string name="at_always_off_description">Wyłącza przycisk pływający i ukrywa wszystkie szybkie skróty.</string>
+    <string name="at_always_on_description">Utrzymuje aktywny przycisk pływający, aby zapewnić szybki dostęp na każdym ekranie.</string>
+    <string name="floating_button_settings_disclaimer">Możesz włączyć/wyłączyć tę funkcję w dowolnym momencie w Ustawieniach zgodnie ze swoimi preferencjami.</string>
+    <string name="gallery">Galeria</string>
+    <string name="gallery_allow_display">Zezwól na wyświetlanie galerii</string>
+    <string name="quick_access_floating_button_description">Ta funkcja jest dostępna na ekranie głównym. Po prostu dotknij pływającego przycisku, aby z niej skorzystać.</string>
+    <string name="quick_access_floating_button_title">Pływający przycisk szybkiego dostępu</string>
+    <string name="quick_access_settings">Ustawienia szybkiego dostępu</string>
+    <string name="str_home_cleaner">Czyściciel</string>
 </resources>

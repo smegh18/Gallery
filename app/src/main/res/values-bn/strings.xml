@@ -390,4 +390,9 @@
     <string name="security_question8">আপনার স্বপ্নের কাজ কে?</string>
     <string name="security_question9">আপনার ক্রীড়া নায়ক কে?</string>
     <string name="security_question10">কোন শহরে বা শহরে আপনার প্রথম কাজ ছিল?</string>
+    <string name="always_off">সর্বদা বন্ধ</string>
+    <string name="always_on">সর্বদা চালু</string>
+    <string name="gallery">গ্যালারি</string>
+    <string name="gallery_allow_display">গ্যালারি প্রদর্শনের অনুমতি দিন</string>
+    <string name="str_home_cleaner">ক্লিনার</string>
 </resources>

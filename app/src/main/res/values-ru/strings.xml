@@ -442,4 +442,15 @@
     <string name="security_question8">Кто ваша работа мечты?</string>
     <string name="security_question9">Кто ваш спортивный герой?</string>
     <string name="security_question10">В каком городе или поселке была ваша первая работа?</string>
+    <string name="always_off">Всегда ВЫКЛ.</string>
+    <string name="always_on">Всегда ВКЛЮЧЕНО</string>
+    <string name="at_always_off_description">Отключает плавающую кнопку и скрывает все быстрые ярлыки.</string>
+    <string name="at_always_on_description">Оставляет плавающую кнопку активной для быстрого доступа на каждом экране.</string>
+    <string name="floating_button_settings_disclaimer">Вы можете включить/выключить эту функцию в любое время в Настройках по своему усмотрению.</string>
+    <string name="gallery">Галерея</string>
+    <string name="gallery_allow_display">Разрешите Галерее отображение</string>
+    <string name="quick_access_floating_button_description">Эта функция доступна на главном экране. Просто нажмите на плавающую кнопку, чтобы использовать её.</string>
+    <string name="quick_access_floating_button_title">Плавающая кнопка быстрого доступа</string>
+    <string name="quick_access_settings">Настройки быстрого доступа</string>
+    <string name="str_home_cleaner">Очиститель</string>
 </resources>

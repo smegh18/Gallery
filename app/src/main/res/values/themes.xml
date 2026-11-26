@@ -14,4 +14,11 @@
         <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
         <item name="android:windowExitAnimation">@anim/dialog_slide_bottom</item>
     </style>
+    <!-- Phase 10: tip_guidance_theme, the see-through guide over the system permission page -->
+    <style name="Theme.NewGallery.Guide" parent="Theme.NewGallery">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 </resources>

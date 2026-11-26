@@ -441,4 +441,15 @@ cestino"</string>
     <string name="security_question8">Qual è il tuo lavoro dei sogni?</string>
     <string name="security_question9">Chi è il tuo idolo sportivo?</string>
     <string name="security_question10">In quale città è stato il tuo primo lavoro?</string>
+    <string name="always_off">Sempre SPENTO</string>
+    <string name="always_on">Sempre acceso</string>
+    <string name="at_always_off_description">Disattiva il pulsante flottante e nasconde tutte le scorciatoie rapide.</string>
+    <string name="at_always_on_description">Mantiene attivo il pulsante flottante per un accesso rapido su ogni schermata.</string>
+    <string name="floating_button_settings_disclaimer">Puoi attivare/disattivare questa funzione in qualsiasi momento dalle Impostazioni in base alle tue preferenze.</string>
+    <string name="gallery">Galleria</string>
+    <string name="gallery_allow_display">Consenti la visualizzazione della galleria</string>
+    <string name="quick_access_floating_button_description">Questa funzione è disponibile nella schermata principale. Basta toccare il pulsante fluttuante per usarla.</string>
+    <string name="quick_access_floating_button_title">Pulsante fluttuante di accesso rapido</string>
+    <string name="quick_access_settings">Impostazioni accesso rapido</string>
+    <string name="str_home_cleaner">Pulitore</string>
 </resources>

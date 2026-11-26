@@ -441,4 +441,15 @@ recycle bin"</string>
     <string name="security_question8">Apakah pekerjaan impian anda?</string>
     <string name="security_question9">Siapakah idol sukan anda?</string>
     <string name="security_question10">Di bandar manakah anda mempunyai pekerjaan pertama?</string>
+    <string name="always_off">Sentiasa OFF</string>
+    <string name="always_on">Sentiasa HIDUP</string>
+    <string name="at_always_off_description">Nyahaktifkan butang terapung dan sembunyikan semua pintasan pantas.</string>
+    <string name="at_always_on_description">Menjadikan butang terapung sentiasa aktif untuk akses cepat pada setiap skrin.</string>
+    <string name="floating_button_settings_disclaimer">Anda boleh menghidupkan/mematikan ciri ini pada bila-bila masa dari Tetapan mengikut pilihan anda.</string>
+    <string name="gallery">Galeri</string>
+    <string name="gallery_allow_display">Galari Benarkan Paparan</string>
+    <string name="quick_access_floating_button_description">Ciri ini tersedia di skrin utama. Hanya ketik butang terapung untuk menggunakannya.</string>
+    <string name="quick_access_floating_button_title">Butang terapung akses pantas</string>
+    <string name="quick_access_settings">Tetapan akses pantas</string>
+    <string name="str_home_cleaner">Pembersih</string>
 </resources>

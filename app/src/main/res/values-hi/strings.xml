@@ -441,4 +441,15 @@
     <string name="security_question8">आपका सपने की नौकरी क्या है?</string>
     <string name="security_question9">आपका स्पोर्ट्स आदर्श कौन हैं?</string>
     <string name="security_question10">आपकी पहली नौकरी किस शहर में थी?</string>
+    <string name="always_off">हमेशा बंद</string>
+    <string name="always_on">हमेशा बने रहें</string>
+    <string name="at_always_off_description">फ़्लोटिंग बटन को निष्क्रिय करता है और सभी त्वरित शॉर्टकट छुपाता है.</string>
+    <string name="at_always_on_description">हर स्क्रीन पर त्वरित एक्सेस के लिए फ़्लोटिंग बटन को सक्रिय रखता है।</string>
+    <string name="floating_button_settings_disclaimer">आप अपनी पसंद के अनुसार सेटिंग्स से कभी भी इस सुविधा को चालू/बंद कर सकते हैं।</string>
+    <string name="gallery">गैलरी</string>
+    <string name="gallery_allow_display">गैलरी डिस्प्ले की अनुमति दें</string>
+    <string name="quick_access_floating_button_description">यह सुविधा होम स्क्रीन पर उपलब्ध है। इसका उपयोग करने के लिए बस फ़्लोटिंग बटन पर टैप करें।</string>
+    <string name="quick_access_floating_button_title">त्वरित पहुंच फ़्लोटिंग बटन</string>
+    <string name="quick_access_settings">त्वरित पहुंच सेटिंग्स</string>
+    <string name="str_home_cleaner">साफ करने वाला</string>
 </resources>

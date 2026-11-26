@@ -441,4 +441,15 @@ keranjang sampah"</string>
     <string name="security_question8">Apa pekerjaan impian Anda?</string>
     <string name="security_question9">Siapakah idol olahraga Anda?</string>
     <string name="security_question10">Di kota mana Anda pertama kali bekerja?</string>
+    <string name="always_off">Selalu MATI</string>
+    <string name="always_on">Selalu AKTIF</string>
+    <string name="at_always_off_description">Menonaktifkan tombol mengambang dan menyembunyikan semua pintasan cepat.</string>
+    <string name="at_always_on_description">Menjaga tombol mengambang tetap aktif untuk akses cepat di setiap layar.</string>
+    <string name="floating_button_settings_disclaimer">Anda dapat menyalakan/mematikan fitur ini kapan saja dari Pengaturan sesuai preferensi Anda.</string>
+    <string name="gallery">Galeri</string>
+    <string name="gallery_allow_display">Izinkan Tampilan Galeri</string>
+    <string name="quick_access_floating_button_description">Fitur ini tersedia di layar beranda. Cukup ketuk tombol mengambang untuk menggunakannya.</string>
+    <string name="quick_access_floating_button_title">Tombol mengambang akses cepat</string>
+    <string name="quick_access_settings">Pengaturan akses cepat</string>
+    <string name="str_home_cleaner">Pembersih</string>
 </resources>

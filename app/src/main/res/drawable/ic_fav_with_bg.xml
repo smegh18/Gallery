@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector android:height="50.0dip" android:width="50.0dip" android:viewportWidth="50.0" android:viewportHeight="50.0"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt">
+    <path android:pathData="M25,0L25,0A25,25 0,0 1,50 25L50,25A25,25 0,0 1,25 50L25,50A25,25 0,0 1,0 25L0,25A25,25 0,0 1,25 0z" android:fillAlpha="0.2">
+        <aapt:attr name="android:fillColor">
+            <gradient android:angle="0.0" android:type="linear" android:startX="25.0" android:startY="0.0" android:endX="25.0" android:endY="50.0">
+                <item android:color="#ffac94fc" android:offset="0.0" />
+                <item android:color="#ff5a98fc" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#ff000000" android:pathData="M25,5L25,5A20,20 0,0 1,45 25L45,25A20,20 0,0 1,25 45L25,45A20,20 0,0 1,5 25L5,25A20,20 0,0 1,25 5z" />
+    <path android:pathData="M25,5L25,5A20,20 0,0 1,45 25L45,25A20,20 0,0 1,25 45L25,45A20,20 0,0 1,5 25L5,25A20,20 0,0 1,25 5z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:angle="0.0" android:type="linear" android:startX="45.925" android:startY="46.906" android:endX="12.053" android:endY="9.192">
+                <item android:color="#ffff973c" android:offset="0.0" />
+                <item android:color="#ffff8316" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#00000000" android:pathData="M25.04,34.634L20.847,30.331L16.688,26.028C14.437,23.65 14.437,19.927 16.688,17.549C17.79,16.49 19.282,15.937 20.808,16.021C22.334,16.106 23.757,16.821 24.735,17.995L25.04,18.295L25.343,17.982C26.321,16.808 27.743,16.093 29.269,16.008C30.795,15.924 32.288,16.477 33.39,17.536C35.64,19.914 35.64,23.637 33.39,26.015L29.23,30.318L25.04,34.634Z" android:strokeColor="#ffffffff" android:strokeWidth="1.7" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillType="evenOdd" />
+</vector>

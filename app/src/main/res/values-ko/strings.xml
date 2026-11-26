@@ -440,4 +440,15 @@
     <string name="security_question8">당신의 꿈 직업은 무엇인가요?</string>
     <string name="security_question9">당신의 스포츠 아이돌은 누구인가요?</string>
     <string name="security_question10">당신의 첫 직장이었던 도시는 어디인가요?</string>
+    <string name="always_off">항상 OFF</string>
+    <string name="always_on">항상 켜짐</string>
+    <string name="at_always_off_description">플로팅 버튼을 비활성화하고 모든 빠른 단축키를 숨깁니다.</string>
+    <string name="at_always_on_description">모든 화면에서 빠르게 접근할 수 있도록 플로팅 버튼을 활성 상태로 유지합니다.</string>
+    <string name="floating_button_settings_disclaimer">설정에서 선호도에 따라 언제든지 이 기능을 켜거나 끌 수 있습니다.</string>
+    <string name="gallery">갤러리</string>
+    <string name="gallery_allow_display">갤러리 표시 허용</string>
+    <string name="quick_access_floating_button_description">이 기능은 홈 화면에서 사용할 수 있습니다. 플로팅 버튼을 탭하기만 하면 사용할 수 있습니다.</string>
+    <string name="quick_access_floating_button_title">빠른 액세스 플로팅 버튼</string>
+    <string name="quick_access_settings">빠른 액세스 설정</string>
+    <string name="str_home_cleaner">클리너</string>
 </resources>

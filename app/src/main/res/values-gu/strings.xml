@@ -425,4 +425,15 @@
     <string name="security_question8">તમારી સ્વપ્નનોની નોકરી કઇ છે?</string>
     <string name="security_question9">તમારો સ્પોર્ટ્સ આઇડલ કોણ છે?</string>
     <string name="security_question10">તમારી પ્રથમ નોકરી કયા શહેરમાં કે નગરમાં હતી?</string>
+    <string name="always_off">હંમેશા બંધ</string>
+    <string name="always_on">હંમેશા ચાલુ</string>
+    <string name="at_always_off_description">ફ્લોટિંગ બટન નિષ્ક્રિય કરો અને બધા ઝડપી શૉર્ટકટ છુપાવો.</string>
+    <string name="at_always_on_description">દરેક સ્ક્રીનમાં ઝડપી ઍક્સેસ માટે ફ્લોટિંગ બટન સક્રિય રાખે છે.</string>
+    <string name="floating_button_settings_disclaimer">તમે તમારી પસંદગીના આધારે સેટિંગ્સમાંથી કોઈ પણ સમયે આ સુવિધાને ચાલુ/બંધ કરી શકો છો.</string>
+    <string name="gallery">ગેલેરી</string>
+    <string name="gallery_allow_display">ગેલેરીને પ્રદર્શન કરવાની મંજૂરી આપો</string>
+    <string name="quick_access_floating_button_description">આ સુવિધા હોમ સ્ક્રીન પર ઉપલબ્ધ છે. તેનો ઉપયોગ કરવા માટે ફક્ત ફ્લોટિંગ બટનને ટેપ કરો.</string>
+    <string name="quick_access_floating_button_title">ઝડપી પ્રવેશ ફ્લોટિંગ બટન</string>
+    <string name="quick_access_settings">ઝડપી પ્રવેશ સેટિંગ્સ</string>
+    <string name="str_home_cleaner">ક્લીનર</string>
 </resources>

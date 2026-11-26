@@ -273,4 +273,7 @@
     <color name="security_answer_stroke">#def2ff</color>
     <color name="ad_title_color">#1e3354</color>
     <color name="bgColor">#1e1e24</color>
+    <!-- Phase 10 Floating sidebar (R272) -->
+    <color name="install_setting_card_stroke">#fff5f5f5</color>
+    <color name="iu_setting_sub_text">#ff7a8389</color>
 </resources>

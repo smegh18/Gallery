@@ -441,4 +441,15 @@
     <string name="security_question8">夢の仕事は何ですか？</string>
     <string name="security_question9">スポーツのアイドルは誰ですか？</string>
     <string name="security_question10">最初の仕事の都市はどこでしたか？</string>
+    <string name="always_off">常にオフ</string>
+    <string name="always_on">常にオン</string>
+    <string name="at_always_off_description">フローティングボタンを無効にし、すべてのクイックショートカットを非表示にします。</string>
+    <string name="at_always_on_description">すべての画面で素早くアクセスできるよう、フローティングボタンを常に有効にします。</string>
+    <string name="floating_button_settings_disclaimer">設定から、お好みに応じていつでもこの機能をオン/オフにできます。</string>
+    <string name="gallery">ギャラリー</string>
+    <string name="gallery_allow_display">ギャラリーの表示を許可する</string>
+    <string name="quick_access_floating_button_description">この機能はホーム画面で利用できます。フローティングボタンをタップするだけで使用できます。</string>
+    <string name="quick_access_floating_button_title">クイックアクセスフローティングボタン</string>
+    <string name="quick_access_settings">クイックアクセス設定</string>
+    <string name="str_home_cleaner">クリーナー</string>
 </resources>

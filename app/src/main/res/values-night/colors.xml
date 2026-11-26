@@ -147,4 +147,7 @@
     <color name="imagePickerFolderBGColor">#212121</color>
     <color name="imagePickerSelectionsBGColor">#1e1e1e</color>
     <color name="ad_title_color">#ffffff</color>
+    <!-- Phase 10 Floating sidebar (R272) -->
+    <color name="install_setting_card_stroke">#ff252525</color>
+    <color name="iu_setting_sub_text">#ff7e7e7e</color>
 </resources>

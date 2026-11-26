@@ -433,4 +433,15 @@
     <string name="security_question8">شغل رویاهای شما چیست؟</string>
     <string name="security_question9">الهیات ورزشی شما کیست؟</string>
     <string name="security_question10">در کدام شهر اولین شغل شما بود؟</string>
+    <string name="always_off">همیشه خاموش</string>
+    <string name="always_on">همیشه روشن است</string>
+    <string name="at_always_off_description">دکمه شناور را غیرفعال کرده و تمام میانبرهای سریع را پنهان می‌کند.</string>
+    <string name="at_always_on_description">دکمه شناور را برای دسترسی سریع در تمام صفحه‌ها فعال نگه می‌دارد.</string>
+    <string name="floating_button_settings_disclaimer">می‌توانید این ویژگی را در هر زمان از تنظیمات بر اساس ترجیحات خود روشن/خاموش کنید.</string>
+    <string name="gallery">گالری</string>
+    <string name="gallery_allow_display">نمایش گالری را مجاز کنید</string>
+    <string name="quick_access_floating_button_description">این ویژگی در صفحه اصلی در دسترس است. فقط روی دکمه شناور ضربه بزنید تا از آن استفاده کنید.</string>
+    <string name="quick_access_floating_button_title">دکمه شناور دسترسی سریع</string>
+    <string name="quick_access_settings">تنظیمات دسترسی سریع</string>
+    <string name="str_home_cleaner">پاک‌کننده</string>
 </resources>

@@ -426,4 +426,15 @@ Tarama Tamamlandı!"</string>
     <string name="security_question8">Hayalinizdeki meslek nedir?</string>
     <string name="security_question9">Spor kahramanınız kim?</string>
     <string name="security_question10">İlk işiniz hangi şehir veya kasabadaydı?</string>
+    <string name="always_off">Her zaman KAPALI</string>
+    <string name="always_on">Her zaman AÇIK</string>
+    <string name="at_always_off_description">Kayan düğmeyi devre dışı bırakır ve tüm hızlı kısayolları gizler.</string>
+    <string name="at_always_on_description">Her ekranda hızlı erişim için kayan düğmeyi aktif tutar.</string>
+    <string name="floating_button_settings_disclaimer">"Tercihinize göre Ayarlar'dan istediğiniz zaman bu özelliği AÇIK/KAPALI yapabilirsiniz."</string>
+    <string name="gallery">Galeri</string>
+    <string name="gallery_allow_display">Galeri Görüntülemeye İzin Ver</string>
+    <string name="quick_access_floating_button_description">Bu özellik Ana ekranda mevcuttur. Kullanmak için sadece kayan düğmeye dokunun.</string>
+    <string name="quick_access_floating_button_title">Hızlı erişim kayan düğme</string>
+    <string name="quick_access_settings">Hızlı erişim ayarları</string>
+    <string name="str_home_cleaner">Temizleyici</string>
 </resources>

@@ -433,4 +433,15 @@ Papierkorb zu verschieben"</string>
     <string name="security_question8">Was ist Ihr Traumberuf?</string>
     <string name="security_question9">Wer ist Ihr Sportidol?</string>
     <string name="security_question10">In welcher Stadt war Ihr erster Job?</string>
+    <string name="always_off">Immer AUS</string>
+    <string name="always_on">Immer EIN</string>
+    <string name="at_always_off_description">Deaktiviert die schwebende Taste und blendet alle Schnellzugriffe aus.</string>
+    <string name="at_always_on_description">Hält die schwebende Taste für schnellen Zugriff auf jedem Bildschirm aktiv.</string>
+    <string name="floating_button_settings_disclaimer">Sie können diese Funktion jederzeit in den Einstellungen nach Ihren Wünschen ein- oder ausschalten.</string>
+    <string name="gallery">Galerie</string>
+    <string name="gallery_allow_display">Galerie erlaubt die Anzeige</string>
+    <string name="quick_access_floating_button_description">Diese Funktion ist auf dem Startbildschirm verfügbar. Tippen Sie einfach auf den schwebenden Button, um sie zu verwenden.</string>
+    <string name="quick_access_floating_button_title">Schwebender Schnellzugriffs-Button</string>
+    <string name="quick_access_settings">Schnellzugriffs-Einstellungen</string>
+    <string name="str_home_cleaner">Reiniger</string>
 </resources>
