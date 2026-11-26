@@ -390,4 +390,13 @@
     <string name="security_question8">আপনার স্বপ্নের কাজ কে?</string>
     <string name="security_question9">আপনার ক্রীড়া নায়ক কে?</string>
     <string name="security_question10">কোন শহরে বা শহরে আপনার প্রথম কাজ ছিল?</string>
+    <string name="collage_limit_error">কোলাজের জন্য আপনাকে অবশ্যই %1$d থেকে %2$dটি আইটেম নির্বাচন করতে হবে৷</string>
+    <string name="discard_changes">পরিবর্তন বাতিল করুন</string>
+    <string name="discard_permission">পরিবর্তনগুলি বাতিল করার বিষয়টি নিশ্চিত করবেন?</string>
+    <string name="blur_bg">ঝাপসা পটভূমি</string>
+    <string name="exit_without_saving">আপনার ডিজিটাল পরিচয় প্রকাশ করুন</string>
+    <string name="are_you_sure_you_want_to_discard_changes_message">সেকেন্ডের মধ্যে আপনার অনন্য এআই অবতার পরিচয় তৈরি করুন।</string>
+    <string name="other">অন্যান্য</string>
+    <string name="snapchat">স্ন্যাপচ্যাট</string>
+    <string name="please_turn_on_internet_and_try_again">অনুগ্রহ করে আপনার ইন্টারনেট চালু করুন এবং আবার চেষ্টা করুন।</string>
 </resources>

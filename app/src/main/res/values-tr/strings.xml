@@ -426,4 +426,13 @@ Tarama Tamamlandı!"</string>
     <string name="security_question8">Hayalinizdeki meslek nedir?</string>
     <string name="security_question9">Spor kahramanınız kim?</string>
     <string name="security_question10">İlk işiniz hangi şehir veya kasabadaydı?</string>
+    <string name="collage_limit_error">Kolaj için %1$d ile %2$d arasında öğe seçmelisiniz.</string>
+    <string name="discard_changes">Değişiklikleri Sil</string>
+    <string name="discard_permission">Atma değişikliklerini onaylıyor musunuz?</string>
+    <string name="blur_bg">Arkaplanı Bulanıklaştır</string>
+    <string name="exit_without_saving">Dijital Kimliğinizi Serbest Bırakın</string>
+    <string name="are_you_sure_you_want_to_discard_changes_message">Benzersiz yapay zeka avatar kimliğinizi saniyeler içinde oluşturun.</string>
+    <string name="other">Diğer</string>
+    <string name="snapchat">Snapchat</string>
+    <string name="please_turn_on_internet_and_try_again">Lütfen internetinizi açıp tekrar deneyin.</string>
 </resources>

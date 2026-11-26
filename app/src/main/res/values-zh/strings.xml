@@ -428,4 +428,13 @@
     <string name="security_question8">你的梦想职业是谁？</string>
     <string name="security_question9">你的体育英雄是谁？</string>
     <string name="security_question10">您的第一份工作在哪个城市或城镇？</string>
+    <string name="collage_limit_error">您必须在 %1$d 到 %2$d 个项目之间进行选择以制作拼贴画。</string>
+    <string name="discard_changes">放弃更改</string>
+    <string name="discard_permission">确认放弃更改？</string>
+    <string name="blur_bg">模糊背景</string>
+    <string name="exit_without_saving">释放你的数字身份</string>
+    <string name="are_you_sure_you_want_to_discard_changes_message">在几秒钟内生成您独特的 AI 头像身份。</string>
+    <string name="other">其他</string>
+    <string name="snapchat">Snapchat</string>
+    <string name="please_turn_on_internet_and_try_again">请打开互联网并重试。</string>
 </resources>

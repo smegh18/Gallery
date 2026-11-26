@@ -542,4 +542,50 @@ recycle bin"</string>
     <string name="collage_limit_error">You must select between %1$d and %2$d items for the collage.</string>
     <string name="discard_changes">Discard Changes</string>
     <string name="discard_permission">Confirm discard changes?</string>
+    <string name="collage">Collage</string>
+    <string name="layout">Layout</string>
+    <string name="ratio">Ratio</string>
+    <string name="background">Background</string>
+    <string name="border">Border</string>
+    <string name="replace">Replace</string>
+    <string name="swap">Swap</string>
+    <string name="vertical">Vertical</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="right">Right</string>
+    <string name="zoom_in">Zoom In</string>
+    <string name="left">Left</string>
+    <string name="up">Up</string>
+    <string name="down">Down</string>
+    <string name="radius">Radius</string>
+    <string name="padding">Padding</string>
+    <string name="ratio_size">Ratio/size</string>
+    <string name="blur_bg">Blur Bg</string>
+    <string name="blur">Blur</string>
+    <string name="custom">Custom</string>
+    <string name="select">Select</string>
+    <string name="png">Png</string>
+    <string name="white">White</string>
+    <string name="black">Black</string>
+    <string name="add_new_text_label">Add New Text</string>
+    <string name="exit_without_saving">Exit without saving?</string>
+    <string name="are_you_sure_you_want_to_discard_changes_message">Your changes will be lost if you exit without saving!</string>
+    <string name="exit">Exit</string>
+    <string name="share_image_via_title">Share File via…</string>
+    <string name="other">Other</string>
+    <string name="x">X</string>
+    <string name="messenger">Messenger</string>
+    <string name="snapchat">Snapchat</string>
+    <string name="save_clg_menu">Save Image</string>
+    <string name="please_turn_on_internet_and_try_again">Please turn on your internet and try again.</string>
+    <string name="try_again">Try again</string>
+    <string name="hellow_label">Hellow</string>
+    <string name="bg_width">Bg Width</string>
+    <string name="bg_height">Bg Height</string>
+    <string name="keyboard">Keyboard</string>
+    <string name="Something_went_wrong_message">Oops! something went wrong</string>
+    <string name="collage_ratio_story" translatable="false">Story</string>
+    <string name="collage_ratio_movie" translatable="false">Movie</string>
+    <string name="collage_ratio_post" translatable="false">Post</string>
+    <string name="collage_ratio_cover" translatable="false">Cover</string>
+    <string name="collage_ratio_header" translatable="false">Header</string>
 </resources>

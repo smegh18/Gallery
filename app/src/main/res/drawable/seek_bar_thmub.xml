@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector android:height="19.0dip" android:width="19.0dip" android:viewportWidth="19.0" android:viewportHeight="19.0"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="@color/seekbar_thumb_border_color" android:pathData="M9.167,18.5C14.137,18.5 18.167,14.471 18.167,9.5C18.167,4.529 14.137,0.5 9.167,0.5C4.196,0.5 0.167,4.529 0.167,9.5C0.167,14.471 4.196,18.5 9.167,18.5Z" android:fillType="evenOdd" />
+    <path android:fillColor="@color/mainAppColor" android:pathData="M9.166,16.605C13.09,16.605 16.272,13.424 16.272,9.5C16.272,5.576 13.09,2.395 9.166,2.395C5.242,2.395 2.061,5.576 2.061,9.5C2.061,13.424 5.242,16.605 9.166,16.605Z" android:fillType="evenOdd" />
+</vector>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector android:height="96.0dip" android:width="96.0dip" android:viewportWidth="96.0" android:viewportHeight="96.0"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:pathData="M2.9 55c0-1.09 0.43-2.13 1.2-2.9 0.77-0.77 1.81-1.2 2.9-1.2h82c2.26 0 4.1 1.84 4.1 4.1v36c0 2.26-1.84 4.1-4.1 4.1h-82c-2.26 0-4.1-1.84-4.1-4.1z" android:strokeColor="@color/aspect_ratio_disable_color" android:strokeWidth="1.8" />
+    <path android:fillColor="@color/aspect_ratio_disable_color" android:pathData="M60.5 68.3c-0.3-2.8-2.5-5-5.3-5.3-4.8-0.5-9.6-0.5-14.4 0-2.8 0.3-4.9 2.4-5.3 5.2-0.3 2.5-0.3 5-0.1 7.4 0.3 2.7 2.4 4.9 5.2 5.2 2.2 0.2 4.4 0.4 6.7 0.4h0.2c2.4 0 5-0.1 7.8-0.4 2.8-0.3 5-2.5 5.2-5.2 0.2-2.5 0.2-4.9 0-7.3ZM59 75.4c-0.2 2-1.8 3.7-3.8 3.9-4.8 0.5-9.6 0.5-14.3 0-2-0.2-3.6-1.9-3.8-3.9-0.2-2.4-0.2-4.8 0.1-7.1 0.3-2 1.9-3.6 3.9-3.8 2.3-0.2 4.7-0.4 7.1-0.4h0.3c2.2 0 4.5 0.1 6.7 0.4 2.1 0.2 3.8 1.8 4 3.9 0 2.3 0 4.7-0.2 7Z" />
+    <path android:fillColor="@color/aspect_ratio_disable_color" android:pathData="M51.8 71.4l-6-3.8c-0.1-0.1-0.3-0.1-0.4-0.1-0.4 0-0.8 0.3-0.8 0.8v7.2c0 0.4 0.3 0.7 0.7 0.8 0.1 0 0.3 0 0.4-0.1l6-3.4c0.1-0.1 0.2-0.1 0.3-0.3 0.3-0.4 0.2-0.9-0.2-1.1ZM50 72l-3.8 2.2v-4.6L50 72Z" />
+</vector>
