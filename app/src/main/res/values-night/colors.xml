@@ -149,4 +149,9 @@
     <color name="ad_title_color">#ffffff</color>
     <!-- Phase 09 -->
     <color name="lib_white_for_slider">#ff000000</color>
+    <!-- Phase 11 -->
+    <color name="black_color">#ffffffff</color>
+    <color name="install_setting_card_stroke">#ff252525</color>
+    <color name="iu_setting_sub_text">#ff7e7e7e</color>
+    <color name="bg_overlay_dialog_top">#ff0278fe</color>
 </resources>

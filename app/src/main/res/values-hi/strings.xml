@@ -479,4 +479,26 @@
     <string name="paywall_slider_duplicate_desc">स्टोरेज स्पेस खाली करने के लिए डुप्लिकेट तस्वीरों को तुरंत ढूंढें और डिलीट करें</string>
     <string name="paywall_slider_recycle_title">रिसाइकिल बिन</string>
     <string name="paywall_slider_recycle_desc">रिसाइकिल बिन से गलती से डिलीट हुए फोटो और वीडियो को वापस पाएं</string>
+    <string name="gs_photos">फ़ोटो</string>
+    <string name="title_settings">सेटिंग्स</string>
+    <string name="games">खेल</string>
+    <string name="gs_view_moments">मोमेंट्स देखें</string>
+    <string name="call_sett_desc">यह स्क्रीन आपको हिडन फ़ोटो, प्राइवेट एलबम, स्मार्ट सॉर्ट, मीडिया क्लीनर और डुप्लिकेट फाइंडर जैसी सुविधाओं को प्रबंधित करने देती है।</string>
+    <string name="always_on">हमेशा बने रहें</string>
+    <string name="show_gs">प्रत्येक इनकमिंग कॉल के बाद दिखाया जाता है।</string>
+    <string name="always_off">हमेशा बंद</string>
+    <string name="disable_call_info">कॉल जानकारी स्क्रीन को पूरी तरह से निष्क्रिय करता है।</string>
+    <string name="improve_your_call_experience">अपने कॉल अनुभव को बेहतर बनाएं</string>
+    <string name="enables_smarter_call_amp_app_experience">अधिक स्मार्ट कॉल और ऐप अनुभव सक्षम करता है</string>
+    <string name="disable_setting">आप इसे कभी भी सेटिंग्स में बंद कर सकते हैं</string>
+    <string name="gallery_allow_display">गैलरी डिस्प्ले की अनुमति दें</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">चुनें कि किसी ऐप को इंस्टॉल/अनइंस्टॉल करने के बाद ऑप्टिमाइज़िंग स्क्रीन कब दिखाई देनी चाहिए.</string>
+    <string name="always_on_subtitle">हर बार जब कोई ऐप इंस्टॉल या अनइंस्टॉल होता है तो दिखाता है.</string>
+    <string name="always_off_subtitle">सुरक्षा स्कैन स्क्रीन को पूर्णतः अक्षम कर देता है।</string>
+    <string name="private_gallery_vault">निजी गैलरी वॉल्ट</string>
+    <string name="smart_org">"स्मार्ट संगठन और
+एक ही जगह पर गोपनीयता"</string>
+    <string name="try_it_now">अभी आज़माएं</string>
+    <string name="app_scan_open">खुला</string>
+    <string name="app_scan_done">हो गया</string>
 </resources>

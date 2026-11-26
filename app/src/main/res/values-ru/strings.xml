@@ -480,4 +480,25 @@
     <string name="paywall_slider_duplicate_desc">Быстро находите и удаляйте повторяющиеся фотографии, чтобы освободить место</string>
     <string name="paywall_slider_recycle_title">Корзина</string>
     <string name="paywall_slider_recycle_desc">Восстанавливайте случайно удаленные фото и видео прямо из корзины</string>
+    <string name="gs_photos">Фотографии</string>
+    <string name="title_settings">Настройки</string>
+    <string name="games">Игры</string>
+    <string name="call_sett_desc">Этот экран позволяет управлять такими функциями, как Скрытые фото, Личные альбомы, Умная сортировка, Очистка медиа и Поиск дубликатов.</string>
+    <string name="always_on">Всегда ВКЛЮЧЕНО</string>
+    <string name="show_gs">Отображается каждый раз после входящего звонка.</string>
+    <string name="always_off">Всегда ВЫКЛ.</string>
+    <string name="disable_call_info">Полностью отключает экран информации о звонке.</string>
+    <string name="improve_your_call_experience">Улучшите качество звонков</string>
+    <string name="enables_smarter_call_amp_app_experience">Включает более умные звонки и работу с приложениями</string>
+    <string name="disable_setting">Вы можете отключить это в любое время в настройках</string>
+    <string name="gallery_allow_display">Разрешите Галерее отображение</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Выберите, когда должен появляться экран оптимизации после установки/удаления приложения.</string>
+    <string name="always_on_subtitle">Показывается каждый раз при установке или удалении приложения.</string>
+    <string name="always_off_subtitle">Полностью отключает экран сканирования безопасности.</string>
+    <string name="private_gallery_vault">Частный сейф галереи</string>
+    <string name="smart_org">"Умная организация и
+конфиденциальность в одном месте"</string>
+    <string name="try_it_now">Попробуйте сейчас</string>
+    <string name="app_scan_open">Открыть</string>
+    <string name="app_scan_done">Сделанный</string>
 </resources>

@@ -138,4 +138,7 @@ sealed class Screen(val route: String) {
 
     // Phase 09
     data object Pro : Screen("pro") // PayWallActivity (activity_subscription_purchase)
+    // Phase 11
+    data object GsSetting : Screen("gs_setting")
+    data object IuSetting : Screen("iu_setting")
 }

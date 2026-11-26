@@ -464,4 +464,25 @@ Tarama Tamamlandı!"</string>
     <string name="paywall_slider_duplicate_desc">Depolama alanını boşaltmak için yinelenen fotoğrafları hızla bulun ve silin</string>
     <string name="paywall_slider_recycle_title">Geri Dönüşüm Kutusu</string>
     <string name="paywall_slider_recycle_desc">Yanlışlıkla silinen fotoğrafları ve videoları geri dönüşüm kutusundan kurtarın</string>
+    <string name="gs_photos">Fotoğraflar</string>
+    <string name="title_settings">Settings</string>
+    <string name="games">Oyunlar</string>
+    <string name="call_sett_desc">Bu ekran, Gizli Fotoğraflar, Özel Albümler, Akıllı Sıralama, Medya Temizleyici ve Çift Bulucu gibi özellikleri yönetmenizi sağlar.</string>
+    <string name="always_on">Her zaman AÇIK</string>
+    <string name="show_gs">Gelen her aramadan sonra gösterilir.</string>
+    <string name="always_off">Her zaman KAPALI</string>
+    <string name="disable_call_info">Arama Bilgisi ekranını tamamen devre dışı bırakır.</string>
+    <string name="improve_your_call_experience">Arama deneyiminizi iyileştirin</string>
+    <string name="enables_smarter_call_amp_app_experience">Daha akıllı arama ve uygulama deneyimi sağlar</string>
+    <string name="disable_setting">Ayarlar üzerinden istediğiniz zaman devre dışı bırakabilirsiniz</string>
+    <string name="gallery_allow_display">Galeri Görüntülemeye İzin Ver</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Bir uygulamayı yükledikten/kaldırdıktan sonra optimizasyon ekranının ne zaman görüneceğini seçin.</string>
+    <string name="always_on_subtitle">Bir uygulama her yüklendiğinde veya kaldırıldığında gösterilir.</string>
+    <string name="always_off_subtitle">Güvenlik tarama ekranını tamamen devre dışı bırakır.</string>
+    <string name="private_gallery_vault">Özel Galeri Kasası</string>
+    <string name="smart_org">"Akıllı düzenleme ve
+bir yerde gizlilik"</string>
+    <string name="try_it_now">Şimdi Deneyin</string>
+    <string name="app_scan_open">Açık</string>
+    <string name="app_scan_done">Tamamlamak</string>
 </resources>

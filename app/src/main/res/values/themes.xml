@@ -14,4 +14,15 @@
         <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
         <item name="android:windowExitAnimation">@anim/dialog_slide_bottom</item>
     </style>
+    <!-- Phase 11 -->
+    <!-- Quick Info and install/uninstall screens: plain window background instead of the splash art -->
+    <style name="Theme.NewGallery.Gs">
+        <item name="android:windowBackground">@color/backgroundColor</item>
+    </style>
+    <!-- 2.7.2 tip_guidance_theme: the permission guide card floats over the system settings page -->
+    <style name="Theme.NewGallery.Guide">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+    </style>
 </resources>

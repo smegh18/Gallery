@@ -427,4 +427,26 @@
     <string name="paywall_slider_duplicate_desc">স্টোরেজ খালি করতে দ্রুত ডুপ্লিকেট ছবি খুঁজে মুছে ফেলুন</string>
     <string name="paywall_slider_recycle_title">রিসাইকেল বিন</string>
     <string name="paywall_slider_recycle_desc">রিসাইকেল বিন থেকে ভুলবশত মুছে যাওয়া ছবি ও ভিডিও পুনরুদ্ধার করুন</string>
+    <string name="gs_photos">ছবি</string>
+    <string name="title_settings">সেটিংস</string>
+    <string name="games">গেমস</string>
+    <string name="gs_view_moments">মুহূর্তগুলি দেখুন</string>
+    <string name="call_sett_desc">এই স্ক্রিনটি আপনাকে হিডেন ফটো, প্রাইভেট অ্যালবাম, স্মার্ট সর্ট, মিডিয়া ক্লিনার এবং ডুপ্লিকেট ফাইন্ডার-এর মতো ফিচারগুলি পরিচালনা করতে দেয়।</string>
+    <string name="always_on">সর্বদা চালু</string>
+    <string name="show_gs">প্রতিটি আসা কলের পরে দেখানো হয়।</string>
+    <string name="always_off">সর্বদা বন্ধ</string>
+    <string name="disable_call_info">কল ইনফো স্ক্রিন সম্পূর্ণভাবে নিষ্ক্রিয় করে।</string>
+    <string name="improve_your_call_experience">আপনার কল অভিজ্ঞতা উন্নত করুন</string>
+    <string name="enables_smarter_call_amp_app_experience">আরও স্মার্ট কল ও অ্যাপ অভিজ্ঞতা সক্ষম করে</string>
+    <string name="disable_setting">আপনি যেকোনো সময় সেটিংস থেকে এটি বন্ধ করতে পারেন</string>
+    <string name="gallery_allow_display">গ্যালারি প্রদর্শনের অনুমতি দিন</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">একটি অ্যাপ ইনস্টল/আনইনস্টল করার পরে অপ্টিমাইজিং স্ক্রিন কখন প্রদর্শিত হবে তা চয়ন করুন।</string>
+    <string name="always_on_subtitle">প্রতিবার একটি অ্যাপ ইনস্টল বা আনইনস্টল করার সময় দেখায়।</string>
+    <string name="always_off_subtitle">নিরাপত্তা স্ক্যান স্ক্রীন সম্পূর্ণরূপে নিষ্ক্রিয় করে।</string>
+    <string name="private_gallery_vault">প্রাইভেট গ্যালারি ভল্ট</string>
+    <string name="smart_org">"স্মার্ট সংগঠন এবং
+একটি জায়গায় গোপনীয়তা"</string>
+    <string name="try_it_now">এখনই ব্যবহার করুন</string>
+    <string name="app_scan_open">খোলা</string>
+    <string name="app_scan_done">সম্পন্ন</string>
 </resources>

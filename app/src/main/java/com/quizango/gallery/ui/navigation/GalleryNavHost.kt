@@ -90,6 +90,7 @@ fun GalleryNavHost(
     // Short fade + slight slide between screens; plain fade in and out of the splash
     val fromSplash: androidx.compose.animation.AnimatedContentTransitionScope<androidx.navigation.NavBackStackEntry>.() -> Boolean =
         { initialState.destination.route == Screen.Splash.route }
+    com.quizango.gallery.ui.gs.GsAppEffects(navController) // Phase 11
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
@@ -791,10 +792,14 @@ fun GalleryNavHost(
                 appPreferences = app.preferences,
                 onNavigate = { route -> navController.navigateOnce(route) },
                 onNavigateBack = { navController.popBackStack() },
-                // wired when Phase 10/11 merge
-                onOpenQuickInfoSettings = {},
-                onOpenFloatingSettings = {},
-                onOpenInstallSettings = {}
+                // The openers run 2.7.2's permission checks first (Phone then overlay, or overlay), then navigate
+                onOpenQuickInfoSettings = com.quizango.gallery.ui.gs.rememberQuickInfoSettingsOpener {
+                    navController.navigateOnce(Screen.GsSetting.route)
+                },
+                onOpenFloatingSettings = {}, // wired when Phase 10 merges
+                onOpenInstallSettings = com.quizango.gallery.ui.gs.rememberInstallSettingsOpener {
+                    navController.navigateOnce(Screen.IuSetting.route)
+                }
             )
         }
 
@@ -807,6 +812,13 @@ fun GalleryNavHost(
         // Phase 09
         composable(Screen.Pro.route) {
             com.quizango.gallery.ui.settings.ProScreen(onClose = { navController.popBackStack() })
+        }
+        // Phase 11
+        composable(Screen.GsSetting.route) {
+            com.quizango.gallery.ui.gs.GsSettingScreen(app.preferences, onNavigateBack = { navController.popBackStack() })
+        }
+        composable(Screen.IuSetting.route) {
+            com.quizango.gallery.ui.gs.IuSettingScreen(app.preferences, onNavigateBack = { navController.popBackStack() })
         }
     }
 }

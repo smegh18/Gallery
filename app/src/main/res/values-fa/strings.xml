@@ -471,4 +471,26 @@
     <string name="paywall_slider_duplicate_desc">یافتن و حذف سریع عکس‌های تکراری برای آزادسازی فضای ذخیره‌سازی</string>
     <string name="paywall_slider_recycle_title">سطل زباله</string>
     <string name="paywall_slider_recycle_desc">بازیابی عکس‌ها و ویدیوهای تصادفی حذف شده از سطل زباله</string>
+    <string name="gs_photos">عکس‌ها</string>
+    <string name="title_settings">تنظیمات</string>
+    <string name="games">بازی‌ها</string>
+    <string name="gs_view_moments">مشاهده لحظه‌ها</string>
+    <string name="call_sett_desc">این صفحه به شما امکان می‌دهد ویژگی‌هایی مانند عکس‌های مخفی، آلبوم‌های خصوصی، مرتب‌سازی هوشمند، پاک‌کننده رسانه و پیدا کننده فایل‌های تکراری را مدیریت کنید.</string>
+    <string name="always_on">همیشه روشن است</string>
+    <string name="show_gs">هر بار پس از تماس ورودی نمایش داده می‌شود.</string>
+    <string name="always_off">همیشه خاموش</string>
+    <string name="disable_call_info">صفحه اطلاعات تماس را به طور کامل غیرفعال می‌کند.</string>
+    <string name="improve_your_call_experience">تجربه تماس خود را بهبود دهید</string>
+    <string name="enables_smarter_call_amp_app_experience">تجربه هوشمندتر تماس و برنامه را فعال می‌کند</string>
+    <string name="disable_setting">می‌توانید هر زمان از تنظیمات آن را غیرفعال کنید</string>
+    <string name="gallery_allow_display">نمایش گالری را مجاز کنید</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">انتخاب کنید چه زمانی صفحه بهینه‌سازی پس از نصب/حذف برنامه ظاهر شود.</string>
+    <string name="always_on_subtitle">هر بار که یک برنامه نصب یا حذف می شود نشان داده می شود.</string>
+    <string name="always_off_subtitle">صفحه اسکن امنیتی را به طور کامل غیرفعال می کند.</string>
+    <string name="private_gallery_vault">سرداب گالری خصوصی</string>
+    <string name="smart_org">"سازماندهی هوشمند و
+حریم خصوصی در یک مکان"</string>
+    <string name="try_it_now">همین حالا امتحان کنید</string>
+    <string name="app_scan_open">باز کنید</string>
+    <string name="app_scan_done">انجام شد</string>
 </resources>

@@ -479,4 +479,25 @@
     <string name="paywall_slider_duplicate_desc">சேமிப்பிடத்தை காலியாக்க நகல் புகைப்படங்களை விரைவாகக் கண்டுபிடித்து அழிக்கவும்</string>
     <string name="paywall_slider_recycle_title">குப்பைத் தொட்டி</string>
     <string name="paywall_slider_recycle_desc">தவறுதலாக நீக்கப்பட்ட புகைப்படங்கள் மற்றும் வீடியோக்களை குப்பைத் தொட்டியிலிருந்து மீட்டெடுக்கவும்</string>
+    <string name="gs_photos">புகைப்படங்கள்</string>
+    <string name="title_settings">அமைப்புகள்</string>
+    <string name="games">பாடல்கள்</string>
+    <string name="call_sett_desc">இந்த திரை உங்களுக்கு Hidden Photos, Private Albums, Smart Sort, Media Cleaner மற்றும் Duplicate Finder போன்ற அம்சங்களை நிர்வகிக்க அனுமதிக்கிறது.</string>
+    <string name="always_on">எப்போதும் இயக்கத்தில் இருக்கும்</string>
+    <string name="show_gs">ஒரு வரவிருக்கும் அழைப்புக்குப் பிறகு எப்போதும் காண்பிக்கப்படும்.</string>
+    <string name="always_off">எப்போதும் ஆஃப்</string>
+    <string name="disable_call_info">கால் தகவல் திரையை முழுமையாக முடக்குகிறது.</string>
+    <string name="improve_your_call_experience">உங்கள் அழைப்பு அனுபவத்தை மேம்படுத்துங்கள்</string>
+    <string name="enables_smarter_call_amp_app_experience">சிறந்த அழைப்பு மற்றும் ஆப் அனுபவத்தை செயல்படுத்துகிறது</string>
+    <string name="disable_setting">அமைப்புகளில் எப்போது வேண்டுமானாலும் முடக்கலாம்</string>
+    <string name="gallery_allow_display">கேலரி காண்பித்தல் அனுமதி</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">ஆப்ஸை நிறுவிய/நிறுவல் நீக்கிய பிறகு, மேம்படுத்தும் திரை எப்போது தோன்றும் என்பதைத் தேர்வுசெய்யவும்.</string>
+    <string name="always_on_subtitle">ஒவ்வொரு முறையும் ஆப்ஸ் நிறுவப்படும் அல்லது நிறுவல் நீக்கப்படும்.</string>
+    <string name="always_off_subtitle">பாதுகாப்பு ஸ்கேன் திரையை முழுவதுமாக முடக்குகிறது.</string>
+    <string name="private_gallery_vault">தனிப்பட்ட கேலரி தொகுப்பு</string>
+    <string name="smart_org">"சாதுரியமான ஒழுங்கமைப்பு &amp;
+ஒரு இடத்தில் அறக்கட்டளை"</string>
+    <string name="try_it_now">இப்போது முயற்சிக்கவும்</string>
+    <string name="app_scan_open">திற</string>
+    <string name="app_scan_done">முடிந்தது</string>
 </resources>

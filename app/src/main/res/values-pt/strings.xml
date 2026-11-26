@@ -478,4 +478,25 @@ Verificação concluída!"</string>
     <string name="paywall_slider_duplicate_desc">Encontre e exclua rapidamente fotos duplicadas para liberar espaço de armazenamento</string>
     <string name="paywall_slider_recycle_title">Lixeira</string>
     <string name="paywall_slider_recycle_desc">Recupere fotos e vídeos excluídos acidentalmente da lixeira</string>
+    <string name="gs_photos">Fotos</string>
+    <string name="title_settings">Configurações</string>
+    <string name="games">Jogos</string>
+    <string name="call_sett_desc">Esta tela permite gerenciar recursos como Fotos Ocultas, Álbuns Privados, Ordenação Inteligente, Limpeza de Mídia e Localizador de Duplicatas.</string>
+    <string name="always_on">Sempre LIGADO</string>
+    <string name="show_gs">Mostra toda vez após uma chamada recebida.</string>
+    <string name="always_off">Sempre DESLIGADO</string>
+    <string name="disable_call_info">Desativa completamente a tela de informações da chamada.</string>
+    <string name="improve_your_call_experience">Melhore sua experiência de chamada</string>
+    <string name="enables_smarter_call_amp_app_experience">Ativa uma experiência de chamadas e apps mais inteligente</string>
+    <string name="disable_setting">Você pode desativar a qualquer momento nas configurações</string>
+    <string name="gallery_allow_display">Permitir exibição da galeria</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Escolha quando a tela de otimização deve aparecer após instalar/desinstalar um aplicativo.</string>
+    <string name="always_on_subtitle">Mostra sempre que um aplicativo é instalado ou desinstalado.</string>
+    <string name="always_off_subtitle">Desativa completamente a tela de verificação de segurança.</string>
+    <string name="private_gallery_vault">Cofre de Galeria Privada</string>
+    <string name="smart_org">"Organização inteligente e
+privacidade em um só lugar"</string>
+    <string name="try_it_now">Experimente agora</string>
+    <string name="app_scan_open">Abrir</string>
+    <string name="app_scan_done">Feito</string>
 </resources>

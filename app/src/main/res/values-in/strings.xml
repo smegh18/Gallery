@@ -479,4 +479,26 @@ keranjang sampah"</string>
     <string name="paywall_slider_duplicate_desc">Temukan dan hapus foto duplikat dengan cepat untuk mengosongkan ruang penyimpanan</string>
     <string name="paywall_slider_recycle_title">Tempat Sampah</string>
     <string name="paywall_slider_recycle_desc">Pulihkan foto dan video yang tidak sengaja dihapus dari tempat sampah</string>
+    <string name="gs_photos">Foto</string>
+    <string name="title_settings">Pengaturan</string>
+    <string name="games">Permainan</string>
+    <string name="gs_view_moments">Lihat Momen</string>
+    <string name="call_sett_desc">Layar ini memungkinkan Anda mengelola fitur seperti Foto Tersembunyi, Album Pribadi, Smart Sort, Pembersih Media, dan Pencari Duplikat.</string>
+    <string name="always_on">Selalu AKTIF</string>
+    <string name="show_gs">Ditampilkan setiap kali setelah panggilan masuk.</string>
+    <string name="always_off">Selalu MATI</string>
+    <string name="disable_call_info">Menonaktifkan layar Info Panggilan sepenuhnya.</string>
+    <string name="improve_your_call_experience">Tingkatkan pengalaman panggilan Anda</string>
+    <string name="enables_smarter_call_amp_app_experience">Mengaktifkan pengalaman panggilan &amp; aplikasi yang lebih cerdas</string>
+    <string name="disable_setting">Anda dapat menonaktifkannya kapan saja di pengaturan</string>
+    <string name="gallery_allow_display">Izinkan Tampilan Galeri</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Pilih kapan layar pengoptimalan akan muncul setelah memasang/mencopot pemasangan aplikasi.</string>
+    <string name="always_on_subtitle">Ditampilkan setiap kali aplikasi diinstal atau dihapus instalasinya.</string>
+    <string name="always_off_subtitle">Menonaktifkan layar pemindaian keamanan sepenuhnya.</string>
+    <string name="private_gallery_vault">Lemari Galeri Pribadi</string>
+    <string name="smart_org">"Organisasi pintar &amp;
+privasi dalam satu tempat"</string>
+    <string name="try_it_now">Coba Sekarang</string>
+    <string name="app_scan_open">Membuka</string>
+    <string name="app_scan_done">Selesai</string>
 </resources>

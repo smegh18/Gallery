@@ -471,4 +471,26 @@
     <string name="paywall_slider_duplicate_desc">اعثر بسرعة على الصور المكررة واحذفها لتحرير مساحة التخزين</string>
     <string name="paywall_slider_recycle_title">سلة المحذوفات</string>
     <string name="paywall_slider_recycle_desc">استرجع الصور ومقاطع الفيديو المحذوفة عن طريق الخطأ من سلة المحذوفات</string>
+    <string name="gs_photos">الصور</string>
+    <string name="title_settings">الإعدادات</string>
+    <string name="games">ألعاب</string>
+    <string name="gs_view_moments">عرض اللحظات</string>
+    <string name="call_sett_desc">تتيح لك هذه الشاشة إدارة ميزات مثل الصور المخفية، الألبومات الخاصة، الفرز الذكي، منظف الوسائط، والعثور على النسخ المكررة.</string>
+    <string name="always_on">دائما قيد التشغيل</string>
+    <string name="show_gs">يتم العرض بعد كل مكالمة واردة.</string>
+    <string name="always_off">إيقاف التشغيل دائمًا</string>
+    <string name="disable_call_info">تعطيل شاشة معلومات المكالمة بالكامل.</string>
+    <string name="improve_your_call_experience">حسّن تجربة المكالمات لديك</string>
+    <string name="enables_smarter_call_amp_app_experience">يتيح تجربة مكالمات وتطبيقات أكثر ذكاءً</string>
+    <string name="disable_setting">يمكنك تعطيله في أي وقت من الإعدادات</string>
+    <string name="gallery_allow_display">المعرض يسمح بالعرض</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">اختر متى يجب أن تظهر شاشة التحسين بعد تثبيت/إلغاء تثبيت التطبيق.</string>
+    <string name="always_on_subtitle">يتم عرضها في كل مرة يتم فيها تثبيت التطبيق أو إلغاء تثبيته.</string>
+    <string name="always_off_subtitle">يقوم بتعطيل شاشة فحص الأمان بشكل كامل.</string>
+    <string name="private_gallery_vault">خزينة المعرض الخاص</string>
+    <string name="smart_org">"تنظيم ذكي و
+خصوصية في مكان واحد"</string>
+    <string name="try_it_now">جربها الآن</string>
+    <string name="app_scan_open">يفتح</string>
+    <string name="app_scan_done">منتهي</string>
 </resources>

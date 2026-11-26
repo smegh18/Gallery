@@ -471,4 +471,26 @@ poubelle"</string>
     <string name="paywall_slider_duplicate_desc">"Trouvez et supprimez rapidement les photos en double pour libérer de l'espace de stockage"</string>
     <string name="paywall_slider_recycle_title">Corbeille</string>
     <string name="paywall_slider_recycle_desc">Récupérez les photos et vidéos supprimées accidentellement de la corbeille</string>
+    <string name="gs_photos">Photos</string>
+    <string name="title_settings">Paramètres</string>
+    <string name="games">Jeux</string>
+    <string name="gs_view_moments">Voir les moments</string>
+    <string name="call_sett_desc">Cet écran vous permet de gérer des fonctionnalités telles que Photos Cachées, Albums Privés, Tri Intelligent, Nettoyeur de Médias et Recherche de Doublons.</string>
+    <string name="always_on">Toujours allumé</string>
+    <string name="show_gs">S’affiche à chaque appel entrant.</string>
+    <string name="always_off">Toujours éteint</string>
+    <string name="disable_call_info">Désactive complètement l’écran d’informations d’appel.</string>
+    <string name="improve_your_call_experience">Améliorez votre expérience des appels</string>
+    <string name="enables_smarter_call_amp_app_experience">Active une expérience plus intelligente pour les appels et les applis</string>
+    <string name="disable_setting">Vous pouvez la désactiver à tout moment dans les paramètres</string>
+    <string name="gallery_allow_display">"Autoriser l'affichage de la galerie"</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">"Choisissez quand l'écran d'optimisation doit apparaître après l'installation/la désinstallation d'une application."</string>
+    <string name="always_on_subtitle">"S'affiche à chaque fois qu'une application est installée ou désinstallée."</string>
+    <string name="always_off_subtitle">"Désactive complètement l'écran d'analyse de sécurité."</string>
+    <string name="private_gallery_vault">Coffre-fort de galerie privée</string>
+    <string name="smart_org">"Organisation intelligente et
+confidentialité en un seul endroit"</string>
+    <string name="try_it_now">Essayez-le maintenant</string>
+    <string name="app_scan_open">Ouvrir</string>
+    <string name="app_scan_done">Fait</string>
 </resources>

@@ -463,4 +463,26 @@
     <string name="paywall_slider_duplicate_desc">स्टोरेज जागा मोकळी करण्यासाठी ड्युप्लिकेट फोटो द्रुतपणे शोधा आणि हटवा</string>
     <string name="paywall_slider_recycle_title">रिसायकल बिन</string>
     <string name="paywall_slider_recycle_desc">रिसायकल बिनमधून चुकून हटवलेले फोटो आणि व्हिडिओ रिकव्हर करा</string>
+    <string name="gs_photos">फोटो</string>
+    <string name="title_settings">सेटिंग्ज</string>
+    <string name="games">खेळ</string>
+    <string name="gs_view_moments">क्षण पहा</string>
+    <string name="call_sett_desc">हा स्क्रीन तुम्हाला हिडन फोटो, प्रायव्हेट अल्बम, स्मार्ट सॉर्ट, मीडिया क्लिनर आणि डुप्लिकेट फाइंडर सारख्या फिचर्स व्यवस्थापित करण्याची परवानगी देते.</string>
+    <string name="always_on">नेहमी चालू</string>
+    <string name="show_gs">प्रत्येक येणाऱ्या कॉलनंतर दाखवतो.</string>
+    <string name="always_off">नेहमी बंद</string>
+    <string name="disable_call_info">कॉल माहिती स्क्रीन पूर्णपणे अक्षम करते.</string>
+    <string name="improve_your_call_experience">तुमचा कॉल अनुभव सुधारा</string>
+    <string name="enables_smarter_call_amp_app_experience">अधिक स्मार्ट कॉल आणि अॅप अनुभव सक्षम करते</string>
+    <string name="disable_setting">तुम्ही सेटिंग्जमध्ये कधीही ते बंद करू शकता</string>
+    <string name="gallery_allow_display">गॅलरी प्रदर्शित करण्याची परवाह</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">ॲप स्थापित/विस्थापित केल्यानंतर ऑप्टिमाइझिंग स्क्रीन केव्हा दिसावी ते निवडा.</string>
+    <string name="always_on_subtitle">प्रत्येक वेळी ॲप इंस्टॉल किंवा अनइंस्टॉल केल्यावर दाखवतो.</string>
+    <string name="always_off_subtitle">सुरक्षा स्कॅन स्क्रीन पूर्णपणे अक्षम करते.</string>
+    <string name="private_gallery_vault">प्रायव्हेट गॅलरी वॉल्ट</string>
+    <string name="smart_org">"स्मार्ट आयोजन आणि
+एका ठिकाणी गोपनीयता"</string>
+    <string name="try_it_now">आता प्रयत्न करा</string>
+    <string name="app_scan_open">उघडा</string>
+    <string name="app_scan_done">झाले</string>
 </resources>

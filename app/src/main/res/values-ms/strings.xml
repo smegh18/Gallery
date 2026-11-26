@@ -479,4 +479,25 @@ recycle bin"</string>
     <string name="paywall_slider_duplicate_desc">Cari dan padam foto pendua dengan pantas untuk mengosongkan ruang storan</string>
     <string name="paywall_slider_recycle_title">Tong Kitar Semula</string>
     <string name="paywall_slider_recycle_desc">Pulihkan foto dan video yang dipadam secara tidak sengaja daripada tong kitar semula</string>
+    <string name="gs_photos">Foto</string>
+    <string name="title_settings">Tetapan</string>
+    <string name="games">Permainan</string>
+    <string name="call_sett_desc">Skrin ini membolehkan anda menguruskan ciri seperti Foto Tersembunyi, Album Peribadi, Susun Pintar, Pembersih Media dan Pencari Duplikat.</string>
+    <string name="always_on">Sentiasa HIDUP</string>
+    <string name="show_gs">Dipaparkan setiap kali selepas panggilan masuk.</string>
+    <string name="always_off">Sentiasa OFF</string>
+    <string name="disable_call_info">Mematikan skrin Maklumat Panggilan sepenuhnya.</string>
+    <string name="improve_your_call_experience">Tingkatkan pengalaman panggilan anda</string>
+    <string name="enables_smarter_call_amp_app_experience">Mendayakan pengalaman panggilan &amp; aplikasi yang lebih pintar</string>
+    <string name="disable_setting">Anda boleh mematikannya pada bila-bila masa dalam tetapan</string>
+    <string name="gallery_allow_display">Galari Benarkan Paparan</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Pilih masa skrin pengoptimuman akan muncul selepas memasang/menyahpasang apl.</string>
+    <string name="always_on_subtitle">Dipaparkan setiap kali apl dipasang atau dinyahpasang.</string>
+    <string name="always_off_subtitle">Melumpuhkan skrin imbasan keselamatan sepenuhnya.</string>
+    <string name="private_gallery_vault">Peti Kebal Galeri Peribadi</string>
+    <string name="smart_org">"Pengorganisasian pintar &amp;
+privasi di satu tempat"</string>
+    <string name="try_it_now">Cuba Sekarang</string>
+    <string name="app_scan_open">Buka</string>
+    <string name="app_scan_done">Selesai</string>
 </resources>

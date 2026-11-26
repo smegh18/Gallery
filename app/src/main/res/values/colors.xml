@@ -299,4 +299,9 @@
     <color name="rate_desc_color">#ff777777</color>
     <!-- dialog_rate_us tvDesc: a literal in the reference layout, no colour name -->
     <color name="rate_best_text">#ff109142</color>
+    <!-- Phase 11 -->
+    <color name="black_color">#ff000000</color>
+    <color name="install_setting_card_stroke">#fff5f5f5</color>
+    <color name="iu_setting_sub_text">#ff7a8389</color>
+    <color name="bg_overlay_dialog_top">#ffe6f0ff</color>
 </resources>
