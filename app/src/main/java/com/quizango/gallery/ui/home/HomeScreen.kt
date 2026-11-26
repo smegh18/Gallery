@@ -41,6 +41,7 @@ import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
 import com.quizango.gallery.ui.components.AddToAlbumSheet
+import com.quizango.gallery.ui.components.homeUsageAccessPrompt
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.splash.checkStoragePermissions
 import com.quizango.gallery.ui.vault.rememberVaultHideGate
@@ -76,7 +77,9 @@ fun HomeScreen(
     var titleBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     val albumSelecting = uiState.selectedAlbums.isNotEmpty()
     val anySelecting = uiState.isSelectionMode || albumSelecting
-    val showVaultHint = !anySelecting && shouldShowVaultHint(
+    // The usage-access prompt holds the vault hint until it closes (HA isUsageAccessPopupShowingOnHome)
+    val usagePromptShowing = homeUsageAccessPrompt()
+    val showVaultHint = !anySelecting && !usagePromptShowing && shouldShowVaultHint(
         uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context)
     )
 

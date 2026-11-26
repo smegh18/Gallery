@@ -305,4 +305,24 @@ class AppPreferences(private val context: Context) {
             it[Keys.VAULT_ANSWER_3] = com.quizango.gallery.data.local.VaultSecret.hash(com.quizango.gallery.data.local.VaultSecret.normalizeAnswer(a3))
         }
     }
+
+    // Phase 12: usage-access prompts (2.7.2 AppPreference key names; -1 = never shown)
+    private val appInsightsKey = booleanPreferencesKey("app_insights_enabled")
+    private val homeUsageShownKey = intPreferencesKey("usage_access_home_popup_last_shown_session")
+    private val usageShownKey = intPreferencesKey("usage_access_popup_last_shown_session")
+
+    /** Settings "Share app usage stats"; false means the user opted out, so no usage-access prompt shows. */
+    val appInsightsEnabled: Flow<Boolean> = context.dataStore.data.map { it[appInsightsKey] ?: true }
+
+    suspend fun setAppInsightsEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[appInsightsKey] = enabled }
+    }
+
+    /** Session the Home prompt ([home]) or the one shared by the video, story, Recycle Bin and Settings prompts last showed in. */
+    fun usageAccessShownSession(home: Boolean): Flow<Int> =
+        context.dataStore.data.map { it[if (home) homeUsageShownKey else usageShownKey] ?: -1 }
+
+    suspend fun setUsageAccessShownSession(home: Boolean, session: Int) {
+        context.dataStore.edit { it[if (home) homeUsageShownKey else usageShownKey] = session }
+    }
 }

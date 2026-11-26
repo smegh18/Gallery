@@ -84,6 +84,8 @@ import com.quizango.gallery.data.repository.MediaRepository
 import com.quizango.gallery.data.repository.VaultRepository
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.MediaType
+import com.quizango.gallery.ui.components.UsageAccessKind
+import com.quizango.gallery.ui.components.UsageAccessQueue
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.sdp
@@ -97,8 +99,8 @@ import androidx.media3.common.MediaItem as ExoMediaItem
 
 private enum class PlayerMenu { SPEED, SUBTITLE, AUDIO }
 
-// shortcut: no-op; Phase 12 (USG-01) shows dialog_usage_access_video here, where 2.7.2 records ta/d.VIDEO.
-internal fun recordVideoUsageAccessTrigger() = Unit
+/** 2.7.2 queues ta/d.VIDEO here; Home tries that prompt on its next resume. */
+internal fun recordVideoUsageAccessTrigger() = UsageAccessQueue.queueForHome(UsageAccessKind.VIDEO)
 
 /** Back from the player, or from a viewer that showed a video: the usage-access trigger first, then navigation. */
 internal fun leaveWithVideoTrigger(recordsVideo: Boolean, navigate: () -> Unit, trigger: () -> Unit = ::recordVideoUsageAccessTrigger) {

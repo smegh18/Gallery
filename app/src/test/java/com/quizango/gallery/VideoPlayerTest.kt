@@ -6,6 +6,8 @@ import com.quizango.gallery.ui.navigation.Screen
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.components.UsageAccessKind
+import com.quizango.gallery.ui.components.UsageAccessQueue
 import com.quizango.gallery.ui.viewer.CONTROLS_HIDE_MS
 import com.quizango.gallery.ui.viewer.SEEK_STEP_MS
 import com.quizango.gallery.ui.viewer.TapZone
@@ -116,6 +118,8 @@ class VideoPlayerTest {
         val calls = mutableListOf<String>()
         leaveWithVideoTrigger(recordsVideo = true, navigate = { calls += "navigate" }, trigger = { calls += "trigger" })
         assertEquals(listOf("trigger", "navigate"), calls)
-        assertEquals(Unit, recordVideoUsageAccessTrigger()) // Phase 12 owns the dialog; the hook does nothing yet
+        UsageAccessQueue.take()
+        recordVideoUsageAccessTrigger()
+        assertEquals(UsageAccessKind.VIDEO, UsageAccessQueue.take()) // Home shows it on its next resume
     }
 }
