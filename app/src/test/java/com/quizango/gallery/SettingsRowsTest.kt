@@ -5,7 +5,6 @@ import com.quizango.gallery.ui.settings.ABOUT_VERSION_NAME
 import com.quizango.gallery.ui.settings.AboutLinks
 import com.quizango.gallery.ui.settings.PAYWALL_SLIDES
 import com.quizango.gallery.ui.settings.UsageToggle
-import com.quizango.gallery.ui.settings.floatingRowVisible
 import com.quizango.gallery.ui.settings.rateStar
 import com.quizango.gallery.ui.settings.rateTitle
 import com.quizango.gallery.ui.settings.usageSwitchOn
@@ -29,15 +28,6 @@ class SettingsRowsTest {
         assertTrue(usageSwitchOn(enabled = true, accessGranted = true))
         assertFalse(usageSwitchOn(enabled = true, accessGranted = false)) // default on, but no usage access yet
         assertFalse(usageSwitchOn(enabled = false, accessGranted = true))
-    }
-
-    @Test
-    fun floatingRowNeedsAndroid9AndASupportedDevice() {
-        assertTrue(floatingRowVisible(28, "Google", "Pixel 7"))
-        assertFalse(floatingRowVisible(27, "Google", "Pixel 7"))
-        assertFalse(floatingRowVisible(33, "POCO", "2312BPC51H"))
-        assertFalse(floatingRowVisible(33, "Redmi", "23129RN51X"))
-        assertFalse(floatingRowVisible(33, "motorola", "moto e13"))
     }
 
     @Test

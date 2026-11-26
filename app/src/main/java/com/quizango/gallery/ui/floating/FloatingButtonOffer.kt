@@ -109,7 +109,7 @@ fun rememberOverlayPermissionFlow(onGranted: () -> Unit, onDenied: () -> Unit): 
                 }
             }, 200)
             poll.postDelayed({
-                if (!Settings.canDrawOverlays(context)) runCatching { context.startActivity(Intent(context, OverlayGuideActivity::class.java)) }
+                if (!Settings.canDrawOverlays(context)) runCatching { context.startActivity(Intent(context, com.quizango.gallery.ui.gs.PermissionGuideActivity::class.java)) }
             }, 1000)
         }
     }
@@ -130,10 +130,12 @@ class FloatingButtonOffer internal constructor(internal val forcefully: Boolean?
  * once per launch and only once the media permission is there (HomeActivity.o00Ooo).
  */
 @Composable
-fun rememberFloatingButtonOffer(session: Int): FloatingButtonOffer {
+fun rememberFloatingButtonOffer(session: Int, enabled: Boolean = true): FloatingButtonOffer {
     val context = LocalContext.current
     LaunchedEffect(Unit) { FloatingButtons.start(context) }
-    val offer = remember(session) {
+    val offer = remember(session, enabled) {
+        // HA.o000O00O: no offer when Home was opened from a notification, deep link, shortcut or Quick Info
+        if (!enabled) return@remember FloatingButtonOffer(null)
         val shown = FloatingButtons.prefs(context).getInt(FloatingButtons.KEY_HOME_DIALOG_SESSION, -1)
         FloatingButtonOffer(
             homeOffer(session, shown, FloatingButtons.isOn(context), FloatingButtons.available())

@@ -65,8 +65,11 @@ fun FloatingTool.route(junkCleanedToday: Boolean): String? = when (this) {
     FloatingTool.SETTINGS -> Screen.Settings.route
 }
 
-/** MainActivity is exported: its floating_route extra may only name a route some tool opens, never e.g. vault_media. */
-fun isSidebarRoute(route: String): Boolean =
+/**
+ * MainActivity is exported: its floating_route extra may only name a route some tool or the panel's settings button
+ * opens, never e.g. vault_media.
+ */
+fun isSidebarRoute(route: String): Boolean = route == Screen.FloatingSetting.route ||
     FloatingTool.entries.any { route == it.route(junkCleanedToday = true) || route == it.route(junkCleanedToday = false) }
 
 /** default_remote_config floating_button_controller.home_dialog_sessions: launch number -> forcefully. */

@@ -459,7 +459,8 @@ private fun SidebarCard(p: SidebarPanel) {
                 .cascade(p, p.tools.size + 1)
                 .rotate(if (p.moreOpen != p.left) 0f else 180f)
                 .clip(CircleShape)
-                .clickable(remember { MutableInteractionSource() }, ripple(), onClickLabel = stringResource(R.string.more)) { p.toggleMore() }
+                .clickable(remember { MutableInteractionSource() }, ripple(), onClickLabel = stringResource(R.string.more)) { p.toggleMore() },
+            contentDescription = stringResource(R.string.more)
         )
     }
 }
@@ -488,7 +489,8 @@ private fun MoreCard(p: SidebarPanel) {
                 R.drawable.home_shell_ic_settings,
                 colorResource(R.color.floating_sidebar_collapse_bg),
                 Modifier.clip(CircleShape).clickable(remember { MutableInteractionSource() }, ripple(), onClickLabel = stringResource(R.string.quick_access_settings)) { p.openSettings() },
-                tint = colorResource(R.color.floating_sidebar_collapse_icon)
+                tint = colorResource(R.color.floating_sidebar_collapse_icon),
+                contentDescription = stringResource(R.string.quick_access_settings)
             )
         }
         if (p.editing) Text(
@@ -593,9 +595,11 @@ private fun ItemLabel(text: String) {
 
 /** FloatingSidebarRoundButton: a 30 sdp circle around a 7 sdp padded icon. */
 @Composable
-private fun RoundButton(icon: Int, background: Color, modifier: Modifier = Modifier, tint: Color? = null) {
+private fun RoundButton(
+    icon: Int, background: Color, modifier: Modifier = Modifier, tint: Color? = null, contentDescription: String? = null
+) {
     Image(
-        painterResource(icon), null,
+        painterResource(icon), contentDescription,
         modifier.size(30.sdp).background(background, CircleShape).padding(7.sdp),
         colorFilter = tint?.let { ColorFilter.tint(it) }
     )

@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -167,7 +168,9 @@ fun rememberInstallSettingsOpener(onOpen: () -> Unit): () -> Unit {
     }
 }
 
-private fun Intent.takeGsRoute(): String? = getStringExtra(EXTRA_GS_ROUTE)?.also { removeExtra(EXTRA_GS_ROUTE) }
+// MainActivity is exported: anything outside the routes the app itself sends is dropped (no vault bypass, no crash)
+private fun Intent.takeGsRoute(): String? =
+    runCatching { getStringExtra(EXTRA_GS_ROUTE) }.getOrNull()?.also { removeExtra(EXTRA_GS_ROUTE) }?.takeIf(::isGsRoute)
 
 /**
  * App-wide Phase 11 effects, placed once in the NavHost: opens the route Quick Info, the install screen or the
@@ -179,7 +182,8 @@ fun GsAppEffects(navController: NavHostController) {
     val context = LocalContext.current
     val activity = LocalActivity.current as? ComponentActivity ?: return
     val scope = rememberCoroutineScope()
-    var pending by remember { mutableStateOf(activity.intent?.takeGsRoute()) }
+    // Saveable: after process death the relaunch intent still carries gs_route, so it must not be replayed
+    var pending by rememberSaveable { mutableStateOf(activity.intent?.takeGsRoute()) }
     DisposableEffect(activity) {
         val listener = Consumer<Intent> { intent -> intent.takeGsRoute()?.let { pending = it } }
         activity.addOnNewIntentListener(listener)
@@ -198,7 +202,7 @@ fun GsAppEffects(navController: NavHostController) {
         when (route) {
             GS_ROUTE_PERMISSION -> permissionFlow()
             Screen.Home.route -> Unit
-            else -> navController.navigate(route) { launchSingleTop = true }
+            else -> runCatching { navController.navigate(route) { launchSingleTop = true } }
         }
     }
     LifecycleResumeEffect(Unit) {

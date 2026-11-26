@@ -140,6 +140,7 @@ class FloatingSidebarTest {
         assertTrue(isSidebarRoute(Screen.VaultLock.route))
         assertTrue(isSidebarRoute(Screen.RemoveJunk.route))
         assertTrue(isSidebarRoute(Screen.Cleaner.route))
+        assertTrue(isSidebarRoute(Screen.FloatingSetting.route)) // the panel's Quick Access settings gear
         // MainActivity is exported: anything else, like the vault grid past its lock, is refused
         assertFalse(isSidebarRoute(Screen.VaultMedia.route))
         assertFalse(isSidebarRoute(Screen.VaultSetting.route))

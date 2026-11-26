@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import androidx.core.content.ContextCompat
 import com.quizango.gallery.GalleryApplication
+import com.quizango.gallery.data.local.InstallSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -39,6 +40,7 @@ class GsSetupCardReceiver : BroadcastReceiver() {
 
     private suspend fun handle(app: GalleryApplication, state: String?) {
         val prefs = app.preferences
+        if (!InstallSource.isCampaign(app, prefs)) return // 2.7.2 cWbN6pumKk: campaign installs only
         if (!prefs.afterCallScreenEnabled.first()) return
         // Each change arrives more than once (with and without the number, once per SIM): act on the first
         if (state == lastPhoneState) return
@@ -86,7 +88,9 @@ class GsSetupCardReceiver : BroadcastReceiver() {
             }
             unlockReceiver = receiver
             runCatching {
-                ContextCompat.registerReceiver(app, receiver, IntentFilter(Intent.ACTION_USER_PRESENT), ContextCompat.RECEIVER_NOT_EXPORTED)
+                // Exported: SystemUI (not the system uid) sends USER_PRESENT, so a not-exported receiver never gets it.
+                // Safe, USER_PRESENT is a protected broadcast only the platform can send.
+                ContextCompat.registerReceiver(app, receiver, IntentFilter(Intent.ACTION_USER_PRESENT), ContextCompat.RECEIVER_EXPORTED)
             }.onFailure { unlockReceiver = null }
         }
 

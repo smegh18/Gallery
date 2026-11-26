@@ -103,6 +103,7 @@ internal fun ExternalPickScreen(request: PickRequest, mediaRepository: MediaRepo
     Column(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
         PickToolbar(
             multiple = request.multiple,
+            selectedCount = picked.size,
             onClose = { onPicked(emptyList()) },
             onDone = {
                 if (picked.isEmpty()) Toast.makeText(context, R.string.please_select_items, Toast.LENGTH_SHORT).show()
@@ -167,7 +168,7 @@ internal fun ExternalPickScreen(request: PickRequest, mediaRepository: MediaRepo
 
 /** layout_toolbar as ExternalSelectMediaActivity sets it: closeBtn, title, selectBtn only for multiple picks. */
 @Composable
-private fun PickToolbar(multiple: Boolean, onClose: () -> Unit, onDone: () -> Unit) {
+private fun PickToolbar(multiple: Boolean, selectedCount: Int, onClose: () -> Unit, onDone: () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -188,7 +189,7 @@ private fun PickToolbar(multiple: Boolean, onClose: () -> Unit, onDone: () -> Un
                     .padding(6.sdp)
             )
             Text(
-                text = stringResource(R.string.select_items),
+                text = if (selectedCount > 0) stringResource(R.string.items_selected, selectedCount) else stringResource(R.string.select_items),
                 style = GalleryText.BodyLargeSemiBold,
                 color = colorResource(R.color.titleColor),
                 maxLines = 1,

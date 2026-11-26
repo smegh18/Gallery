@@ -23,11 +23,29 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.quizango.gallery.MainActivity
 import com.quizango.gallery.R
+import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.navigation.encodeRouteArg
 
 /** MainActivity extra: a NavHost route to open once Home is reached (see [GsAppEffects]). */
 internal const val EXTRA_GS_ROUTE = "gs_route"
 /** [EXTRA_GS_ROUTE] value that runs the call + overlay permission flow (2.7.2 key_notification_intent "gs_permission"). */
 internal const val GS_ROUTE_PERMISSION = "gs_permission"
+/** 2.7.2 FROM_GS: MainActivity counts an entry from Quick Info or the install screen as an outside entry. */
+internal const val EXTRA_FROM_GS = "from_gs"
+
+private val GS_ROUTES = setOf(
+    GS_ROUTE_PERMISSION, Screen.Home.route, Screen.Settings.route, Screen.VaultLock.route,
+    Screen.Favorites.route, Screen.Moments.route, Screen.CollageMaker.route
+)
+private val GS_ALBUM_PREFIXES = listOf("filter:videos", "filter:camera", "filter:screenshots")
+    .map { "album/${encodeRouteArg(it)}/" }
+
+/** The [EXTRA_GS_ROUTE] values Quick Info, the install screen and the notification send; never a vault content route. */
+internal fun isGsRoute(route: String): Boolean =
+    route in GS_ROUTES || GS_ALBUM_PREFIXES.any { prefix ->
+        route.startsWith(prefix) && route.length > prefix.length && route.substring(prefix.length).none { it == '/' || it == '?' }
+    }
+
 /** 2.7.2 posts both Quick Info notifications under this one id. */
 internal const val GS_NOTIFICATION_ID = 129
 private const val GS_CHANNEL_ID = "GS_CARD_CHANNEL_ID"
@@ -36,6 +54,7 @@ private const val GS_CHANNEL_ID = "GS_CARD_CHANNEL_ID"
 internal fun appRouteIntent(context: Context, route: String): Intent =
     Intent(context, MainActivity::class.java)
         .putExtra(EXTRA_GS_ROUTE, route)
+        .putExtra(EXTRA_FROM_GS, true)
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
 internal fun quickInfoIntent(context: Context): Intent =

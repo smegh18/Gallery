@@ -184,8 +184,9 @@ fun StoryViewScreen(
         }
     }
 
+    // 2.7.2 Oooo0oO: leaving on an ad step only finishes, it queues no STORY prompt
     BackHandler {
-        if (fromStoryRow) recordStoryUsageAccessTrigger()
+        if (fromStoryRow && step != null) recordStoryUsageAccessTrigger()
         onNavigateBack()
     }
 
@@ -243,7 +244,10 @@ fun StoryViewScreen(
             StoryProgressBar(steps.size, index, rtl, { progress.value }, Modifier.padding(top = 8.dp))
             StoryHeader(
                 title = step?.let { storyDate(it) }.orEmpty(),
-                onClose = close,
+                onClose = {
+                    if (fromStoryRow && step != null) recordStoryUsageAccessTrigger()
+                    onNavigateBack()
+                },
                 onShare = { step?.let { shareSelectedMedia(context, setOf(it.filePath), shareTitle) } },
                 modifier = Modifier.padding(top = 20.sdp)
             )

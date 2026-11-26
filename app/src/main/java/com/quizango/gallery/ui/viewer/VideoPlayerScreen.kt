@@ -468,7 +468,7 @@ fun VideoPlayerScreen(
                                     if (landscape) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                                 touch()
                             }
-                            // shortcut: the floating popup player (overlay permission) is Phase 10; this hook stays a no-op until then
+                            // shortcut: 2.7.2's FloatingViewService popup player is not ported (left undone in Phase 10); the button only re-shows controls until it is scheduled
                             PlayerButton(R.drawable.ic_video_floating, R.string.viewer_floating, 5.sdp, Modifier.padding(end = 8.sdp)) { touch() }
                         }
                     }

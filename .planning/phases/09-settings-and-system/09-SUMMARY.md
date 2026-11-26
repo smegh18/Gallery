@@ -49,7 +49,7 @@ requirements-completed: [SET-01, SET-02, SET-03, SET-04, SET-05]
 - **ExternalSelectMediaActivity**: PICK + GET_CONTENT for image/*, video/*, vnd.android.cursor.dir/image|video;
   `EXTRA_ALLOW_MULTIPLE` shows the done tick; single tap returns `setData(uri)`, several return ClipData, both with
   FLAG_GRANT_READ_URI_PERMISSION; URIs are MediaStore content URIs.
-- **DeepLinkActivity**: `https://api.bestgalleryapp.com/Activity?activity=<name>&key=<value>` (autoVerify); 21 exact
+- **DeepLinkActivity**: `https://api.bestgalleryapp.com/Activity?activity=<name>&key=<value>` (autoVerify dropped later: it made the OS fetch the reference host's assetlinks.json on every install, and could never pass); 21 exact
   names (PayWall, Duplicate, Recycle, Favorite, Burst, Theme, Search, Language, AllAlbum, Map, VaultLock, Home,
   Moments, PhotoEdit, RemoveBg, ColorSplash, BlurBg, RateUs, Animated, InternalSelectMedia, Organizer) + ExternalURL;
   always lands on Home first. `HA.o000O00O` skips the vault hint for those entries.

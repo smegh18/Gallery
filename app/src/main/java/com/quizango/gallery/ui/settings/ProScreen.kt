@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -175,7 +176,7 @@ fun ProScreen(onClose: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(R.string.refresh).uppercase(),
+                    text = stringResource(R.string.refresh).uppercase(LocalConfiguration.current.locales[0]),
                     style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = dpText(14.sdp)),
                     color = colorResource(R.color.lib_white)
                 )
@@ -237,15 +238,14 @@ private fun PaywallSlider(dark: Boolean, button: Color) {
         HorizontalPager(state = pager, verticalAlignment = Alignment.Top) { page ->
             val (title, desc) = PAYWALL_SLIDES[page]
             Column(Modifier.padding(start = 8.sdp, end = 8.sdp, top = 3.sdp, bottom = 10.sdp)) {
-                Image(
-                    painter = painterResource(R.drawable.sub_ic_mask_anim),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
+                // sub_ic_mask_anim is a layer-list, which painterResource cannot load
+                Box(
+                    Modifier
                         .fillMaxWidth()
                         .aspectRatio(3f / 2f)
                         .clip(RoundedCornerShape(8.sdp))
                         .background(colorResource(R.color.lib_white_for_slider))
+                        .drawableBackground(R.drawable.sub_ic_mask_anim)
                 )
                 Text(
                     text = stringResource(title),

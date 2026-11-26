@@ -99,7 +99,7 @@ fun HomeScreen(
     }
     // Phase 10: 2.7.2 offers the floating button after the notification request and Home's usage-access check, so the
     // start dialogs never stack; the offer, like them, holds the vault hint until it closes (isVaultHintShowPending)
-    val floatingOffer = com.quizango.gallery.ui.floating.rememberFloatingButtonOffer(uiState.sessionCount)
+    val floatingOffer = com.quizango.gallery.ui.floating.rememberFloatingButtonOffer(uiState.sessionCount, enabled = !openedFromOutside)
     val floatingOfferReady = !notificationAskPending && usageChecked && !usagePromptShowing
     val showVaultHint = !anySelecting && shouldShowVaultHint(
         uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context),

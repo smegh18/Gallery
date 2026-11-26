@@ -10,22 +10,17 @@ Updated 2026-11-25 by Claude Code. The session was paused mid-work so it can con
 ## Active goal (user instruction, 2026-11-25)
 "Skip artemis check and complete all rest of work." So: no Artemis or device checks. Finish Phases 8-12 (porting), then run Phase 13's quality gates without Artemis. Device acceptance (VER-01, VER-02, every Verified box) stays open for a later device session.
 
-## Where things stand
-- **Phases 1-7: complete.** Phases 6 and 7 were closed on 2026-11-25 on automated gates only. Their device matrices (`06-LIVE-COMPARISON.md`, `07-LIVE-COMPARISON.md`) stay PENDING-DEVICE and move to Phase 13. Checklist rows 25-37 are ticked Ported, not Verified (see the note above "Phase 7 known deviations" in the checklist).
-- **CodeRabbit on Phases 6-7.** The CLI is installed now. Running `coderabbit review --committed --base-commit 04c2447 --dir app --agent` found 11 major issues: the expired-trash purge racing a restore, Organizer drag and tutorial bugs, the junk list capped at 200 and partial-clean handling, a Duplicate Delete Process pop race, and vault batch results being ignored, plus double-submit races in Forgot Password and PIN confirm. 10 are fixed. CR-6 was rejected because 2.7.2 opens Junk Cleared after every clean, and our port only reports the bytes it actually removed. Unit tests (346) and `assembleDebug` pass after the fixes. Details are in the "CodeRabbit review 2026-11-25" section of `06-GATE-FINDINGS.md` and `07-GATE-FINDINGS.md`. Two smaller issues the fixer noticed are still open, so they come first:
-  - Vault Unhide still toasts success when only some items were restored, and it clears the whole selection. This is the same kind of bug as CR-10, in `ui/vault/VaultMediaScreen.kt`.
-  - `syncMediaStore` writes back the `deletedDate` it read at the start of the sync without holding `trashLock`, so a restore during a sync can be overwritten. This is in `data/repository/MediaRepository.kt`.
-  - CodeRabbit has not re-reviewed the fixes.
-- **Phases 8-12: not started.** Research for all five began but was stopped at the pause before any file was saved, so it has to be redone. Write one file per phase: `.planning/phases/08-create-and-edit/08-RESEARCH.md`, `09-settings-and-system/09-RESEARCH.md`, `10-floating-sidebar/10-RESEARCH.md`, `11-after-call-and-install-screens/11-RESEARCH.md` and `12-usage-access-and-cleanup/12-RESEARCH.md`. The five are independent, so they can run in parallel. The brief for each: read the phase section in ROADMAP (including any "Carried in" items), its requirement IDs and checklist rows, and the decoded reference (below). Compare that with our code, then write sections 1-7: scope, reference contract per screen, ours versus reference, resources to import, pitfalls, plan breakdown with file ownership and waves, and assumptions.
+## Where things stand (2026-11-26)
+- **Phases 1-7:** complete (6-7 on automated gates; device pass deferred to Phase 13).
+- **Phases 9, 10, 11, 12:** built by parallel builder agents, merged into main and wired together (Settings rows to Floating/Gs/IU settings, Settings usage switch to the usage-access sheet, Home start order: notification ask, then usage check, then floating offer). Each has `.planning/phases/NN-*/NN-SUMMARY.md`. 385 unit tests and assembleDebug passed at the Phase 10 merge (`1a183ae`).
+- **Review of 9-12:** CodeRabbit (2 runs) plus a nine-lens multi-agent review with 3 skeptics per finding. CodeRabbit findings: CR9-1 fixed, CR9-2 resolved by the wiring, CR10-1 fixed, CR10-2 and CR10-3..14 rejected (2.7.2 shows no app label; translations are 2.7.2's own text). The workflow confirmed 25 findings (full JSON copied to `.planning/phases/12-usage-access-and-cleanup/REVIEW-9-12.json`), including 2 critical security bugs (the exported MainActivity followed any `gs_route` extra, so the vault could be opened without the PIN) and 2 critical crashes (painterResource on shape drawables in Pro and Settings). All 25 are fixed (gates passed); CodeRabbit has not re-reviewed the fixes.
+- **Phase 8 (Create and Edit):** its builder was still working at the pause. Its partial work is pushed on branch `phase-08-wip` (see `.planning/phases/08-create-and-edit/08-SUMMARY.md` on that branch). Finish it, merge into main (expect conflicts in strings/colours/NavHost/Screen; keep both sides, drop identical duplicates, regenerate translations with sync-strings), then review it the same way.
+- **Left after that:** CLR-01 cleanup sweep (script idea: list res files nothing references, rerun after Phase 8), Phase 13 gates without Artemis, then update ROADMAP/REQUIREMENTS/PARITY-CHECKLIST (rows #10-#12, #38-#53 Ported) and STATE.
+- Decisions to confirm with the user: usage-access prompts are ON (`USAGE_ACCESS_RC_ENABLE`; 2.7.2 offline defaults are off); Quick Actions notification repeats every 600 min (`INTERVAL_MINUTES`; 2.7.2 bundled default 0 = off).
 
 ## Next steps
-1. Set up the new computer (next section) and check that the gates pass.
-2. Finish any CodeRabbit finding marked open, then rerun the gates.
-3. Research Phases 8-12 (see above), then plan and build them in order. For each phase:
-   - run `./gradlew.bat :app:testDebugUnitTest -q`, `./gradlew.bat :app:assembleDebug -q`, `python -I scripts/ref_res.py check-strings` and `check-colors`;
-   - run a CodeRabbit review (`coderabbit review --committed --base-commit <phase start> --dir app --agent`; the free tier allows 3 reviews per rolling hour) and an unslop audit of the changed screens;
-   - tick Ported in PARITY-CHECKLIST.md, but not Verified.
-4. Phase 13 without Artemis: confirm the VER-03 gates for every phase, then update ROADMAP, REQUIREMENTS and STATE.
+1. Finish the review fixes, then Phase 8, merge, review.
+2. CLR-01 sweep, gates (tests, assembleDebug, check-strings, check-colors, CodeRabbit), docs, commit, push.
 
 ## Setup on a new computer
 - Install JDK 17 or later, Android SDK 36 with build-tools 36.1.0 (for aapt2), Python 3, apktool 2.12.x, adb, and the CodeRabbit CLI (then `coderabbit auth login`).

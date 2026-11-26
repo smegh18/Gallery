@@ -74,7 +74,7 @@ Recent decisions affecting current work:
 
 - CodeRabbit Phase 6-7: 10 of 11 fixed, CR-6 rejected (parity). Still open: vault Unhide reports success on partial restore and clears the whole selection (`ui/vault/VaultMediaScreen.kt`); `syncMediaStore` writes back a stale `deletedDate` outside `trashLock` (`data/repository/MediaRepository.kt`). The fixes were not re-reviewed by CodeRabbit.
 - Research Phases 8-12 (none saved yet; brief in HANDOFF.md), then plan and build them in order.
-- Pre-release: replace the reference brand art (launcher icons, app_icon_splash, about_gallery_logo, app_icon_lottie, anime_overlay, img_feature_promo_top light/night, ic_gs2_default_app, ic_gs2_success, ic_story_playzen, and the "Playzen" story label) with our own before any store build (user decision 2026-11-13, Phase 1; Phase 4).
+- Pre-release: replace the reference brand art (launcher icons, app_icon_splash, about_gallery_logo, app_icon_lottie, anime_overlay, img_feature_promo_top light/night, ic_gs2_default_app, ic_gs2_success, ic_story_playzen, notification_icon (sunflower status-bar icon), img_overlay_dialog, and the "Playzen" story label) with our own before any store build (user decision 2026-11-13, Phase 1; Phase 4).
 
 ### Blockers/Concerns
 

@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Process
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -87,6 +88,7 @@ import kotlinx.coroutines.launch
 /**
  * RC "enable". 2.7.2's in-app default is false: its Home, video, story and Recycle Bin prompts appear only once its
  * live remote config turns them on (the Settings one never checks it). USG-01 asks for them, so they are on here.
+ * False also hides the Settings usage row (2.7.2 SettingActivity sets usageDataLay GONE).
  */
 internal const val USAGE_ACCESS_RC_ENABLE = true
 
@@ -395,6 +397,7 @@ private fun UsageAccessSheet(kind: UsageAccessKind, onAllow: () -> Unit, onNotNo
                 .padding(top = 12.sdp)
                 .clickable(interactionSource = noRipple, indication = null) {
                     runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(USAGE_PRIVACY_POLICY_URL))) }
+                        .onFailure { Toast.makeText(context, R.string.browser_not_available, Toast.LENGTH_SHORT).show() }
                 }
                 .padding(4.sdp)
         )

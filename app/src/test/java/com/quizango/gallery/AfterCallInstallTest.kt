@@ -14,6 +14,8 @@ import com.quizango.gallery.ui.gs.callEndAction
 import com.quizango.gallery.ui.gs.callTimes
 import com.quizango.gallery.ui.gs.gsAlbumRoute
 import com.quizango.gallery.ui.gs.gsAlbums
+import com.quizango.gallery.ui.gs.GS_ROUTE_PERMISSION
+import com.quizango.gallery.ui.gs.isGsRoute
 import com.quizango.gallery.ui.gs.packageEvent
 import com.quizango.gallery.ui.iu.iuTexts
 import com.quizango.gallery.ui.navigation.Screen
@@ -112,5 +114,22 @@ class AfterCallInstallTest {
         assertEquals(Screen.Home.route, gsAlbumRoute(cards[0], "All Photos"))
         assertEquals(Screen.AlbumDetail.createRoute("filter:camera", "Camera"), gsAlbumRoute(cards[1], "Camera"))
         assertEquals(Screen.Favorites.route, gsAlbumRoute(cards[3], "Favorite"))
+    }
+
+    @Test
+    fun theGsRouteExtraOnlyOpensRoutesTheAppItselfSends() {
+        listOf(
+            GS_ROUTE_PERMISSION, Screen.Home.route, Screen.Settings.route, Screen.VaultLock.route,
+            Screen.Favorites.route, Screen.Moments.route, Screen.CollageMaker.route,
+            Screen.AlbumDetail.createRoute("filter:videos", "Videos"),
+            Screen.AlbumDetail.createRoute("filter:camera", "Camera"),
+            Screen.AlbumDetail.createRoute("filter:screenshots", "Screen / shot?")
+        ).forEach { assertTrue(it, isGsRoute(it)) }
+        // MainActivity is exported: vault content, vault settings, recovery and unknown routes are refused
+        listOf(
+            Screen.VaultMedia.route, Screen.VaultSetting.route, "vault/recovery_question", "vault/settings",
+            Screen.VaultLockFor.createRoute(1, true), "x", "",
+            Screen.AlbumDetail.createRoute("123", "Private"), "album/filter%3Avideos/", "album/filter%3Avideos/a/b"
+        ).forEach { assertFalse(it, isGsRoute(it)) }
     }
 }

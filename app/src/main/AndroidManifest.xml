@@ -90,7 +90,8 @@
             </intent-filter>
 
             <!-- Phase 09: DeepLinkActivity -->
-            <intent-filter android:autoVerify="true">
+            <!-- no autoVerify: the OS would fetch the reference host's assetlinks.json on every install -->
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -133,6 +134,7 @@
         <!-- After-call Quick Info: its own task so Back returns to the dialer -->
         <activity
             android:name=".ui.gs.QuickInfoActivity"
+            android:turnScreenOn="true"
             android:autoRemoveFromRecents="true"
             android:excludeFromRecents="true"
             android:exported="false"
@@ -197,12 +199,6 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-        <activity
-            android:name=".ui.floating.OverlayGuideActivity"
-            android:exported="false"
-            android:excludeFromRecents="true"
-            android:noHistory="true"
-            android:theme="@style/Theme.NewGallery.Guide" />
 
     </application>
 

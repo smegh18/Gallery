@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.os.BundleCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.quizango.gallery.ui.external.ExternalPickScreen
@@ -27,6 +28,7 @@ import com.quizango.gallery.ui.external.PickRequest
 import com.quizango.gallery.ui.external.pickKind
 import com.quizango.gallery.ui.floating.FloatingButtons
 import com.quizango.gallery.ui.floating.isSidebarRoute
+import com.quizango.gallery.ui.gs.EXTRA_FROM_GS
 import com.quizango.gallery.ui.home.LocalOpenedFromOutside
 import com.quizango.gallery.ui.navigation.EXTRA_NOTIFICATION_ACTION
 import com.quizango.gallery.ui.navigation.EXTRA_SHORTCUT_ROUTE
@@ -57,6 +59,11 @@ class MainActivity : AppCompatActivity() {
         val app = application as GalleryApplication
         val pick = pickRequestOf(intent)
         if (pick == null && savedInstanceState == null) accept(intent)
+        // A recreation before Home (language picked in onboarding, process death) keeps the waiting entry
+        if (savedInstanceState != null) {
+            pendingEntry = BundleCompat.getParcelable(savedInstanceState, KEY_PENDING_ENTRY, Intent::class.java)
+            openedFromOutside = openedFromOutside || savedInstanceState.getBoolean(KEY_FROM_OUTSIDE)
+        }
         // Phase 10: a screen opened from the floating sidebar starts on Home (no splash) with the screen over it.
         // This activity is exported, so only a sidebar tool's own route is accepted (never e.g. vault_media past the lock).
         val floatingRoute = runCatching { intent.getStringExtra(FloatingButtons.EXTRA_ROUTE) }.getOrNull()
@@ -98,6 +105,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(KEY_PENDING_ENTRY, pendingEntry)
+        outState.putBoolean(KEY_FROM_OUTSIDE, openedFromOutside)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -113,6 +126,8 @@ class MainActivity : AppCompatActivity() {
             openedFromOutside = true
             pendingEntry = intent
         }
+        // 2.7.2 FROM_GS: Quick Info and the install screen count as outside entries; GsAppEffects opens their route
+        if (runCatching { intent.getBooleanExtra(EXTRA_FROM_GS, false) }.getOrDefault(false)) openedFromOutside = true
     }
 
     /** 2.7.2 lands every outside entry on Home first (Splash, Home, then the screen); Splash and onboarding run as usual. */
@@ -169,5 +184,10 @@ class MainActivity : AppCompatActivity() {
             setResult(RESULT_OK, result)
         }
         finish()
+    }
+
+    private companion object {
+        const val KEY_PENDING_ENTRY = "pending_entry"
+        const val KEY_FROM_OUTSIDE = "from_outside"
     }
 }

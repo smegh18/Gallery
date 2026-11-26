@@ -1,15 +1,12 @@
 package com.quizango.gallery.ui.settings
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color as AndroidColor
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import android.view.Gravity
 import android.view.ViewGroup
@@ -55,6 +52,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
@@ -77,8 +75,10 @@ import com.quizango.gallery.R
 import com.quizango.gallery.data.local.InstallSource
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.components.USAGE_ACCESS_RC_ENABLE
 import com.quizango.gallery.ui.components.isUsageAccessGranted
 import com.quizango.gallery.ui.components.rememberSettingsUsageAccessPrompt
+import com.quizango.gallery.ui.floating.FloatingButtons
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryText
@@ -97,14 +97,6 @@ internal fun usageToggle(checked: Boolean, accessGranted: Boolean): UsageToggle 
 
 /** Oooooo0: the switch is on only while sharing is allowed and usage access is granted. */
 internal fun usageSwitchOn(enabled: Boolean, accessGranted: Boolean): Boolean = enabled && accessGranted
-
-/** common_data.overlay_unsupported_devices default, as "brand_model" in lower case (PermissionsKt.OooO0OO). */
-internal val OVERLAY_UNSUPPORTED_DEVICES =
-    setOf("poco_2312bpc51h", "redmi_23129rn51h", "redmi_23129rn51x", "poco_2302epcc4i", "motorola_moto e13")
-
-/** Oooooo: the floating-button row needs Android 9+ and a device that can draw over other apps. */
-internal fun floatingRowVisible(sdk: Int, brand: String, model: String): Boolean =
-    sdk >= 28 && "${brand}_$model".lowercase().trim() !in OVERLAY_UNSUPPORTED_DEVICES
 
 /** dialog_rate_us (jt/e.HISPj7KHQ7): 1-2 stars say sorry, 3-5 thank; the big star art follows the rating. */
 @StringRes
@@ -131,9 +123,6 @@ private fun networkAvailable(context: Context): Boolean {
     return caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
         caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
 }
-
-private fun granted(context: Context, permission: String) =
-    context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
 
 private fun open(context: Context, url: String) {
     runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
@@ -167,14 +156,13 @@ fun SettingsScreen(
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { resumes++ }
     val online = remember(resumes) { networkAvailable(context) }
     val canDrawOverlays = remember(resumes) { Settings.canDrawOverlays(context) }
-    val phoneGranted = remember(resumes) {
-        granted(context, Manifest.permission.CALL_PHONE) && granted(context, Manifest.permission.READ_PHONE_STATE)
-    }
+    // READ_PHONE_STATE only, as the row's opener: CALL_PHONE is not declared, so it would never count as granted
+    val phoneGranted = remember(resumes) { com.quizango.gallery.ui.gs.phoneGranted(context) }
     val usageAccess = remember(resumes) { isUsageAccessGranted(context) }
     // dl/e case 0: the prompt turns sharing back on when access was granted, then the switch re-reads it
     val askUsageAccess = rememberSettingsUsageAccessPrompt(onDone = { resumes++ })
     val usageOn = usageSwitchOn(insightsEnabled, usageAccess)
-    val floatingVisible = floatingRowVisible(Build.VERSION.SDK_INT, Build.BRAND.orEmpty(), Build.MODEL.orEmpty())
+    val floatingVisible = FloatingButtons.available()
 
     fun toggleUsage() {
         when (usageToggle(usageOn, usageAccess)) {
@@ -247,7 +235,7 @@ fun SettingsScreen(
             SwitchRow(R.drawable.ic_delete, R.string.delete_photos_after_days, checked = autoDelete, tint = false,
                 // dl/c case 0 flips the switch; turning it on only saves the choice (the Recycle Bin purges on open, Phase 6)
                 onToggle = { scope.launch { appPreferences.setAutoDeleteTrash(!autoDelete) } })
-            SwitchRow(R.drawable.ic_setting_usage_data, R.string.setting_usage_data_title, checked = usageOn, tint = true, onToggle = ::toggleUsage)
+            if (USAGE_ACCESS_RC_ENABLE) SwitchRow(R.drawable.ic_setting_usage_data, R.string.setting_usage_data_title, checked = usageOn, tint = true, onToggle = ::toggleUsage)
         }
     }
 
@@ -310,13 +298,13 @@ private fun SettingRow(
     ) {
         Box(Modifier.padding(horizontal = 5.sdp)) {
             Image(painterResource(icon), contentDescription = null)
-            if (dot) Image(
-                painter = painterResource(R.drawable.ic_red_dot),
-                contentDescription = null,
-                modifier = Modifier
+            // ic_red_dot is a <shape>, which painterResource cannot load
+            if (dot) Box(
+                Modifier
                     .align(Alignment.TopEnd)
                     .offset(x = if (dotCentered) 4.sdp else 0.dp, y = (-4).sdp)
                     .size(8.sdp)
+                    .drawableBackground(R.drawable.ic_red_dot)
             )
         }
         Text(
@@ -447,7 +435,7 @@ private fun RateUsDialog(onDismiss: () -> Unit, onRate: (Int) -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.rate_us).uppercase(),
+                        text = stringResource(R.string.rate_us).uppercase(LocalConfiguration.current.locales[0]),
                         style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 16.sp),
                         color = colorResource(R.color.onlyWhite)
                     )

@@ -1,5 +1,6 @@
 package com.quizango.gallery.service
 
+import java.io.IOException
 import android.app.KeyguardManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -20,6 +21,7 @@ import androidx.core.content.ContextCompat
 import com.quizango.gallery.GalleryApplication
 import com.quizango.gallery.MainActivity
 import com.quizango.gallery.R
+import com.quizango.gallery.data.local.InstallSource
 import com.quizango.gallery.ui.gs.IuThrottle
 import com.quizango.gallery.ui.gs.OverlayLauncher
 import com.quizango.gallery.ui.gs.PackageEvent
@@ -115,8 +117,12 @@ class PackageMonitorService : Service() {
             CoroutineScope(Dispatchers.Main.immediate).launch {
                 try {
                     if (!app.preferences.iuAlwaysOn.first()) return@launch
+                    // also stops a service started before the campaign gate existed
+                    if (!InstallSource.isCampaign(app, app.preferences)) return@launch
                     val screen = InstallUninstallActivity.intent(app, packageName, event)
                     if (isAppInForeground()) app.startActivity(screen) else OverlayLauncher.launch(app, screen)
+                } catch (_: IOException) {
+                    // an unreadable DataStore skips this event instead of crashing the app
                 } finally {
                     pending.finish()
                 }
@@ -128,10 +134,13 @@ class PackageMonitorService : Service() {
         private const val CHANNEL_ID = "PackageMonitorChannel"
         private val throttle = IuThrottle()
 
-        /** 2.7.2 IUServiceKeeper: runs only with the overlay permission and while the IU setting is Always ON. */
+        /** 2.7.2 IUServiceKeeper: runs only for campaign installs, with the overlay permission and while the IU setting is Always ON. */
         suspend fun startIfAllowed(context: Context) {
             val app = context.applicationContext as GalleryApplication
-            if (!Settings.canDrawOverlays(app) || !app.preferences.iuAlwaysOn.first()) return
+            if (!Settings.canDrawOverlays(app)) return
+            // An unreadable DataStore leaves the monitor off instead of crashing the caller's coroutine
+            if (!(try { app.preferences.iuAlwaysOn.first() } catch (_: IOException) { false })) return
+            if (!(try { InstallSource.isCampaign(app, app.preferences) } catch (_: IOException) { false })) return
             runCatching { ContextCompat.startForegroundService(app, Intent(app, PackageMonitorService::class.java)) }
         }
 
