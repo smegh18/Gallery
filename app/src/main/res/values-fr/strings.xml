@@ -433,4 +433,26 @@ poubelle"</string>
     <string name="security_question8">Quel est votre emploi de rêve ?</string>
     <string name="security_question9">Qui est votre idole sportive ?</string>
     <string name="security_question10">Dans quelle ville avez-vous eu votre premier emploi ?</string>
+    <string name="collage_limit_error">Vous devez sélectionner entre %1$d et %2$d éléments pour le collage.</string>
+    <string name="discard_changes">Ignorer les modifications</string>
+    <string name="discard_permission">"Confirmer l'abandon des modifications ?"</string>
+    <string name="removed_background">"Supprimer l'arrière-plan"</string>
+    <string name="gallery">Galerie</string>
+    <string name="ml_kit_module_error">"Quelque chose s'est mal passé. Veuillez réessayer après un certain temps."</string>
+    <string name="please_turn_on_internet_and_try_again">Veuillez activer votre internet et réessayer.</string>
+    <string name="progress_toast">"Veuillez patienter, le processus est en cours d'exécution"</string>
+    <string name="remove_bg">"Supprimer l'arrière-plan"</string>
+    <string name="instantly_remove_bg">"Supprimez instantanément l'arrière-plan de
+ n'importe quelle photo"</string>
+    <string name="instantly_blur_background">"Floutez instantanément l'arrière-plan de
+ n'importe quelle photo"</string>
+    <string name="splash">Éclabousser</string>
+    <string name="instantly_color_splash">"Changez instantanément la couleur de l'arrière-plan
+ dans n'importe quelle photo"</string>
+    <string name="try_now">Essayer maintenant</string>
+    <string name="apply">Appliquer</string>
+    <string name="lock_screen">Écran de verrouillage</string>
+    <string name="home_screen">"Écran d'accueil"</string>
+    <string name="home_lock_screen">"Écran d'accueil et de verrouillage"</string>
+    <string name="apply_set_wallpaper">"Fond d'écran mis à jour avec succès."</string>
 </resources>

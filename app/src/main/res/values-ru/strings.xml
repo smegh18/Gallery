@@ -442,4 +442,27 @@
     <string name="security_question8">Кто ваша работа мечты?</string>
     <string name="security_question9">Кто ваш спортивный герой?</string>
     <string name="security_question10">В каком городе или поселке была ваша первая работа?</string>
+    <string name="collage_limit_error">Вы должны выбрать от %1$d до %2$d элементов для коллажа.</string>
+    <string name="discard_changes">Отменить изменения</string>
+    <string name="discard_permission">Подтвердить отмену изменений?</string>
+    <string name="removed_background">Фон удален</string>
+    <string name="gallery">Галерея</string>
+    <string name="ml_kit_module_error">Произошла ошибка, попробуйте позже.</string>
+    <string name="please_turn_on_internet_and_try_again">Пожалуйста, включите интернет и попробуйте снова.</string>
+    <string name="progress_toast">Пожалуйста, подождите, идет процесс</string>
+    <string name="remove_bg">Удалить фон</string>
+    <string name="instantly_remove_bg">"Мгновенно удалить фон с
+ любого фото"</string>
+    <string name="instantly_blur_background">"Мгновенно размыть фон
+ на любом фото"</string>
+    <string name="splash">Брызги</string>
+    <string name="instantly_color_splash">"Мгновенно изменить цвет фона
+ на любом фото"</string>
+    <string name="try_now">Попробовать сейчас</string>
+    <string name="AI">ИИ</string>
+    <string name="apply">Применить</string>
+    <string name="lock_screen">Экран блокировки</string>
+    <string name="home_screen">Главный экран</string>
+    <string name="home_lock_screen">Главный экран &amp; Экран блокировки</string>
+    <string name="apply_set_wallpaper">Обои успешно обновлены.</string>
 </resources>

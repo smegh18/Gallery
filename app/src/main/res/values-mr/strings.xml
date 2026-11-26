@@ -425,4 +425,23 @@
     <string name="security_question8">तुमच्या स्वप्नातील नोकरी काय आहे?</string>
     <string name="security_question9">तुमचा क्रीडा आदर्श कोणता आहे?</string>
     <string name="security_question10">तुमच्या पहिल्या नोकरीच्या शहराचे नाव कोणते आहे?</string>
+    <string name="collage_limit_error">तुम्हाला कोलाजसाठी %1$d आणि %2$d वस्तूंच्या दरम्यान निवड करणे आवश्यक आहे.</string>
+    <string name="discard_changes">बदल वगळा</string>
+    <string name="discard_permission">बदल खारेज करण्याची पुष्टी करा?</string>
+    <string name="removed_background">पार्श्वभूमि काढा</string>
+    <string name="gallery">गॅलरी</string>
+    <string name="ml_kit_module_error">काहीतरी चुकीचं झालं आहे. कृपया काही क्षणांतर पुन्हा प्रयत्न करा.</string>
+    <string name="please_turn_on_internet_and_try_again">कृपया आपलं इंटरनेट सुरू करा आणि पुन्हा प्रयत्न करा.</string>
+    <string name="progress_toast">कृपया थांबा, प्रक्रिया चालू आहे</string>
+    <string name="remove_bg">पार्श्वभूमि काढा</string>
+    <string name="instantly_remove_bg">कोणत्याही फोटोतून पार्श्वछाया त्वरितपणे काढा</string>
+    <string name="instantly_blur_background">कोणत्याही फोटोतून बॅकग्राऊंड त्वरितपणे ब्लर करा</string>
+    <string name="splash">स्फॅश</string>
+    <string name="instantly_color_splash">कोणत्याही फोटोत रंगाची त्वरितपणे बॅकग्राऊंड बदला</string>
+    <string name="try_now">आता प्रयत्न करा</string>
+    <string name="apply">लागू करा</string>
+    <string name="lock_screen">स्क्रीन लॉक</string>
+    <string name="home_screen">मुख्य स्क्रीन</string>
+    <string name="home_lock_screen">मुख्य आणि लॉक स्क्रीन</string>
+    <string name="apply_set_wallpaper">वॉलपेपर सफलतेच अद्यतित केला गेला आहे.</string>
 </resources>

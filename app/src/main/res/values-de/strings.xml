@@ -433,4 +433,26 @@ Papierkorb zu verschieben"</string>
     <string name="security_question8">Was ist Ihr Traumberuf?</string>
     <string name="security_question9">Wer ist Ihr Sportidol?</string>
     <string name="security_question10">In welcher Stadt war Ihr erster Job?</string>
+    <string name="collage_limit_error">Sie müssen zwischen %1$d und %2$d Elemente für die Collage auswählen.</string>
+    <string name="discard_changes">Änderungen verwerfen</string>
+    <string name="discard_permission">Bestätigen Sie das Verwerfen von Änderungen?</string>
+    <string name="removed_background">Hintergrund entfernt</string>
+    <string name="gallery">Galerie</string>
+    <string name="ml_kit_module_error">Etwas ist schief gelaufen. Bitte versuchen Sie es nach einiger Zeit erneut.</string>
+    <string name="please_turn_on_internet_and_try_again">Bitte schalten Sie Ihr Internet ein und versuchen Sie es erneut.</string>
+    <string name="progress_toast">Bitte warten, der Prozess läuft</string>
+    <string name="remove_bg">Hintergrund entfernt</string>
+    <string name="instantly_remove_bg">"Entfernen Sie den Hintergrund sofort von
+ jedem Foto"</string>
+    <string name="instantly_blur_background">"Machen Sie den Hintergrund sofort verschwommen
+ in jedem Foto"</string>
+    <string name="splash">Spritzer</string>
+    <string name="instantly_color_splash">"Ändern Sie sofort die Hintergrundfarbe in
+ jedem Foto"</string>
+    <string name="try_now">Jetzt ausprobieren</string>
+    <string name="apply">Anwenden</string>
+    <string name="lock_screen">Bildschirmsperre</string>
+    <string name="home_screen">Startbildschirm</string>
+    <string name="home_lock_screen">Start- und Bildschirmsperre</string>
+    <string name="apply_set_wallpaper">Hintergrund erfolgreich aktualisiert.</string>
 </resources>

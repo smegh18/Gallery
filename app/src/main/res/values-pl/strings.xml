@@ -440,4 +440,23 @@ Skanowanie zakończone!"</string>
     <string name="security_question8">Jaka jest twoja wymarzona praca?</string>
     <string name="security_question9">Kto jest twoim idolem sportowym?</string>
     <string name="security_question10">W jakim mieście miałeś swoją pierwszą pracę?</string>
+    <string name="collage_limit_error">Musisz wybrać między %1$d a %2$d przedmiotami do kolażu.</string>
+    <string name="discard_changes">Odrzuć zmiany</string>
+    <string name="discard_permission">Potwierdź odrzucenie zmian?</string>
+    <string name="removed_background">Usuń Tło</string>
+    <string name="gallery">Galeria</string>
+    <string name="ml_kit_module_error">Coś poszło nie tak, Spróbuj ponownie po chwili.</string>
+    <string name="please_turn_on_internet_and_try_again">Proszę włączyć internet i spróbować ponownie.</string>
+    <string name="progress_toast">Proszę czekać, proces jest uruchamiany</string>
+    <string name="remove_bg">Usuń Tło</string>
+    <string name="instantly_remove_bg">Usuń tło natychmiast z dowolnego zdjęcia</string>
+    <string name="instantly_blur_background">Rozmyj tło natychmiast na dowolnym zdjęciu</string>
+    <string name="splash">Plusk</string>
+    <string name="instantly_color_splash">Zmień tło kolorystyczne natychmiast na dowolnym zdjęciu</string>
+    <string name="try_now">Spróbuj teraz</string>
+    <string name="apply">Zastosuj</string>
+    <string name="lock_screen">Ekran blokady</string>
+    <string name="home_screen">Ekran główny</string>
+    <string name="home_lock_screen">Ekran główny i blokady</string>
+    <string name="apply_set_wallpaper">Tapeta została pomyślnie zaktualizowana.</string>
 </resources>

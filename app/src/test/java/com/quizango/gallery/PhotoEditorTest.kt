@@ -297,31 +297,4 @@ class PhotoEditorTest {
         assertTrue(colorSplashRoute.startsWith("creative/color_splash?path="))
         assertTrue(colorSplashRoute.contains("sample.jpg"))
     }
-
-    @Test
-    fun testRemoveBgChoiceTypes() {
-        val transparent = com.quizango.gallery.ui.creative.RemoveBgChoice.Transparent
-        val colorPicker = com.quizango.gallery.ui.creative.RemoveBgChoice.ColorPicker
-        val gallery = com.quizango.gallery.ui.creative.RemoveBgChoice.Gallery
-        val solid = com.quizango.gallery.ui.creative.RemoveBgChoice.SolidColor(Color(0xFF9E9E9E), 0)
-
-        assertTrue(transparent is com.quizango.gallery.ui.creative.RemoveBgChoice)
-        assertTrue(colorPicker is com.quizango.gallery.ui.creative.RemoveBgChoice)
-        assertTrue(gallery is com.quizango.gallery.ui.creative.RemoveBgChoice)
-        assertEquals(0, solid.id)
-        assertEquals(Color(0xFF9E9E9E), solid.color)
-    }
-
-    @Test
-    fun testCreativeRulerParameters() {
-        val minBlur = 0
-        val maxBlur = 100
-        val defaultBlur = 25
-        assertTrue(defaultBlur in minBlur..maxBlur)
-
-        val minSplash = 0
-        val maxSplash = 100
-        val defaultSplash = 0
-        assertTrue(defaultSplash in minSplash..maxSplash)
-    }
 }

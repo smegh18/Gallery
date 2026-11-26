@@ -441,4 +441,23 @@
     <string name="security_question8">သင့်အကြိုက်ဆုံး အလုပ်အကိုင်</string>
     <string name="security_question9">သင့်အကြိုက်ဆုံး အားကိုကြားရွေးချယ်သူ</string>
     <string name="security_question10">သင့်ပထမအလုပ်အကိုင်ကို တစ်ချို့ မြို့မှာ</string>
+    <string name="collage_limit_error">ကော်လား့ခ်အတွက် %1$d နှင့် %2$d ပစ္စည်းများကို ရွေးချယ်ရမည်။</string>
+    <string name="discard_changes">ပြင်မပျက်နှိပ်ချက်ကို ဖယ်ရှားမည်</string>
+    <string name="discard_permission">ပြောင်းလဲမှုများကို ဖျက်လိုသလားကို အတည်ပြုသင်သည်လား။</string>
+    <string name="removed_background">မြင့်နေသည့် နေသည်</string>
+    <string name="gallery">ဓာတ်ပုံခန်းမ</string>
+    <string name="ml_kit_module_error">မှားနေသည့်အခါတွင် မှားနေသည်။ ကျေးဇူးပြုပြီး နောက်ထပ် အိမ်ထဲ ဖြစ်ပါ။</string>
+    <string name="please_turn_on_internet_and_try_again">အင်တာနက်ကဖွင့်ထားပါသို့ နောက်ထပ် ထပ်မှာကို အင်တာနက်ကဖွင့်ပါ။</string>
+    <string name="progress_toast">ကျေးဇူးတင်ပါသည်။ ဆက်စပ်ရမ်းသည်။</string>
+    <string name="remove_bg">နောက်ဆုံးပြတ်ရန်</string>
+    <string name="instantly_remove_bg">မိုဘိုင်းမှ နောက်ဆုံးပြတ်ရန်အတွက်</string>
+    <string name="instantly_blur_background">မိုဘိုင်းမှ နောက်ဆုံးပြတ်ရန်အတွက်</string>
+    <string name="splash">ရေခဲဆိပ်</string>
+    <string name="instantly_color_splash">မိုဘိုင်းမှ အလျားဘေးအတွက် နောက်ဆုံးပြတ်ရန်</string>
+    <string name="try_now">ယခုကြိုသွားပါ</string>
+    <string name="apply">အသံပြုံ</string>
+    <string name="lock_screen">အသံပြုံ အကြောင်း</string>
+    <string name="home_screen">အပင် အကြောင်း</string>
+    <string name="home_lock_screen">အပင် &amp; အသံပြုံ အကြောင်း</string>
+    <string name="apply_set_wallpaper">ဗီဒီယိုပြင်ဆင်မှု အောင်မြင်စွာရှင်းပြထားသည်။</string>
 </resources>

@@ -441,4 +441,26 @@ keranjang sampah"</string>
     <string name="security_question8">Apa pekerjaan impian Anda?</string>
     <string name="security_question9">Siapakah idol olahraga Anda?</string>
     <string name="security_question10">Di kota mana Anda pertama kali bekerja?</string>
+    <string name="collage_limit_error">Anda harus memilih antara %1$d dan %2$d item untuk kolase.</string>
+    <string name="discard_changes">Buang Perubahan</string>
+    <string name="discard_permission">Konfirmasi pembatalan perubahan?</string>
+    <string name="removed_background">Hapus Latar Belakang</string>
+    <string name="gallery">Galeri</string>
+    <string name="ml_kit_module_error">Ada yang salah, Harap coba lagi setelah beberapa saat.</string>
+    <string name="please_turn_on_internet_and_try_again">Mohon nyalakan internet Anda dan coba lagi.</string>
+    <string name="progress_toast">Harap tunggu, proses sedang berjalan</string>
+    <string name="remove_bg">Hapus Latar Belakang</string>
+    <string name="instantly_remove_bg">"Hapus latar belakang secara instan dari
+ setiap foto"</string>
+    <string name="instantly_blur_background">"Buat latar belakang buram secara instan
+ pada setiap foto"</string>
+    <string name="splash">Percikan</string>
+    <string name="instantly_color_splash">"Ubah warna latar belakang secara instan
+ pada setiap foto"</string>
+    <string name="try_now">Coba Sekarang</string>
+    <string name="apply">Terapkan</string>
+    <string name="lock_screen">Layar Kunci</string>
+    <string name="home_screen">Layar Beranda</string>
+    <string name="home_lock_screen">Layar Beranda &amp; Kunci</string>
+    <string name="apply_set_wallpaper">Wallpaper berhasil diperbarui.</string>
 </resources>

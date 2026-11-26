@@ -1,688 +1,353 @@
 package com.quizango.gallery.ui.creative
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Rect
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.BackHandler
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
+import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.data.repository.MediaRepository
-import com.quizango.gallery.ui.theme.*
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.components.PhotoPicker
+import com.quizango.gallery.ui.editor.DiscardChangesDialog
+import com.quizango.gallery.ui.home.drawableBackground
+import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/**
- * Background selection item type matching reference `albums.gallery.photo.folder.picasa.app.web.gallery.cx.c`.
- */
-sealed class RemoveBgChoice {
-    data object Gallery : RemoveBgChoice()
-    data object ColorPicker : RemoveBgChoice()
-    data object Transparent : RemoveBgChoice()
-    data class SolidColor(val color: Color, val id: Int) : RemoveBgChoice()
-    data class CustomImage(val uri: Uri, val bitmap: Bitmap?) : RemoveBgChoice()
+/** The Remove BG background behind the cut-out subject (de/c tiles). */
+private sealed interface RemoveBgBackdrop {
+    data object Transparent : RemoveBgBackdrop
+    data class Solid(val color: Color) : RemoveBgBackdrop
+    data class Picture(val bitmap: Bitmap) : RemoveBgBackdrop
 }
 
+/** array remove_bg_color: tile 0 Gallery, 2 colour picker, 4 transparent; the rest are swatches (black / white follow the theme). */
+private const val TILE_GALLERY = 0
+private const val TILE_PICKER = 2
+private const val TILE_TRANSPARENT = 4
+private val SWATCHES = listOf(
+    -1, R.color.color_gray, -1, R.color.color_dark_gray, -1, R.color.color_light_pink, R.color.black, R.color.color_pink,
+    R.color.white, R.color.color_dark_pink, R.color.yellow_color_picker, R.color.yellow_green_color_picker,
+    R.color.sky_blue_color_picker, R.color.color_dark_green, R.color.color_dark_purple, R.color.sticker_hint_color
+)
+
 /**
- * Remove Background screen reconstructed with 100% visual and behavioral parity
- * against reference APK `activity_remove_bg.xml` and `RemoveBgActivity.java`.
+ * activity_remove_bg (S272 RemoveBgActivity): guide on first use, ML Kit subject segmentation, then the subject as a
+ * movable sticker over the chosen background. Done writes the result over the editor's working copy [imagePath].
  */
 @Composable
 fun RemoveBgScreen(
     imagePath: String,
-    mediaRepository: MediaRepository? = null,
+    mediaRepository: MediaRepository,
+    preferences: AppPreferences,
+    onSaved: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
+    val guideSeen by remember { preferences.oneTimeFlag(AiTool.REMOVE_BG.guideKey) }.collectAsState(initial = null)
+    var started by rememberSaveable { mutableStateOf(false) }
+    var original by remember { mutableStateOf<Bitmap?>(null) }
+    var subject by remember { mutableStateOf<Pair<Bitmap, IntArray>?>(null) }
+    var segmenting by remember { mutableStateOf(true) }
+    var ready by remember { mutableStateOf(false) } // after the 1000 ms loader
+    var backdrop by remember { mutableStateOf<RemoveBgBackdrop>(RemoveBgBackdrop.Transparent) }
+    var selectedTile by remember { mutableIntStateOf(TILE_TRANSPARENT) }
+    var pan by remember { mutableStateOf(Offset.Zero) }
+    var zoom by remember { mutableFloatStateOf(1f) }
+    var turn by remember { mutableFloatStateOf(0f) }
+    var fit by remember { mutableFloatStateOf(1f) } // screen px per original px
+    var saving by remember { mutableStateOf(false) }
+    var discarding by remember { mutableStateOf(false) }
+    var pickingImage by remember { mutableStateOf(false) }
+    var pickingColor by remember { mutableStateOf(false) }
+    val gridState = rememberLazyGridState()
+    val showGuide = !started && showsGuide(guideSeen)
 
-    var originalBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var cutoutBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var customBgBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var isSegmenting by remember { mutableStateOf(true) }
-    var isSaving by remember { mutableStateOf(false) }
+    LaunchedEffect(guideSeen) { if (guideSeen == true) started = true }
+    LaunchedEffect(Unit) { original = withContext(Dispatchers.IO) { ImageSegmentationHelper.decodeUpright(imagePath) } }
+    LaunchedEffect(started, original) {
+        val src = original ?: return@LaunchedEffect
+        if (!started || subject != null) return@LaunchedEffect
+        val cut = ImageSegmentationHelper.extractSubject(context, src)?.let { withContext(Dispatchers.Default) { ImageSegmentationHelper.trim(it) } }
+        segmenting = false
+        if (cut == null) {
+            val msg = if (ImageSegmentationHelper.isOnline(context)) R.string.ml_kit_module_error else R.string.please_turn_on_internet_and_try_again
+            Toast.makeText(context, context.getString(msg), Toast.LENGTH_SHORT).show()
+            return@LaunchedEffect
+        }
+        subject = cut
+        delay(1000) // dd/g: remove_bg_loader plays one second before the transparent backdrop shows
+        ready = true
+    }
 
-    // Selected background choice
-    var selectedChoice by remember { mutableStateOf<RemoveBgChoice>(RemoveBgChoice.Transparent) }
-    var customPickedColor by remember { mutableStateOf(Color(0xFFFF3B30)) }
-    var showColorPickerDialog by remember { mutableStateOf(false) }
-
-    // Authentic Lottie loader from reference APK (R.raw.remove_bg_loader)
-    val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.remove_bg_loader))
-
-    // Gallery Image Picker launcher
-    val galleryPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        if (uri != null) {
-            coroutineScope.launch(Dispatchers.IO) {
-                try {
-                    context.contentResolver.openInputStream(uri)?.use { stream ->
-                        val bmp = BitmapFactory.decodeStream(stream)
-                        if (bmp != null) {
-                            customBgBitmap = bmp
-                            selectedChoice = RemoveBgChoice.CustomImage(uri, bmp)
-                        }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+    fun save() {
+        val src = original ?: return
+        val cut = subject
+        if (!ready || cut == null) {
+            Toast.makeText(context, context.getString(R.string.progress_toast), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (saving) return
+        saving = true
+        scope.launch {
+            val out = withContext(Dispatchers.Default) {
+                when (val b = backdrop) {
+                    RemoveBgBackdrop.Transparent -> cut.first // dd/v: the trimmed cut-out alone
+                    else -> renderOnBackdrop(src.width, src.height, b, cut, pan.x / fit, pan.y / fit, zoom, turn)
                 }
+            }
+            if (ImageSegmentationHelper.writePng(out, imagePath)) onSaved() else {
+                saving = false
+                Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // 14 authentic palette colors matching reference array R.array.remove_bg_color
-    val authenticColors = remember {
-        listOf(
-            Color(0xFF9E9E9E), // color_gray
-            Color(0xFF424242), // color_dark_gray
-            Color(0xFFFF8A80), // color_light_pink
-            Color(0xFF000000), // black
-            Color(0xFFFD5451), // color_pink
-            Color(0xFFFFFFFF), // white
-            Color(0xFFD50100), // color_dark_pink
-            Color(0xFFFBE870), // yellow_color_picker
-            Color(0xFFC5E17A), // yellow_green_color_picker
-            Color(0xFF76D7EA), // sky_blue_color_picker
-            Color(0xFF0CD043), // color_dark_green
-            Color(0xFF523583), // color_dark_purple
-            Color(0xFF7A91AD), // sticker_hint_color
-            Color(0xFF007AFF)  // primary blue
-        )
-    }
+    BackHandler(enabled = !showGuide) { discarding = true }
+    BackHandler(enabled = pickingImage) { pickingImage = false }
 
-    // Load original bitmap and perform background removal
-    LaunchedEffect(imagePath) {
-        if (imagePath.isNotEmpty()) {
-            withContext(Dispatchers.IO) {
-                try {
-                    val opts = BitmapFactory.Options().apply {
-                        inPreferredConfig = Bitmap.Config.ARGB_8888
-                    }
-                    val bmp = BitmapFactory.decodeFile(imagePath, opts)
-                    if (bmp != null) {
-                        originalBitmap = bmp
-                        val fg = ImageSegmentationHelper.extractSubject(context, bmp)
-                        cutoutBitmap = fg
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                } finally {
-                    isSegmenting = false
-                }
-            }
-        } else {
-            isSegmenting = false
-        }
-    }
-
-    fun saveComposite() {
-        if (isSaving || isSegmenting) return
-        val fg = cutoutBitmap ?: originalBitmap ?: return
-
-        isSaving = true
-        coroutineScope.launch {
-            try {
-                val composite = when (val choice = selectedChoice) {
-                    is RemoveBgChoice.Transparent -> {
-                        ImageSegmentationHelper.compositeColoredBackground(fg, 0)
-                    }
-                    is RemoveBgChoice.SolidColor -> {
-                        val colorInt = android.graphics.Color.argb(
-                            (choice.color.alpha * 255).toInt(),
-                            (choice.color.red * 255).toInt(),
-                            (choice.color.green * 255).toInt(),
-                            (choice.color.blue * 255).toInt()
-                        )
-                        ImageSegmentationHelper.compositeColoredBackground(fg, colorInt)
-                    }
-                    is RemoveBgChoice.ColorPicker -> {
-                        val colorInt = android.graphics.Color.argb(
-                            (customPickedColor.alpha * 255).toInt(),
-                            (customPickedColor.red * 255).toInt(),
-                            (customPickedColor.green * 255).toInt(),
-                            (customPickedColor.blue * 255).toInt()
-                        )
-                        ImageSegmentationHelper.compositeColoredBackground(fg, colorInt)
-                    }
-                    is RemoveBgChoice.CustomImage -> {
-                        val bg = choice.bitmap ?: customBgBitmap
-                        if (bg != null) {
-                            val scaledBg = Bitmap.createScaledBitmap(bg, fg.width, fg.height, true)
-                            ImageSegmentationHelper.composite(scaledBg, fg)
-                        } else {
-                            ImageSegmentationHelper.compositeColoredBackground(fg, 0)
-                        }
-                    }
-                    else -> ImageSegmentationHelper.compositeColoredBackground(fg, 0)
-                }
-
-                val savedPath = ImageSegmentationHelper.saveImageToGallery(
-                    context = context,
-                    bitmap = composite,
-                    folderName = "Gallery",
-                    prefix = "NO_BG"
-                )
-                if (savedPath != null) {
-                    mediaRepository?.syncMediaStore()
-                    Toast.makeText(context, "Image saved to Pictures/Gallery", Toast.LENGTH_SHORT).show()
-                    onNavigateBack()
-                } else {
-                    Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(context, "Error saving: ${e.message}", Toast.LENGTH_SHORT).show()
-            } finally {
-                isSaving = false
-            }
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.screenBackground)
-    ) {
-        // Authentic Top Toolbar (layout_toolbar.xml)
-        Surface(
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 2.dp,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
-                        )
-                    )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { onNavigateBack() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_back),
-                            contentDescription = "Back",
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.remove_background),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                // 1dp Divider (actionbarDividerColor)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colorScheme.settingsDivider)
-                )
-            }
-        }
-
-        // Horizontal indeterminate progress bar during segmentation
-        if (isSegmenting) {
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(3.dp),
-                color = Color(0xFF0066FF),
-                trackColor = Color.Transparent
-            )
-        }
-
-        // Viewport (clImagesHolder3 & clImagesHolder)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .background(Color(0xFFF5F7FA)),
-            contentAlignment = Alignment.Center
-        ) {
-            if (isSegmenting) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    LottieAnimation(
-                        composition = lottieComposition,
-                        iterations = LottieConstants.IterateForever,
-                        modifier = Modifier.size(130.dp)
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = "Analyzing subject...",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF707C93)
-                    )
-                }
-            } else if (cutoutBitmap != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // Background layer based on selected choice
-                    when (val choice = selectedChoice) {
-                        is RemoveBgChoice.Transparent -> {
-                            Image(
-                                painter = painterResource(R.drawable.transparent_background),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(8.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        is RemoveBgChoice.SolidColor -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(choice.color)
-                            )
-                        }
-                        is RemoveBgChoice.ColorPicker -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(customPickedColor)
-                            )
-                        }
-                        is RemoveBgChoice.CustomImage -> {
-                            val bg = choice.bitmap ?: customBgBitmap
-                            if (bg != null) {
+    Box(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        Column(Modifier.fillMaxSize()) {
+            SharedMediaToolbar(title = stringResource(R.string.removed_background), onBack = { discarding = true })
+            Box(Modifier.weight(1f).fillMaxWidth()) {
+                BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    val src = original
+                    if (src != null) {
+                        val density = LocalDensity.current
+                        val scale = minOf(constraints.maxWidth / src.width.toFloat(), constraints.maxHeight / src.height.toFloat())
+                        SideEffect { fit = scale }
+                        val w = with(density) { (src.width * scale).toDp() }
+                        val h = with(density) { (src.height * scale).toDp() }
+                        Box(
+                            Modifier
+                                .size(w, h)
+                                .pointerInput(ready) {
+                                    if (ready) detectTransformGestures { _, move, scale, rotation ->
+                                        pan += move; zoom *= scale; turn += rotation
+                                    }
+                                }
+                        ) {
+                            val cut = subject
+                            if (!ready || cut == null) {
+                                Image(src.asImageBitmap(), contentDescription = null, modifier = Modifier.fillMaxSize())
+                            } else {
+                                when (val b = backdrop) {
+                                    RemoveBgBackdrop.Transparent -> Image(
+                                        painterResource(R.drawable.transparent_background), contentDescription = null,
+                                        contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize().background(colorResource(R.color.onlyWhite))
+                                    )
+                                    is RemoveBgBackdrop.Solid -> Box(Modifier.fillMaxSize().background(b.color))
+                                    is RemoveBgBackdrop.Picture -> Image(b.bitmap.asImageBitmap(), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                                }
                                 Image(
-                                    bitmap = bg.asImageBitmap(),
+                                    bitmap = cut.first.asImageBitmap(),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(8.dp)),
-                                    contentScale = ContentScale.Crop
+                                        .offset { IntOffset((cut.second[0] * scale).toInt(), (cut.second[1] * scale).toInt()) }
+                                        .size(with(density) { (cut.first.width * scale).toDp() }, with(density) { (cut.first.height * scale).toDp() })
+                                        .graphicsLayer { translationX = pan.x; translationY = pan.y; scaleX = zoom; scaleY = zoom; rotationZ = turn }
                                 )
                             }
+                            if (subject != null && !ready) RemoveBgLoader(230, Modifier.align(Alignment.Center))
                         }
-                        else -> {}
-                    }
-
-                    // Foreground cutout subject overlay
-                    val fg = cutoutBitmap
-                    if (fg != null) {
-                        Image(
-                            bitmap = fg.asImageBitmap(),
-                            contentDescription = "Cutout Subject",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Fit
-                        )
                     }
                 }
+                if (segmenting && started) SegmentingBar(Modifier.align(Alignment.TopCenter))
             }
-        }
-
-        // Authentic Bottom View (AddBgLay)
-        Surface(
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 10.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(10.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal
-                        )
-                    )
-                    .padding(horizontal = 14.dp, vertical = 10.dp)
-            ) {
-                // Action Header: Close, Add Background, Save
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+            ToolSheet {
+                ToolSheetHeader(
+                    title = stringResource(R.string.add_background),
+                    onClose = { discarding = true },
+                    onDone = ::save,
+                    modifier = Modifier.padding(top = 5.sdp)
+                )
+                LazyHorizontalGrid(
+                    rows = GridCells.Fixed(2),
+                    state = gridState,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 5.sdp).height(116.sdp) // two rows of 48sdp tiles with 5sdp margins
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { onNavigateBack() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_cancle),
-                            contentDescription = "Cancel",
-                            colorFilter = ColorFilter.tint(Color(0xFF0066FF)),
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-
-                    Text(
-                        text = stringResource(R.string.add_background),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { saveComposite() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_done),
-                            contentDescription = "Save",
-                            colorFilter = ColorFilter.tint(Color(0xFF0066FF)),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // 2-row horizontal scrollable grid matching reference addBgColorRv (spanCount=2)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    // Column 0: Gallery Picker & Color Wheel Picker
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        // Item: Gallery Picker (item_remove_bg_gallery.xml)
-                        val isGallerySelected = selectedChoice is RemoveBgChoice.CustomImage
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(RoundedCornerShape(6.dp))
-                                .border(
-                                    width = if (isGallerySelected) 2.5.dp else 1.dp,
-                                    color = if (isGallerySelected) Color(0xFF01A368) else Color(0xFFE4E6E9),
-                                    shape = RoundedCornerShape(6.dp)
-                                )
-                                .clickable { galleryPickerLauncher.launch("image/*") },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable.ic_gallery),
-                                    contentDescription = "Gallery",
-                                    modifier = Modifier.size(22.dp)
-                                )
-                                Text(
-                                    text = "Gallery",
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-
-                        // Item: Color Picker (ic_remove_bg_color_picker)
-                        val isColorPickerSelected = selectedChoice is RemoveBgChoice.ColorPicker
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(RoundedCornerShape(6.dp))
-                                .border(
-                                    width = if (isColorPickerSelected) 2.5.dp else 1.dp,
-                                    color = if (isColorPickerSelected) Color(0xFF01A368) else Color(0xFFE4E6E9),
-                                    shape = RoundedCornerShape(6.dp)
-                                )
-                                .clickable {
-                                    showColorPickerDialog = true
-                                    selectedChoice = RemoveBgChoice.ColorPicker
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_remove_bg_color_picker),
-                                contentDescription = "Picker",
-                                modifier = Modifier.size(46.dp)
-                            )
-                        }
-                    }
-
-                    // Column 1: Transparent Round & Solid Color 0
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        // Transparent round
-                        val isTransparentSelected = selectedChoice is RemoveBgChoice.Transparent
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(RoundedCornerShape(6.dp))
-                                .border(
-                                    width = if (isTransparentSelected) 2.5.dp else 1.dp,
-                                    color = if (isTransparentSelected) Color(0xFF01A368) else Color(0xFFE4E6E9),
-                                    shape = RoundedCornerShape(6.dp)
-                                )
-                                .clickable { selectedChoice = RemoveBgChoice.Transparent },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_transparent_round),
-                                contentDescription = "Transparent",
-                                modifier = Modifier.size(46.dp)
-                            )
-                        }
-
-                        // Solid Color 0
-                        val color0 = authenticColors[0]
-                        val isColor0Selected = (selectedChoice as? RemoveBgChoice.SolidColor)?.id == 0
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(RoundedCornerShape(6.dp))
-                                .border(
-                                    width = if (isColor0Selected) 2.5.dp else 1.dp,
-                                    color = if (isColor0Selected) Color(0xFF01A368) else Color(0x20000000),
-                                    shape = RoundedCornerShape(6.dp)
-                                )
-                                .clickable { selectedChoice = RemoveBgChoice.SolidColor(color0, 0) },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(42.dp)
-                                    .clip(RoundedCornerShape(5.dp))
-                                    .background(color0)
-                            )
-                        }
-                    }
-
-                    // Columns 2..N: Pairs of authentic solid color swatches
-                    val remainingColors = authenticColors.drop(1)
-                    val colorPairs = remainingColors.chunked(2)
-                    colorPairs.forEachIndexed { colIdx, pair ->
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            pair.forEachIndexed { rowIdx, color ->
-                                val swatchId = 1 + (colIdx * 2) + rowIdx
-                                val isSelected = (selectedChoice as? RemoveBgChoice.SolidColor)?.id == swatchId
-                                Box(
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clip(RoundedCornerShape(6.dp))
-                                        .border(
-                                            width = if (isSelected) 2.5.dp else 1.dp,
-                                            color = if (isSelected) Color(0xFF01A368) else Color(0x20000000),
-                                            shape = RoundedCornerShape(6.dp)
-                                        )
-                                        .clickable { selectedChoice = RemoveBgChoice.SolidColor(color, swatchId) },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(42.dp)
-                                            .clip(RoundedCornerShape(5.dp))
-                                            .background(color)
-                                    )
+                    items(SWATCHES.size) { i ->
+                        val swatch = if (SWATCHES[i] == -1) null else colorResource(SWATCHES[i])
+                        BackdropTile(i, swatch, selected = i == selectedTile, enabled = ready) {
+                            when (i) {
+                                TILE_GALLERY -> pickingImage = true
+                                TILE_PICKER -> pickingColor = true
+                                else -> {
+                                    backdrop = swatch?.let { RemoveBgBackdrop.Solid(it) } ?: RemoveBgBackdrop.Transparent
+                                    selectedTile = i
                                 }
                             }
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(10.dp))
             }
         }
-    }
-
-    // Interactive Color Picker Dialog
-    if (showColorPickerDialog) {
-        var redVal by remember { mutableFloatStateOf(customPickedColor.red * 255f) }
-        var greenVal by remember { mutableFloatStateOf(customPickedColor.green * 255f) }
-        var blueVal by remember { mutableFloatStateOf(customPickedColor.blue * 255f) }
-
-        val previewColor = remember(redVal, greenVal, blueVal) {
-            Color(redVal.toInt() / 255f, greenVal.toInt() / 255f, blueVal.toInt() / 255f)
-        }
-
-        AlertDialog(
-            onDismissRequest = { showColorPickerDialog = false },
-            containerColor = MaterialTheme.colorScheme.surface,
-            title = {
-                Text(
-                    text = "Choose Color",
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp
-                )
-            },
-            text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(previewColor)
-                            .border(1.dp, Color(0xFFE4E6E9), RoundedCornerShape(8.dp))
-                    )
-
-                    Text("Red: ${redVal.toInt()}", fontSize = 12.sp, color = Color.Gray)
-                    Slider(
-                        value = redVal,
-                        onValueChange = { redVal = it },
-                        valueRange = 0f..255f,
-                        colors = SliderDefaults.colors(thumbColor = Color.Red, activeTrackColor = Color.Red)
-                    )
-
-                    Text("Green: ${greenVal.toInt()}", fontSize = 12.sp, color = Color.Gray)
-                    Slider(
-                        value = greenVal,
-                        onValueChange = { greenVal = it },
-                        valueRange = 0f..255f,
-                        colors = SliderDefaults.colors(thumbColor = Color.Green, activeTrackColor = Color.Green)
-                    )
-
-                    Text("Blue: ${blueVal.toInt()}", fontSize = 12.sp, color = Color.Gray)
-                    Slider(
-                        value = blueVal,
-                        onValueChange = { blueVal = it },
-                        valueRange = 0f..255f,
-                        colors = SliderDefaults.colors(thumbColor = Color.Blue, activeTrackColor = Color.Blue)
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        customPickedColor = previewColor
-                        selectedChoice = RemoveBgChoice.ColorPicker
-                        showColorPickerDialog = false
-                    }
-                ) {
-                    Text("OK", fontWeight = FontWeight.Bold, color = Color(0xFF0066FF))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showColorPickerDialog = false }) {
-                    Text("Cancel", color = Color(0xFF707C93))
+        if (saving) SavingLayer()
+        if (pickingImage) PhotoPicker(mediaRepository, multi = false, onBack = { pickingImage = false }) { picked ->
+            pickingImage = false
+            scope.launch {
+                withContext(Dispatchers.IO) { ImageSegmentationHelper.decodeUpright(picked.first().filePath) }?.let {
+                    backdrop = RemoveBgBackdrop.Picture(it)
+                    selectedTile = -1
                 }
             }
+        }
+        if (showGuide) AiToolGuide(
+            tool = AiTool.REMOVE_BG,
+            onContinue = { scope.launch { preferences.setOneTimeFlag(AiTool.REMOVE_BG.guideKey) }; started = true },
+            onCancel = onNavigateBack
         )
     }
 
-    // Full-screen saving loader
-    if (isSaving) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.4f)),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                color = Color(0xFF0066FF),
-                modifier = Modifier.size(48.dp)
-            )
-        }
+    LaunchedEffect(ready) {
+        // RB isRemoveBgScrollToolTip: once, 2000 ms in, the swatches scroll to the end and 800 ms later back
+        if (!ready || preferences.oneTimeFlag(SCROLL_HINT_KEY).first()) return@LaunchedEffect
+        preferences.setOneTimeFlag(SCROLL_HINT_KEY)
+        delay(2000)
+        gridState.animateScrollToItem(SWATCHES.lastIndex)
+        delay(800)
+        gridState.animateScrollToItem(0)
     }
+
+    if (pickingColor) {
+        val current = (backdrop as? RemoveBgBackdrop.Solid)?.color ?: colorResource(R.color.onlyWhite)
+        ColorPickerDialog(current, onPick = { backdrop = RemoveBgBackdrop.Solid(it); selectedTile = TILE_PICKER; pickingColor = false }) { pickingColor = false }
+    }
+    if (discarding) DiscardChangesDialog(onDiscard = { discarding = false; onNavigateBack() }, onDismiss = { discarding = false })
+}
+
+private const val SCROLL_HINT_KEY = "isRemoveBgScrollToolTip"
+
+/** item_remove_bg_color / item_remove_bg_gallery: 48sdp square with the selection border on top. */
+@Composable
+private fun BackdropTile(index: Int, swatch: Color?, selected: Boolean, enabled: Boolean, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(4.sdp)
+    if (index == TILE_GALLERY) {
+        Column(
+            Modifier
+                .padding(5.sdp)
+                .size(48.sdp)
+                .drawableBackground(R.drawable.ic_color_square_border_default)
+                .clip(shape)
+                .clickable(enabled = enabled, onClick = onClick),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(painterResource(R.drawable.ic_gallery), contentDescription = null, modifier = Modifier.size(24.sdp).padding(2.dp))
+            Text(stringResource(R.string.gallery), style = GalleryText.BodyXXSmallMedium, color = colorResource(R.color.titleColor))
+        }
+        return
+    }
+    Box(Modifier.padding(5.sdp).size(48.sdp).clip(shape).clickable(enabled = enabled, onClick = onClick)) {
+        when (index) {
+            TILE_PICKER -> TileImage(R.drawable.ic_remove_bg_color_picker)
+            TILE_TRANSPARENT -> TileImage(R.drawable.ic_transparent_round)
+            else -> Box(Modifier.fillMaxSize().background(swatch ?: Color.Transparent))
+        }
+        Box(Modifier.fillMaxSize().drawableBackground(if (selected) R.drawable.ic_color_square_border else R.drawable.ic_color_square_default))
+    }
+}
+
+@Composable
+private fun TileImage(@DrawableRes id: Int) =
+    Image(painterResource(id), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+
+/** dd/v colour / image save: clImagesHolder redrawn at the original size, the subject with the user's move, zoom and turn. */
+private fun renderOnBackdrop(
+    width: Int,
+    height: Int,
+    backdrop: RemoveBgBackdrop,
+    cut: Pair<Bitmap, IntArray>,
+    dx: Float,
+    dy: Float,
+    zoom: Float,
+    turn: Float
+): Bitmap {
+    val out = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(out)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+    when (backdrop) {
+        is RemoveBgBackdrop.Solid -> canvas.drawColor(backdrop.color.toArgb())
+        is RemoveBgBackdrop.Picture -> canvas.drawBitmap(backdrop.bitmap, centerCrop(backdrop.bitmap, width, height), Rect(0, 0, width, height), paint)
+        RemoveBgBackdrop.Transparent -> Unit
+    }
+    val (bmp, at) = cut
+    val cx = at[0] + bmp.width / 2f
+    val cy = at[1] + bmp.height / 2f
+    val m = Matrix().apply {
+        postTranslate(at[0].toFloat(), at[1].toFloat())
+        postScale(zoom, zoom, cx, cy)
+        postRotate(turn, cx, cy)
+        postTranslate(dx, dy)
+    }
+    canvas.drawBitmap(bmp, m, paint)
+    return out
+}
+
+/** The source rectangle ContentScale.Crop shows of [bmp] in a [w] x [h] frame. */
+private fun centerCrop(bmp: Bitmap, w: Int, h: Int): Rect {
+    val scale = maxOf(w / bmp.width.toFloat(), h / bmp.height.toFloat())
+    val sw = (w / scale).toInt()
+    val sh = (h / scale).toInt()
+    val l = (bmp.width - sw) / 2
+    val t = (bmp.height - sh) / 2
+    return Rect(l, t, l + sw, t + sh)
 }

@@ -433,4 +433,26 @@ papelera"</string>
     <string name="security_question8">¿Cuál es tu trabajo soñado?</string>
     <string name="security_question9">¿Quién es tu ídolo deportivo?</string>
     <string name="security_question10">¿En qué ciudad fue tu primer trabajo?</string>
+    <string name="collage_limit_error">Debes seleccionar entre %1$d y %2$d elementos para el collage.</string>
+    <string name="discard_changes">Descartar Cambios</string>
+    <string name="discard_permission">¿Confirmar descartar cambios?</string>
+    <string name="removed_background">Eliminar fondo</string>
+    <string name="gallery">Galería</string>
+    <string name="ml_kit_module_error">Algo salió mal. Por favor, inténtelo después de algún tiempo.</string>
+    <string name="please_turn_on_internet_and_try_again">Por favor, encienda su internet e inténtelo de nuevo.</string>
+    <string name="progress_toast">Por favor espera, el proceso está en ejecución</string>
+    <string name="remove_bg">Eliminar fondo</string>
+    <string name="instantly_remove_bg">"Quita el fondo al instante de
+ cualquier foto"</string>
+    <string name="instantly_blur_background">"Desenfoca el fondo al instante de
+ cualquier foto"</string>
+    <string name="splash">Salpicadura</string>
+    <string name="instantly_color_splash">"Cambia instantáneamente el color de fondo
+ en cualquier foto"</string>
+    <string name="try_now">Probar ahora</string>
+    <string name="apply">Aplicar</string>
+    <string name="lock_screen">Pantalla de bloqueo</string>
+    <string name="home_screen">Pantalla de inicio</string>
+    <string name="home_lock_screen">Pantalla de inicio y bloqueo</string>
+    <string name="apply_set_wallpaper">Fondo de pantalla actualizado con éxito.</string>
 </resources>

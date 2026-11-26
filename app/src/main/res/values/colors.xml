@@ -273,4 +273,7 @@
     <color name="security_answer_stroke">#def2ff</color>
     <color name="ad_title_color">#1e3354</color>
     <color name="bgColor">#1e1e24</color>
+    <!-- Phase 08 -->
+    <color name="wallpaper_bg">#88ffffff</color>
+    <color name="wallpaper_apply_button">#ff1e3354</color>
 </resources>

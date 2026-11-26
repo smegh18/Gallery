@@ -441,4 +441,26 @@ cestino"</string>
     <string name="security_question8">Qual è il tuo lavoro dei sogni?</string>
     <string name="security_question9">Chi è il tuo idolo sportivo?</string>
     <string name="security_question10">In quale città è stato il tuo primo lavoro?</string>
+    <string name="collage_limit_error">Devi selezionare tra %1$d e %2$d elementi per il collage.</string>
+    <string name="discard_changes">Annulla modifiche</string>
+    <string name="discard_permission">Conferma annulla modifiche?</string>
+    <string name="removed_background">Rimuovi Sfondo</string>
+    <string name="gallery">Galleria</string>
+    <string name="ml_kit_module_error">"Qualcosa è andato storto, Riprova dopo un po' di tempo."</string>
+    <string name="please_turn_on_internet_and_try_again">Si prega di attivare Internet e riprovare.</string>
+    <string name="progress_toast">Per favore, attendi, il processo è in corso</string>
+    <string name="remove_bg">Rimuovi Sfondo</string>
+    <string name="instantly_remove_bg">"Rimuovi immediatamente lo sfondo da
+ qualsiasi foto"</string>
+    <string name="instantly_blur_background">"Sfoca immediatamente lo sfondo da
+ qualsiasi foto"</string>
+    <string name="splash">Spruzzo</string>
+    <string name="instantly_color_splash">"Cambia immediatamente il colore dello sfondo
+ in qualsiasi foto"</string>
+    <string name="try_now">Prova ora</string>
+    <string name="apply">Applica</string>
+    <string name="lock_screen">Schermata di blocco</string>
+    <string name="home_screen">Schermata principale</string>
+    <string name="home_lock_screen">Schermata principale e di blocco</string>
+    <string name="apply_set_wallpaper">Sfondo aggiornato con successo.</string>
 </resources>

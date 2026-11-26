@@ -433,4 +433,26 @@
     <string name="security_question8">ما هو وظيفة أحلامك؟</string>
     <string name="security_question9">من هو قدوتك الرياضية؟</string>
     <string name="security_question10">في أي مدينة كانت وظيفتك الأولى؟</string>
+    <string name="collage_limit_error">يجب عليك اختيار ما بين %1$d و %2$d عنصر لإنشاء التجميع.</string>
+    <string name="discard_changes">تجاهل التغييرات</string>
+    <string name="discard_permission">هل تريد تأكيد تجاهل التغييرات؟</string>
+    <string name="removed_background">تمت إزالة الخلفية</string>
+    <string name="gallery">المعرض</string>
+    <string name="ml_kit_module_error">حدث خطأ، يرجى المحاولة بعد فترة من الوقت.</string>
+    <string name="please_turn_on_internet_and_try_again">الرجاء تشغيل الإنترنت والمحاولة مرة أخرى.</string>
+    <string name="progress_toast">انتظر من فضلك، العملية قيد التشغيل</string>
+    <string name="remove_bg">إزالة الخلفية</string>
+    <string name="instantly_remove_bg">"قم بإزالة الخلفية على الفور من
+ أي صورة"</string>
+    <string name="instantly_blur_background">"قم بتعتيم الخلفية على الفور
+ في أي صورة"</string>
+    <string name="splash">بقعة</string>
+    <string name="instantly_color_splash">"قم بتغيير لون الخلفية على الفور
+ في أي صورة"</string>
+    <string name="try_now">جرب الآن</string>
+    <string name="apply">تطبيق</string>
+    <string name="lock_screen">قفل الشاشة</string>
+    <string name="home_screen">الشاشة الرئيسية</string>
+    <string name="home_lock_screen">الشاشة الرئيسية وقفل الشاشة</string>
+    <string name="apply_set_wallpaper">تم تحديث خلفية الشاشة بنجاح.</string>
 </resources>

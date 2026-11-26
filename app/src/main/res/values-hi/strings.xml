@@ -441,4 +441,23 @@
     <string name="security_question8">आपका सपने की नौकरी क्या है?</string>
     <string name="security_question9">आपका स्पोर्ट्स आदर्श कौन हैं?</string>
     <string name="security_question10">आपकी पहली नौकरी किस शहर में थी?</string>
+    <string name="collage_limit_error">आपको कोलाज के लिए %1$d और %2$d आइटमों के बीच चयन करना होगा।</string>
+    <string name="discard_changes">परिवर्तन छोड़ें</string>
+    <string name="discard_permission">परिवर्तनों की पुष्टि करें?</string>
+    <string name="removed_background">बैकग्राउंड हटाएं</string>
+    <string name="gallery">गैलरी</string>
+    <string name="ml_kit_module_error">कुछ गड़बड़ हो गई है, कृपया थोड़ी देर बाद प्रयास करें।</string>
+    <string name="please_turn_on_internet_and_try_again">कृपया अपना इंटरनेट चालू करें और पुनः प्रयास करें।</string>
+    <string name="progress_toast">कृपया प्रतीक्षा करें, प्रक्रिया चल रही है</string>
+    <string name="remove_bg">बैकग्राउंड हटाएं</string>
+    <string name="instantly_remove_bg">किसी भी फोटो से पृष्ठभूमि को तुरंत हटाएं</string>
+    <string name="instantly_blur_background">तुरंत किसी भी फोटो से पृष्ठभूमि को धुंधला करें</string>
+    <string name="splash">स्प्लैश</string>
+    <string name="instantly_color_splash">तुरंत किसी भी फोटो में पृष्ठभूमि का रंग बदलें</string>
+    <string name="try_now">अब कोशिश करो</string>
+    <string name="apply">लागू करें</string>
+    <string name="lock_screen">लॉक स्क्रीन</string>
+    <string name="home_screen">होम स्क्रीन</string>
+    <string name="home_lock_screen">होम और लॉक स्क्रीन</string>
+    <string name="apply_set_wallpaper">वॉलपेपर सफलता से अपडेट किया गया।</string>
 </resources>

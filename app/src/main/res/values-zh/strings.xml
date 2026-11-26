@@ -428,4 +428,23 @@
     <string name="security_question8">你的梦想职业是谁？</string>
     <string name="security_question9">你的体育英雄是谁？</string>
     <string name="security_question10">您的第一份工作在哪个城市或城镇？</string>
+    <string name="collage_limit_error">您必须在 %1$d 到 %2$d 个项目之间进行选择以制作拼贴画。</string>
+    <string name="discard_changes">放弃更改</string>
+    <string name="discard_permission">确认放弃更改？</string>
+    <string name="removed_background">删除背景</string>
+    <string name="gallery">画廊</string>
+    <string name="ml_kit_module_error">出现错误，请稍后再试。</string>
+    <string name="please_turn_on_internet_and_try_again">请打开互联网并重试。</string>
+    <string name="progress_toast">请稍候，进程正在运行</string>
+    <string name="remove_bg">删除背景</string>
+    <string name="instantly_remove_bg">立即从任何照片中删除背景</string>
+    <string name="instantly_blur_background">立即模糊任何照片中的背景</string>
+    <string name="splash">溅</string>
+    <string name="instantly_color_splash">立即更改任何照片的背景颜色</string>
+    <string name="try_now">立即试用</string>
+    <string name="apply">申请</string>
+    <string name="lock_screen">锁定屏幕</string>
+    <string name="home_screen">主屏幕</string>
+    <string name="home_lock_screen">主屏幕和锁定屏幕</string>
+    <string name="apply_set_wallpaper">壁纸更新成功。</string>
 </resources>

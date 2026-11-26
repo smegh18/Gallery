@@ -723,6 +723,8 @@ fun GalleryNavHost(
             RemoveBgScreen(
                 imagePath = path,
                 mediaRepository = app.mediaRepository,
+                preferences = app.preferences,
+                onSaved = { navController.previousBackStackEntry?.savedStateHandle?.set("editResult", true); navController.popBackStack() },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -738,7 +740,8 @@ fun GalleryNavHost(
 
             BlurBgScreen(
                 imagePath = path,
-                mediaRepository = app.mediaRepository,
+                preferences = app.preferences,
+                onSaved = { navController.previousBackStackEntry?.savedStateHandle?.set("editResult", true); navController.popBackStack() },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -754,7 +757,8 @@ fun GalleryNavHost(
 
             ColorSplashScreen(
                 imagePath = path,
-                mediaRepository = app.mediaRepository,
+                preferences = app.preferences,
+                onSaved = { navController.previousBackStackEntry?.savedStateHandle?.set("editResult", true); navController.popBackStack() },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

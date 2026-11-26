@@ -441,4 +441,23 @@ recycle bin"</string>
     <string name="security_question8">Apakah pekerjaan impian anda?</string>
     <string name="security_question9">Siapakah idol sukan anda?</string>
     <string name="security_question10">Di bandar manakah anda mempunyai pekerjaan pertama?</string>
+    <string name="collage_limit_error">Anda mesti memilih antara %1$d dan %2$d item untuk kolaj.</string>
+    <string name="discard_changes">Buang Perubahan</string>
+    <string name="discard_permission">Sahkan pembatalan perubahan?</string>
+    <string name="removed_background">Alih Latar Belakang</string>
+    <string name="gallery">Galeri</string>
+    <string name="ml_kit_module_error">Ada yang tidak kena, Sila cuba selepas beberapa masa.</string>
+    <string name="please_turn_on_internet_and_try_again">Sila hidupkan internet anda dan cuba lagi.</string>
+    <string name="progress_toast">Sila tunggu, proses sedang berjalan</string>
+    <string name="remove_bg">Alih Latar Belakang</string>
+    <string name="instantly_remove_bg">Alih latar belakang dengan segera dari mana-mana foto</string>
+    <string name="instantly_blur_background">Alih latar belakang dengan segera pada mana-mana foto</string>
+    <string name="splash">Percikan</string>
+    <string name="instantly_color_splash">Alih latar belakang dengan segera pada mana-mana foto</string>
+    <string name="try_now">Cuba Sekarang</string>
+    <string name="apply">Gunakan</string>
+    <string name="lock_screen">Skrin Kunci</string>
+    <string name="home_screen">Skrin Utama</string>
+    <string name="home_lock_screen">Skrin Utama &amp; Kunci</string>
+    <string name="apply_set_wallpaper">Wallpaper berjaya dikemaskini.</string>
 </resources>

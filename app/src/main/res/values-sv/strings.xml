@@ -440,4 +440,23 @@ Skanning slutförd!"</string>
     <string name="security_question8">Vad är ditt drömjobb?</string>
     <string name="security_question9">Vem är din idrottsidol?</string>
     <string name="security_question10">I vilken stad hade du ditt första jobb?</string>
+    <string name="collage_limit_error">Du måste välja mellan %1$d och %2$d objekt för kollaget.</string>
+    <string name="discard_changes">Kasta ändringar</string>
+    <string name="discard_permission">Bekräfta att kasta ändringar?</string>
+    <string name="removed_background">Ta bort bakgrund</string>
+    <string name="gallery">Galleri</string>
+    <string name="ml_kit_module_error">Något gick fel, försök igen senare.</string>
+    <string name="please_turn_on_internet_and_try_again">Vänligen slå på internet och försök igen.</string>
+    <string name="progress_toast">Vänta, processen körs</string>
+    <string name="remove_bg">Ta bort bakgrund</string>
+    <string name="instantly_remove_bg">Ta bort bakgrunden direkt från vilken bild som helst</string>
+    <string name="instantly_blur_background">Sudda ut bakgrunden direkt på vilken bild som helst</string>
+    <string name="splash">Splash</string>
+    <string name="instantly_color_splash">Ändra omedelbart bakgrundsfärgen på vilken bild som helst</string>
+    <string name="try_now">Prova nu</string>
+    <string name="apply">Tillämpa</string>
+    <string name="lock_screen">Låsskärm</string>
+    <string name="home_screen">Startskärm</string>
+    <string name="home_lock_screen">Start- och låsskärm</string>
+    <string name="apply_set_wallpaper">Bakgrundsbild uppdaterad framgångsrikt.</string>
 </resources>

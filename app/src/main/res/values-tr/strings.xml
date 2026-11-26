@@ -426,4 +426,23 @@ Tarama Tamamlandı!"</string>
     <string name="security_question8">Hayalinizdeki meslek nedir?</string>
     <string name="security_question9">Spor kahramanınız kim?</string>
     <string name="security_question10">İlk işiniz hangi şehir veya kasabadaydı?</string>
+    <string name="collage_limit_error">Kolaj için %1$d ile %2$d arasında öğe seçmelisiniz.</string>
+    <string name="discard_changes">Değişiklikleri Sil</string>
+    <string name="discard_permission">Atma değişikliklerini onaylıyor musunuz?</string>
+    <string name="removed_background">Kaldırılan Arka Plan</string>
+    <string name="gallery">Galeri</string>
+    <string name="ml_kit_module_error">Bir sorun oluştu. Lütfen bir süre sonra tekrar deneyin.</string>
+    <string name="please_turn_on_internet_and_try_again">Lütfen internetinizi açıp tekrar deneyin.</string>
+    <string name="progress_toast">Lütfen bekleyin, İşlem devam ediyor</string>
+    <string name="remove_bg">Arkaplanı Kaldır</string>
+    <string name="instantly_remove_bg">Herhangi bir fotoğrafın arka planını anında kaldırın</string>
+    <string name="instantly_blur_background">Herhangi bir fotoğraftaki arka planı anında bulanıklaştırın</string>
+    <string name="splash">Sıçrama</string>
+    <string name="instantly_color_splash">Herhangi bir fotoğraftaki arka plan rengini anında değiştirin</string>
+    <string name="try_now">Şimdi deneyin</string>
+    <string name="apply">Uygula</string>
+    <string name="lock_screen">Kilit Ekranı</string>
+    <string name="home_screen">Ana Ekran</string>
+    <string name="home_lock_screen">Ana Sayfa ve Kilit Ekranı</string>
+    <string name="apply_set_wallpaper">Duvar kağıdı başarıyla güncellendi.</string>
 </resources>

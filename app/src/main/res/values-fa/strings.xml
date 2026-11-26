@@ -433,4 +433,26 @@
     <string name="security_question8">شغل رویاهای شما چیست؟</string>
     <string name="security_question9">الهیات ورزشی شما کیست؟</string>
     <string name="security_question10">در کدام شهر اولین شغل شما بود؟</string>
+    <string name="collage_limit_error">شما باید بین %1$d و %2$d آیتم برای کلاژ انتخاب کنید.</string>
+    <string name="discard_changes">لغو تغییرات</string>
+    <string name="discard_permission">تایید لغو تغییرات؟</string>
+    <string name="removed_background">پس زمینه حذف شد</string>
+    <string name="gallery">گالری</string>
+    <string name="ml_kit_module_error">مشکلی پیش آمد. لطفاً بعد از مدتی دوباره تلاش کنید.</string>
+    <string name="please_turn_on_internet_and_try_again">لطفاً اینترنت خود را روشن کنید و دوباره تلاش کنید.</string>
+    <string name="progress_toast">لطفاً صبر کنید، فرآیند در حال اجراست</string>
+    <string name="remove_bg">حذف پس‌زمینه</string>
+    <string name="instantly_remove_bg">"فوراً پس‌زمینه را از
+ هر تصویر حذف کنید"</string>
+    <string name="instantly_blur_background">"فوراً پس‌زمینه را مات کنید
+ در هر تصویر"</string>
+    <string name="splash">پاشش</string>
+    <string name="instantly_color_splash">"فوراً رنگ پس‌زمینه را تغییر دهید
+ در هر تصویر"</string>
+    <string name="try_now">اکنون امتحان کنید</string>
+    <string name="apply">اعمال</string>
+    <string name="lock_screen">صفحه قفل</string>
+    <string name="home_screen">صفحه اصلی</string>
+    <string name="home_lock_screen">صفحه اصلی و قفل</string>
+    <string name="apply_set_wallpaper">تصویر زمینه با موفقیت به‌روزرسانی شد.</string>
 </resources>

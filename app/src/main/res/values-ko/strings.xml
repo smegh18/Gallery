@@ -440,4 +440,23 @@
     <string name="security_question8">당신의 꿈 직업은 무엇인가요?</string>
     <string name="security_question9">당신의 스포츠 아이돌은 누구인가요?</string>
     <string name="security_question10">당신의 첫 직장이었던 도시는 어디인가요?</string>
+    <string name="collage_limit_error">콜라주를 위해 %1$d에서 %2$d개 항목 중에서 선택해야 합니다.</string>
+    <string name="discard_changes">변경 사항 삭제</string>
+    <string name="discard_permission">변경 사항을 취소하시겠습니까?</string>
+    <string name="removed_background">배경이 제거되었습니다</string>
+    <string name="gallery">갤러리</string>
+    <string name="ml_kit_module_error">문제가 발생했습니다. 잠시 후에 다시 시도해주세요.</string>
+    <string name="please_turn_on_internet_and_try_again">인터넷을 켜고 다시 시도해주세요.</string>
+    <string name="progress_toast">잠시만 기다려주세요, 프로세스가 실행 중입니다</string>
+    <string name="remove_bg">배경 제거</string>
+    <string name="instantly_remove_bg">모든 사진에서 배경을 즉시 제거</string>
+    <string name="instantly_blur_background">모든 사진에서 배경을 즉시 흐리게</string>
+    <string name="splash">스플래시</string>
+    <string name="instantly_color_splash">모든 사진에서 배경 색상 즉시 변경</string>
+    <string name="try_now">지금 시도해보세요</string>
+    <string name="apply">적용</string>
+    <string name="lock_screen">잠금 화면</string>
+    <string name="home_screen">홈 화면</string>
+    <string name="home_lock_screen">홈 화면 및 잠금 화면</string>
+    <string name="apply_set_wallpaper">배경화면이 성공적으로 업데이트되었습니다.</string>
 </resources>

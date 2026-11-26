@@ -411,4 +411,23 @@
     <string name="security_question8">آپ کی خواب کی نوکری کیا ہے؟</string>
     <string name="security_question9">آپ کا کھیلوں کا مثال کون ہے؟</string>
     <string name="security_question10">آپ کی پہلی نوکری کا شہر کونسا تھا؟</string>
+    <string name="collage_limit_error">آپ کو کولیج کے لیے %1$d سے %2$d آئٹمز کے درمیان انتخاب کرنا ہوگا۔</string>
+    <string name="discard_changes">ترتیب مسترد کریں</string>
+    <string name="discard_permission">تبدیلیوں کی تصدیق کریں؟</string>
+    <string name="removed_background">پس منظر ہٹا دی گئی</string>
+    <string name="gallery">گیلری</string>
+    <string name="ml_kit_module_error">کچھ غلط ہوگیا ہے، براہ کرم ایک دیر بعد کوشش کریں۔</string>
+    <string name="please_turn_on_internet_and_try_again">براہ کرم اپنے انٹرنیٹ کو چالو کریں اور دوبارہ کوشش کریں۔</string>
+    <string name="progress_toast">براہ کرم انتظار کریں، پروسیس چل رہا ہے</string>
+    <string name="remove_bg">پس منظر ہٹائیں</string>
+    <string name="instantly_remove_bg">کسی بھی تصویر سے فوراً پس منظر ہٹائیں</string>
+    <string name="instantly_blur_background">کسی بھی تصویر میں فوراً پس منظر دھندلا کریں</string>
+    <string name="splash">چھڑکنا</string>
+    <string name="instantly_color_splash">کسی بھی تصویر میں فوراً رنگین پس منظر تبدیل کریں</string>
+    <string name="try_now">اب آزمائیں</string>
+    <string name="apply">لگائیں</string>
+    <string name="lock_screen">لاک سکرین</string>
+    <string name="home_screen">ہوم اسکرین</string>
+    <string name="home_lock_screen">ہوم اور لاک اسکرین</string>
+    <string name="apply_set_wallpaper">وال پیپر کامیابی سے اپ ڈیٹ ہو گیا ہے۔</string>
 </resources>

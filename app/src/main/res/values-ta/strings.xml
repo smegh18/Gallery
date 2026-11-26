@@ -441,4 +441,23 @@
     <string name="security_question8">உங்கள் கனவு தொழில் என்ன?</string>
     <string name="security_question9">உங்கள் விளையாட்டு மதிப்பிடிப்பாளர் யார்?</string>
     <string name="security_question10">உங்கள் முதல் வேலை நகரம் எத்தனாவது?</string>
+    <string name="collage_limit_error">கல்லேஜிற்கான %1$d மற்றும் %2$d உருப்படிகள் இடையே நீங்கள் தேர்வு செய்ய வேண்டும்.</string>
+    <string name="discard_changes">மாற்றங்களை விலக்கு</string>
+    <string name="discard_permission">மாற்றங்களை உறுதிப்படுத்துகிறீர்களா?</string>
+    <string name="removed_background">பின்னல் அகற்றப்பட்டது</string>
+    <string name="gallery">கேலரி</string>
+    <string name="ml_kit_module_error">ஏதாவது தவறுக்குத் தெரிவித்து, சில நேரங்களில் முயற்சிக்கவும்.</string>
+    <string name="please_turn_on_internet_and_try_again">உங்கள் இணையதளத்தை இயக்குங்கள் மற்றும் மீண்டும் முயற்சிக்கவும்.</string>
+    <string name="progress_toast">தயவுசெய்து காத்திருக்கவும், செயல் நடக்கின்றது</string>
+    <string name="remove_bg">பின்னணி நீக்கு</string>
+    <string name="instantly_remove_bg">எந்த படத்திலும் உள்ள பின்னணியை உடைந்துகொள்ளவும்</string>
+    <string name="instantly_blur_background">எந்த படத்திலும் உள்ள பின்னணி மூடுக</string>
+    <string name="splash">நீர் கொட்டுதல்</string>
+    <string name="instantly_color_splash">எந்த படத்திலும் உள்ள பின்னணி நீக்கும்</string>
+    <string name="try_now">இப்போது முயற்சி செய்</string>
+    <string name="apply">பிரயோகி</string>
+    <string name="lock_screen">பூட்டு திரை</string>
+    <string name="home_screen">முதல் திரை</string>
+    <string name="home_lock_screen">முதல் &amp; பூட்டு திரை</string>
+    <string name="apply_set_wallpaper">வால்பேப்பர் வெற்றியாக புதுப்பிக்கப்பட்டது.</string>
 </resources>

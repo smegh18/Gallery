@@ -440,4 +440,23 @@ Verificação concluída!"</string>
     <string name="security_question8">Qual é o seu emprego dos sonhos?</string>
     <string name="security_question9">Quem é o seu ídolo nos esportes?</string>
     <string name="security_question10">Em qual cidade foi o seu primeiro emprego?</string>
+    <string name="collage_limit_error">Você deve selecionar entre %1$d e %2$d itens para a colagem.</string>
+    <string name="discard_changes">Descartar Alterações</string>
+    <string name="discard_permission">Confirmar descartar alterações?</string>
+    <string name="removed_background">Remover Fundo</string>
+    <string name="gallery">Galeria</string>
+    <string name="ml_kit_module_error">Algo deu errado, por favor, tente novamente mais tarde.</string>
+    <string name="please_turn_on_internet_and_try_again">Por favor, ligue a sua internet e tente novamente.</string>
+    <string name="progress_toast">Por favor aguarde, o processo está em execução</string>
+    <string name="remove_bg">Remover Fundo</string>
+    <string name="instantly_remove_bg">Remova o fundo instantaneamente de qualquer foto</string>
+    <string name="instantly_blur_background">Desfoque o fundo instantaneamente em qualquer foto</string>
+    <string name="splash">Брызги</string>
+    <string name="instantly_color_splash">Mude instantaneamente o fundo colorido em qualquer foto</string>
+    <string name="try_now">Experimente agora</string>
+    <string name="apply">Aplicar</string>
+    <string name="lock_screen">Tela de bloqueio</string>
+    <string name="home_screen">Tela inicial</string>
+    <string name="home_lock_screen">Tela inicial e de bloqueio</string>
+    <string name="apply_set_wallpaper">Wallpaper atualizado com sucesso.</string>
 </resources>

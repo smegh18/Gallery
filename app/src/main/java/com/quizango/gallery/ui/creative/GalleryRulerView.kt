@@ -15,11 +15,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import com.quizango.gallery.R
 
 /**
- * Custom interactive RulerView matching the reference APK `RulerView.java`.
- * Features a fixed center needle indicator (`#0066FF`) and a horizontally scrollable tick scale (`#E0E0E0`).
+ * The 2.7.2 RulerView (custom/rulerview): a fixed centre needle (`rulerMidlineColor` colorPrimary) over a scale of
+ * sticks (`rulerStickColor` view_line) that drags under it. [enabled] false is isTouchEnable off (before processing ends).
  */
 @Composable
 fun GalleryRulerView(
@@ -28,8 +30,9 @@ fun GalleryRulerView(
     minValue: Int = 0,
     maxValue: Int = 100,
     modifier: Modifier = Modifier,
-    middleLineColor: Color = Color(0xFF0066FF),
-    stickColor: Color = Color(0xFFE0E0E0)
+    enabled: Boolean = true,
+    middleLineColor: Color = colorResource(R.color.colorPrimary),
+    stickColor: Color = colorResource(R.color.view_line)
 ) {
     val totalRange = (maxValue - minValue).coerceAtLeast(1)
     val tickSpacingPx = 32f // Pixels per unit/tick interval
@@ -40,8 +43,8 @@ fun GalleryRulerView(
         modifier = modifier
             .fillMaxWidth()
             .height(42.dp)
-            .pointerInput(value, minValue, maxValue) {
-                detectDragGestures(
+            .pointerInput(value, minValue, maxValue, enabled) {
+                if (enabled) detectDragGestures(
                     onDragStart = { dragAccumulator = 0f },
                     onDrag = { change, dragAmount ->
                         change.consume()
@@ -57,8 +60,8 @@ fun GalleryRulerView(
                     }
                 )
             }
-            .pointerInput(value, minValue, maxValue) {
-                detectTapGestures { offset ->
+            .pointerInput(value, minValue, maxValue, enabled) {
+                if (enabled) detectTapGestures { offset ->
                     val centerX = size.width / 2f
                     val dx = offset.x - centerX
                     val deltaTicks = (dx / tickSpacingPx).toInt()

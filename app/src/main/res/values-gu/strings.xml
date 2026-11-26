@@ -425,4 +425,23 @@
     <string name="security_question8">તમારી સ્વપ્નનોની નોકરી કઇ છે?</string>
     <string name="security_question9">તમારો સ્પોર્ટ્સ આઇડલ કોણ છે?</string>
     <string name="security_question10">તમારી પ્રથમ નોકરી કયા શહેરમાં કે નગરમાં હતી?</string>
+    <string name="collage_limit_error">તમે કોલાજ માટે %1$d અને %2$d વસ્તુઓ વચ્ચે પસંદ કરવી પડશે.</string>
+    <string name="discard_changes">ફેરફારો છોડો</string>
+    <string name="discard_permission">ફેરફારો ખારેજ કરવાની ખુલાસો?</string>
+    <string name="removed_background">બેકગ્રાઉન્ડ દૂર કરો</string>
+    <string name="gallery">ગેલેરી</string>
+    <string name="ml_kit_module_error">કંઈ ખોટું થયું. કૃપા કરીને કેટલાક પછી પ્રયાસ કરો.</string>
+    <string name="please_turn_on_internet_and_try_again">કૃપા કરીને તમારું ઇન્ટરનેટ ચાલુ કરો અને ફરીથી પ્રયાસ કરો.</string>
+    <string name="progress_toast">કૃપા કરીને રાહ જોવો, પ્રક્રિયા ચાલુ છે</string>
+    <string name="remove_bg">બેકગ્રાઉન્ડ દૂર કરો</string>
+    <string name="instantly_remove_bg">તમારી કોઈ પણ ફોટોમાંથી બેકગ્રાઉન્ડ તત્કાલ દૂર કરો</string>
+    <string name="instantly_blur_background">તમારી કોઈ પણ ફોટોમાંથી બેકગ્રાઉન્ડ તત્કાલ ધૂળાઈ</string>
+    <string name="splash">સ્પલેશ</string>
+    <string name="instantly_color_splash">તમારી કોઈ પણ ફોટોમાં બેકગ્રાઉન્ડનો રંગ તત્કાલ બદલો</string>
+    <string name="try_now">હવે પ્રયાસ કરો</string>
+    <string name="apply">લાગુ કરો</string>
+    <string name="lock_screen">સ્ક્રીન લોક</string>
+    <string name="home_screen">હોમ સ્ક્રીન</string>
+    <string name="home_lock_screen">હોમ અને લોક સ્ક્રીન</string>
+    <string name="apply_set_wallpaper">વોલપેપર સફળતાથી અપડેટ કરવામાં આવ્યું.</string>
 </resources>

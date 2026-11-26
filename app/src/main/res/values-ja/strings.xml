@@ -441,4 +441,23 @@
     <string name="security_question8">夢の仕事は何ですか？</string>
     <string name="security_question9">スポーツのアイドルは誰ですか？</string>
     <string name="security_question10">最初の仕事の都市はどこでしたか？</string>
+    <string name="collage_limit_error">コラージュには、%1$d から %2$d のアイテムを選択する必要があります。</string>
+    <string name="discard_changes">変更を破棄</string>
+    <string name="discard_permission">変更を破棄しますか？</string>
+    <string name="removed_background">背景が削除されました</string>
+    <string name="gallery">ギャラリー</string>
+    <string name="ml_kit_module_error">何かが間違っています。しばらくしてからもう一度お試しください。</string>
+    <string name="please_turn_on_internet_and_try_again">インターネットをオンにしてもう一度お試しください。</string>
+    <string name="progress_toast">お待ちください、プロセスが実行されています</string>
+    <string name="remove_bg">背景を削除</string>
+    <string name="instantly_remove_bg">任意の写真から背景を即座に削除</string>
+    <string name="instantly_blur_background">任意の写真から背景を即座にぼかす</string>
+    <string name="splash">スプラッシュ</string>
+    <string name="instantly_color_splash">任意の写真で背景の色を即座に変更</string>
+    <string name="try_now">今すぐ試す</string>
+    <string name="apply">適用</string>
+    <string name="lock_screen">ロック画面</string>
+    <string name="home_screen">ホーム画面</string>
+    <string name="home_lock_screen">ホーム画面とロック画面</string>
+    <string name="apply_set_wallpaper">壁紙を正常に更新しました。</string>
 </resources>
