@@ -538,4 +538,8 @@ recycle bin"</string>
     <string name="security_question8">Who is your dream job?</string>
     <string name="security_question9">Who is your sports hero?</string>
     <string name="security_question10">In what city or town was your first job?</string>
+    <!-- Phase 08 -->
+    <string name="collage_limit_error">You must select between %1$d and %2$d items for the collage.</string>
+    <string name="discard_changes">Discard Changes</string>
+    <string name="discard_permission">Confirm discard changes?</string>
 </resources>

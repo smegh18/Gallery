@@ -238,7 +238,7 @@ fun VaultAddMediaScreen(
 
 /** emptyLayout: shown only once the first query has returned an empty folder. */
 @Composable
-private fun PickerEmptyState() {
+internal fun PickerEmptyState() {
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Image(painterResource(R.drawable.ic_empty_img), contentDescription = null)
         Text(
@@ -279,7 +279,7 @@ private fun FolderList(albums: List<Album>, onPick: (String?) -> Unit) {
 
 /** item_picker_folder: cover, name, count and the trailing arrow. */
 @Composable
-private fun FolderRow(album: Album?, name: String, count: Int, onClick: () -> Unit) {
+internal fun FolderRow(album: Album?, name: String, count: Int, onClick: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -323,7 +323,7 @@ private fun FolderRow(album: Album?, name: String, count: Int, onClick: () -> Un
 
 /** llSelectedMediaView: count header over an optional strip of picked thumbnails. */
 @Composable
-private fun SelectionTray(
+internal fun SelectionTray(
     picked: List<String>,
     known: Map<String, MediaItem>,
     onClear: () -> Unit,
