@@ -40,6 +40,7 @@ import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.domain.model.SortDirection
 import com.quizango.gallery.domain.model.SortField
 import com.quizango.gallery.domain.model.SortOrder
+import com.quizango.gallery.notification.QuickActionsNotification
 import com.quizango.gallery.ui.components.AddToAlbumSheet
 import com.quizango.gallery.ui.components.homeUsageAccessPrompt
 import com.quizango.gallery.ui.navigation.Screen
@@ -79,8 +80,25 @@ fun HomeScreen(
     val anySelecting = uiState.isSelectionMode || albumSelecting
     // The usage-access prompt holds the vault hint until it closes (HA isUsageAccessPopupShowingOnHome)
     val usagePromptShowing = homeUsageAccessPrompt()
-    val showVaultHint = !anySelecting && !usagePromptShowing && shouldShowVaultHint(
-        uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context)
+    val openedFromOutside = LocalOpenedFromOutside.current
+    // HA.OoooOoO: Android 13+ asks for notifications as Home starts (not after an outside entry) and the vault hint
+    // waits for the answer; once notifications may show, the Quick Actions notification is scheduled (bw/h 16)
+    var notificationAskPending by rememberSaveable {
+        mutableStateOf(!openedFromOutside && !QuickActionsNotification.allowed(context))
+    }
+    val notificationAsk = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        notificationAskPending = false
+        if (granted) QuickActionsNotification.schedule(context)
+    }
+    LaunchedEffect(Unit) {
+        if (notificationAskPending) notificationAsk.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        else QuickActionsNotification.schedule(context)
+    }
+    val showVaultHint = !anySelecting && shouldShowVaultHint(
+        uiState.sessionCount, uiState.vaultHintSeen, uiState.vaultHintClosedSession, checkStoragePermissions(context),
+        openedFromOutside = openedFromOutside, startDialogShowing = notificationAskPending || usagePromptShowing
     )
 
     // HA.Oooo0oO order: vault hint, then the ⋮ popup (its focusable window eats Back itself), then selection,
@@ -175,6 +193,7 @@ fun HomeScreen(
                         if (showVaultHint) viewModel.closeVaultHint() // HA.o000OO0o closes the hint first
                         onNavigate(Screen.VaultLock.route)
                     },
+                    onPro = { onNavigate(Screen.Pro.route) },
                     onTitlePositioned = { titleBounds = it }
                 )
             }

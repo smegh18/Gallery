@@ -306,12 +306,12 @@ class AppPreferences(private val context: Context) {
         }
     }
 
-    // Phase 12: usage-access prompts (2.7.2 AppPreference key names; -1 = never shown)
-    private val appInsightsKey = booleanPreferencesKey("app_insights_enabled")
+    // Phase 09 + 12: Settings "Share app usage stats" and the usage-access prompts (2.7.2 AppPreference key names; -1 = never shown)
+    private val appInsightsKey = booleanPreferencesKey("app_insights_enabled") // 2.7.2 key (x/a), default on
     private val homeUsageShownKey = intPreferencesKey("usage_access_home_popup_last_shown_session")
     private val usageShownKey = intPreferencesKey("usage_access_popup_last_shown_session")
 
-    /** Settings "Share app usage stats"; false means the user opted out, so no usage-access prompt shows. */
+    /** Only the choice is kept, no usage data is collected or sent; false means opted out, so no usage-access prompt shows. */
     val appInsightsEnabled: Flow<Boolean> = context.dataStore.data.map { it[appInsightsKey] ?: true }
 
     suspend fun setAppInsightsEnabled(enabled: Boolean) {

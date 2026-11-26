@@ -25,6 +25,9 @@
     <uses-permission xmlns:tools="http://schemas.android.com/tools"
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
+    <!-- Phase 09: the Quick Actions job survives a reboot, as 2.7.2's WorkManager job -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
@@ -70,6 +73,16 @@
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <data android:mimeType="image/*" />
                 <data android:mimeType="video/*" />
+                <data android:mimeType="vnd.android.cursor.dir/image" />
+                <data android:mimeType="vnd.android.cursor.dir/video" />
+            </intent-filter>
+
+            <!-- Phase 09: DeepLinkActivity -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="api.bestgalleryapp.com" android:pathPrefix="/Activity" android:scheme="https" />
             </intent-filter>
 
             <intent-filter android:label="View Media">
@@ -98,6 +111,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <!-- Phase 09: Quick Actions notification period (2.7.2 NotificationWorker) -->
+        <service
+            android:name=".notification.QuickActionsJob"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
     </application>
 

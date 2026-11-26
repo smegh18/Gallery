@@ -1,123 +1,104 @@
 package com.quizango.gallery.ui.settings
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
+import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.applyNightMode
-import com.quizango.gallery.ui.theme.settingsDivider
+import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+/** activity_theme rows in order: (theme mode, label, picture). */
+private val THEME_ROWS = listOf(
+    Triple(0, R.string.day_mode, R.drawable.theme_group_day_mode),
+    Triple(1, R.string.night_mode, R.drawable.theme_group_night_mode),
+    Triple(2, R.string.system_mode, R.drawable.theme_group_system_mode)
+)
+
+/** activity_theme (ThemeActivity): picking another mode saves it and applies it at once; the same one does nothing. */
 @Composable
 fun ThemeScreen(
     appPreferences: AppPreferences,
     onNavigateBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val scrollState = rememberScrollState()
     val themeMode by appPreferences.themeMode.collectAsState(initial = 2)
 
-    val options = listOf(
-        Triple(0, R.string.day_mode, R.drawable.theme_group_day_mode),
-        Triple(1, R.string.night_mode, R.drawable.theme_group_night_mode),
-        Triple(2, R.string.system_mode, R.drawable.theme_group_system_mode)
-    )
-
-    Scaffold(
-        topBar = {
-            Column {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(id = R.string.theme_mode),
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_back),
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    )
-                )
-                HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outline)
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
+    Column(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
+        SharedMediaToolbar(title = stringResource(R.string.theme_mode), onBack = onNavigateBack)
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(scrollState)
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(top = 5.sdp)
+                .navigationBarsPadding()
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-
-            options.forEach { (mode, labelRes, iconRes) ->
-                val isSelected = themeMode == mode
-                val label = stringResource(id = labelRes)
+            THEME_ROWS.forEachIndexed { index, (mode, label, picture) ->
+                val selected = themeMode == mode
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            scope.launch {
+                        .padding(start = 12.sdp, end = 12.sdp, top = if (index == 0) 8.sdp else 7.sdp)
+                        .semantics { this.selected = selected }
+                        .clickable(remember { MutableInteractionSource() }, ripple(bounded = false), role = Role.RadioButton) {
+                            if (!selected) scope.launch {
                                 appPreferences.setThemeMode(mode)
                                 applyNightMode(mode)
                             }
                         }
-                        .padding(horizontal = 14.dp, vertical = 12.dp), // reference row height
+                        .padding(vertical = 5.sdp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(id = iconRes),
-                        contentDescription = label,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(width = 64.dp, height = 52.dp) // reference icon size
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Image(painterResource(picture), contentDescription = null, modifier = Modifier.padding(horizontal = 5.sdp))
                     Text(
-                        text = label,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.weight(1f)
+                        text = stringResource(label),
+                        style = GalleryText.BodyMediumMedium,
+                        color = colorResource(R.color.theme_text),
+                        modifier = Modifier.weight(1f).padding(start = 10.sdp)
                     )
-                    Icon(
-                        painter = painterResource(
-                            id = if (isSelected) R.drawable.ic_theme_select else R.drawable.ic_theme_unselect
-                        ),
-                        contentDescription = if (isSelected) "Selected" else "Unselected",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(24.dp)
+                    Image(
+                        painter = painterResource(if (selected) R.drawable.ic_theme_select else R.drawable.ic_theme_unselect),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 5.sdp)
                     )
                 }
-
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.settingsDivider,
-                    thickness = 1.dp,
-                    modifier = Modifier.padding(horizontal = 10.dp)
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.sdp, end = 10.sdp, top = 2.sdp)
+                        .height(1.dp)
+                        .background(colorResource(R.color.settings_divider))
                 )
             }
         }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:orientation="horizontal" android:background="@drawable/bg_round" android:layout_width="fill_parent" android:layout_height="42.0dip" android:baselineAligned="false" android:backgroundTint="@color/colorPrimary"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@+id/btnFeature1" android:visibility="gone" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+        <ImageView android:id="@+id/ivFeature1" android:layout_width="@dimen/_18sdp" android:layout_height="@dimen/_18sdp" android:src="@drawable/ic_notification_camera" />
+        <TextView android:textSize="@dimen/_8ssp" android:textColor="@color/white_only" android:id="@+id/txtFeature1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/str_notification_camera" android:fontFamily="@font/if_inter_regular" android:textFontWeight="500" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@+id/btnFeature2" android:visibility="gone" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+        <ImageView android:id="@+id/ivFeature2" android:layout_width="@dimen/_18sdp" android:layout_height="@dimen/_18sdp" android:src="@drawable/ic_notification_fav" />
+        <TextView android:textSize="@dimen/_8ssp" android:textColor="@color/white_only" android:ellipsize="end" android:id="@+id/txtFeature2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/str_notification_favorite" android:maxLines="1" android:fontFamily="@font/if_inter_regular" android:textFontWeight="500" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@+id/btnFeature3" android:visibility="gone" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+        <ImageView android:id="@+id/ivFeature3" android:layout_width="@dimen/_18sdp" android:layout_height="@dimen/_18sdp" android:src="@drawable/ic_notification_cleaner" />
+        <TextView android:textSize="@dimen/_8ssp" android:textColor="@color/white_only" android:ellipsize="end" android:id="@+id/txtFeature3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/clean" android:maxLines="1" android:fontFamily="@font/if_inter_regular" android:textFontWeight="500" />
+    </LinearLayout>
+</LinearLayout>
