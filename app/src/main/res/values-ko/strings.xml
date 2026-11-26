@@ -440,4 +440,28 @@
     <string name="security_question8">당신의 꿈 직업은 무엇인가요?</string>
     <string name="security_question9">당신의 스포츠 아이돌은 누구인가요?</string>
     <string name="security_question10">당신의 첫 직장이었던 도시는 어디인가요?</string>
+    <string name="gs_photos">사진</string>
+    <string name="title_settings">설정</string>
+    <string name="games">게임</string>
+    <string name="gs_view_moments">모먼트 보기</string>
+    <string name="gs_feature">통화 후 기능</string>
+    <string name="call_sett_desc">이 화면에서는 숨김 사진, 개인 앨범, 스마트 정렬, 미디어 정리, 중복 찾기와 같은 기능을 관리할 수 있습니다.</string>
+    <string name="always_on">항상 켜짐</string>
+    <string name="show_gs">들어오는 통화 후 매번 표시됩니다.</string>
+    <string name="always_off">항상 OFF</string>
+    <string name="disable_call_info">통화 정보 화면을 완전히 비활성화합니다.</string>
+    <string name="improve_your_call_experience">통화 경험 개선</string>
+    <string name="enables_smarter_call_amp_app_experience">더 스마트한 통화 및 앱 경험을 활성화합니다</string>
+    <string name="disable_setting">설정에서 언제든지 비활성화할 수 있습니다</string>
+    <string name="gallery_allow_display">갤러리 표시 허용</string>
+    <string name="iu_monitoring">앱 설치/제거 모니터링 중</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">앱을 설치/제거한 후 최적화 화면이 나타나는 시점을 선택하세요.</string>
+    <string name="always_on_subtitle">앱이 설치되거나 제거될 때마다 표시됩니다.</string>
+    <string name="always_off_subtitle">보안 검사 화면을 완전히 비활성화합니다.</string>
+    <string name="private_gallery_vault">프라이빗 갤러리 보관소</string>
+    <string name="smart_org">"스마트한 정리와
+한 곳에서의 프라이버시"</string>
+    <string name="try_it_now">지금 사용해보기</string>
+    <string name="app_scan_open">열려 있는</string>
+    <string name="app_scan_done">완료</string>
 </resources>

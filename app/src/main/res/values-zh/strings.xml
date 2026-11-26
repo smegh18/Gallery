@@ -428,4 +428,27 @@
     <string name="security_question8">你的梦想职业是谁？</string>
     <string name="security_question9">你的体育英雄是谁？</string>
     <string name="security_question10">您的第一份工作在哪个城市或城镇？</string>
+    <string name="gs_photos">照片</string>
+    <string name="title_settings">Settings</string>
+    <string name="games">游戏</string>
+    <string name="gs_feature">通话后功能</string>
+    <string name="call_sett_desc">此屏幕允许您管理隐藏照片、私人相册、智能排序、媒体清理器和重复查找等功能。</string>
+    <string name="always_on">始终开启</string>
+    <string name="show_gs">每次来电后显示。</string>
+    <string name="always_off">始终关闭</string>
+    <string name="disable_call_info">完全禁用通话信息屏幕。</string>
+    <string name="improve_your_call_experience">改善您的通话体验</string>
+    <string name="enables_smarter_call_amp_app_experience">启用更智能的通话和应用体验</string>
+    <string name="disable_setting">您可以随时在设置中关闭</string>
+    <string name="gallery_allow_display">画廊允许显示</string>
+    <string name="iu_monitoring">安装/卸载监控</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">选择安装/卸载应用程序后何时出现优化屏幕。</string>
+    <string name="always_on_subtitle">每次安装或卸载应用程序时显示。</string>
+    <string name="always_off_subtitle">完全禁用安全扫描屏幕。</string>
+    <string name="private_gallery_vault">私人画廊保险库</string>
+    <string name="smart_org">"智能组织与
+一处隐私"</string>
+    <string name="try_it_now">立即尝试</string>
+    <string name="app_scan_open">打开</string>
+    <string name="app_scan_done">完毕</string>
 </resources>

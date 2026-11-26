@@ -441,4 +441,28 @@
     <string name="security_question8">夢の仕事は何ですか？</string>
     <string name="security_question9">スポーツのアイドルは誰ですか？</string>
     <string name="security_question10">最初の仕事の都市はどこでしたか？</string>
+    <string name="gs_photos">写真</string>
+    <string name="title_settings">設定</string>
+    <string name="games">ゲーム</string>
+    <string name="gs_view_moments">モーメントを表示</string>
+    <string name="gs_feature">通話後機能</string>
+    <string name="call_sett_desc">この画面では、隠し写真、プライベートアルバム、スマートソート、メディアクリーナー、重複ファインダーなどの機能を管理できます。</string>
+    <string name="always_on">常にオン</string>
+    <string name="show_gs">着信後毎回表示されます。</string>
+    <string name="always_off">常にオフ</string>
+    <string name="disable_call_info">通話情報画面を完全に無効化します。</string>
+    <string name="improve_your_call_experience">通話体験を向上</string>
+    <string name="enables_smarter_call_amp_app_experience">よりスマートな通話とアプリ体験を有効にします</string>
+    <string name="disable_setting">設定からいつでも無効にできます</string>
+    <string name="gallery_allow_display">ギャラリーの表示を許可する</string>
+    <string name="iu_monitoring">インストール/アンインストールの監視</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">アプリをインストール/アンインストールした後、最適化画面をいつ表示するかを選択します。</string>
+    <string name="always_on_subtitle">アプリがインストールまたはアンインストールされるたびに表示されます。</string>
+    <string name="always_off_subtitle">セキュリティスキャン画面を完全に無効にします。</string>
+    <string name="private_gallery_vault">プライベートギャラリーボールト</string>
+    <string name="smart_org">"スマートな整理と
+一つの場所でのプライバシー"</string>
+    <string name="try_it_now">今すぐ試す</string>
+    <string name="app_scan_open">開ける</string>
+    <string name="app_scan_done">終わり</string>
 </resources>

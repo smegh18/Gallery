@@ -440,4 +440,27 @@ Skanowanie zakończone!"</string>
     <string name="security_question8">Jaka jest twoja wymarzona praca?</string>
     <string name="security_question9">Kto jest twoim idolem sportowym?</string>
     <string name="security_question10">W jakim mieście miałeś swoją pierwszą pracę?</string>
+    <string name="gs_photos">Zdjęcia</string>
+    <string name="title_settings">Ustawienia</string>
+    <string name="games">Gry</string>
+    <string name="gs_feature">Funkcja po rozmowie</string>
+    <string name="call_sett_desc">Ten ekran pozwala zarządzać funkcjami takimi jak Ukryte Zdjęcia, Prywatne Albumy, Inteligentne Sortowanie, Czyściciel Mediów i Wyszukiwarka Duplikatów.</string>
+    <string name="always_on">Zawsze WŁĄCZONY</string>
+    <string name="show_gs">Wyświetla się za każdym razem po przychodzącym połączeniu.</string>
+    <string name="always_off">Zawsze WYŁĄCZONY</string>
+    <string name="disable_call_info">Całkowicie wyłącza ekran informacji o połączeniu.</string>
+    <string name="improve_your_call_experience">Popraw jakość połączeń</string>
+    <string name="enables_smarter_call_amp_app_experience">Włącza inteligentniejsze połączenia i obsługę aplikacji</string>
+    <string name="disable_setting">Możesz wyłączyć to w dowolnym momencie w ustawieniach</string>
+    <string name="gallery_allow_display">Zezwól na wyświetlanie galerii</string>
+    <string name="iu_monitoring">Monitorowanie instalacji/usuwania</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Wybierz, kiedy po zainstalowaniu/odinstalowaniu aplikacji ma zostać wyświetlony ekran optymalizacyjny.</string>
+    <string name="always_on_subtitle">Pokazuje za każdym razem, gdy aplikacja zostanie zainstalowana lub odinstalowana.</string>
+    <string name="always_off_subtitle">Całkowicie wyłącza ekran skanowania bezpieczeństwa.</string>
+    <string name="private_gallery_vault">Prywatna Skarbnica Galerii</string>
+    <string name="smart_org">"Inteligentna organizacja &amp;
+prywatność w jednym miejscu"</string>
+    <string name="try_it_now">Wypróbuj teraz</string>
+    <string name="app_scan_open">Otwarte</string>
+    <string name="app_scan_done">Zrobione</string>
 </resources>

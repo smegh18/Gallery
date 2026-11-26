@@ -440,4 +440,27 @@ Skanning slutförd!"</string>
     <string name="security_question8">Vad är ditt drömjobb?</string>
     <string name="security_question9">Vem är din idrottsidol?</string>
     <string name="security_question10">I vilken stad hade du ditt första jobb?</string>
+    <string name="gs_photos">Foton</string>
+    <string name="title_settings">Inställningar</string>
+    <string name="games">Spel</string>
+    <string name="gs_feature">Efter Samtals-funktion</string>
+    <string name="call_sett_desc">Den här skärmen låter dig hantera funktioner som Dolda Foton, Privata Album, Smart Sortering, Media Rengörare och Dublettsökare.</string>
+    <string name="always_on">Alltid PÅ</string>
+    <string name="show_gs">Visas varje gång efter ett inkommande samtal.</string>
+    <string name="always_off">Alltid AV</string>
+    <string name="disable_call_info">Inaktiverar helt skärmen med samtalsinformation.</string>
+    <string name="improve_your_call_experience">Förbättra din samtalsupplevelse</string>
+    <string name="enables_smarter_call_amp_app_experience">Aktiverar smartare samtals- och appupplevelse</string>
+    <string name="disable_setting">Du kan inaktivera detta när som helst i inställningarna</string>
+    <string name="gallery_allow_display">Tillåt visning av galleri</string>
+    <string name="iu_monitoring">Övervakning av installation/avinstallation</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Välj när optimeringsskärmen ska visas efter installation/avinstallation av en app.</string>
+    <string name="always_on_subtitle">Visas varje gång en app installeras eller avinstalleras.</string>
+    <string name="always_off_subtitle">Inaktiverar säkerhetsskanningsskärmen helt.</string>
+    <string name="private_gallery_vault">Privat galleri-valv</string>
+    <string name="smart_org">"Smart organisation &amp;
+sekretess på ett ställe"</string>
+    <string name="try_it_now">Prova nu</string>
+    <string name="app_scan_open">Öppna</string>
+    <string name="app_scan_done">Gjort</string>
 </resources>

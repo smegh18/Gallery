@@ -411,4 +411,26 @@
     <string name="security_question8">آپ کی خواب کی نوکری کیا ہے؟</string>
     <string name="security_question9">آپ کا کھیلوں کا مثال کون ہے؟</string>
     <string name="security_question10">آپ کی پہلی نوکری کا شہر کونسا تھا؟</string>
+    <string name="gs_photos">تصاویر</string>
+    <string name="title_settings">ترتیبات</string>
+    <string name="games">کھیل</string>
+    <string name="gs_feature">کال کے بعد کی خصوصیت</string>
+    <string name="call_sett_desc">یہ اسکرین آپ کو مخفی تصاویر، نجی البمز، سمارٹ ترتیب، میڈیا کلینر اور ڈپلیکٹ فائنڈر جیسی خصوصیات کو منظم کرنے کی اجازت دیتی ہے۔</string>
+    <string name="always_on">ہمیشہ آن</string>
+    <string name="show_gs">ہر آنے والی کال کے بعد دکھایا جاتا ہے۔</string>
+    <string name="always_off">ہمیشہ آف</string>
+    <string name="disable_call_info">کال معلومات کی اسکرین کو مکمل طور پر غیر فعال کرتا ہے۔</string>
+    <string name="improve_your_call_experience">اپنی کال کا تجربہ بہتر بنائیں</string>
+    <string name="enables_smarter_call_amp_app_experience">زیادہ اسمارٹ کال اور ایپ تجربہ فعال کرتا ہے</string>
+    <string name="disable_setting">آپ اسے کسی بھی وقت سیٹنگز میں بند کر سکتے ہیں</string>
+    <string name="gallery_allow_display">گیلری کو دکھانے کی اجازت دیں</string>
+    <string name="iu_monitoring">نصب/غیر نصب کی نگرانی</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">منتخب کریں کہ ایپ کو انسٹال/ان انسٹال کرنے کے بعد آپٹمائزنگ اسکرین کب ظاہر ہونی چاہیے۔</string>
+    <string name="always_on_subtitle">ہر بار جب کوئی ایپ انسٹال یا ان انسٹال ہوتی ہے تو دکھاتا ہے۔</string>
+    <string name="always_off_subtitle">سیکیورٹی اسکین اسکرین کو مکمل طور پر غیر فعال کرتا ہے۔</string>
+    <string name="private_gallery_vault">پرائیوٹ گیلری وولٹ</string>
+    <string name="smart_org">سمارٹ تنظیم اورایک جگہ پر رازداری</string>
+    <string name="try_it_now">ابھی آزمائیں</string>
+    <string name="app_scan_open">کھولیں۔</string>
+    <string name="app_scan_done">ہو گیا</string>
 </resources>

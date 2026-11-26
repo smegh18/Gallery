@@ -538,4 +538,32 @@ recycle bin"</string>
     <string name="security_question8">Who is your dream job?</string>
     <string name="security_question9">Who is your sports hero?</string>
     <string name="security_question10">In what city or town was your first job?</string>
+    <!-- Phase 11 -->
+    <string name="gs_photos">Photos</string>
+    <string name="title_settings">Settings</string>
+    <string name="games">Games</string>
+    <string name="gs_view_moments">View Moments</string>
+    <string name="gs_feature">After Call Feature</string>
+    <string name="call_sett_desc">This screen lets you manage features like Hidden Photos, Private Albums, Smart Sort, Media Cleaner, and Duplicate Finder.</string>
+    <string name="always_on">Always ON</string>
+    <string name="show_gs">Shows every time after an incoming call.</string>
+    <string name="always_off">Always OFF</string>
+    <string name="disable_call_info">Completely disables the Call Info screen.</string>
+    <string name="improve_your_call_experience">Improve your call experience</string>
+    <string name="enables_smarter_call_amp_app_experience">Enables smarter call &amp; app experience</string>
+    <string name="disable_setting">You can disable anytime in settings</string>
+    <string name="gallery_allow_display">Gallery Allow Display</string>
+    <string name="iu_monitoring">Install/Uninstall Monitoring</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Choose when the optimizing screen should appear after installing/uninstalling an app.</string>
+    <string name="always_on_subtitle">Shows every time an app is installed or uninstalled.</string>
+    <string name="always_off_subtitle">Disables the security scan screen completely.</string>
+    <string name="private_gallery_vault">Private Gallery Vault</string>
+    <string name="smart_org">Smart organization &amp;\nprivacy in one place</string>
+    <string name="try_it_now">Try It Now</string>
+    <string name="app_scan_open">Open</string>
+    <string name="app_scan_done">Done</string>
+    <!-- 2.7.2 hard-codes these three in English -->
+    <string name="iu_service_notification_text">Monitoring app changes</string>
+    <string name="iu_service_channel_name">Package</string>
+    <string name="iu_launch_failed">Failed to launch application</string>
 </resources>

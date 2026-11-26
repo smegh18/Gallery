@@ -305,4 +305,38 @@ class AppPreferences(private val context: Context) {
             it[Keys.VAULT_ANSWER_3] = com.quizango.gallery.data.local.VaultSecret.hash(com.quizango.gallery.data.local.VaultSecret.normalizeAnswer(a3))
         }
     }
+
+    // Phase 11: after-call Quick Info and install/uninstall screens (2.7.2 key names)
+    private object GsKeys {
+        val AFTER_CALL = booleanPreferencesKey("afterCallScreenEnabled")
+        val CALL_START = longPreferencesKey("gsCallStartMs")
+        val CALL_END = longPreferencesKey("gsCallEndMs")
+        val CALL_PERMISSION_DENY_COUNT = intPreferencesKey("callPermissionDenyCount")
+        // 2.7.2 keeps notification_mode and is_pms_service_stop, always flipped together by the IU settings cards
+        val IU_ALWAYS_ON = booleanPreferencesKey("iuAlwaysOn")
+    }
+
+    val afterCallScreenEnabled: Flow<Boolean> = context.dataStore.data.map { it[GsKeys.AFTER_CALL] ?: true }
+    val gsCallTimes: Flow<Pair<Long, Long>> = context.dataStore.data.map { (it[GsKeys.CALL_START] ?: 0L) to (it[GsKeys.CALL_END] ?: 0L) }
+    val callPermissionDenyCount: Flow<Int> = context.dataStore.data.map { it[GsKeys.CALL_PERMISSION_DENY_COUNT] ?: 0 }
+    val iuAlwaysOn: Flow<Boolean> = context.dataStore.data.map { it[GsKeys.IU_ALWAYS_ON] ?: true }
+
+    suspend fun setAfterCallScreenEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[GsKeys.AFTER_CALL] = enabled }
+    }
+
+    suspend fun setGsCallTimes(start: Long, end: Long) {
+        context.dataStore.edit {
+            it[GsKeys.CALL_START] = start
+            it[GsKeys.CALL_END] = end
+        }
+    }
+
+    suspend fun setCallPermissionDenyCount(count: Int) {
+        context.dataStore.edit { it[GsKeys.CALL_PERMISSION_DENY_COUNT] = count }
+    }
+
+    suspend fun setIuAlwaysOn(on: Boolean) {
+        context.dataStore.edit { it[GsKeys.IU_ALWAYS_ON] = on }
+    }
 }

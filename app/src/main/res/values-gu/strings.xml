@@ -425,4 +425,28 @@
     <string name="security_question8">તમારી સ્વપ્નનોની નોકરી કઇ છે?</string>
     <string name="security_question9">તમારો સ્પોર્ટ્સ આઇડલ કોણ છે?</string>
     <string name="security_question10">તમારી પ્રથમ નોકરી કયા શહેરમાં કે નગરમાં હતી?</string>
+    <string name="gs_photos">ફોટા</string>
+    <string name="title_settings">સેટિંગ્સ</string>
+    <string name="games">ગેમ્સ</string>
+    <string name="gs_view_moments">ક્ષણો જુઓ</string>
+    <string name="gs_feature">કોલ પછીની ફીચર</string>
+    <string name="call_sett_desc">આ સ્ક્રીન તમને હિડન ફોટોઝ, પ્રાઇવેટ એલ્બમ્સ, સ્માર્ટ સોર્ટ, મીડિયા ક્લિનર અને ડુપ્લિકેટ ફાઇન્ડર જેવી ફીચરો મેનેજ કરવા દે છે.</string>
+    <string name="always_on">હંમેશા ચાલુ</string>
+    <string name="show_gs">દર આવનારી કોલ પછી બતાવવામાં આવે છે.</string>
+    <string name="always_off">હંમેશા બંધ</string>
+    <string name="disable_call_info">કોલ માહિતી સ્ક્રીનને સંપૂર્ણપણે અક્ષમ કરે છે.</string>
+    <string name="improve_your_call_experience">તમારા કૉલ અનુભવને સુધારો</string>
+    <string name="enables_smarter_call_amp_app_experience">વધુ સ્માર્ટ કૉલ અને એપ્લિકેશન અનુભવ સક્ષમ કરે છે</string>
+    <string name="disable_setting">તમે સેટિંગ્સમાંથી કોઈ પણ સમયે તેને બંધ કરી શકો છો</string>
+    <string name="gallery_allow_display">ગેલેરીને પ્રદર્શન કરવાની મંજૂરી આપો</string>
+    <string name="iu_monitoring">એપ્લિકેશન ઇન્સ્ટોલ/અનઇન્સ્ટોલ ની નિગરાની</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">એપ્લિકેશનને ઇન્સ્ટોલ/અનઇન્સ્ટોલ કર્યા પછી ઑપ્ટિમાઇઝિંગ સ્ક્રીન ક્યારે દેખાવી જોઈએ તે પસંદ કરો.</string>
+    <string name="always_on_subtitle">જ્યારે પણ એપ ઇન્સ્ટોલ અથવા અનઇન્સ્ટોલ કરવામાં આવે ત્યારે તે દર્શાવે છે.</string>
+    <string name="always_off_subtitle">સુરક્ષા સ્કેન સ્ક્રીનને સંપૂર્ણપણે અક્ષમ કરે છે.</string>
+    <string name="private_gallery_vault">પ્રાઇવેટ ગેલેરી વોલ્ટ</string>
+    <string name="smart_org">"સ્માર્ટ આયોજન અને
+એક જ જગ્યાએ પ્રાઇવસી"</string>
+    <string name="try_it_now">હવે પ્રયત્ન કરો</string>
+    <string name="app_scan_open">ખોલો</string>
+    <string name="app_scan_done">થઈ ગયું</string>
 </resources>

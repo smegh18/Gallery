@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -42,6 +43,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.datastore.AppPreferences
+import com.quizango.gallery.ui.gs.PermissionGuideActivity
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
@@ -58,6 +60,7 @@ fun FeaturePromoScreen(
     onNavigateToHome: () -> Unit
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
     var showSkipButton by remember { mutableStateOf(false) }
 
@@ -94,6 +97,7 @@ fun FeaturePromoScreen(
                     Uri.parse("package:${context.packageName}")
                 )
                 overlayLauncher.launch(intent)
+                activity?.let { PermissionGuideActivity.showLater(it, PermissionGuideActivity.GUIDE_OVERLAY) } // Phase 11: 2.7.2 overlay guide
             } else {
                 scope.launch {
                     appPreferences.setOnboardingCompleted(true)

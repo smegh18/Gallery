@@ -433,4 +433,28 @@ Papierkorb zu verschieben"</string>
     <string name="security_question8">Was ist Ihr Traumberuf?</string>
     <string name="security_question9">Wer ist Ihr Sportidol?</string>
     <string name="security_question10">In welcher Stadt war Ihr erster Job?</string>
+    <string name="gs_photos">Fotos</string>
+    <string name="title_settings">Einstellungen</string>
+    <string name="games">Spiele</string>
+    <string name="gs_view_moments">Momente ansehen</string>
+    <string name="gs_feature">Nachruf-Funktion</string>
+    <string name="call_sett_desc">Dieser Bildschirm ermöglicht die Verwaltung von Funktionen wie Versteckte Fotos, Private Alben, Smart Sort, Medienbereinigung und Duplikatsfinder.</string>
+    <string name="always_on">Immer EIN</string>
+    <string name="show_gs">Wird jedes Mal nach einem eingehenden Anruf angezeigt.</string>
+    <string name="always_off">Immer AUS</string>
+    <string name="disable_call_info">Deaktiviert den Call-Info-Bildschirm vollständig.</string>
+    <string name="improve_your_call_experience">Verbessern Sie Ihr Anruferlebnis</string>
+    <string name="enables_smarter_call_amp_app_experience">Ermöglicht intelligentere Anruf- und App-Erlebnisse</string>
+    <string name="disable_setting">Sie können dies jederzeit in den Einstellungen deaktivieren</string>
+    <string name="gallery_allow_display">Galerie erlaubt die Anzeige</string>
+    <string name="iu_monitoring">Überwachung der Installation/Deinstallation</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Wählen Sie, wann der Optimierungsbildschirm nach der Installation/Deinstallation einer App angezeigt werden soll.</string>
+    <string name="always_on_subtitle">Wird jedes Mal angezeigt, wenn eine App installiert oder deinstalliert wird.</string>
+    <string name="always_off_subtitle">Deaktiviert den Sicherheitsscan-Bildschirm vollständig.</string>
+    <string name="private_gallery_vault">Privater Galerie-Tresor</string>
+    <string name="smart_org">"Intelligente Organisation &amp;
+Privatsphäre an einem Ort"</string>
+    <string name="try_it_now">Jetzt ausprobieren</string>
+    <string name="app_scan_open">Offen</string>
+    <string name="app_scan_done">Erledigt</string>
 </resources>

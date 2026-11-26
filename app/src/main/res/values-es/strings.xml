@@ -433,4 +433,28 @@ papelera"</string>
     <string name="security_question8">¿Cuál es tu trabajo soñado?</string>
     <string name="security_question9">¿Quién es tu ídolo deportivo?</string>
     <string name="security_question10">¿En qué ciudad fue tu primer trabajo?</string>
+    <string name="gs_photos">Fotos</string>
+    <string name="title_settings">Configuraciones</string>
+    <string name="games">Juegos</string>
+    <string name="gs_view_moments">Ver momentos</string>
+    <string name="gs_feature">Función Después de la Llamada</string>
+    <string name="call_sett_desc">Esta pantalla le permite gestionar funciones como Fotos Ocultas, Álbumes Privados, Orden Inteligente, Limpiador de Medios y Buscador de Duplicados.</string>
+    <string name="always_on">Siempre encendido</string>
+    <string name="show_gs">Se muestra cada vez después de una llamada entrante.</string>
+    <string name="always_off">Siempre apagado</string>
+    <string name="disable_call_info">Desactiva completamente la pantalla de Información de Llamadas.</string>
+    <string name="improve_your_call_experience">Mejora tu experiencia de llamadas</string>
+    <string name="enables_smarter_call_amp_app_experience">Permite una experiencia de llamadas y apps más inteligente</string>
+    <string name="disable_setting">Puedes desactivarlo en cualquier momento desde la configuración</string>
+    <string name="gallery_allow_display">Permitir visualización de la galería</string>
+    <string name="iu_monitoring">Monitoreo de instalación/desinstalación</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Elija cuándo debe aparecer la pantalla de optimización después de instalar o desinstalar una aplicación.</string>
+    <string name="always_on_subtitle">Se muestra cada vez que se instala o desinstala una aplicación.</string>
+    <string name="always_off_subtitle">Desactiva completamente la pantalla de escaneo de seguridad.</string>
+    <string name="private_gallery_vault">Bóveda de Galería Privada</string>
+    <string name="smart_org">"Organización inteligente y
+privacidad en un solo lugar"</string>
+    <string name="try_it_now">Prueba ahora</string>
+    <string name="app_scan_open">Abierto</string>
+    <string name="app_scan_done">Hecho</string>
 </resources>

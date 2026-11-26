@@ -90,6 +90,7 @@ fun GalleryNavHost(
     // Short fade + slight slide between screens; plain fade in and out of the splash
     val fromSplash: androidx.compose.animation.AnimatedContentTransitionScope<androidx.navigation.NavBackStackEntry>.() -> Boolean =
         { initialState.destination.route == Screen.Splash.route }
+    com.quizango.gallery.ui.gs.GsAppEffects(navController) // Phase 11
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
@@ -798,6 +799,14 @@ fun GalleryNavHost(
             AboutScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+
+        // Phase 11
+        composable(Screen.GsSetting.route) {
+            com.quizango.gallery.ui.gs.GsSettingScreen(app.preferences, onNavigateBack = { navController.popBackStack() })
+        }
+        composable(Screen.IuSetting.route) {
+            com.quizango.gallery.ui.gs.IuSettingScreen(app.preferences, onNavigateBack = { navController.popBackStack() })
         }
     }
 }

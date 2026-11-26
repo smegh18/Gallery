@@ -441,4 +441,28 @@ cestino"</string>
     <string name="security_question8">Qual è il tuo lavoro dei sogni?</string>
     <string name="security_question9">Chi è il tuo idolo sportivo?</string>
     <string name="security_question10">In quale città è stato il tuo primo lavoro?</string>
+    <string name="gs_photos">Foto</string>
+    <string name="title_settings">Impostazioni</string>
+    <string name="games">Giochi</string>
+    <string name="gs_view_moments">Visualizza Momenti</string>
+    <string name="gs_feature">Funzione Dopo Chiamata</string>
+    <string name="call_sett_desc">Questa schermata ti consente di gestire funzioni come Foto Nascoste, Album Privati, Ordinamento Intelligente, Pulizia Media e Ricerca Duplicati.</string>
+    <string name="always_on">Sempre acceso</string>
+    <string name="show_gs">Mostra ogni volta dopo una chiamata in arrivo.</string>
+    <string name="always_off">Sempre SPENTO</string>
+    <string name="disable_call_info">Disabilita completamente la schermata Informazioni Chiamata.</string>
+    <string name="improve_your_call_experience">Migliora la tua esperienza di chiamata</string>
+    <string name="enables_smarter_call_amp_app_experience">Attiva una esperienza di chiamata e app più intelligente</string>
+    <string name="disable_setting">Puoi disattivarla in qualsiasi momento dalle impostazioni</string>
+    <string name="gallery_allow_display">Consenti la visualizzazione della galleria</string>
+    <string name="iu_monitoring">Monitoraggio installazione/disinstallazione</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">"Scegli quando deve comparire la schermata di ottimizzazione dopo l'installazione/disinstallazione di un'app."</string>
+    <string name="always_on_subtitle">"Viene visualizzato ogni volta che un'app viene installata o disinstallata."</string>
+    <string name="always_off_subtitle">Disattiva completamente la schermata di scansione di sicurezza.</string>
+    <string name="private_gallery_vault">Vault Galleria Privata</string>
+    <string name="smart_org">"Organizzazione intelligente e
+privacy in un unico posto"</string>
+    <string name="try_it_now">Provalo Ora</string>
+    <string name="app_scan_open">Aprire</string>
+    <string name="app_scan_done">Fatto</string>
 </resources>

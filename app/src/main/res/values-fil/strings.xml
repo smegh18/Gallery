@@ -433,4 +433,28 @@ recycle bin"</string>
     <string name="security_question8">Ano ang iyong pangarap na trabaho?</string>
     <string name="security_question9">Sino ang iyong iniidolo sa sports?</string>
     <string name="security_question10">Saang lungsod mo unang trabaho?</string>
+    <string name="gs_photos">Mga Larawan</string>
+    <string name="title_settings">Mga Setting</string>
+    <string name="games">Mga Laro</string>
+    <string name="gs_view_moments">Tingnan ang Moments</string>
+    <string name="gs_feature">After Call Feature</string>
+    <string name="call_sett_desc">Pinapayagan ka ng screen na ito na pamahalaan ang mga feature tulad ng Hidden Photos, Private Albums, Smart Sort, Media Cleaner, at Duplicate Finder.</string>
+    <string name="always_on">Palaging ON</string>
+    <string name="show_gs">Ipinapakita sa bawat tawag na papasok.</string>
+    <string name="always_off">Palaging OFF</string>
+    <string name="disable_call_info">Ganap na hindi pinapagana ang Call Info screen.</string>
+    <string name="improve_your_call_experience">Pagandahin ang karanasan mo sa tawag</string>
+    <string name="enables_smarter_call_amp_app_experience">Pinapagana ang mas matalinong karanasan sa tawag at app</string>
+    <string name="disable_setting">Maaari mo itong i-disable anumang oras sa settings</string>
+    <string name="gallery_allow_display">Pahintulutan ang Display ng Gallery</string>
+    <string name="iu_monitoring">Sinusu monitor ang pag-install/uninstall</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">Piliin kung kailan dapat lumabas ang screen sa pag-optimize pagkatapos mag-install/mag-uninstall ng app.</string>
+    <string name="always_on_subtitle">Ipinapakita sa tuwing may naka-install o na-uninstall na app.</string>
+    <string name="always_off_subtitle">Ganap na hindi pinapagana ang screen ng pag-scan ng seguridad.</string>
+    <string name="private_gallery_vault">Private Gallery Vault</string>
+    <string name="smart_org">"Matalinong organisasyon &amp;
+privacy sa iisang lugar"</string>
+    <string name="try_it_now">Subukan na ngayon</string>
+    <string name="app_scan_open">Bukas</string>
+    <string name="app_scan_done">Tapos na</string>
 </resources>

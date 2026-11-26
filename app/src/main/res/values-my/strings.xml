@@ -441,4 +441,27 @@
     <string name="security_question8">သင့်အကြိုက်ဆုံး အလုပ်အကိုင်</string>
     <string name="security_question9">သင့်အကြိုက်ဆုံး အားကိုကြားရွေးချယ်သူ</string>
     <string name="security_question10">သင့်ပထမအလုပ်အကိုင်ကို တစ်ချို့ မြို့မှာ</string>
+    <string name="gs_photos">ဓာတ်ပုံများ</string>
+    <string name="title_settings">စက်မှုလမ်းညွှန်</string>
+    <string name="games">ဂိမ်းများ</string>
+    <string name="gs_feature">ဖုန်းခေါ်ဆိုပြီးနောက် လုပ်ဆောင်ချက်</string>
+    <string name="call_sett_desc">ဤအမျက်နှာက Hidden Photos၊ ပုဂ္ဂလိက အယ်လ်ဘမ်၊ စမတ် စုစည်းမှု၊ မီဒီယာ သန့်ရှင်းစက် နှင့် အတူတူ ပုံ/ဖိုင် ရှာဖွေစက် စသည့် လုပ်ဆောင်ချက်များကို စီမံခန့်ခွဲရန် ခွင့်ပြုသည်။</string>
+    <string name="always_on">အမြဲတမ်းဖွင့်ထားသည်။</string>
+    <string name="show_gs">အဝင်ခေါ်ဆိုမှုတိုင်းပြီးနောက် ပြသသည်။</string>
+    <string name="always_off">အမြဲတမ်းပိတ်ထားပါ။</string>
+    <string name="disable_call_info">Call Info အပြားကို အပြီးသတ် ပိတ်ထားသည်။</string>
+    <string name="improve_your_call_experience">သင့်ခေါ်ဆိုမှုအတွေ့အကြုံကို မြှင့်တင်ပါ</string>
+    <string name="enables_smarter_call_amp_app_experience">ပိုမိုစမတ်ကျသော ခေါ်ဆိုမှုနှင့် အက်ပ်အတွေ့အကြုံကို ဖွင့်ပေးသည်</string>
+    <string name="disable_setting">ဆက်တင်များတွင် မည်သည့်အချိန်မဆို ပိတ်နိုင်ပါသည်</string>
+    <string name="gallery_allow_display">ပြစ်မှု ပြင်ဆင်ဆောင်ရန် ခွင့်ပြုရန်</string>
+    <string name="iu_monitoring">ထည့်သွင်းခြင်း/ဖယ်ရှားခြင်းကို စောင့်ကြည့်နေသည်</string>
+    <string name="choose_when_the_optimizing_screen_should_appear_after_installing_uninstalling_an_app">အက်ပ်တစ်ခုကို ထည့်သွင်းခြင်း/ဖြုတ်ပြီးနောက် ပိုမိုကောင်းမွန်အောင်ပြုလုပ်ခြင်းစခရင်သည် မည်သည့်အချိန်တွင် ပေါ်လာသင့်သည်ကို ရွေးချယ်ပါ။</string>
+    <string name="always_on_subtitle">အက်ပ်တစ်ခုကို ထည့်သွင်းခြင်း သို့မဟုတ် ဖြုတ်လိုက်တိုင်း ပြသသည်။</string>
+    <string name="always_off_subtitle">လုံခြုံရေးစကင်န်မျက်နှာပြင်ကို လုံးဝပိတ်လိုက်ပါ။</string>
+    <string name="private_gallery_vault">ပုံများကို သိမ်းဆည်းရန် လျှို့ဝှက်ခန်း</string>
+    <string name="smart_org">"အသေးစိတ်စီစဉ်မှုနှင့်
+တစ်နေရာတည်းတွင် လျှို့ဝှက်ချက်"</string>
+    <string name="try_it_now">ယခု စမ်းကြည့်ပါ</string>
+    <string name="app_scan_open">ဖွင့်သည်။</string>
+    <string name="app_scan_done">ပြီးပြီ။</string>
 </resources>
