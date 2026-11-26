@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -88,6 +89,7 @@ internal fun HomeTopBar(
     onAddAlbum: () -> Unit,
     onMoreRow: (MoreMenuRow) -> Unit,
     onTitleLongPress: () -> Unit,
+    onPro: () -> Unit,
     onTitlePositioned: (Rect) -> Unit = {}
 ) {
     val haptic = LocalHapticFeedback.current
@@ -120,8 +122,8 @@ internal fun HomeTopBar(
         Spacer(Modifier.weight(1f))
         slots.forEach { slot ->
             when (slot) {
-                // Opens the Pro screen in the reference; Phase 9 builds it, so the tap does nothing until then.
-                TopBarSlot.AD_FREE -> SlotButton(R.drawable.home_shell_ic_ad_free, stringResource(R.string.go_ads_free)) {}
+                // HA.Ooooo00 "pro" action: opens the Pro screen
+                TopBarSlot.AD_FREE -> SlotButton(R.drawable.home_shell_ic_ad_free, stringResource(R.string.go_ads_free), onPro)
                 TopBarSlot.ADD_ALBUM -> SlotButton(R.drawable.home_shell_ic_add, stringResource(R.string.create_album), onAddAlbum)
                 TopBarSlot.SEARCH -> SlotButton(R.drawable.home_shell_ic_search, stringResource(R.string.search), onSearch)
                 TopBarSlot.CAMERA -> SlotButton(R.drawable.home_shell_ic_camera, stringResource(R.string.camera), onCamera)
@@ -221,11 +223,22 @@ private fun MoreMenu(page: Int, onDismiss: () -> Unit, onRow: (MoreMenuRow) -> U
 /** Remote-config default vault_hint_tooltip "session": [4, 8, 12]. */
 internal val VAULT_HINT_SESSIONS = setOf(4, 8, 12)
 
-/** HA.o000o0O0 show rules (UI-SPEC 1.4). */
-internal fun shouldShowVaultHint(session: Int, hintSeen: Boolean, closedSession: Int, hasMediaPermission: Boolean): Boolean =
-    session in VAULT_HINT_SESSIONS && !hintSeen && closedSession != session && hasMediaPermission
-// shortcut: Home has no notification/widget/deep-link entry yet, so HA.o000O00O is not checked; Phase 9 skips the hint for those entries.
-// shortcut: no other start-up dialog exists on Home yet; Phases 9, 10 and 12 must hold the hint until theirs closes (isVaultHintShowPending).
+/** True when the app was opened from a notification, deep link or shortcut (HA.o000O00O); MainActivity provides it. */
+internal val LocalOpenedFromOutside = compositionLocalOf { false }
+
+/**
+ * HA.o000o0O0 show rules (UI-SPEC 1.4): never after an outside entry, and held while a start-up dialog
+ * ([startDialogShowing]: the notification permission request today; Phases 10 and 12 add theirs) is up.
+ */
+internal fun shouldShowVaultHint(
+    session: Int,
+    hintSeen: Boolean,
+    closedSession: Int,
+    hasMediaPermission: Boolean,
+    openedFromOutside: Boolean = false,
+    startDialogShowing: Boolean = false
+): Boolean = session in VAULT_HINT_SESSIONS && !hintSeen && closedSession != session && hasMediaPermission &&
+    !openedFromOutside && !startDialogShowing
 
 /** HomeBottomBarBehavior SETTLE_MS (0xdc). */
 internal const val BAR_SETTLE_MS = 220
