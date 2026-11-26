@@ -1,7 +1,6 @@
 package com.quizango.gallery.ui.settings
 
 import android.Manifest
-import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,7 +10,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
-import android.os.Process
 import android.provider.Settings
 import android.view.Gravity
 import android.view.ViewGroup
@@ -79,15 +77,14 @@ import com.quizango.gallery.R
 import com.quizango.gallery.data.local.InstallSource
 import com.quizango.gallery.data.local.datastore.AppPreferences
 import com.quizango.gallery.ui.browse.SharedMediaToolbar
+import com.quizango.gallery.ui.components.isUsageAccessGranted
+import com.quizango.gallery.ui.components.rememberSettingsUsageAccessPrompt
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.launch
-
-// shortcut: no-op until Phase 12 (USG-01) wires dialog_usage_access_settings
-internal fun recordSettingsUsageAccessTrigger() = Unit
 
 internal enum class UsageToggle { TURN_OFF, TURN_ON, ASK_ACCESS }
 
@@ -135,16 +132,6 @@ private fun networkAvailable(context: Context): Boolean {
         caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
 }
 
-/** PermissionsKt.DxDJysLV5r: usage access (android:get_usage_stats) is allowed for this app. */
-private fun usageAccessGranted(context: Context): Boolean = runCatching {
-    val ops = context.getSystemService(AppOpsManager::class.java)
-    @Suppress("DEPRECATION")
-    val mode = if (Build.VERSION.SDK_INT >= 29) ops.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.packageName)
-    else ops.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.packageName)
-    if (mode == AppOpsManager.MODE_DEFAULT) context.checkCallingOrSelfPermission(Manifest.permission.PACKAGE_USAGE_STATS) == PackageManager.PERMISSION_GRANTED
-    else mode == AppOpsManager.MODE_ALLOWED
-}.getOrDefault(false)
-
 private fun granted(context: Context, permission: String) =
     context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
 
@@ -183,15 +170,9 @@ fun SettingsScreen(
     val phoneGranted = remember(resumes) {
         granted(context, Manifest.permission.CALL_PHONE) && granted(context, Manifest.permission.READ_PHONE_STATE)
     }
-    val usageAccess = remember(resumes) { usageAccessGranted(context) }
-    var awaitingUsageAccess by remember { mutableStateOf(false) }
-    // dl/e case 0: access granted from the prompt turns sharing back on
-    LaunchedEffect(usageAccess) {
-        if (awaitingUsageAccess && usageAccess) {
-            awaitingUsageAccess = false
-            appPreferences.setAppInsightsEnabled(true)
-        }
-    }
+    val usageAccess = remember(resumes) { isUsageAccessGranted(context) }
+    // dl/e case 0: the prompt turns sharing back on when access was granted, then the switch re-reads it
+    val askUsageAccess = rememberSettingsUsageAccessPrompt(onDone = { resumes++ })
     val usageOn = usageSwitchOn(insightsEnabled, usageAccess)
     val floatingVisible = floatingRowVisible(Build.VERSION.SDK_INT, Build.BRAND.orEmpty(), Build.MODEL.orEmpty())
 
@@ -202,10 +183,7 @@ fun SettingsScreen(
                 Toast.makeText(context, R.string.setting_usage_data_off_toast, Toast.LENGTH_SHORT).show()
             }
             UsageToggle.TURN_ON -> scope.launch { appPreferences.setAppInsightsEnabled(true) }
-            UsageToggle.ASK_ACCESS -> {
-                awaitingUsageAccess = true
-                recordSettingsUsageAccessTrigger()
-            }
+            UsageToggle.ASK_ACCESS -> askUsageAccess()
         }
     }
 
