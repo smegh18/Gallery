@@ -1,99 +1,106 @@
 package com.quizango.gallery
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import com.quizango.gallery.ui.editor.AdjustParam
-import com.quizango.gallery.ui.editor.BRUSH_COLORS
-import com.quizango.gallery.ui.editor.CropRatio
-import com.quizango.gallery.ui.editor.DrawnPath
-import com.quizango.gallery.ui.editor.EditorFilter
-import com.quizango.gallery.ui.editor.EditorTab
-import com.quizango.gallery.ui.editor.PlacedSticker
-import com.quizango.gallery.ui.editor.PlacedText
-import com.quizango.gallery.ui.editor.STICKER_LIST
+import com.quizango.gallery.ui.editor.CropPreset
+import com.quizango.gallery.ui.editor.EditTool
+import com.quizango.gallery.ui.editor.TextHit
+import com.quizango.gallery.ui.editor.adjustAmount
+import com.quizango.gallery.ui.editor.editRefusal
+import com.quizango.gallery.ui.editor.editTools
+import com.quizango.gallery.ui.editor.firstTooltip
+import com.quizango.gallery.ui.editor.initialTool
+import com.quizango.gallery.ui.editor.isSuggestionTool
+import com.quizango.gallery.ui.editor.rotatedBy
+import com.quizango.gallery.ui.editor.sampleSizeFor
+import com.quizango.gallery.ui.editor.savedImageFile
+import com.quizango.gallery.ui.editor.textHit
+import com.quizango.gallery.ui.editor.workingCopyName
+import com.quizango.gallery.ui.editor.zoomedScale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
-/**
- * Unit tests verifying Photo Editor models, enums, parameters, palettes, and structures.
- */
+/** PhotoEditActivity rules (#38): tool strip, suggestion entry, crop presets, adjust scale, files, text sticker hits. */
 class PhotoEditorTest {
 
     @Test
-    fun testEditorTabsCompleteness() {
-        val tabs = EditorTab.values()
-        assertEquals(6, tabs.size)
-        assertEquals("Crop", EditorTab.CROP.label)
-        assertEquals("Adjust", EditorTab.ADJUST.label)
-        assertEquals("Filter", EditorTab.FILTER.label)
-        assertEquals("Brush", EditorTab.BRUSH.label)
-        assertEquals("Sticker", EditorTab.STICKER.label)
-        assertEquals("Text", EditorTab.TEXT.label)
-
-        tabs.forEach { tab ->
-            assertTrue(tab.iconRes != 0)
-        }
+    fun aiToolsLeadTheStripOnlyWhenAvailable() {
+        assertEquals(EditTool.entries, editTools(aiAvailable = true))
+        assertEquals(listOf(EditTool.CROP, EditTool.ADJUST, EditTool.FILTER, EditTool.BRUSH, EditTool.STICKER, EditTool.TEXT), editTools(aiAvailable = false))
     }
 
     @Test
-    fun testAdjustParamsCompleteness() {
-        val params = AdjustParam.values()
-        assertEquals(4, params.size)
-        assertEquals("Brightness", AdjustParam.BRIGHTNESS.label)
-        assertEquals("Contrast", AdjustParam.CONTRAST.label)
-        assertEquals("Saturation", AdjustParam.SATURATION.label)
-        assertEquals("Sharpen", AdjustParam.SHARPEN.label)
-
-        params.forEach { param ->
-            assertTrue(param.iconRes != 0)
-        }
+    fun oneTooltipAtATimeRemoveBgFirst() {
+        val seen = mutableSetOf<String>()
+        assertEquals(EditTool.REMOVE_BG, firstTooltip(true, true) { it in seen })
+        seen += "isRemoveEditToolTip"
+        assertEquals(EditTool.COLOR_SPLASH, firstTooltip(true, true) { it in seen })
+        seen += listOf("isColorEditToolTip", "isBlurEditToolTip")
+        assertNull(firstTooltip(true, true) { it in seen })
+        assertNull(firstTooltip(false, true) { false })
+        assertNull(firstTooltip(true, false) { false })
     }
 
     @Test
-    fun testEditorFiltersCompleteness() {
-        val filters = EditorFilter.values()
-        assertTrue(filters.size >= 9)
-        assertEquals("Original", EditorFilter.NONE.label)
-        assertEquals("B&W", EditorFilter.GRAYSCALE.label)
-        assertEquals("Sepia", EditorFilter.SEPIA.label)
-        assertEquals("Vintage", EditorFilter.VINTAGE.label)
-        assertEquals("Cool", EditorFilter.COOL.label)
-        assertEquals("Warm", EditorFilter.WARM.label)
-        assertEquals("Vivid", EditorFilter.VIVID.label)
-        assertEquals("Fade", EditorFilter.FADE.label)
-        assertEquals("Neon", EditorFilter.CYBERPUNK.label)
+    fun suggestionRoutesOpenTheirTool() {
+        assertEquals(EditTool.CROP, initialTool("crop"))
+        assertEquals(EditTool.BRUSH, initialTool("Markup"))
+        assertEquals(EditTool.FILTER, initialTool("filter"))
+        assertNull(initialTool(null))
+        assertTrue(isSuggestionTool("crop") && isSuggestionTool("brush"))
+        assertFalse(isSuggestionTool("adjust") || isSuggestionTool(null))
     }
 
     @Test
-    fun testCropRatiosCompleteness() {
-        val ratios = CropRatio.values()
-        assertTrue(ratios.size >= 8)
-        assertEquals("Free", CropRatio.FREE.label)
-        assertEquals(0f, CropRatio.FREE.aspectX, 0.001f)
+    fun cropPresetsKeepTheShippedAspects() {
+        assertEquals(0 to 0, CropPreset.FREE.aspectX to CropPreset.FREE.aspectY)
+        assertEquals(4 to 3, CropPreset.IG_4_5.aspectX to CropPreset.IG_4_5.aspectY) // 2.7.2 quirk, kept
+        assertEquals(4 to 5, CropPreset.INSTA_STORY.aspectX to CropPreset.INSTA_STORY.aspectY)
+        assertEquals(16 to 9, CropPreset.YOUTUBE.aspectX to CropPreset.YOUTUBE.aspectY)
+    }
 
-        assertEquals("1:1", CropRatio.ONE_ONE.label)
-        assertEquals(1f, CropRatio.ONE_ONE.aspectX / CropRatio.ONE_ONE.aspectY, 0.001f)
+    @Test
+    fun adjustRulerMapsToGpuImageAmounts() {
+        assertEquals(1f, adjustAmount(AdjustParam.BRIGHTNESS.max), 0.0001f)
+        assertEquals(1f, adjustAmount(AdjustParam.CONTRAST.default), 0.0001f)
+        assertEquals(-1f, adjustAmount(AdjustParam.SHARPEN.min), 0.0001f)
+    }
 
-        assertEquals("4:5", CropRatio.FOUR_FIVE.label)
-        assertEquals(0.8f, CropRatio.FOUR_FIVE.aspectX / CropRatio.FOUR_FIVE.aspectY, 0.001f)
+    @Test
+    fun filesAndRefusals() {
+        assertEquals("image.jpg", workingCopyName("IMG_1.jpg"))
+        val pictures = File("/pics")
+        assertEquals(File("/dcim/cam", "Image_5.png"), savedImageFile("/dcim/cam", pictures, 5))
+        assertEquals(File(pictures, "Image_5.png"), savedImageFile(null, pictures, 5))
+        assertEquals(R.string.toast_file, editRefusal("a.SVG", true))
+        assertEquals(R.string.heif_image_toast, editRefusal("a.heic", true))
+        assertEquals(R.string.toast_corrupted_image, editRefusal("a.jpg", false))
+        assertNull(editRefusal("a.jpg", true))
+        assertEquals(1, sampleSizeFor(4000, 3000, 4096))
+        assertEquals(2, sampleSizeFor(8000, 3000, 4096))
+    }
 
-        assertEquals("Story", CropRatio.NINE_SIXTEEN.label)
-        assertEquals(9f / 16f, CropRatio.NINE_SIXTEEN.aspectX / CropRatio.NINE_SIXTEEN.aspectY, 0.001f)
+    @Test
+    fun textStickerCornersOnlyWhenSelected() {
+        val c = Offset(100f, 100f)
+        assertEquals(TextHit.CLOSE, textHit(Offset(52f, 82f), c, 100f, 40f, 0f, 10f, selected = true))
+        assertEquals(TextHit.ZOOM, textHit(Offset(148f, 118f), c, 100f, 40f, 0f, 10f, selected = true))
+        assertEquals(TextHit.BODY, textHit(Offset(52f, 82f), c, 100f, 40f, 0f, 10f, selected = false))
+        assertNull(textHit(Offset(200f, 100f), c, 100f, 40f, 0f, 10f, selected = true))
+        // turned 90 degrees the sticker is tall, so a point above the centre is inside
+        assertEquals(TextHit.BODY, textHit(Offset(100f, 60f), c, 100f, 40f, 90f, 10f, selected = false))
+    }
 
-        assertEquals("Cover", CropRatio.SIXTEEN_NINE.label)
-        assertEquals(16f / 9f, CropRatio.SIXTEEN_NINE.aspectX / CropRatio.SIXTEEN_NINE.aspectY, 0.001f)
-
-        assertEquals("5:4", CropRatio.FIVE_FOUR.label)
-        assertEquals(1.25f, CropRatio.FIVE_FOUR.aspectX / CropRatio.FIVE_FOUR.aspectY, 0.001f)
-
-        assertEquals("4:3", CropRatio.FOUR_THREE.label)
-        assertEquals(4f / 3f, CropRatio.FOUR_THREE.aspectX / CropRatio.FOUR_THREE.aspectY, 0.001f)
-
-        assertEquals("3:4", CropRatio.THREE_FOUR.label)
-        assertEquals(0.75f, CropRatio.THREE_FOUR.aspectX / CropRatio.THREE_FOUR.aspectY, 0.001f)
+    @Test
+    fun zoomAndRotateFollowTheFinger() {
+        val c = Offset(0f, 0f)
+        assertEquals(2f, zoomedScale(1f, c, Offset(10f, 0f), Offset(20f, 0f)), 0.001f)
+        assertEquals(6f, zoomedScale(1f, c, Offset(1f, 0f), Offset(100f, 0f)), 0.001f) // clamped
+        assertEquals(90f, rotatedBy(0f, c, Offset(10f, 0f), Offset(0f, 10f)), 0.001f)
     }
 
     @Test
@@ -233,53 +240,6 @@ class PhotoEditorTest {
         assertEquals(500f, enlarged.width, 0.01f)
         assertEquals(500f, enlarged.height, 0.01f)
         assertEquals(1f, enlarged.width / enlarged.height, 0.001f)
-    }
-
-    @Test
-    fun testBrushColorsPalette() {
-        assertEquals(10, BRUSH_COLORS.size)
-        // Red, Orange, Yellow, Green, Cyan, Blue, Purple, Pink, White, Black
-        assertEquals(Color(0xFFE11A1A), BRUSH_COLORS[0])
-        assertEquals(Color(0xFF247BF7), BRUSH_COLORS[5])
-        assertEquals(Color(0xFFFFFFFF), BRUSH_COLORS[8])
-        assertEquals(Color(0xFF000000), BRUSH_COLORS[9])
-    }
-
-    @Test
-    fun testStickerListNonEmpty() {
-        assertTrue(STICKER_LIST.isNotEmpty())
-        assertTrue(STICKER_LIST.contains("✨"))
-        assertTrue(STICKER_LIST.contains("❤️"))
-        assertTrue(STICKER_LIST.contains("⭐"))
-        assertTrue(STICKER_LIST.contains("🔥"))
-    }
-
-    @Test
-    fun testDrawnPathModel() {
-        val points = listOf(Offset(10f, 20f), Offset(30f, 40f))
-        val path = DrawnPath(points = points, color = Color.Red, strokeWidth = 15f)
-        assertEquals(2, path.points.size)
-        assertEquals(Color.Red, path.color)
-        assertEquals(15f, path.strokeWidth, 0.001f)
-    }
-
-    @Test
-    fun testPlacedStickerModel() {
-        val sticker = PlacedSticker(sticker = "🎉", offset = Offset(150f, 250f))
-        assertEquals("🎉", sticker.sticker)
-        assertEquals(150f, sticker.offset.x, 0.001f)
-        assertEquals(250f, sticker.offset.y, 0.001f)
-        assertTrue(sticker.id != 0L)
-    }
-
-    @Test
-    fun testPlacedTextModel() {
-        val text = PlacedText(text = "Hello Gallery", color = Color.Yellow, fontSize = 28f, opacity = 0.9f)
-        assertEquals("Hello Gallery", text.text)
-        assertEquals(Color.Yellow, text.color)
-        assertEquals(28f, text.fontSize, 0.001f)
-        assertEquals(0.9f, text.opacity, 0.001f)
-        assertTrue(text.id != 0L)
     }
 
     @Test
