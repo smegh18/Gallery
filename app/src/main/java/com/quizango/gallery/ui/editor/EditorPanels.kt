@@ -119,10 +119,11 @@ internal fun ToolStrip(tools: List<EditTool>, isNew: (EditTool) -> Boolean, onTa
                         else -> null
                     }
                     // Badge starts at the icon's end, 5.sdp below the cell top (10.sdp above the icon)
+                    val lift = 10.sdp
                     if (badge != null) Box(
                         Modifier.align(Alignment.TopEnd).layout { measurable, _ ->
                             val p = measurable.measure(Constraints())
-                            layout(0, 0) { p.place(0, -10.sdp.roundToPx()) }
+                            layout(0, 0) { p.place(0, -lift.roundToPx()) }
                         }
                     ) {
                         Text(

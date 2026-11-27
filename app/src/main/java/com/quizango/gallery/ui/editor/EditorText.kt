@@ -220,7 +220,7 @@ internal fun renderTexts(src: Bitmap, items: List<TextItem>, shownWidth: Float, 
             textSize = TEXT_BASE.value * fontScale * density * t.scale * k
             color = t.color
             alpha = (t.opacity * 255).toInt()
-            if (t.shadow != 0f) setShadowLayer(abs(t.shadow) * density * k, t.shadow * density * k, t.shadow * density * k, shadowColor)
+            if (t.shadow != 0f) setShadowLayer(abs(t.shadow) * k, t.shadow * k, t.shadow * k, shadowColor) // shadow is in screen px, like the Compose Shadow
         }
         val width = t.text.lines().maxOf { paint.measureText(it) }.toInt().coerceAtLeast(1)
         t.gradient?.let { g ->

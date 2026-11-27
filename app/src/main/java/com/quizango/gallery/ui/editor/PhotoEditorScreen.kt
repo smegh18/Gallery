@@ -301,7 +301,7 @@ private fun PhotoEditor(
                     }
                 }
             }
-            EditTool.BRUSH -> { brushSize = 40f; brushColor = primary; strokes = emptyList(); brushHistory.clear() }
+            EditTool.BRUSH -> { brushSize = 40f; brushColor = primary; strokes = emptyList(); brushHistory.clear(); brushHistory.record(emptyList()) }
             EditTool.TEXT -> { texts = emptyList(); selectedText = null; textSub = TextSubTool.NONE; textInput = TextItem(0, "", white) }
             EditTool.STICKER -> stickerPicker = true
             else -> Unit
@@ -620,7 +620,7 @@ private fun PhotoEditor(
                         eyedropper = eyedropper,
                         onEyedropper = { eyedropper = !eyedropper },
                         onPicker = { colorDialog = true },
-                        onUndo = { strokes = brushHistory.undo() ?: if (strokes.isNotEmpty()) emptyList<BrushStroke>().also { brushHistory.clear() } else strokes },
+                        onUndo = { brushHistory.undo()?.let { strokes = it } },
                         onRedo = { brushHistory.redo()?.let { strokes = it } },
                         onClose = ::cancelPanel,
                         onDone = ::done
