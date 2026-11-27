@@ -57,7 +57,10 @@ class ComposeOverlay(context: Context, val params: WindowManager.LayoutParams, c
     fun add(): Boolean = runCatching {
         registry.currentState = Lifecycle.State.RESUMED
         windowManager.addView(view, params)
-    }.onFailure { destroy() }.isSuccess
+    }.onFailure {
+        android.util.Log.w("ComposeOverlay", "addView failed", it)
+        destroy()
+    }.isSuccess
 
     fun update() {
         runCatching { windowManager.updateViewLayout(view, params) }
