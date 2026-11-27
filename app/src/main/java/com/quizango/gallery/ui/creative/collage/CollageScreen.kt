@@ -39,6 +39,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -105,9 +106,11 @@ import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.coroutines.resume
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -215,11 +218,26 @@ internal fun CollageScreen(paths: List<String>, mediaRepository: MediaRepository
     val bitmaps = remember { mutableStateMapOf<String, ImageBitmap>() }
     val layer = rememberGraphicsLayer()
     val maxSide = remember(paths.size) { (1600 / ceil(sqrt(paths.size.toDouble()))).toInt() }
-    val wanted = state.cells.map { it.path } + listOfNotNull((state.background as? CollageBg.Image)?.path)
-    LaunchedEffect(wanted) {
-        wanted.filter { it !in bitmaps }.forEach { p -> loadPhoto(context, p, maxSide)?.let { bitmaps[p] = it } }
+    val failedPaths = remember { mutableStateMapOf<String, Unit>() } // unreadable photos; Save retries them
+    var loadAttempt by remember { mutableIntStateOf(0) }
+    val wanted = usedPaths(state)
+    LaunchedEffect(wanted, loadAttempt) {
+        wanted.filter { it !in bitmaps && it !in failedPaths }.forEach { p ->
+            val bmp = loadPhoto(context, p, maxSide)
+            if (bmp != null) bitmaps[p] = bmp else {
+                failedPaths[p] = Unit
+                Toast.makeText(context, context.getString(R.string.Something_went_wrong_message), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
-    val loaded = state.cells.all { it.path in bitmaps }
+    // Drop decoded photos nothing shows or can roll back to (replaced cells, abandoned backgrounds)
+    val keep = usedPaths(state, before, subBefore)
+    SideEffect {
+        bitmaps.keys.retainAll(keep)
+        failedPaths.keys.retainAll(keep)
+    }
+    val loaded = wanted.all { it in bitmaps } // cells and an image background, so the capture has every picture
+    val pending = wanted.any { it !in bitmaps && it !in failedPaths }
     LaunchedEffect(Unit) {
         delay(1000) // mSave stays at alpha 0.3 and unclickable for about a second
         saveReady = true
@@ -338,7 +356,12 @@ internal fun CollageScreen(paths: List<String>, mediaRepository: MediaRepository
     }
 
     fun save() {
-        if (!saveReady || !loaded || saving) return
+        if (!saveReady || pending || saving) return
+        if (!loaded) { // a photo failed to load: try again (the user can also replace it or pick another background)
+            failedPaths.clear()
+            loadAttempt++
+            return
+        }
         selected = null
         swapFrom = null
         saving = true
@@ -377,7 +400,7 @@ internal fun CollageScreen(paths: List<String>, mediaRepository: MediaRepository
             CollageHeader(
                 title = sub?.let { if (it == SubPanel.RATIO) R.string.ratio else null } ?: panel?.title,
                 onBack = ::back,
-                saveEnabled = saveReady && loaded,
+                saveEnabled = saveReady && !pending,
                 onSave = ::save,
                 brush = panel == Panel.BRUSH,
                 canUndo = state.strokes.size > (before?.strokes?.size ?: 0),
@@ -482,7 +505,7 @@ internal fun CollageScreen(paths: List<String>, mediaRepository: MediaRepository
                     )
                 }
                 // iView: the loader while the photos decode
-                if (!loaded) Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (pending) Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     LottieAnimation(
                         loader,
                         iterations = LottieConstants.IterateForever,
@@ -813,6 +836,11 @@ private fun downscaleBlur(src: ImageBitmap, radius: Int): ImageBitmap {
     return Bitmap.createScaledBitmap(a, max(1, a.width / f), max(1, a.height / f), true).asImageBitmap()
 }
 
+/** Every picture [states] show: the cell photos and an image background. */
+internal fun usedPaths(vararg states: CollageState?): Set<String> = states.filterNotNull().flatMapTo(LinkedHashSet()) { s ->
+    s.cells.map { it.path } + listOfNotNull((s.background as? CollageBg.Image)?.path)
+}
+
 /** Decodes a photo near [side] px with its EXIF turn applied, as a software bitmap the capture can read. */
 private suspend fun loadPhoto(context: Context, path: String, side: Int): ImageBitmap? {
     val request = ImageRequest.Builder(context).data(File(path)).size(side).allowHardware(false).build()
@@ -839,9 +867,14 @@ private suspend fun saveCollage(context: Context, bitmap: Bitmap): Uri? = withCo
                 resolver.delete(uri, null, null) // no half-written collage left behind
                 throw e
             }
-            values.clear()
-            values.put(MediaStore.Images.Media.IS_PENDING, 0)
-            resolver.update(uri, values, null, null)
+            try {
+                values.clear()
+                values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                if (resolver.update(uri, values, null, null) == 0) error("publish")
+            } catch (e: Exception) {
+                resolver.delete(uri, null, null) // a pending row that never published is hidden; do not leave it
+                throw e
+            }
             uri
         } else {
             @Suppress("DEPRECATION")
@@ -853,7 +886,13 @@ private suspend fun saveCollage(context: Context, bitmap: Bitmap): Uri? = withCo
                 file.delete()
                 throw e
             }
-            MediaScannerConnection.scanFile(context, arrayOf(file.path), arrayOf("image/png"), null)
+            val scanned = suspendCancellableCoroutine { cont ->
+                MediaScannerConnection.scanFile(context, arrayOf(file.path), arrayOf("image/png")) { _, uri -> cont.resume(uri != null) }
+            }
+            if (!scanned) {
+                file.delete() // a retried Save writes a new file, so do not leave this one behind
+                error("scan")
+            }
             FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
         }
     }.getOrNull()

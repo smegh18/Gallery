@@ -54,6 +54,10 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -126,6 +130,10 @@ internal fun CollageSeekBar(value: Int, max: Int, onChange: (Int) -> Unit, modif
     Canvas(
         modifier
             .height(30.sdp)
+            .semantics {
+                progressBarRangeInfo = ProgressBarRangeInfo(value.toFloat(), min.toFloat()..max.toFloat(), steps = (range - 1).coerceAtLeast(0))
+                setProgress { v -> change(v.roundToInt().coerceIn(min, max)); true }
+            }
             .pointerInput(min, max) { detectTapGestures { seek(it.x, size.width, 9.5.dp.toPx()) } }
             .pointerInput(min, max) {
                 detectHorizontalDragGestures { c, _ ->

@@ -189,7 +189,9 @@ private fun PhotoEditor(
     var prepared by rememberSaveable { mutableStateOf(false) }
     var edited by rememberSaveable { mutableStateOf(false) }
     var autoOpened by rememberSaveable { mutableStateOf(false) }
-    var tool by rememberSaveable { mutableStateOf<EditTool?>(null) }
+    // Not saveable: the panel drafts below (strokes, texts, crop) are plain remember, so a recreated editor must not reopen
+    // a panel whose draft is gone (Done would silently drop it)
+    var tool by remember { mutableStateOf<EditTool?>(null) }
 
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var busy by remember { mutableStateOf(false) }
@@ -258,6 +260,7 @@ private fun PhotoEditor(
     var stickerPicker by remember { mutableStateOf(false) }
     val textSizes = remember { mutableMapOf<Long, Pair<Int, Int>>() }
     var shownWidth by remember { mutableFloatStateOf(1f) }
+    var textBoxWidth by remember { mutableFloatStateOf(1f) } // the width TextSticker wraps against, screen px
 
     val white = colorResource(R.color.onlyWhite).toArgb()
     val shadowColor = colorResource(R.color.blackTran1).toArgb()
@@ -331,12 +334,12 @@ private fun PhotoEditor(
         scope.launch {
             val out = withContext(Dispatchers.Default) { runCatching { transform(bmp) }.getOrNull() }
             val written = out != null && withContext(Dispatchers.IO) { writePng(out, working) }
+            busy = false
             if (written) {
                 bitmap = out
                 edited = true
-            } else toast(R.string.something_went_wrong)
-            busy = false
-            closePanel()
+                closePanel()
+            } else toast(R.string.something_went_wrong) // keep the panel and its draft so Apply can be retried
         }
     }
 
@@ -378,9 +381,10 @@ private fun PhotoEditor(
                 val list = texts.filter { it.text.isNotBlank() }
                 if (list.isEmpty()) closePanel() else {
                     val w = shownWidth
+                    val wrap = textBoxWidth
                     val d = density.density
                     val fs = density.fontScale
-                    commit { renderTexts(it, list, w, d, fs, shadowColor) }
+                    commit { renderTexts(it, list, w, wrap, d, fs, shadowColor) }
                 }
             }
             else -> closePanel()
@@ -406,7 +410,15 @@ private fun PhotoEditor(
                 toast(R.string.something_went_wrong)
                 return@launch
             }
-            suspendCancellableCoroutine { cont -> MediaScannerConnection.scanFile(context, arrayOf(out.path), arrayOf("image/png")) { _, _ -> cont.resume(Unit) } }
+            val published = suspendCancellableCoroutine { cont ->
+                MediaScannerConnection.scanFile(context, arrayOf(out.path), arrayOf("image/png")) { _, uri -> cont.resume(uri != null) }
+            }
+            if (!published) {
+                withContext(Dispatchers.IO) { out.delete() } // a retried Save writes a new file, so do not leave this one behind
+                busy = false
+                toast(R.string.something_went_wrong)
+                return@launch
+            }
             mediaRepository.syncMediaStore()
             busy = false
             onSaved(out.path)
@@ -451,6 +463,7 @@ private fun PhotoEditor(
                     } else {
                         val fit = fitRect(bmp.width, bmp.height, boxW, boxH)
                         shownWidth = fit.width
+                        textBoxWidth = boxW
                         val shown = preview ?: bmp
                         Image(
                             bitmap = remember(shown) { shown.asImageBitmap() },

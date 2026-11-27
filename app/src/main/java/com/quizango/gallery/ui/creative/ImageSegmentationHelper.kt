@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 /** Shared work of Remove BG, Blur BG and Color Splash (S272 RB / BB / CS). */
 object ImageSegmentationHelper {
@@ -55,7 +56,9 @@ object ImageSegmentationHelper {
         val segmenter = SubjectSegmentation.getClient(SubjectSegmenterOptions.Builder().enableForegroundBitmap().build())
         try {
             val modules = ModuleInstall.getClient(context)
-            if (!Tasks.await(modules.areModulesAvailable(segmenter)).areModulesAvailable()) {
+            // Every Task wait is bounded (Tasks.await throws TimeoutException, caught below) so the tool reaches its error state
+            if (!Tasks.await(modules.areModulesAvailable(segmenter), TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS).areModulesAvailable()) {
+                val deadline = System.currentTimeMillis() + INSTALL_TIMEOUT_MS
                 val done = CompletableDeferred<Boolean>()
                 val listener = InstallStatusListener { update ->
                     when (update.installState) {
@@ -65,12 +68,15 @@ object ImageSegmentationHelper {
                     }
                 }
                 val request = ModuleInstallRequest.newBuilder().addApi(segmenter).setListener(listener).build()
-                val installed = Tasks.await(modules.installModules(request)).areModulesAlreadyInstalled() ||
-                    withTimeoutOrNull(INSTALL_TIMEOUT_MS) { done.await() } == true
-                modules.unregisterListener(listener)
+                val installed = try {
+                    Tasks.await(modules.installModules(request), INSTALL_TIMEOUT_MS, TimeUnit.MILLISECONDS).areModulesAlreadyInstalled() ||
+                        withTimeoutOrNull((deadline - System.currentTimeMillis()).coerceAtLeast(1)) { done.await() } == true
+                } finally {
+                    modules.unregisterListener(listener)
+                }
                 if (!installed) return@withContext null
             }
-            Tasks.await(segmenter.process(InputImage.fromBitmap(source, 0))).foregroundBitmap
+            Tasks.await(segmenter.process(InputImage.fromBitmap(source, 0)), TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS).foregroundBitmap
         } catch (e: Exception) {
             null
         } finally {
@@ -131,7 +137,7 @@ object ImageSegmentationHelper {
 
     /** RB / BB / CS save: PNG quality 100 over the editor's working copy. */
     suspend fun writePng(bitmap: Bitmap, path: String): Boolean = withContext(Dispatchers.IO) {
-        runCatching { File(path).outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }.getOrDefault(false)
+        com.quizango.gallery.ui.editor.writePng(bitmap, File(path))
     }
 
     /** s9/k.Oooo000: picks which segmentation error to show. */
@@ -177,4 +183,5 @@ object ImageSegmentationHelper {
     // shortcut: photos over 4096 px come back downsampled, raise it if 2.7.2's full-size output matters on such files
     private const val MAX_SIDE = 4096
     private const val INSTALL_TIMEOUT_MS = 60_000L
+    private const val TASK_TIMEOUT_MS = 60_000L
 }

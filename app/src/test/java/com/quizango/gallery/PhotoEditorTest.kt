@@ -29,8 +29,8 @@ class PhotoEditorTest {
 
     @Test
     fun aiToolsLeadTheStripOnlyWhenAvailable() {
-        assertEquals(EditTool.entries, editTools(aiAvailable = true))
-        assertEquals(listOf(EditTool.CROP, EditTool.ADJUST, EditTool.FILTER, EditTool.BRUSH, EditTool.STICKER, EditTool.TEXT), editTools(aiAvailable = false))
+        assertEquals(EditTool.entries - EditTool.STICKER, editTools(aiAvailable = true)) // Sticker hidden until placement exists
+        assertEquals(listOf(EditTool.CROP, EditTool.ADJUST, EditTool.FILTER, EditTool.BRUSH, EditTool.TEXT), editTools(aiAvailable = false))
     }
 
     @Test

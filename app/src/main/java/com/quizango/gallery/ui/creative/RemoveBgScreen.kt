@@ -118,17 +118,28 @@ fun RemoveBgScreen(
     var discarding by remember { mutableStateOf(false) }
     var pickingImage by remember { mutableStateOf(false) }
     var pickingColor by remember { mutableStateOf(false) }
+    var failed by remember { mutableStateOf(false) } // decode or segmentation failed; Done starts a new attempt
+    var attempt by remember { mutableIntStateOf(0) }
     val gridState = rememberLazyGridState()
     val showGuide = !started && showsGuide(guideSeen)
 
     LaunchedEffect(guideSeen) { if (guideSeen == true) started = true }
-    LaunchedEffect(Unit) { original = withContext(Dispatchers.IO) { ImageSegmentationHelper.decodeUpright(imagePath) } }
-    LaunchedEffect(started, original) {
+    LaunchedEffect(attempt) {
+        if (original != null) return@LaunchedEffect
+        original = withContext(Dispatchers.IO) { ImageSegmentationHelper.decodeUpright(imagePath) }
+        if (original == null) {
+            segmenting = false
+            failed = true
+            Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
+        }
+    }
+    LaunchedEffect(started, original, attempt) {
         val src = original ?: return@LaunchedEffect
         if (!started || subject != null) return@LaunchedEffect
         val cut = ImageSegmentationHelper.extractSubject(context, src)?.let { withContext(Dispatchers.Default) { ImageSegmentationHelper.trim(it) } }
         segmenting = false
         if (cut == null) {
+            failed = true
             val msg = if (ImageSegmentationHelper.isOnline(context)) R.string.ml_kit_module_error else R.string.please_turn_on_internet_and_try_again
             Toast.makeText(context, context.getString(msg), Toast.LENGTH_SHORT).show()
             return@LaunchedEffect
@@ -139,6 +150,12 @@ fun RemoveBgScreen(
     }
 
     fun save() {
+        if (failed) {
+            failed = false
+            segmenting = true
+            attempt++
+            return
+        }
         val src = original ?: return
         val cut = subject
         if (!ready || cut == null) {
@@ -161,7 +178,7 @@ fun RemoveBgScreen(
         }
     }
 
-    BackHandler(enabled = !showGuide) { discarding = true }
+    BackHandler(enabled = !showGuide) { if (!saving) discarding = true } // the working copy may already be rewritten mid-save
     BackHandler(enabled = pickingImage) { pickingImage = false }
 
     Box(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {

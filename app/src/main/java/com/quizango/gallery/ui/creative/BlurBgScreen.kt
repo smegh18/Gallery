@@ -78,22 +78,31 @@ internal fun BackgroundEffectScreen(
     var value by remember { mutableIntStateOf(RULER_MAX) } // BB / CS: ruler 0..25, default 25
     var saving by remember { mutableStateOf(false) }
     var discarding by remember { mutableStateOf(false) }
+    var failed by remember { mutableStateOf(false) } // decode or segmentation failed; Done starts a new attempt
+    var attempt by remember { mutableIntStateOf(0) }
     val showGuide = !started && showsGuide(guideSeen)
 
     LaunchedEffect(guideSeen) { if (guideSeen == true) started = true }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) { ImageSegmentationHelper.decodeUpright(imagePath) }?.let { src ->
-            original = src
-            val scale = minOf(1f, PREVIEW_SIDE / maxOf(src.width, src.height).toFloat())
-            preview = Bitmap.createScaledBitmap(src, (src.width * scale).toInt().coerceAtLeast(1), (src.height * scale).toInt().coerceAtLeast(1), true)
+    LaunchedEffect(attempt) {
+        if (original != null) return@LaunchedEffect
+        val src = withContext(Dispatchers.IO) { ImageSegmentationHelper.decodeUpright(imagePath) }
+        if (src == null) {
+            segmenting = false
+            failed = true
+            Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
+            return@LaunchedEffect
         }
+        original = src
+        val scale = minOf(1f, PREVIEW_SIDE / maxOf(src.width, src.height).toFloat())
+        preview = Bitmap.createScaledBitmap(src, (src.width * scale).toInt().coerceAtLeast(1), (src.height * scale).toInt().coerceAtLeast(1), true)
     }
-    LaunchedEffect(started, original) {
+    LaunchedEffect(started, original, attempt) {
         val src = original ?: return@LaunchedEffect
         if (!started || subject != null) return@LaunchedEffect
         val fg = ImageSegmentationHelper.extractSubject(context, src)
         segmenting = false
         if (fg == null) {
+            failed = true
             val msg = if (ImageSegmentationHelper.isOnline(context)) R.string.ml_kit_module_error else R.string.please_turn_on_internet_and_try_again
             Toast.makeText(context, context.getString(msg), Toast.LENGTH_SHORT).show()
             return@LaunchedEffect
@@ -111,19 +120,26 @@ internal fun BackgroundEffectScreen(
     }
 
     fun save() {
+        if (failed) {
+            failed = false
+            segmenting = true
+            attempt++
+            return
+        }
         val src = original ?: return
         val fg = subject
-        val shown = effect
-        if (!ready || fg == null || shown == null) {
+        val small = preview
+        if (!ready || fg == null || small == null || effect == null) {
             Toast.makeText(context, context.getString(R.string.progress_toast), Toast.LENGTH_SHORT).show()
             return
         }
         if (saving) return
         saving = true
+        val v = value // the ruler at Done, not whatever preview finished last
         scope.launch {
             val out = withContext(Dispatchers.Default) {
                 // llMainLayout drawn at the original size: the blurred preview scales up, the splash is redone at full size
-                val bg = if (tool == AiTool.BLUR) shown else ImageSegmentationHelper.splash(src, splashIntensity(value))
+                val bg = if (tool == AiTool.BLUR) ImageSegmentationHelper.blur(small, v) else ImageSegmentationHelper.splash(src, splashIntensity(v))
                 Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888).also { out ->
                     val canvas = Canvas(out)
                     val paint = Paint(Paint.FILTER_BITMAP_FLAG)
@@ -132,7 +148,7 @@ internal fun BackgroundEffectScreen(
                 }
             }
             if (ImageSegmentationHelper.writePng(out, imagePath)) {
-                preferences.setOneTimeFlag(tool.guideKey) // bc/o, bc/aj: saving also marks the guide seen
+                runCatching { preferences.setOneTimeFlag(tool.guideKey) } // bc/o, bc/aj: saving also marks the guide seen; a failed flag write must not hide the save
                 onSaved()
             } else {
                 saving = false
@@ -141,7 +157,7 @@ internal fun BackgroundEffectScreen(
         }
     }
 
-    BackHandler(enabled = !showGuide) { discarding = true }
+    BackHandler(enabled = !showGuide) { if (!saving) discarding = true } // the working copy may already be rewritten mid-save
 
     Box(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
         Column(Modifier.fillMaxSize()) {

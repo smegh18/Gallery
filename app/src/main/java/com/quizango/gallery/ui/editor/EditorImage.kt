@@ -12,6 +12,7 @@ import androidx.annotation.StringRes
 import com.quizango.gallery.R
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStream
 import kotlin.math.floor
 import kotlin.math.pow
 
@@ -29,7 +30,8 @@ internal enum class EditTool(@StringRes val label: Int, @DrawableRes val icon: I
 }
 
 /** s9/k.OooOo0o: the three AI tools lead the strip only on Android 10+ with at least 3 GB of RAM. */
-internal fun editTools(aiAvailable: Boolean): List<EditTool> = if (aiAvailable) EditTool.entries else EditTool.entries.filterNot { it.ai }
+// shortcut: Sticker is hidden because StickerScreen cannot hand a sticker back to place on the photo yet; drop the filter once placement and export exist
+internal fun editTools(aiAvailable: Boolean): List<EditTool> = EditTool.entries.filter { it != EditTool.STICKER && (aiAvailable || !it.ai) }
 
 internal const val AI_MIN_SDK = 29
 internal const val AI_MIN_RAM = 3L * 1024 * 1024 * 1024
@@ -245,9 +247,19 @@ internal fun decodeForEdit(file: File): Bitmap? {
 }
 
 /** Every applied tool rewrites the working copy as PNG at quality 100 (PE ~11706). */
-internal fun writePng(bitmap: Bitmap, file: File): Boolean = runCatching {
-    FileOutputStream(file).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
-}.getOrDefault(false)
+internal fun writePng(bitmap: Bitmap, file: File): Boolean = replaceFile(file) { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+
+/**
+ * Writes [file] through a sibling temp file and renames it over [file] only after [write] returned true and the stream
+ * closed, so a failed encode (full storage, OOM) leaves the previous content intact.
+ */
+internal fun replaceFile(file: File, write: (OutputStream) -> Boolean): Boolean {
+    val tmp = File(file.path + ".tmp")
+    val ok = runCatching { FileOutputStream(tmp).use { out -> write(out).also { if (it) out.fd.sync() } } }.getOrDefault(false) &&
+        tmp.renameTo(file) // rename(2) replaces the target atomically on Android
+    if (!ok) tmp.delete()
+    return ok
+}
 
 /** A copy scaled so its longer side is at most [maxSide], for previews and filter thumbnails. */
 internal fun scaledDown(src: Bitmap, maxSide: Int): Bitmap {

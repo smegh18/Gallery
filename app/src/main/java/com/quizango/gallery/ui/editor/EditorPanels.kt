@@ -51,6 +51,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
@@ -295,6 +299,10 @@ internal fun EditorSlider(
     Canvas(
         modifier
             .height(32.dp)
+            .semantics {
+                progressBarRangeInfo = ProgressBarRangeInfo(value, range)
+                setProgress { v -> change(v.coerceIn(range)); release(); true }
+            }
             .pointerInput(range) { detectTapGestures(onTap = { seek(it.x, size.width, 10.dp.toPx()); release() }) }
             .pointerInput(range) {
                 detectHorizontalDragGestures(onDragEnd = { release() }, onDragCancel = { release() }) { c, _ ->

@@ -209,8 +209,11 @@ private fun androidx.compose.foundation.layout.BoxScope.CornerButton(icon: Int, 
     Image(painterResource(icon), contentDescription = null, modifier = Modifier.align(alignment).size(size))
 }
 
-/** Draws the stickers onto a copy of [src]; [shownWidth] is the on-screen image width the sizes were set against. */
-internal fun renderTexts(src: Bitmap, items: List<TextItem>, shownWidth: Float, density: Float, fontScale: Float, shadowColor: Int): Bitmap {
+/**
+ * Draws the stickers onto a copy of [src]; [shownWidth] is the on-screen image width the sizes were set against and
+ * [boxWidth] the on-screen width each [TextSticker] wraps in, so the export breaks lines where the preview did.
+ */
+internal fun renderTexts(src: Bitmap, items: List<TextItem>, shownWidth: Float, boxWidth: Float, density: Float, fontScale: Float, shadowColor: Int): Bitmap {
     val out = src.copy(Bitmap.Config.ARGB_8888, true)
     val canvas = Canvas(out)
     val k = src.width / shownWidth
@@ -222,7 +225,8 @@ internal fun renderTexts(src: Bitmap, items: List<TextItem>, shownWidth: Float, 
             alpha = (t.opacity * 255).toInt()
             if (t.shadow != 0f) setShadowLayer(abs(t.shadow) * k, t.shadow * k, t.shadow * k, shadowColor) // shadow is in screen px, like the Compose Shadow
         }
-        val width = t.text.lines().maxOf { paint.measureText(it) }.toInt().coerceAtLeast(1)
+        val wrap = (boxWidth - 4 * TEXT_INSET.value * density) * k // TextSticker's two insets on each side
+        val width = minOf(t.text.lines().maxOf { paint.measureText(it) }, wrap).toInt().coerceAtLeast(1)
         t.gradient?.let { g ->
             paint.shader = LinearGradient(0f, 0f, width.toFloat(), 0f, intArrayOf(g.start, g.end), floatArrayOf(0f, g.split.coerceIn(0.01f, 1f)), Shader.TileMode.CLAMP)
         }
