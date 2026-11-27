@@ -210,7 +210,9 @@ private fun PhotoEditor(
                 if (runCatching { src.copyTo(working, overwrite = true) }.isFailure) return@withContext R.string.toast_corrupted_image
             }
             try {
-                decodeForEdit(working)?.let { bmp -> withContext(Dispatchers.Main) { bitmap = bmp }; null } ?: R.string.toast_corrupted_image
+                val bmp = decodeForEdit(working) ?: return@withContext R.string.toast_corrupted_image
+                withContext(Dispatchers.Main) { bitmap = bmp }
+                null
             } catch (_: OutOfMemoryError) {
                 R.string.outofmemory_msg
             }
