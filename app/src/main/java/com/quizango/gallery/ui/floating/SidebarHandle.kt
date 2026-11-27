@@ -192,22 +192,21 @@ internal class SidebarHandle(private val context: Context, scope: CoroutineScope
                 lastX = event.rawX; lastY = event.rawY
                 val inward = (event.rawX - downX) * if (onLeft) 1f else -1f
                 val dy = event.rawY - downY
-                val wasNone = gesture == Gesture.NONE
-                if (wasNone) {
+                if (gesture == Gesture.NONE) {
                     gesture = when {
                         inward > touchSlop && inward > abs(dy) -> if (openPanel(view)) Gesture.PANEL else Gesture.IGNORED
                         -inward > dp(OUTWARD_CANCEL_DP) || max(abs(event.rawX - downX), abs(dy)) > touchSlop * 3 -> Gesture.IGNORED
                         else -> Gesture.NONE
                     }
                     if (gesture != Gesture.NONE) main.removeCallbacks(longPress)
+                    // 2.7.2 bo/l: once the panel opens, moves count from here (this move included), not from touch-down
+                    if (gesture == Gesture.PANEL) downX = event.rawX
                 }
                 when (gesture) {
-                    Gesture.PANEL -> panel.dragOpen(inward)
+                    Gesture.PANEL -> panel.dragOpen((event.rawX - downX) * if (onLeft) 1f else -1f)
                     Gesture.MOVE -> moveTo(event.rawX, event.rawY)
                     else -> Unit
                 }
-                // 2.7.2 bo/l: once the panel opens, later moves count from here, not from the touch-down point
-                if (wasNone && gesture == Gesture.PANEL) downX = event.rawX
             }
             MotionEvent.ACTION_UP -> {
                 velocity?.addMovement(event)

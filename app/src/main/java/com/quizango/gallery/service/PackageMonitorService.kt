@@ -118,7 +118,11 @@ class PackageMonitorService : Service() {
                 try {
                     if (!app.preferences.iuAlwaysOn.first()) return@launch
                     // also stops a service started before the campaign gate existed
-                    if (!InstallSource.isCampaign(app, app.preferences)) return@launch
+                    // Organic installs never run the monitor; a sticky restart that skipped startIfAllowed stops here
+                    if (!InstallSource.isCampaign(app, app.preferences)) {
+                        stop(app)
+                        return@launch
+                    }
                     val screen = InstallUninstallActivity.intent(app, packageName, event)
                     if (isAppInForeground()) app.startActivity(screen) else OverlayLauncher.launch(app, screen)
                 } catch (_: IOException) {
