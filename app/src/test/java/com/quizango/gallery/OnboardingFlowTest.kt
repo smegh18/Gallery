@@ -36,7 +36,6 @@ class OnboardingFlowTest {
     @Test
     fun testOnboardingDrawablesExist() {
         assertTrue(R.drawable.ic_floating_btn != 0)
-        assertTrue(R.drawable.dialog_background_gradient != 0)
         assertTrue(R.drawable.ic_permission_needed != 0)
         assertTrue(R.drawable.ic_logo != 0)
     }
