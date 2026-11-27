@@ -479,12 +479,18 @@ fun GalleryNavHost(
             val rawTab = backStackEntry.arguments?.getString("tab") ?: ""
             val tab = if (rawTab.isNotEmpty()) rawTab else null
 
+            // The AI tools report "editResult" (they rewrote the working copy); Save hands "editedPath" to the caller
+            val toolEdited by backStackEntry.savedStateHandle.getStateFlow("editResult", false).collectAsState()
             PhotoEditorScreen(
                 initialPath = path,
                 initialTab = tab,
                 mediaRepository = app.mediaRepository,
-                onNavigateBack = { navController.popBackStack() },
-                onNavigate = { route -> navController.navigateOnce(route) }
+                preferences = app.preferences,
+                toolEdited = toolEdited,
+                onToolEditConsumed = { backStackEntry.savedStateHandle["editResult"] = false },
+                onOpenTool = { route -> navController.navigateOnce(route) },
+                onSaved = { saved -> navController.previousBackStackEntry?.savedStateHandle?.set("editedPath", saved); navController.popBackStack() },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
@@ -708,9 +714,7 @@ fun GalleryNavHost(
         }
 
         composable(Screen.Stickers.route) {
-            StickerScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            StickerScreen(onBack = { navController.popBackStack() })
         }
 
         composable(
@@ -725,6 +729,8 @@ fun GalleryNavHost(
             RemoveBgScreen(
                 imagePath = path,
                 mediaRepository = app.mediaRepository,
+                preferences = app.preferences,
+                onSaved = { navController.previousBackStackEntry?.savedStateHandle?.set("editResult", true); navController.popBackStack() },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -740,7 +746,8 @@ fun GalleryNavHost(
 
             BlurBgScreen(
                 imagePath = path,
-                mediaRepository = app.mediaRepository,
+                preferences = app.preferences,
+                onSaved = { navController.previousBackStackEntry?.savedStateHandle?.set("editResult", true); navController.popBackStack() },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -756,7 +763,8 @@ fun GalleryNavHost(
 
             ColorSplashScreen(
                 imagePath = path,
-                mediaRepository = app.mediaRepository,
+                preferences = app.preferences,
+                onSaved = { navController.previousBackStackEntry?.savedStateHandle?.set("editResult", true); navController.popBackStack() },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

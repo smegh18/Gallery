@@ -148,7 +148,8 @@ def render(ref, lang, notices):
             notices.append("kept English (format mismatch): %s/%s" % (lang, key))
             continue
         ref_el.tail = None
-        lines.append("    " + ET.tostring(ref_el, encoding="unicode"))
+        # Blanks before a line break inside a string are invisible; dropped so git diff --check stays clean
+        lines.append("    " + re.sub(r"[ \t]+\n", "\n", ET.tostring(ref_el, encoding="unicode")))
     return ('<?xml version="1.0" encoding="utf-8"?>\n<!-- %s -->\n<resources>\n%s\n</resources>\n'
             % (HEADER, "\n".join(lines)))
 

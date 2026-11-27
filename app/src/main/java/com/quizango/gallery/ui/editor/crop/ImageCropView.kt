@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.quizango.gallery.ui.editor.CropRatio
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -308,7 +307,9 @@ object CropGeometry {
 }
 
 /**
- * Interactive Jetpack Compose crop overlay component matching CanHub CropImageView and reference APK item_crop_layout.
+ * The embedded com.canhub.cropper.CropImageView of item_crop_layout with its default overlay: a 3dp #AAFFFFFF border,
+ * 2dp x 14dp white corners set 5dp outside it, rule-of-thirds guidelines while touched, [dimColor] outside the window.
+ * [aspectX]/[aspectY] of 0 means a free window; the window starts at the whole image (cropInitialCropWindowPaddingRatio 0).
  */
 @Composable
 fun ImageCropView(
@@ -316,309 +317,101 @@ fun ImageCropView(
     rotationDegrees: Float,
     flipX: Boolean,
     flipY: Boolean,
-    selectedRatio: CropRatio,
+    aspectX: Float,
+    aspectY: Float,
+    dimColor: Color,
     modifier: Modifier = Modifier,
     onCropRectChanged: (Rect, Rect) -> Unit = { _, _ -> }
 ) {
     val density = LocalDensity.current
-    val touchRadiusPx = remember(density) { with(density) { 32.dp.toPx() } }
-    val cornerLenPx = remember(density) { with(density) { 22.dp.toPx() } }
-    val handleThicknessPx = remember(density) { with(density) { 3.5.dp.toPx() } }
-    val borderThicknessPx = remember(density) { with(density) { 1.5.dp.toPx() } }
-    val gridThicknessPx = remember(density) { with(density) { 1.dp.toPx() } }
+    val touchRadiusPx = remember(density) { with(density) { 24.dp.toPx() } }
+    val borderPx = remember(density) { with(density) { 3.dp.toPx() } }
+    val cornerThickPx = remember(density) { with(density) { 2.dp.toPx() } }
+    val cornerLenPx = remember(density) { with(density) { 14.dp.toPx() } }
+    val cornerOffsetPx = remember(density) { with(density) { 5.dp.toPx() } }
+    val guidePx = remember(density) { with(density) { 1.dp.toPx() } }
+    val lineColor = Color(0xAAFFFFFF) // CropDefaults border and guideline colour (library default, not themed)
 
-    // Pre-transformed bitmap according to in-crop rotation and flips
     val transformedBitmap = remember(bitmap, rotationDegrees, flipX, flipY) {
         val matrix = Matrix()
         if (flipX) matrix.postScale(-1f, 1f)
         if (flipY) matrix.postScale(1f, -1f)
         if (rotationDegrees != 0f) matrix.postRotate(rotationDegrees)
-        if (flipX || flipY || rotationDegrees != 0f) {
-            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        } else {
-            bitmap
-        }
+        if (flipX || flipY || rotationDegrees != 0f) Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true) else bitmap
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val containerWidth = constraints.maxWidth.toFloat()
         val containerHeight = constraints.maxHeight.toFloat()
-
-        // Calculate fitted image display bounds inside container
-        val scale = min(
-            containerWidth / transformedBitmap.width.toFloat(),
-            containerHeight / transformedBitmap.height.toFloat()
-        )
+        val scale = min(containerWidth / transformedBitmap.width.toFloat(), containerHeight / transformedBitmap.height.toFloat())
         val displayedW = transformedBitmap.width * scale
         val displayedH = transformedBitmap.height * scale
         val imgLeft = (containerWidth - displayedW) / 2f
         val imgTop = (containerHeight - displayedH) / 2f
-        val imageBounds = remember(displayedW, displayedH, imgLeft, imgTop) {
-            Rect(imgLeft, imgTop, imgLeft + displayedW, imgTop + displayedH)
-        }
+        val imageBounds = remember(displayedW, displayedH, imgLeft, imgTop) { Rect(imgLeft, imgTop, imgLeft + displayedW, imgTop + displayedH) }
 
-        var cropRect by remember {
-            mutableStateOf(
-                CropGeometry.calculateAspectCropRect(
-                    imageBounds = imageBounds,
-                    aspectX = selectedRatio.aspectX,
-                    aspectY = selectedRatio.aspectY
-                )
-            )
-        }
-
+        var cropRect by remember { mutableStateOf(CropGeometry.calculateAspectCropRect(imageBounds, aspectX, aspectY)) }
         var activeHandle by remember { mutableStateOf<CropHandle?>(null) }
 
-        // Recalculate crop rect when ratio or image orientation changes
-        LaunchedEffect(selectedRatio, imageBounds) {
-            cropRect = CropGeometry.calculateAspectCropRect(
-                imageBounds = imageBounds,
-                aspectX = selectedRatio.aspectX,
-                aspectY = selectedRatio.aspectY
-            )
-            onCropRectChanged(cropRect, imageBounds)
+        LaunchedEffect(aspectX, aspectY, imageBounds) {
+            cropRect = CropGeometry.calculateAspectCropRect(imageBounds, aspectX, aspectY)
         }
-
-        // Notify parent when cropRect or imageBounds updates
-        LaunchedEffect(cropRect, imageBounds) {
-            onCropRectChanged(cropRect, imageBounds)
-        }
+        LaunchedEffect(cropRect, imageBounds) { onCropRectChanged(cropRect, imageBounds) }
 
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(selectedRatio, imageBounds) {
+                .pointerInput(aspectX, aspectY, imageBounds) {
                     detectDragGestures(
-                        onDragStart = { offset ->
-                            activeHandle = CropGeometry.hitTest(offset, cropRect, touchRadiusPx)
-                        },
+                        onDragStart = { activeHandle = CropGeometry.hitTest(it, cropRect, touchRadiusPx) },
                         onDrag = { change, dragAmount ->
-                            if (activeHandle != null) {
-                                change.consume()
-                                cropRect = CropGeometry.updateCropRect(
-                                    currentRect = cropRect,
-                                    handle = activeHandle!!,
-                                    dragDelta = dragAmount,
-                                    bounds = imageBounds,
-                                    aspectX = selectedRatio.aspectX,
-                                    aspectY = selectedRatio.aspectY
-                                )
-                            }
+                            val handle = activeHandle ?: return@detectDragGestures
+                            change.consume()
+                            cropRect = CropGeometry.updateCropRect(cropRect, handle, dragAmount, imageBounds, aspectX, aspectY)
                         },
-                        onDragEnd = {
-                            activeHandle = null
-                        },
-                        onDragCancel = {
-                            activeHandle = null
-                        }
+                        onDragEnd = { activeHandle = null },
+                        onDragCancel = { activeHandle = null }
                     )
                 }
         ) {
-            // 1. Draw transformed image within imageBounds
             drawImage(
                 image = transformedBitmap.asImageBitmap(),
                 dstOffset = IntOffset(imgLeft.toInt(), imgTop.toInt()),
                 dstSize = IntSize(displayedW.toInt(), displayedH.toInt())
             )
+            // Dim outside the window
+            if (cropRect.top > imageBounds.top) drawRect(dimColor, Offset(imageBounds.left, imageBounds.top), Size(imageBounds.width, cropRect.top - imageBounds.top))
+            if (cropRect.bottom < imageBounds.bottom) drawRect(dimColor, Offset(imageBounds.left, cropRect.bottom), Size(imageBounds.width, imageBounds.bottom - cropRect.bottom))
+            if (cropRect.left > imageBounds.left) drawRect(dimColor, Offset(imageBounds.left, cropRect.top), Size(cropRect.left - imageBounds.left, cropRect.height))
+            if (cropRect.right < imageBounds.right) drawRect(dimColor, Offset(cropRect.right, cropRect.top), Size(imageBounds.right - cropRect.right, cropRect.height))
 
-            // 2. Draw darkened overlay (#BB000000) outside crop window
-            val dimColor = Color(0xBB000000)
-            // Top dim
-            if (cropRect.top > imageBounds.top) {
-                drawRect(
-                    color = dimColor,
-                    topLeft = Offset(imageBounds.left, imageBounds.top),
-                    size = Size(imageBounds.width, cropRect.top - imageBounds.top)
-                )
+            if (activeHandle != null) { // Guidelines.ON_TOUCH
+                for (i in 1..2) {
+                    val x = cropRect.left + cropRect.width * i / 3f
+                    val y = cropRect.top + cropRect.height * i / 3f
+                    drawLine(lineColor, Offset(x, cropRect.top), Offset(x, cropRect.bottom), guidePx)
+                    drawLine(lineColor, Offset(cropRect.left, y), Offset(cropRect.right, y), guidePx)
+                }
             }
-            // Bottom dim
-            if (cropRect.bottom < imageBounds.bottom) {
-                drawRect(
-                    color = dimColor,
-                    topLeft = Offset(imageBounds.left, cropRect.bottom),
-                    size = Size(imageBounds.width, imageBounds.bottom - cropRect.bottom)
-                )
-            }
-            // Left dim
-            if (cropRect.left > imageBounds.left) {
-                drawRect(
-                    color = dimColor,
-                    topLeft = Offset(imageBounds.left, cropRect.top),
-                    size = Size(cropRect.left - imageBounds.left, cropRect.height)
-                )
-            }
-            // Right dim
-            if (cropRect.right < imageBounds.right) {
-                drawRect(
-                    color = dimColor,
-                    topLeft = Offset(cropRect.right, cropRect.top),
-                    size = Size(imageBounds.right - cropRect.right, cropRect.height)
-                )
-            }
-
-            // 3. Draw crop window border
-            drawRect(
-                color = Color.White.copy(alpha = 0.85f),
-                topLeft = cropRect.topLeft,
-                size = cropRect.size,
-                style = Stroke(width = borderThicknessPx)
-            )
-
-            // 4. Draw 3x3 Rule of Thirds guidelines
-            val guidelineColor = Color.White.copy(alpha = 0.45f)
-            val thirdW = cropRect.width / 3f
-            val thirdH = cropRect.height / 3f
-            // Vertical guidelines
-            drawLine(
-                color = guidelineColor,
-                start = Offset(cropRect.left + thirdW, cropRect.top),
-                end = Offset(cropRect.left + thirdW, cropRect.bottom),
-                strokeWidth = gridThicknessPx
-            )
-            drawLine(
-                color = guidelineColor,
-                start = Offset(cropRect.left + 2 * thirdW, cropRect.top),
-                end = Offset(cropRect.left + 2 * thirdW, cropRect.bottom),
-                strokeWidth = gridThicknessPx
-            )
-            // Horizontal guidelines
-            drawLine(
-                color = guidelineColor,
-                start = Offset(cropRect.left, cropRect.top + thirdH),
-                end = Offset(cropRect.right, cropRect.top + thirdH),
-                strokeWidth = gridThicknessPx
-            )
-            drawLine(
-                color = guidelineColor,
-                start = Offset(cropRect.left, cropRect.top + 2 * thirdH),
-                end = Offset(cropRect.right, cropRect.top + 2 * thirdH),
-                strokeWidth = gridThicknessPx
-            )
-
-            // 5. Draw authentic Corner L-Brackets (CanHub / reference APK style)
-            drawCornerBrackets(
-                cropRect = cropRect,
-                cornerLen = cornerLenPx,
-                thickness = handleThicknessPx,
-                color = Color.White
-            )
-
-            // 6. Draw Midpoint Edge Bars
-            drawEdgeBars(
-                cropRect = cropRect,
-                barLen = cornerLenPx * 0.9f,
-                thickness = handleThicknessPx,
-                color = Color.White
-            )
+            drawRect(lineColor, cropRect.topLeft, cropRect.size, style = Stroke(width = borderPx))
+            drawCorners(cropRect, cornerLenPx, cornerThickPx, cornerOffsetPx + (cornerThickPx - borderPx) / 2f + borderPx / 2f, Color.White)
         }
     }
 }
 
-/**
- * Draws L-shaped corner brackets on the crop window.
- */
-private fun DrawScope.drawCornerBrackets(
-    cropRect: Rect,
-    cornerLen: Float,
-    thickness: Float,
-    color: Color
-) {
-    val halfThick = thickness / 2f
-
-    // TOP-LEFT
-    drawLine(
-        color = color,
-        start = Offset(cropRect.left - halfThick, cropRect.top),
-        end = Offset(cropRect.left + cornerLen, cropRect.top),
-        strokeWidth = thickness
-    )
-    drawLine(
-        color = color,
-        start = Offset(cropRect.left, cropRect.top - halfThick),
-        end = Offset(cropRect.left, cropRect.top + cornerLen),
-        strokeWidth = thickness
-    )
-
-    // TOP-RIGHT
-    drawLine(
-        color = color,
-        start = Offset(cropRect.right + halfThick, cropRect.top),
-        end = Offset(cropRect.right - cornerLen, cropRect.top),
-        strokeWidth = thickness
-    )
-    drawLine(
-        color = color,
-        start = Offset(cropRect.right, cropRect.top - halfThick),
-        end = Offset(cropRect.right, cropRect.top + cornerLen),
-        strokeWidth = thickness
-    )
-
-    // BOTTOM-LEFT
-    drawLine(
-        color = color,
-        start = Offset(cropRect.left - halfThick, cropRect.bottom),
-        end = Offset(cropRect.left + cornerLen, cropRect.bottom),
-        strokeWidth = thickness
-    )
-    drawLine(
-        color = color,
-        start = Offset(cropRect.left, cropRect.bottom + halfThick),
-        end = Offset(cropRect.left, cropRect.bottom - cornerLen),
-        strokeWidth = thickness
-    )
-
-    // BOTTOM-RIGHT
-    drawLine(
-        color = color,
-        start = Offset(cropRect.right + halfThick, cropRect.bottom),
-        end = Offset(cropRect.right - cornerLen, cropRect.bottom),
-        strokeWidth = thickness
-    )
-    drawLine(
-        color = color,
-        start = Offset(cropRect.right, cropRect.bottom + halfThick),
-        end = Offset(cropRect.right, cropRect.bottom - cornerLen),
-        strokeWidth = thickness
-    )
-}
-
-/**
- * Draws midpoint edge bars on the crop window.
- */
-private fun DrawScope.drawEdgeBars(
-    cropRect: Rect,
-    barLen: Float,
-    thickness: Float,
-    color: Color
-) {
-    val halfBar = barLen / 2f
-
-    // Top edge bar
-    drawLine(
-        color = color,
-        start = Offset(cropRect.center.x - halfBar, cropRect.top),
-        end = Offset(cropRect.center.x + halfBar, cropRect.top),
-        strokeWidth = thickness
-    )
-    // Bottom edge bar
-    drawLine(
-        color = color,
-        start = Offset(cropRect.center.x - halfBar, cropRect.bottom),
-        end = Offset(cropRect.center.x + halfBar, cropRect.bottom),
-        strokeWidth = thickness
-    )
-    // Left edge bar
-    drawLine(
-        color = color,
-        start = Offset(cropRect.left, cropRect.center.y - halfBar),
-        end = Offset(cropRect.left, cropRect.center.y + halfBar),
-        strokeWidth = thickness
-    )
-    // Right edge bar
-    drawLine(
-        color = color,
-        start = Offset(cropRect.right, cropRect.center.y - halfBar),
-        end = Offset(cropRect.right, cropRect.center.y + halfBar),
-        strokeWidth = thickness
-    )
+/** CropOverlayView.drawCorners: an L at each corner, drawn [offset] outside the window border. */
+private fun DrawScope.drawCorners(r: Rect, len: Float, thick: Float, offset: Float, color: Color) {
+    val l = r.left - offset
+    val t = r.top - offset
+    val rt = r.right + offset
+    val b = r.bottom + offset
+    val h = thick / 2f
+    drawLine(color, Offset(l - h, t), Offset(r.left + len, t), thick)
+    drawLine(color, Offset(l, t - h), Offset(l, r.top + len), thick)
+    drawLine(color, Offset(rt + h, t), Offset(r.right - len, t), thick)
+    drawLine(color, Offset(rt, t - h), Offset(rt, r.top + len), thick)
+    drawLine(color, Offset(l - h, b), Offset(r.left + len, b), thick)
+    drawLine(color, Offset(l, b + h), Offset(l, r.bottom - len), thick)
+    drawLine(color, Offset(rt + h, b), Offset(r.right - len, b), thick)
+    drawLine(color, Offset(rt, b + h), Offset(rt, r.bottom - len), thick)
 }

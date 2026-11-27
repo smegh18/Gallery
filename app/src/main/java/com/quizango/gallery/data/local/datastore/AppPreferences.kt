@@ -359,4 +359,12 @@ class AppPreferences(private val context: Context) {
     suspend fun setIuAlwaysOn(on: Boolean) {
         context.dataStore.edit { it[GsKeys.IU_ALWAYS_ON] = on }
     }
+
+    // Phase 08 (AI tools)
+    /** One-time 2.7.2 flags, default false: isRemoveBgGuide, isBlurBgGuide, isColorSplashGuide, isRemoveBgScrollToolTip. */
+    fun oneTimeFlag(key: String): Flow<Boolean> = context.dataStore.data.map { it[booleanPreferencesKey(key)] ?: false }
+
+    suspend fun setOneTimeFlag(key: String) {
+        context.dataStore.edit { it[booleanPreferencesKey(key)] = true }
+    }
 }

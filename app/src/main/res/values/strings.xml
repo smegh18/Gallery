@@ -610,4 +610,94 @@ recycle bin"</string>
     <string name="quick_access_floating_button_description">This feature is available on the Home screen. Just tap the floating button to use it.</string>
     <string name="quick_access_floating_button_title">Quick Access Floating Button</string>
     <string name="str_home_cleaner">Cleaner</string>
+    <!-- Phase 08 -->
+    <string name="collage_limit_error">You must select between %1$d and %2$d items for the collage.</string>
+    <string name="discard_changes">Discard Changes</string>
+    <string name="discard_permission">Confirm discard changes?</string>
+    <string name="removed_background">Removed Background</string>
+    <string name="ml_kit_module_error">Something went wrong, Please try after some time.</string>
+    <string name="progress_toast">Please wait, Process is running</string>
+    <string name="remove_bg">Remove Background</string>
+    <string name="instantly_remove_bg">"Instantly remove background from
+ any photo"</string>
+    <string name="instantly_blur_background">"Instantly Blur background
+ From in any photo"</string>
+    <string name="splash">Splash</string>
+    <string name="instantly_color_splash">"Instantly change background
+ color in any photo"</string>
+    <string name="try_now">Try Now</string>
+    <string name="AI">AI</string>
+    <string name="apply">Apply</string>
+    <string name="lock_screen">Lock Screen</string>
+    <string name="home_screen">Home Screen</string>
+    <string name="home_lock_screen">Home &amp; Lock Screen</string>
+    <string name="apply_set_wallpaper">Wallpaper updated successfully.</string>
+    <string name="collage">Collage</string>
+    <string name="layout">Layout</string>
+    <string name="ratio">Ratio</string>
+    <string name="background">Background</string>
+    <string name="border">Border</string>
+    <string name="replace">Replace</string>
+    <string name="swap">Swap</string>
+    <string name="vertical">Vertical</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="right">Right</string>
+    <string name="zoom_in">Zoom In</string>
+    <string name="left">Left</string>
+    <string name="up">Up</string>
+    <string name="down">Down</string>
+    <string name="radius">Radius</string>
+    <string name="padding">Padding</string>
+    <string name="ratio_size">Ratio/size</string>
+    <string name="blur_bg">Blur Bg</string>
+    <string name="blur">Blur</string>
+    <string name="custom">Custom</string>
+    <string name="select">Select</string>
+    <string name="png">Png</string>
+    <string name="white">White</string>
+    <string name="black">Black</string>
+    <string name="add_new_text_label">Add New Text</string>
+    <string name="exit_without_saving">Exit without saving?</string>
+    <string name="are_you_sure_you_want_to_discard_changes_message">Your changes will be lost if you exit without saving!</string>
+    <string name="exit">Exit</string>
+    <string name="share_image_via_title">Share File via…</string>
+    <string name="other">Other</string>
+    <string name="x">X</string>
+    <string name="messenger">Messenger</string>
+    <string name="snapchat">Snapchat</string>
+    <string name="save_clg_menu">Save Image</string>
+    <string name="try_again">Try again</string>
+    <string name="hellow_label">Hellow</string>
+    <string name="bg_width">Bg Width</string>
+    <string name="bg_height">Bg Height</string>
+    <string name="keyboard">Keyboard</string>
+    <string name="Something_went_wrong_message">Oops! something went wrong</string>
+    <string name="collage_ratio_story" translatable="false">Story</string>
+    <string name="collage_ratio_movie" translatable="false">Movie</string>
+    <string name="collage_ratio_post" translatable="false">Post</string>
+    <string name="collage_ratio_cover" translatable="false">Cover</string>
+    <string name="collage_ratio_header" translatable="false">Header</string>
+    <string name="new_edit">New</string>
+    <string name="remove_n_background">"Remove
+Background"</string>
+    <string name="color_bg">"Color
+Splash"</string>
+    <string name="IG_1">IG 1:1</string>
+    <string name="IG_2">IG 4:5</string>
+    <string name="Ins_story">Ins Story</string>
+    <string name="cover">Cover</string>
+    <string name="IG_3">5:4</string>
+    <string name="ab">AB</string>
+    <string name="font_styles">Font Styles</string>
+    <string name="outofmemory_msg">memory not available to load image</string>
+    <string name="file_not_found">File not found!</string>
+    <string name="toast_file">Unable to edit svg files.</string>
+    <string name="heif_image_toast">Unable to edit heif image.</string>
+    <string name="tap_to_auto_remove_bg">Tap to auto Remove background</string>
+    <string name="tap_to_blur_bg">Tap to blur Background</string>
+    <string name="tap_to_color_splash_bg">Tap to change background in to gray</string>
+    <string name="explore_stickers">Explore Stickers</string>
+    <string name="no_stickers">No Stickers</string>
+    <string name="editor_redo" translatable="false">Redo</string>
+    <string name="editor_add_text" translatable="false">Add text</string>
 </resources>

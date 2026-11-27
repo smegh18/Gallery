@@ -23,6 +23,11 @@ class EditHistory<T>(private val limit: Int = 30) {
         index = states.size - 1
     }
 
+    fun clear() {
+        states.clear()
+        index = -1
+    }
+
     fun undo(): T? = if (canUndo) states[--index] else null
     fun redo(): T? = if (canRedo) states[++index] else null
 }
