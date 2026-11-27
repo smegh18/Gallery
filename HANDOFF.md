@@ -10,17 +10,14 @@ Updated 2026-11-25 by Claude Code. The session was paused mid-work so it can con
 ## Active goal (user instruction, 2026-11-25)
 "Skip artemis check and complete all rest of work." So: no Artemis or device checks. Finish Phases 8-12 (porting), then run Phase 13's quality gates without Artemis. Device acceptance (VER-01, VER-02, every Verified box) stays open for a later device session.
 
-## Where things stand (2026-11-26)
-- **Phases 1-7:** complete (6-7 on automated gates; device pass deferred to Phase 13).
-- **Phases 9, 10, 11, 12:** built by parallel builder agents, merged into main and wired together (Settings rows to Floating/Gs/IU settings, Settings usage switch to the usage-access sheet, Home start order: notification ask, then usage check, then floating offer). Each has `.planning/phases/NN-*/NN-SUMMARY.md`. 385 unit tests and assembleDebug passed at the Phase 10 merge (`1a183ae`).
-- **Review of 9-12:** CodeRabbit (2 runs) plus a nine-lens multi-agent review with 3 skeptics per finding. CodeRabbit findings: CR9-1 fixed, CR9-2 resolved by the wiring, CR10-1 fixed, CR10-2 and CR10-3..14 rejected (2.7.2 shows no app label; translations are 2.7.2's own text). The workflow confirmed 25 findings (full JSON copied to `.planning/phases/12-usage-access-and-cleanup/REVIEW-9-12.json`), including 2 critical security bugs (the exported MainActivity followed any `gs_route` extra, so the vault could be opened without the PIN) and 2 critical crashes (painterResource on shape drawables in Pro and Settings). All 25 are fixed (gates passed); CodeRabbit has not re-reviewed the fixes.
-- **Phase 8 (Create and Edit):** its builder was still working at the pause. Its partial work is pushed on branch `phase-08-wip` (see `.planning/phases/08-create-and-edit/08-SUMMARY.md` on that branch). Finish it, merge into main (expect conflicts in strings/colours/NavHost/Screen; keep both sides, drop identical duplicates, regenerate translations with sync-strings), then review it the same way.
-- **Left after that:** CLR-01 cleanup sweep (script idea: list res files nothing references, rerun after Phase 8), Phase 13 gates without Artemis, then update ROADMAP/REQUIREMENTS/PARITY-CHECKLIST (rows #10-#12, #38-#53 Ported) and STATE.
-- Decisions to confirm with the user: usage-access prompts are ON (`USAGE_ACCESS_RC_ENABLE`; 2.7.2 offline defaults are off); Quick Actions notification repeats every 600 min (`INTERVAL_MINUTES`; 2.7.2 bundled default 0 = off).
+## Where things stand (2026-11-27)
+- **Phases 1-12: complete on main.** All 53 parity-checklist rows are Ported; none Verified. Phases 8-12 were built by parallel builder agents in worktrees and merged; each has `.planning/phases/NN-*/NN-SUMMARY.md` with its deviations.
+- **Quality gates (without Artemis):** unit tests (~397), assembleDebug, check-strings, check-colors pass. CodeRabbit ran on every phase; a nine-lens multi-agent review of Phases 9-12 confirmed 25 findings (incl. a vault PIN bypass via the exported MainActivity's `gs_route` extra and two crashes), all fixed (`.planning/phases/12-usage-access-and-cleanup/REVIEW-9-12.json`). CLR-01 sweep removed 100 unreferenced resources.
+- **Open:** the device pass (Phase 13: VER-01/VER-02, the PENDING-DEVICE matrices in 06/07-LIVE-COMPARISON.md), and two user decisions: usage-access prompts ON (`USAGE_ACCESS_RC_ENABLE`; 2.7.2 offline default off) and the Quick Actions notification every 600 min (`INTERVAL_MINUTES`; 2.7.2 bundled default 0 = off).
 
 ## Next steps
-1. Finish the review fixes, then Phase 8, merge, review.
-2. CLR-01 sweep, gates (tests, assembleDebug, check-strings, check-colors, CodeRabbit), docs, commit, push.
+1. Connect the phone and run the device pass with Artemis (Phase 13), fixing what differs.
+2. Before a store build: replace the reference brand art (STATE.md list).
 
 ## Setup on a new computer
 - Install JDK 17 or later, Android SDK 36 with build-tools 36.1.0 (for aapt2), Python 3, apktool 2.12.x, adb, and the CodeRabbit CLI (then `coderabbit auth login`).

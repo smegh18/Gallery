@@ -68,39 +68,39 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 
 ### Create and edit
 
-- [ ] **EDT-01**: The photo editor tools, crop, text, font and colour panels match 2.7.2's changed layouts (#38–#39).
-- [ ] **EDT-02**: The collage picker, screen and saved flow match 2.7.2, including 7 changed panels and no collage home (#40).
-- [ ] **EDT-03**: Remove BG, Blur BG, Colour Splash (each with its guide), Sticker and Wallpaper match 2.7.2 (#41–#45).
+- [x] **EDT-01**: The photo editor tools, crop, text, font and colour panels match 2.7.2's changed layouts (#38–#39).
+- [x] **EDT-02**: The collage picker, screen and saved flow match 2.7.2, including 7 changed panels and no collage home (#40).
+- [x] **EDT-03**: Remove BG, Blur BG, Colour Splash (each with its guide), Sticker and Wallpaper match 2.7.2 (#41–#45).
 
 ### Settings and system
 
-- [ ] **SET-01**: Settings matches 2.7.2's `activity_setting`, including the "Share app usage stats" toggle and its dialog (#46).
-- [ ] **SET-02**: Theme and About match 2.7.2. The privacy policy opens the 2.7.2 URL (#47–#48).
-- [ ] **SET-03**: The Pro / subscription screen matches 2.7.2's `activity_subscription_purchase`, with no real billing (#49).
-- [ ] **SET-04**: Notifications use 2.7.2's big and small layouts. Tapping one opens the matching screen (#52).
-- [ ] **SET-05**: The app handles external "select media" requests and deep links like 2.7.2 (#53).
+- [x] **SET-01**: Settings matches 2.7.2's `activity_setting`, including the "Share app usage stats" toggle and its dialog (#46).
+- [x] **SET-02**: Theme and About match 2.7.2. The privacy policy opens the 2.7.2 URL (#47–#48).
+- [x] **SET-03**: The Pro / subscription screen matches 2.7.2's `activity_subscription_purchase`, with no real billing (#49).
+- [x] **SET-04**: Notifications use 2.7.2's big and small layouts. Tapping one opens the matching screen (#52).
+- [x] **SET-05**: The app handles external "select media" requests and deep links like 2.7.2 (#53).
 
 ### Floating sidebar
 
-- [ ] **FLT-01**: The user can turn on an edge handle, drawn over other apps, that opens the quick-tools sidebar (#11).
-- [ ] **FLT-02**: The user sees the two-step sidebar intro the first time ("Your quick tools live here", "Put it where you like") (#11).
-- [ ] **FLT-03**: The user can add or remove sidebar tools within 2.7.2's limits, plus the "Keep at least one tool" rule (#11).
-- [ ] **FLT-04**: The floating button popup and the floating settings screen match 2.7.2 (#10–#12).
+- [x] **FLT-01**: The user can turn on an edge handle, drawn over other apps, that opens the quick-tools sidebar (#11).
+- [x] **FLT-02**: The user sees the two-step sidebar intro the first time ("Your quick tools live here", "Put it where you like") (#11).
+- [x] **FLT-03**: The user can add or remove sidebar tools within 2.7.2's limits, plus the "Keep at least one tool" rule (#11).
+- [x] **FLT-04**: The floating button popup and the floating settings screen match 2.7.2 (#10–#12).
 
 ### After-call and install screens (GS)
 
-- [ ] **GS-01**: After a call ends, the user sees 2.7.2's "Quick Info" card (Gs screen with games / media / menu tabs), if they enabled it (#50).
-- [ ] **GS-02**: The user can manage these features in Gs Settings, including the permission-guide animation (#50).
-- [ ] **GS-03**: When an app is installed, updated or uninstalled, the user sees 2.7.2's progress and complete screens, plus the IU settings (#51).
-- [ ] **GS-04**: When the overlay permission is off, the user sees 2.7.2's "Quick Info disabled" notification (#50).
+- [x] **GS-01**: After a call ends, the user sees 2.7.2's "Quick Info" card (Gs screen with games / media / menu tabs), if they enabled it (#50).
+- [x] **GS-02**: The user can manage these features in Gs Settings, including the permission-guide animation (#50).
+- [x] **GS-03**: When an app is installed, updated or uninstalled, the user sees 2.7.2's progress and complete screens, plus the IU settings (#51).
+- [x] **GS-04**: When the overlay permission is off, the user sees 2.7.2's "Quick Info disabled" notification (#50).
 
 ### Usage access
 
-- [ ] **USG-01**: The user sees 2.7.2's usage-access dialog at the same trigger points (home, story, video, recycle) and in Settings. Allow opens system Usage Access; Not now dismisses. No usage data leaves the device.
+- [x] **USG-01**: The user sees 2.7.2's usage-access dialog at the same trigger points (home, story, video, recycle) and in Settings. Allow opens system Usage Access; Not now dismisses. No usage data leaves the device.
 
 ### Cleanup
 
-- [ ] **CLR-01**: Code 2.7.2 removed is gone from our app: Welcome screen, feature carousel, collage home, and Lotties no longer used.
+- [x] **CLR-01**: Code 2.7.2 removed is gone from our app: Welcome screen, feature carousel, collage home, and Lotties no longer used.
 
 ### Verification (stage 2)
 
@@ -150,24 +150,24 @@ Every UI requirement means: matches 2.7.2 in layout, text, icons, colours, light
 | CLN-04 | Phase 6: Manage and Cleaner | Complete |
 | VLT-01 | Phase 7: Private Vault | Complete |
 | VLT-02 | Phase 7: Private Vault | Complete |
-| EDT-01 | Phase 8: Create and Edit | Pending |
-| EDT-02 | Phase 8: Create and Edit | Pending |
-| EDT-03 | Phase 8: Create and Edit | Pending |
-| SET-01 | Phase 9: Settings and System | Pending |
-| SET-02 | Phase 9: Settings and System | Pending |
-| SET-03 | Phase 9: Settings and System | Pending |
-| SET-04 | Phase 9: Settings and System | Pending |
-| SET-05 | Phase 9: Settings and System | Pending |
-| FLT-01 | Phase 10: Floating Sidebar | Pending |
-| FLT-02 | Phase 10: Floating Sidebar | Pending |
-| FLT-03 | Phase 10: Floating Sidebar | Pending |
-| FLT-04 | Phase 10: Floating Sidebar | Pending |
-| GS-01 | Phase 11: After-Call and Install Screens | Pending |
-| GS-02 | Phase 11: After-Call and Install Screens | Pending |
-| GS-03 | Phase 11: After-Call and Install Screens | Pending |
-| GS-04 | Phase 11: After-Call and Install Screens | Pending |
-| USG-01 | Phase 12: Usage Access and Cleanup | Pending |
-| CLR-01 | Phase 12: Usage Access and Cleanup | Pending |
+| EDT-01 | Phase 8: Create and Edit | Complete |
+| EDT-02 | Phase 8: Create and Edit | Complete |
+| EDT-03 | Phase 8: Create and Edit | Complete |
+| SET-01 | Phase 9: Settings and System | Complete |
+| SET-02 | Phase 9: Settings and System | Complete |
+| SET-03 | Phase 9: Settings and System | Complete |
+| SET-04 | Phase 9: Settings and System | Complete |
+| SET-05 | Phase 9: Settings and System | Complete |
+| FLT-01 | Phase 10: Floating Sidebar | Complete |
+| FLT-02 | Phase 10: Floating Sidebar | Complete |
+| FLT-03 | Phase 10: Floating Sidebar | Complete |
+| FLT-04 | Phase 10: Floating Sidebar | Complete |
+| GS-01 | Phase 11: After-Call and Install Screens | Complete |
+| GS-02 | Phase 11: After-Call and Install Screens | Complete |
+| GS-03 | Phase 11: After-Call and Install Screens | Complete |
+| GS-04 | Phase 11: After-Call and Install Screens | Complete |
+| USG-01 | Phase 12: Usage Access and Cleanup | Complete |
+| CLR-01 | Phase 12: Usage Access and Cleanup | Complete |
 | VER-01 | Phase 13: Device Verification and Quality Gates | Pending |
 | VER-02 | Phase 13: Device Verification and Quality Gates | Pending |
 | VER-03 | Phase 13: Device Verification and Quality Gates | Pending |

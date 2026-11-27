@@ -47,9 +47,9 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 | 7 | Photos tab | fragment_all_media CHANGED; photos_tab_item_date/grid/ad NEW | home/PhotosTab.kt | [x] | [ ] |
 | 8 | Albums tab | fragment_album CHANGED; item_home_album_card NEW; item_stories, item_folder, item_grid_gallery CHANGED (album selection: layout_select_album_bottom, album info, rename, change cover ported) | home/AlbumsTab.kt | [x] | [ ] |
 | 9 | Explore tab | fragment_explore CHANGED; explore_tab_hero/item_feature/item_row/item_tile NEW | home/ExploreTab.kt | [x] | [ ] |
-| 10 | Exit popup | dialog_exit_popup CHANGED (note: Home exit uses dialog_exit through S272/jt/a; dialog_exit_popup is the photo editor's "Exit without saving?" dialog, ported in Phase 8; Phase 13 confirms popup versus direct exit) | HomeScreen BackHandler: direct exit like 2.7.2 (popup removed 2026-11-20) | [x] | [ ] |
-| 11 | Floating button and sidebar | layout_floating_button, layout_floating_popup_menu, dialog_floating_button_popup CHANGED; item_floating_sidebar_action, layout_floating_sidebar_intro NEW | none: **decision D2** | [ ] | [ ] |
-| 12 | FloatingSettingActivity | (settings for 11) | none: **D2** | [ ] | [ ] |
+| 10 | Exit popup | dialog_exit_popup CHANGED (note: Home exit uses dialog_exit through S272/jt/a; dialog_exit_popup is the collage screen's Back dialog (ported in Phase 8, CollagePanels.kt); the photo editor uses dialog_discard_changes; Phase 13 confirms popup versus direct exit) | HomeScreen BackHandler: direct exit like 2.7.2 (popup removed 2026-11-20) | [x] | [ ] |
+| 11 | Floating button and sidebar | layout_floating_button, layout_floating_popup_menu, dialog_floating_button_popup CHANGED; item_floating_sidebar_action, layout_floating_sidebar_intro NEW | none: **decision D2** | [x] | [ ] |
+| 12 | FloatingSettingActivity | (settings for 11) | none: **D2** | [x] | [ ] |
 
 ### A3. Viewing
 | # | Reference | Layouts | Ours | Ported | Verified |
@@ -90,31 +90,33 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 
 **Phases 6-7 Ported without the device pass** (user decision 2026-11-25: skip Artemis/device checks and continue): rows 25-37 are ticked Ported on automated gates (unit tests, assembleDebug, string/colour checks, CodeRabbit). The device matrices in `06-LIVE-COMPARISON.md` and `07-LIVE-COMPARISON.md` stay PENDING-DEVICE and move to Phase 13; Verified stays unticked.
 
+**Phases 8-12 Ported without the device pass** (user decision 2026-11-25): rows 10-12 and 38-53 are ticked Ported on automated gates plus CodeRabbit and a multi-agent review; deviations are listed in each phase's NN-SUMMARY.md. Verified stays for Phase 13.
+
 **Phase 7 known deviations** (rows 32-37; boxes unchanged until the device pass, see `.planning/phases/07-private-vault/07-LIVE-COMPARISON.md`): D2 no Hidden Folder section; D3 Forgot Password answer match is trimmed, case-insensitive and hashed (2.7.2 matches exactly); PIN, pattern and answers stored hashed; no shake on wrong entry (D4); Home lock-icon shared-element transition (`vault_click`) not built; the secured toast is an in-app overlay; picker folder row is the toolbar and the grid has four columns (D1, `activity_select`).
 
 ### A6. Create and edit
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 38 | PhotoEditActivity | item_crop, item_tools, item_res, fragment_text_input, layout_adjust_text_section, layout_text_color_tab, item_font CHANGED | editor/PhotoEditorScreen.kt | [ ] | [ ] |
-| 39 | CropImageActivity | same | editor/crop | [ ] | [ ] |
-| 40 | Collage picker / screen / saved | activity_collage_screen CHANGED; layout_*_collage (7) CHANGED; activity_main_collage removed | creative/CollageMakerScreen.kt | [ ] | [ ] |
-| 41 | RemoveBgActivity + guide | same | creative/RemoveBgScreen.kt | [ ] | [ ] |
-| 42 | BlurBgActivity + guide | same | creative/BlurBgScreen.kt | [ ] | [ ] |
-| 43 | ColorSplashActivity + guide | same | creative/ColorSplashScreen.kt | [ ] | [ ] |
-| 44 | StickerActivity | same | creative/StickerScreen.kt | [ ] | [ ] |
-| 45 | WallpaperActivity | same | creative/WallpaperScreen.kt | [ ] | [ ] |
+| 38 | PhotoEditActivity | item_crop, item_tools, item_res, fragment_text_input, layout_adjust_text_section, layout_text_color_tab, item_font CHANGED | editor/PhotoEditorScreen.kt | [x] | [ ] |
+| 39 | CropImageActivity | same | editor/crop | [x] | [ ] |
+| 40 | Collage picker / screen / saved | activity_collage_screen CHANGED; layout_*_collage (7) CHANGED; activity_main_collage removed | creative/CollageMakerScreen.kt | [x] | [ ] |
+| 41 | RemoveBgActivity + guide | same | creative/RemoveBgScreen.kt | [x] | [ ] |
+| 42 | BlurBgActivity + guide | same | creative/BlurBgScreen.kt | [x] | [ ] |
+| 43 | ColorSplashActivity + guide | same | creative/ColorSplashScreen.kt | [x] | [ ] |
+| 44 | StickerActivity | same | creative/StickerScreen.kt | [x] | [ ] |
+| 45 | WallpaperActivity | same | creative/WallpaperScreen.kt | [x] | [ ] |
 
 ### A7. Settings and system
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 46 | SettingActivity | activity_setting CHANGED; dialog_usage_access_settings NEW | settings/SettingsScreen.kt | [ ] | [ ] |
-| 47 | ThemeActivity | same | settings/ThemeScreen.kt | [ ] | [ ] |
-| 48 | AboutActivity | same | settings/AboutScreen.kt | [ ] | [ ] |
-| 49 | PayWall / subscription | activity_subscription_purchase CHANGED | none (Pro button) | [ ] | [ ] |
-| 50 | GsActivity, GsSettingActivity (+ fragment_gs_games/media/menu, dialog_gs_*) | NEW | none: **decision D3** | [ ] | [ ] |
-| 51 | InstallUninstallActivity / IUSettingActivity | activity_install_uninstall CHANGED | none: **D3** | [ ] | [ ] |
-| 52 | Notifications (NotificationIntent, ApiNotificationRedirect, NotificationClick) | notification_big/small_layout CHANGED | none | [ ] | [ ] |
-| 53 | ExternalSelectMediaActivity, DeepLinkActivity | same | MainActivity intents | [ ] | [ ] |
+| 46 | SettingActivity | activity_setting CHANGED; dialog_usage_access_settings NEW | settings/SettingsScreen.kt | [x] | [ ] |
+| 47 | ThemeActivity | same | settings/ThemeScreen.kt | [x] | [ ] |
+| 48 | AboutActivity | same | settings/AboutScreen.kt | [x] | [ ] |
+| 49 | PayWall / subscription | activity_subscription_purchase CHANGED | none (Pro button) | [x] | [ ] |
+| 50 | GsActivity, GsSettingActivity (+ fragment_gs_games/media/menu, dialog_gs_*) | NEW | none: **decision D3** | [x] | [ ] |
+| 51 | InstallUninstallActivity / IUSettingActivity | activity_install_uninstall CHANGED | none: **D3** | [x] | [ ] |
+| 52 | Notifications (NotificationIntent, ApiNotificationRedirect, NotificationClick) | notification_big/small_layout CHANGED | none | [x] | [ ] |
+| 53 | ExternalSelectMediaActivity, DeepLinkActivity | same | MainActivity intents | [x] | [ ] |
 
 ## B. Decisions needed before porting
 

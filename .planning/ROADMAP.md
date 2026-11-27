@@ -34,11 +34,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Viewing and Browsing** - Full-screen viewer, video player and the album, discovery and search lists (completed 2026-11-23)
 - [x] **Phase 6: Manage and Cleaner** - System cleaner, duplicate flow, Recycle Bin and Quick Organize (completed 2026-11-25; device pass deferred to Phase 13)
 - [x] **Phase 7: Private Vault** - Vault lock, media, settings, recovery and the media picker (completed 2026-11-25; device pass deferred to Phase 13)
-- [ ] **Phase 8: Create and Edit** - Photo editor, crop, collage and the creative tools
-- [ ] **Phase 9: Settings and System** - Settings, Theme, About, Pro screen, notifications, external intents and deep links
-- [ ] **Phase 10: Floating Sidebar** - Over-other-apps edge handle with the quick-tools sidebar
-- [ ] **Phase 11: After-Call and Install Screens** - Quick Info after calls, install/update/uninstall screens and their settings
-- [ ] **Phase 12: Usage Access and Cleanup** - Usage-access dialogs at every trigger point, plus the removed-code sweep
+- [x] **Phase 8: Create and Edit** - Photo editor, crop, collage and the creative tools (completed 2026-11-27; device pass in Phase 13)
+- [x] **Phase 9: Settings and System** - Settings, Theme, About, Pro screen, notifications, external intents and deep links (completed 2026-11-27; device pass in Phase 13)
+- [x] **Phase 10: Floating Sidebar** - Over-other-apps edge handle with the quick-tools sidebar (completed 2026-11-27; device pass in Phase 13)
+- [x] **Phase 11: After-Call and Install Screens** - Quick Info after calls, install/update/uninstall screens and their settings (completed 2026-11-27; device pass in Phase 13)
+- [x] **Phase 12: Usage Access and Cleanup** - Usage-access dialogs at every trigger point, plus the removed-code sweep (completed 2026-11-27; device pass in Phase 13)
 - [ ] **Phase 13: Device Verification and Quality Gates** - Artemis side-by-side checks of every row and flow, light and dark
 
 ## Phase Details
@@ -326,9 +326,9 @@ Phases execute in numeric order: 1 → 2 → 3 → … → 13
 | 5. Viewing and Browsing | 8/8 | Complete    | 2026-11-23 |
 | 6. Manage and Cleaner | 13/13 | Complete (device pass in Phase 13) | 2026-11-25 |
 | 7. Private Vault | 9/9 | Complete (device pass in Phase 13) | 2026-11-25 |
-| 8. Create and Edit | 0/TBD | Not started | - |
-| 9. Settings and System | 0/TBD | Not started | - |
-| 10. Floating Sidebar | 0/TBD | Not started | - |
-| 11. After-Call and Install Screens | 0/TBD | Not started | - |
-| 12. Usage Access and Cleanup | 0/TBD | Not started | - |
-| 13. Device Verification and Quality Gates | 0/TBD | Not started | - |
+| 8. Create and Edit | 1/1 | Complete (device pass in Phase 13) | 2026-11-27 |
+| 9. Settings and System | 1/1 | Complete (device pass in Phase 13) | 2026-11-27 |
+| 10. Floating Sidebar | 1/1 | Complete (device pass in Phase 13) | 2026-11-27 |
+| 11. After-Call and Install Screens | 1/1 | Complete (device pass in Phase 13) | 2026-11-27 |
+| 12. Usage Access and Cleanup | 1/1 | Complete (device pass in Phase 13) | 2026-11-27 |
+| 13. Device Verification and Quality Gates | 0/1 | Gates done without Artemis; device checks open | - |

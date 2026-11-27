@@ -41,38 +41,38 @@
     {
       "number": "8",
       "name": "Create and Edit",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "number": "9",
       "name": "Settings and System",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "10",
       "name": "Floating Sidebar",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "11",
       "name": "After-Call and Install Screens",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "12",
       "name": "Usage Access and Cleanup",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "13",
       "name": "Device Verification and Quality Gates",
-      "status": "pending"
+      "status": "in_progress"
     }
   ],
   "next": {
-    "command": "/gsd-plan-phase 8",
-    "label": "Research and plan Phase 8 (Create and Edit)",
-    "reason": "Phase 8 of 13 · 54% · research not saved yet; see HANDOFF.md"
+    "command": "/gsd-verify-work 13",
+    "label": "Device pass (Phase 13)",
+    "reason": "Phases 1-12 ported; Verified boxes need a device/Artemis session"
   },
-  "updated_at": "2026-11-25T19:30:00.000Z"
+  "updated_at": "2026-11-27T12:00:00.000Z"
 }

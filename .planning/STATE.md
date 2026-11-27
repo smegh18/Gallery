@@ -2,19 +2,19 @@
 gsd_state_version: "1.0"
 milestone: v2.0
 milestone_name: Reference 2.7.2 parity
-current_phase: 8
-current_phase_name: Create and Edit
-status: ready-to-research
-stopped_at: Phases 6-7 closed without the device pass (user decision 2026-11-25); CodeRabbit 6-7 fixes committed; Phase 8-12 research not saved, redo it
-last_updated: "2026-11-25T19:30:00.000Z"
-last_activity: 2026-11-25
-last_activity_desc: Closed Phases 6-7 on automated gates and fixed the owed CodeRabbit review; paused to move computers before Phase 8-12 research was saved
+current_phase: 13
+current_phase_name: Device Verification and Quality Gates
+status: device-verification-pending
+stopped_at: Phases 1-12 ported and merged on main; quality gates pass without Artemis; device pass (VER-01/VER-02) open
+last_updated: "2026-11-27T12:00:00.000Z"
+last_activity: 2026-11-27
+last_activity_desc: Phases 8-12 built in parallel, merged, reviewed (CodeRabbit + multi-agent), CLR-01 sweep done
 progress:
   total_phases: 13
-  completed_phases: 7
+  completed_phases: 12
   total_plans: 52
   completed_plans: 52
-  percent: 54
+  percent: 92
 ---
 
 # Project State
@@ -24,16 +24,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-13)
 
 **Core value:** a user cannot tell our app from reference 2.7.2: same screens, flows, animations and behaviour.
-**Current focus:** Phase 8 - Create and Edit (then 9, 10, 11, 12; Phase 13 gates without Artemis)
+**Current focus:** Phase 13 - device pass with Artemis (the only open work)
 
 ## Current Position
 
-Phase: 8 of 13 (Create and Edit)
-Plan: none yet (research not started: the 2026-11-25 attempt was stopped before saving)
-Status: Ready to research
-Last activity: 2026-11-25 — Phases 6-7 closed on automated gates, CodeRabbit fixes committed; session paused to continue on another computer (see HANDOFF.md)
+Phase: 13 of 13 (Device Verification and Quality Gates)
+Status: Phases 1-12 ported (all 53 checklist rows Ported, none Verified); automated gates, CodeRabbit and a multi-agent review done per phase. Open: the device/Artemis pass (VER-01, VER-02) and the two remote-config decisions below.
+Last activity: 2026-11-27 — Phase 8 merged, CLR-01 sweep, docs updated
 
-Progress: [█████░░░░░] 54%
+Progress: [█████████░] 92%
 
 ## Performance Metrics
 
@@ -72,8 +71,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- CodeRabbit Phase 6-7: 10 of 11 fixed, CR-6 rejected (parity). Still open: vault Unhide reports success on partial restore and clears the whole selection (`ui/vault/VaultMediaScreen.kt`); `syncMediaStore` writes back a stale `deletedDate` outside `trashLock` (`data/repository/MediaRepository.kt`). The fixes were not re-reviewed by CodeRabbit.
-- Research Phases 8-12 (none saved yet; brief in HANDOFF.md), then plan and build them in order.
+- Confirm with the user: usage-access prompts ON (`USAGE_ACCESS_RC_ENABLE`, 2.7.2 offline default off) and the Quick Actions notification every 600 min (`INTERVAL_MINUTES`, 2.7.2 bundled default 0 = off).
+- Optional: the photo editor's Save sets `editedPath` on the previous entry, but nothing reads it yet (viewer does not reopen on the saved image).
+
 - Pre-release: replace the reference brand art (launcher icons, app_icon_splash, about_gallery_logo, app_icon_lottie, anime_overlay, img_feature_promo_top light/night, ic_gs2_default_app, ic_gs2_success, ic_story_playzen, notification_icon (sunflower status-bar icon), img_overlay_dialog, and the "Playzen" story label) with our own before any store build (user decision 2026-11-13, Phase 1; Phase 4).
 
 ### Blockers/Concerns
@@ -92,5 +92,5 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-11-25
-Stopped at: Phases 6-7 closed; paused before Phase 8-12 research
+Stopped at: Phases 1-12 complete; device pass next
 Resume file: HANDOFF.md
