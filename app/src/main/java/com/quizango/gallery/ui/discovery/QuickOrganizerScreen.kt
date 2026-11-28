@@ -4,7 +4,9 @@ import android.os.Environment
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -32,7 +34,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,8 @@ import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.home.CreateAlbumDialog
 import com.quizango.gallery.ui.home.albumRoots
 import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.sdp
+import androidx.compose.ui.semantics.Role
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -236,15 +239,22 @@ fun QuickOrganizerScreen(
                 },
                 navigationIcon = { IconButton(onClick = ::requestBack) { Icon(painterResource(R.drawable.ic_back), contentDescription = null, tint = colorResource(R.color.titleColor)) } },
                 actions = {
-                    IconButton(onClick = ::undo, enabled = !busy) { Icon(painterResource(if (canUndo) R.drawable.ic_undo_checked else R.drawable.ic_undo_unchecked), contentDescription = stringResource(R.string.undo)) }
-                    IconButton(onClick = onNavigateToRecycle) { Icon(painterResource(R.drawable.ic_delete), contentDescription = stringResource(R.string.organizer_recycle_bin), tint = colorResource(R.color.titleColor)) }
+                    // 2.7.2 ActionMenuView puts the last 48dp item flush with the edge; cancel TopAppBar's 4dp end padding
+                    Row(Modifier.offset(x = 4.dp)) {
+                        IconButton(onClick = ::undo, enabled = !busy) { Icon(painterResource(if (canUndo) R.drawable.ic_undo_checked else R.drawable.ic_undo_unchecked), contentDescription = stringResource(R.string.undo), tint = Color.Unspecified) }
+                        IconButton(onClick = onNavigateToRecycle) { Icon(painterResource(R.drawable.ic_delete), contentDescription = stringResource(R.string.organizer_recycle_bin), tint = colorResource(R.color.titleColor)) }
+                    }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                expandedHeight = 56.dp, // 2.7.2 mToolBar is wrap_content = actionBarSize
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(R.color.white))
             )
         }
     ) { insets ->
-        Column(Modifier.fillMaxSize().padding(insets).background(Color.White)) {
+        Column(Modifier.fillMaxSize().padding(insets).background(colorResource(R.color.white))) {
+          // 2.7.2 incIntroStep spans from below mToolBar to above mRelAlbumListContainer, so the tutorial scrim lives in this Box
+          Box(Modifier.weight(1f).fillMaxWidth()) {
             if (expanded) {
+              Column(Modifier.fillMaxSize()) {
                 Row(Modifier.fillMaxWidth().background(colorResource(R.color.shimmer_color)).padding(horizontal = 10.dp, vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(painterResource(R.drawable.ic_information), contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.Unspecified)
                     Text(stringResource(R.string.you_can_select_a_photo_to_jump_to), style = GalleryText.BodyXSmallSemiBold, color = colorResource(R.color.black), modifier = Modifier.padding(start = 10.dp))
@@ -254,6 +264,7 @@ fun QuickOrganizerScreen(
                         AsyncImage(model = media.contentUri, contentDescription = media.fileName, modifier = Modifier.fillMaxWidth().aspectRatio(1f).clickable { selectedPath = media.filePath; actionState = actionState.copy(completedPaths = actionState.completedPaths - media.filePath); expanded = false }, contentScale = ContentScale.Crop)
                     }
                 }
+              }
             } else if (!isMediaLoaded) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(Modifier.padding(bottom = 8.dp), color = colorResource(R.color.colorPrimary))
@@ -265,7 +276,7 @@ fun QuickOrganizerScreen(
                     Text(stringResource(R.string.no_media_file), style = MaterialTheme.typography.bodySmall, color = colorResource(R.color.fastScrollerColor))
                 }
             } else {
-                HorizontalPager(state = pagerState, modifier = Modifier.weight(1f).fillMaxWidth(), userScrollEnabled = !busy && organizerStep == 7) { page ->
+                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize(), userScrollEnabled = !busy && organizerStep == 7) { page ->
                     val item = visibleItems.getOrNull(page)
                     if (item != null) {
                         Box(Modifier.fillMaxSize().pointerInput(item.filePath, busy, organizerStep) {
@@ -283,7 +294,18 @@ fun QuickOrganizerScreen(
                         }
                     }
                 }
-                LazyRow(Modifier.fillMaxWidth().shadow(12.dp).background(Color.White).padding(vertical = 4.dp), contentPadding = PaddingValues(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            }
+            OrganizerTutorialOverlay(
+                step = organizerStep,
+                onClose = { scope.launch { app.preferences.setOrganizerStepFlow(7) } },
+                onOrganizeNow = { scope.launch { app.preferences.setOrganizerStepFlow(2) } },
+                onCreateAlbum = ::openCreateAlbum,
+                onAlbumTap = { albums.firstOrNull()?.let { tapAlbum(it, 1) } },
+                onSwipe = ::swipeTutorial
+            )
+          }
+            if (!expanded && isMediaLoaded && visibleItems.isNotEmpty()) {
+                LazyRow(Modifier.fillMaxWidth().shadow(12.dp).background(colorResource(R.color.white))) {
                     item {
                         OrganizerAlbumCell(name = stringResource(R.string.org_create_album), cover = null, create = true, selected = false, enabled = organizerStep == 7 || organizerStep == 2, onClick = ::openCreateAlbum)
                     }
@@ -294,17 +316,8 @@ fun QuickOrganizerScreen(
                     }
                 }
             }
-            Spacer(Modifier.navigationBarsPadding())
         }
     }
-    OrganizerTutorialOverlay(
-        step = organizerStep,
-        onClose = { scope.launch { app.preferences.setOrganizerStepFlow(7) } },
-        onOrganizeNow = { scope.launch { app.preferences.setOrganizerStepFlow(2) } },
-        onCreateAlbum = ::openCreateAlbum,
-        onAlbumTap = { albums.firstOrNull()?.let { tapAlbum(it, 1) } },
-        onSwipe = ::swipeTutorial
-    )
     if (showCreateAlbum) CreateAlbumDialog(onCreate = ::createAlbum, onDismiss = ::dismissCreateAlbum)
     if (showBackDeletePrompt) {
         AlertDialog(
@@ -350,11 +363,15 @@ private suspend fun PointerInputScope.detectOrganizerSwipe(onSwipe: (OrganizerSw
     }
 }
 
+
+/** One static face: a W700 request is synthesised from regular, as TextView does for textFontWeight on a single font. */
+private val InterRegularOnly = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(R.font.if_inter_regular))
+
 @Composable
 private fun OrganizerAlbumCell(name: String, cover: Any?, create: Boolean, selected: Boolean, enabled: Boolean = true, onClick: () -> Unit) {
-    Column(Modifier.width(78.dp).clickable(enabled = enabled, onClick = onClick).padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(Modifier.clickable(enabled = enabled, onClick = onClick).padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         AsyncImage(model = if (create) R.drawable.organizer_create_album else cover ?: R.drawable.ic_album_placeholder, contentDescription = name, modifier = Modifier.size(48.dp).clip(RoundedCornerShape(8.dp)), contentScale = ContentScale.Crop)
-        Text(name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = colorResource(R.color.black), maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 5.dp))
+        Text(name, style = GalleryText.BodySmallMedium.copy(fontSize = 12.sp, platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = true)), color = colorResource(R.color.black), maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.padding(start = 2.sdp, top = 5.sdp))
     }
 }
 
@@ -373,17 +390,33 @@ private fun OrganizerTutorialOverlay(
         if (step in 5..6) detectOrganizerSwipe(onSwipe)
     }) {
         when (step) {
-            1 -> Column(Modifier.align(Alignment.Center).fillMaxWidth().padding(horizontal = 30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Icon(painterResource(R.drawable.ic_heart_left_org), null, Modifier.size(36.dp, 54.dp))
-                    IconButton(onClick = onClose) { Icon(painterResource(R.drawable.ic_close_new_org), contentDescription = null, modifier = Modifier.size(24.dp)) }
+            // 2.7.2 clFirst: lavFirstStep centred; ivHeartLeft ends at its start; ivHeartTop sits on its top-end; ivClose is centred over ivHeartTop
+            1 -> BoxWithConstraints(Modifier.fillMaxSize()) {
+                val lottieW = 250.sdp
+                val lottieH = 330.sdp
+                val lottieTop = ((maxHeight - lottieH) / 2).coerceAtLeast(0.dp)
+                val heartW = 24.dp // ic_heart_left_org / ic_heart_top_org intrinsic width
+                Image(painterResource(R.drawable.ic_heart_left_org), null, Modifier.align(Alignment.Center).offset(x = -(lottieW + heartW) / 2))
+                Column(Modifier.align(Alignment.TopCenter).offset(x = (lottieW - heartW) / 2).width(heartW).height(lottieTop), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box(Modifier.weight(1f).wrapContentWidth(unbounded = true), contentAlignment = Alignment.Center) {
+                        Image(painterResource(R.drawable.ic_close_new_org), contentDescription = null, modifier = Modifier.clickable(onClick = onClose).padding(start = 6.sdp, top = 6.sdp, bottom = 8.sdp))
+                    }
+                    Image(painterResource(R.drawable.ic_heart_top_org), null, Modifier.padding(top = 6.sdp))
                 }
                 val composition by rememberLottieComposition(com.airbnb.lottie.compose.LottieCompositionSpec.RawRes(R.raw.quick_oraganize))
                 val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
-                LottieAnimation(composition, { progress }, Modifier.size(width = 250.dp, height = 330.dp))
-                Button(onClick = onOrganizeNow, shape = RoundedCornerShape(100), modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)) {
-                    Text(stringResource(R.string.organize_now).uppercase(), color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                LottieAnimation(composition, { progress }, Modifier.align(Alignment.Center).size(width = lottieW, height = lottieH))
+                val pill = RoundedCornerShape(100.sdp)
+                Text(
+                    stringResource(R.string.organize_now).uppercase(),
+                    // txtOrganizeNow: no style (TextView keeps font padding); textFontWeight 700 over the single if_inter_regular face, so Android fakes the bold
+                    style = GalleryText.BodyXLargeBold.copy(fontFamily = InterRegularOnly, platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = true)),
+                    color = colorResource(R.color.whiteOnlyColor),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = lottieTop + lottieH + 24.sdp).width(lottieW).padding(horizontal = 30.dp)
+                        .clip(pill).background(colorResource(R.color.colorPrimary), pill).border(1.dp, colorResource(R.color.whiteOnlyColor), pill)
+                        .clickable(role = Role.Button, onClick = onOrganizeNow).padding(vertical = 12.sdp)
+                )
             }
             2 -> TutorialCard(Modifier.align(Alignment.BottomCenter), stringResource(R.string.str_step_1), R.drawable.organizer_create_album, stringResource(R.string.org_create_album), onCreateAlbum)
             4 -> TutorialCard(Modifier.align(Alignment.BottomCenter), stringResource(R.string.str_step_2), R.drawable.ic_album_placeholder, stringResource(R.string.org_album_name_photo), onAlbumTap)

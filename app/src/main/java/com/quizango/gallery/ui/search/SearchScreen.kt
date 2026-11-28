@@ -76,8 +76,8 @@ import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** SearchViewModel shows six cards per section before View All (`const/4 ... 0x6` in 2.7.2). */
-internal const val SEARCH_PREVIEW_LIMIT = 6
+/** The search preview shows three cards per section before View All (2.7.2 dg.g.getItemCount caps isShort at 3). */
+internal const val SEARCH_PREVIEW_LIMIT = 3
 
 /** Result sections in screen order; [type] is the reference event type (Albums 1, Places 2, Moments 3). */
 internal enum class SearchSection(val type: Int, @StringRes val title: Int) {
@@ -241,9 +241,8 @@ internal fun SearchToolbar(query: String, onQueryChange: (String) -> Unit, onBac
             Row(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 4.sdp)
-                    .drawableBackground(R.drawable.search_back)
-                    .padding(horizontal = 10.sdp, vertical = 7.sdp),
+                    .padding(start = 4.sdp, end = 10.sdp)
+                    .drawableBackground(R.drawable.search_back),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BasicTextField(
@@ -254,7 +253,8 @@ internal fun SearchToolbar(query: String, onQueryChange: (String) -> Unit, onBac
                     cursorBrush = SolidColor(colorResource(R.color.colorPrimary)),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
-                    modifier = Modifier.weight(1f),
+                    // searchEdt: marginHorizontal 10 + paddingHorizontal 10, paddingVertical 7
+                    modifier = Modifier.weight(1f).padding(horizontal = 20.sdp, vertical = 7.sdp),
                     decorationBox = { field ->
                         Box(contentAlignment = Alignment.CenterStart) {
                             if (query.isEmpty()) Text(
@@ -324,10 +324,12 @@ private fun ColorsRow(onPick: () -> Unit, onColor: (String) -> Unit) {
                         .padding(4.sdp)
                         .size(20.sdp)
                         .clip(CircleShape)
-                        .background(colorOfHex(hex))
-                        .border(1.sdp, colorResource(R.color.onlyWhite), CircleShape)
                         .semantics { contentDescription = hex }
                         .clickable { onColor(hex) }
+                        // MaterialCardView: the fill sits inside the 1sdp stroke, so no colour bleeds past its edge
+                        .border(1.sdp, colorResource(R.color.onlyWhite), CircleShape)
+                        .padding(1.sdp)
+                        .background(colorOfHex(hex), CircleShape)
                 )
             }
         }
@@ -335,7 +337,7 @@ private fun ColorsRow(onPick: () -> Unit, onColor: (String) -> Unit) {
     }
 }
 
-/** item_search_main: title with View All, up to six item_search_sub cards in 3 columns, divider. */
+/** item_search_main: title with View All, up to three item_search_sub cards in 3 columns, divider. */
 @Composable
 private fun SectionBlock(section: SearchSection, cards: List<SearchCard>, onViewAll: () -> Unit, onOpen: (SearchCard) -> Unit) {
     Column(Modifier.fillMaxWidth()) {
@@ -350,7 +352,7 @@ private fun SectionBlock(section: SearchSection, cards: List<SearchCard>, onView
                 text = stringResource(R.string.view_all),
                 style = GalleryText.BodyMediumMedium,
                 color = colorResource(R.color.colorPrimary),
-                modifier = Modifier.padding(end = 6.sdp).clickable(onClick = onViewAll).padding(4.sdp)
+                modifier = Modifier.padding(end = 10.sdp).clickable(onClick = onViewAll)
             )
         }
         Column(Modifier.fillMaxWidth().padding(top = 5.sdp, start = 2.sdp, end = 2.sdp)) {

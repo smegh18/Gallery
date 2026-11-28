@@ -24,7 +24,16 @@ This was a **smoke pass of our app on the device** (does each new flow open, wor
 - MIUI's edge back-gesture zone swallows touches in the last ~12 px of the screen edge; the sidebar handle opens with a swipe starting inside the handle (about 20 px in), as a finger naturally does.
 - `ComposeOverlay.add()` now logs a warning when an overlay window cannot be added (it failed silently before).
 
+## Side-by-side with 2.7.2 (2026-11-27/28, Redmi M2006C3MII, 27 screens)
+Both apps driven through the same 27 screens by script and captured at 720x1600; each pair compared by an agent and every reported difference re-checked by a second agent trying to refute it.
+- **Light:** 2 of 27 matched at the start, 19 in the last full run; Pro, Quick Access, After Call, Install/Uninstall and Quick Organize matched in later re-checks.
+- **Dark:** 13 of 27 on the first pass; the six screens fixed and re-checked all match except a 2px title offset on Quick Access.
+- **Root cause found:** TextView draws `textSize` at whole pixels (`getDimensionPixelSize`), Compose kept fractions (9ssp = 21.6px). `Int.ssp` now rounds to whole px, which fixed narrow or 1px-low text on many screens at once.
+- **Left on purpose:** 1px text offsets on a few titles (would move every screen), the story ring's anti-aliased edge, the Go Ads Free subtitle breaking one word later, the Pro note's uneven word gaps (2.7.2's JustifiedTextView), the dark Quick Access title (light matches with the same code), and the saved first-launch album order (`myAlbums` pref) not ported.
+- **Not a difference:** the thin grey bar at x≈706-712, y≈705-860 on reference captures is 2.7.2's own floating Quick Access edge handle (overlay granted on the test phone), not a scrollbar.
+- **Reference install:** the Play-pulled `gallery-2.7.2.apk` is a base split only and crashes at the splash; it runs with the `split_config.xxhdpi.apk` from a full 2.7.2 install (kept in `reference/2.7.2-splits/`, git-ignored). Play auto-update must be off or it moves to 2.7.5.
+
 ## Still open for Phase 13
-- Side-by-side comparison with 2.7.2 in light and dark for every row, then tick Verified.
+- Tick Verified rows in PARITY-CHECKLIST from the side-by-side results above.
 - Quick Info after a real call; install/uninstall screens after a real install.
 - The PENDING-DEVICE matrices in `06-LIVE-COMPARISON.md` and `07-LIVE-COMPARISON.md`.

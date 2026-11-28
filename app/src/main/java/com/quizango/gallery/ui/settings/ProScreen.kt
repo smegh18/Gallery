@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
@@ -51,11 +53,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -63,6 +67,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import com.quizango.gallery.R
 import com.quizango.gallery.ui.home.drawableBackground
 import com.quizango.gallery.ui.theme.Inter
@@ -123,12 +128,12 @@ fun ProScreen(onClose: () -> Unit) {
             .navigationBarsPadding()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // layHeading: the packed chain (gone left diamond, heading, empty right diamond) centred before the close button
-            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.Center) {
+            // layHeading: diamondLeft is gone, so 2.7.2 renders the heading start-aligned at its 16sdp goneMarginStart
+            Row(Modifier.weight(1f)) {
                 Column(Modifier.padding(start = 16.sdp, end = 2.sdp).weight(1f, fill = false)) {
                     Text(
                         text = stringResource(R.string.sub_intro_sub_pro),
-                        style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 20.ssp),
+                        style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 20.ssp, platformStyle = PlatformTextStyle(includeFontPadding = true)),
                         color = colorResource(pick(R.color.paywall_title_light, R.color.paywall_title_dark)),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -136,7 +141,7 @@ fun ProScreen(onClose: () -> Unit) {
                     )
                     Text(
                         text = stringResource(R.string.sub_intro_sub_unlock_premium_feature),
-                        style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 10.ssp),
+                        style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 10.ssp, platformStyle = PlatformTextStyle(includeFontPadding = true)),
                         color = colorResource(pick(R.color.paywall_subtitle_light, R.color.paywall_subtitle_dark))
                     )
                 }
@@ -184,7 +189,11 @@ fun ProScreen(onClose: () -> Unit) {
         }
         Text(
             text = stringResource(R.string.sub_subscription_note).replace(Regex("\\s+"), " "),
-            style = TextStyle(fontFamily = Inter, fontSize = dpText(11.sdp), textAlign = TextAlign.Justify),
+            // JustifiedTextView sets no spacing: its lines sit at Inter's whole-px line box, 31px for 26.4px text (1.175em)
+            style = TextStyle(
+                fontFamily = Inter, fontSize = dpText(11.sdp), lineHeight = 1.175.em, textAlign = TextAlign.Justify,
+                lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None)
+            ),
             color = fontDefault,
             modifier = Modifier.padding(horizontal = 10.sdp, vertical = 8.sdp).padding(2.sdp)
         )
@@ -243,19 +252,20 @@ private fun PaywallSlider(dark: Boolean, button: Color) {
                     Modifier
                         .fillMaxWidth()
                         .aspectRatio(3f / 2f)
+                        .shadow(2.dp, RoundedCornerShape(8.sdp)) // CardView default cardElevation
                         .clip(RoundedCornerShape(8.sdp))
                         .background(colorResource(R.color.lib_white_for_slider))
                         .drawableBackground(R.drawable.sub_ic_mask_anim)
                 )
                 Text(
                     text = stringResource(title),
-                    style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = dpText(15.sdp), textAlign = TextAlign.Center),
+                    style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = dpText(15.sdp), textAlign = TextAlign.Center, platformStyle = PlatformTextStyle(includeFontPadding = true)),
                     color = titleColor,
                     modifier = Modifier.fillMaxWidth().padding(top = 12.sdp)
                 )
                 Text(
                     text = stringResource(desc),
-                    style = TextStyle(fontFamily = Inter, fontSize = dpText(11.sdp), textAlign = TextAlign.Center),
+                    style = TextStyle(fontFamily = Inter, fontSize = dpText(11.sdp), textAlign = TextAlign.Center, platformStyle = PlatformTextStyle(includeFontPadding = true)),
                     color = descColor,
                     modifier = Modifier.fillMaxWidth().padding(top = 12.sdp)
                 )
@@ -263,8 +273,9 @@ private fun PaywallSlider(dark: Boolean, button: Color) {
         }
         // IndicatorView: 6sdp high, 6sdp dots and a 10sdp selected pill, 4dp apart; button colour and its 100/255 tint
         Row(
-            Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 16.sdp, vertical = 5.sdp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            // zhpan measures wider than the dots it draws from the left edge, so 2.7.2's group sits 1.5dp left of centre
+            Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 16.sdp, vertical = 5.sdp).offset(x = (-1.5).dp),
+            horizontalArrangement = Arrangement.spacedBy(4.2.dp)
         ) {
             repeat(PAYWALL_SLIDES.size) { i ->
                 val selected = i == pager.currentPage

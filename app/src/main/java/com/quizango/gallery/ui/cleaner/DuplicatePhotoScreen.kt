@@ -1,9 +1,11 @@
 package com.quizango.gallery.ui.cleaner
 
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -24,8 +26,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +51,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import com.quizango.gallery.R
 import com.quizango.gallery.data.local.DuplicateFinder
@@ -179,7 +181,7 @@ fun DuplicatePhotoScreen(
 /** keepPhotoLayout: "Keep One Photo" and the SwitchCompat (thumb colorPrimary when on). */
 @Composable
 private fun KeepOneRow(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    val primary = colorResource(R.color.colorPrimary)
+    val onChange by rememberUpdatedState(onCheckedChange)
     Row(
         modifier = Modifier.fillMaxWidth().padding(top = 5.sdp).padding(horizontal = 10.sdp),
         verticalAlignment = Alignment.CenterVertically
@@ -190,14 +192,16 @@ private fun KeepOneRow(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
             color = colorResource(R.color.titleColor),
             modifier = Modifier.weight(1f)
         )
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = primary,
-                checkedTrackColor = primary.copy(alpha = 0.3f),
-                checkedBorderColor = Color.Transparent
-            )
+        // duplicateSelectAllSwitch is a plain SwitchCompat: the AppCompat theme draws its track and thumb
+        AndroidView(
+            factory = { ctx ->
+                SwitchCompat(ctx).apply {
+                    contentDescription = ctx.getString(R.string.keep_best_photo)
+                    setOnCheckedChangeListener { _, c -> onChange(c) }
+                }
+            },
+            update = { if (it.isChecked != checked) it.isChecked = checked },
+            modifier = Modifier.heightIn(min = 48.dp) // the MaterialComponents switch style's 48dp minimum height
         )
     }
 }
@@ -250,7 +254,11 @@ private fun DuplicateGrid(
                 }
             }
         }
-        FastScrollThumb(gridState, trackHeightPx = constraints.maxHeight)
+        // 2.7.2 draws the white half-pill here, inside the scroller's 2.sdp end padding
+        val trackHeightPx = constraints.maxHeight
+        Box(Modifier.matchParentSize().padding(end = 2.sdp)) {
+            FastScrollThumb(gridState, trackHeightPx = trackHeightPx, thumb = R.drawable.ic_fast_scroll_bubble)
+        }
     }
 }
 

@@ -83,7 +83,7 @@ Component Inventory section omitted: `Tool: none` (no registry to enumerate; sam
 |---|---|---|
 | Cell | column, width 64.sdp, centred horizontally, clickable | `item_stories` root |
 | Ring frame | 61.sdp square | `FrameLayout` |
-| Ring | `InsLoadingView` "unclicked": one solid ring, colour `album_tab_story_ring` (#0066FF, start = end colour), ring diameter 0.9 × 61.sdp, stroke 0.025 × 61.sdp; photo clipped to a circle of 0.865 × 61.sdp, centre-crop | `com/baselibrary/custom/InsLoadingView.smali` (`circleDia 0.9f`, `strokeWidth 0.025f`, `bitmapDia 0.865f`); colours set in `SA` constructor (0x7f06003b) |
+| Ring | `InsLoadingView` "unclicked": one solid ring, colour `album_tab_story_ring` (#0066FF, start = end colour), as rendered by 2.7.2 on device (side-by-side 2026-11-27): ring radius 0.3985 × box, stroke 0.0205 × box; photo clipped to a circle of 0.722 × box, centre-crop. The smali fractions (0.9 / 0.865 / 0.025) are relative to the view's own measured size, not the 61.sdp box, so they are not used directly | `com/baselibrary/custom/InsLoadingView.smali` (`circleDia 0.9f`, `strokeWidth 0.025f`, `bitmapDia 0.865f`); colours set in `SA` constructor (0x7f06003b) |
 | Press feedback | the ring view scales to 0.9 while pressed, back to 1.0 on release | `InsLoadingView.onTouchEvent` (0.9f) |
 | Cover | first photo of the story | `SA`/`bx/j.HISPj7KHQ7` → `s9/bd.OooO0oO(data[0])` |
 | Label | 8.ssp Inter Regular, `album_tab_story_label`, centred, 1 line ellipsize end, padding h 2.sdp, marginTop 1.sdp | `status_text` |
@@ -126,7 +126,7 @@ bottom margin → 13.sdp outer edge, 8.sdp between columns, card width `(width �
 | 3 | All videos (`ALL_VIDEO`) | the list has it | "All Video" `album_tab_all_video` | Album media list titled "Videos" `videos` (ours `filter:videos`) |
 | 4 | Camera (`ALL_CAMERA`) | the list has it | "Camera" `camera` | Album media list titled "Camera" `camera` (ours `filter:camera`) |
 | 5 | Screenshots (type 10) | the list has it | "Screenshots" `screenshot` | Album media list titled "Screenshots" `screenshot` (ours `filter:screenshots`) |
-| 6… | Device folders | each non-virtual album, in list order (ours: newest photo first, keep) | folder name | Album media list of that folder |
+| 6… | Device folders | each non-virtual album, in list order: folder directory lastModified, newest first (2.7.2 s9/k.Ooooo0o; 2.7.2 then saves that order in the "myAlbums" pref) | folder name | Album media list of that folder |
 | last | Deleted (type −2001, `deletedCard`) | always | "Deleted" `album_tab_deleted` | Recycle Bin (`RecycleActivity`; ours `Screen.RecycleBin`) |
 
 The reference shows an interstitial before opening (`albums.click_interstitial`): no ad in ours (D5), open directly.
@@ -363,7 +363,7 @@ top, story title start, row chevron), 32.sdp (Edit pill height), 48.sdp not used
 
 Exceptions (parity overrides multiples of 4, per Phase 1): 1, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15, 17, 18, 19, 20, 22, 23, 25, 26, 28, 30, 40, 42, 44,
 53, 58, 60, 61, 64, 65, 80, 91, 113, 150, 167, 191, 200 sdp; unscaled 1 px (row divider), 2.dp, 3.dp (progress height), 5.dp, 6.dp, 8.dp, 18.dp.
-Fractions of the 61.sdp ring (0.9, 0.865, 0.025) come from `InsLoadingView`. Never round them.
+Ring fractions (0.3985 radius, 0.0205 stroke, 0.722 photo) are measured on the rendered 2.7.2; `InsLoadingView`'s 0.9 / 0.865 / 0.025 apply to its own size. Keep the measured values.
 
 ---
 

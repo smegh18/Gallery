@@ -37,6 +37,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,9 +51,11 @@ import com.quizango.gallery.ui.discovery.StoryQueue
 import com.quizango.gallery.domain.model.Album
 import com.quizango.gallery.domain.model.MediaItem
 import com.quizango.gallery.ui.navigation.Screen
+import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
+import androidx.compose.ui.unit.sp
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -80,11 +84,11 @@ internal fun deletedCard(items: List<MediaItem>): Album {
     )
 }
 
-/** 2.7.2 grid order (AA.OooO0oo): Recent, Favorite, All Video, Camera, Screenshots (when not empty), folders, Deleted. */
+/** 2.7.2 grid order (AA.OooO0oo): Recent, Favorite, All Video, Camera (always), Screenshots (when not empty), folders, Deleted. */
 internal fun albumGrid(albums: List<Album>, favorite: Album, deleted: Album): List<Album> {
     fun virtual(id: String) = albums.firstOrNull { it.id == id }
     return listOfNotNull(virtual("filter:all_photos"), favorite) +
-        listOf("filter:videos", "filter:camera", "filter:screenshots").mapNotNull { id -> virtual(id)?.takeIf { it.itemCount > 0 } } +
+        listOf("filter:videos", "filter:camera", "filter:screenshots").mapNotNull { id -> virtual(id)?.takeIf { id == "filter:camera" || it.itemCount > 0 } } +
         albums.filter { !it.id.startsWith("filter:") }.sortedByDescending { it.isPinned } + // stable: pinned keep list order
         deleted
 }
@@ -210,6 +214,9 @@ internal fun albumBadge(album: Album): Int? = when {
 internal fun albumCountText(count: Int, locale: Locale = Locale.getDefault()): String =
     NumberFormat.getIntegerInstance(locale).format(count)
 
+// item_home_album_card: includeFontPadding=false and no fixed line height, so the Inter metrics set the line box
+private val cardTextStyle = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+
 /** item_home_album_card. [selectionMark] is null outside album selection, else whether this card is ticked. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -269,7 +276,8 @@ private fun HomeAlbumCard(album: Album, title: String, selectionMark: Boolean?, 
             fontFamily = Inter,
             fontWeight = FontWeight.Medium,
             fontSize = 9.ssp,
-            lineHeight = 11.ssp, // natural line box (includeFontPadding=false in the reference)
+            style = cardTextStyle,
+            letterSpacing = 0.sp, // reference TextView has no tracking; bare Text inherits bodyLarge 0.5.sp
             color = colorResource(R.color.album_tab_name),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -280,7 +288,8 @@ private fun HomeAlbumCard(album: Album, title: String, selectionMark: Boolean?, 
             fontFamily = Inter,
             fontWeight = FontWeight.Normal,
             fontSize = 9.ssp,
-            lineHeight = 11.ssp,
+            style = cardTextStyle,
+            letterSpacing = 0.sp,
             color = colorResource(R.color.album_tab_count),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -312,18 +321,19 @@ private fun StoryItem(story: Story?, onClick: () -> Unit) {
                     .fillMaxSize()
                     .graphicsLayer { scaleX = scale; scaleY = scale }
                     .drawBehind {
-                        // InsLoadingView "unclicked": one solid ring, diameter 0.9, stroke 0.025 of the view
-                        drawCircle(ring, radius = size.minDimension * 0.45f, style = Stroke(width = size.minDimension * 0.025f))
+                        // InsLoadingView "unclicked" as rendered by 2.7.2: ring outer 120px, stroke 3px in a 146.8px box
+                        drawCircle(ring, radius = size.minDimension * 0.3985f, style = Stroke(width = size.minDimension * 0.0205f))
                     },
                 contentAlignment = Alignment.Center
             ) {
-                Box(Modifier.fillMaxSize(0.865f).clip(CircleShape)) {
+                Box(Modifier.fillMaxSize(0.722f).clip(CircleShape)) { // 4px white gap to the ring
                     if (story != null) {
                         AsyncImage(
                             model = story.items.first().contentUri,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
+                            // InsLoadingView crops to the whole view and shows only its 0.135..0.865 oval
+                            modifier = Modifier.fillMaxSize().graphicsLayer { scaleX = 1f / 0.73f; scaleY = 1f / 0.73f }
                         )
                     } else {
                         Image(
@@ -345,10 +355,7 @@ private fun StoryItem(story: Story?, onClick: () -> Unit) {
         }
         Text(
             text = stringResource(story?.titleRes ?: R.string.playzen),
-            fontFamily = Inter,
-            fontWeight = FontWeight.Normal,
-            fontSize = 8.ssp,
-            lineHeight = 10.ssp,
+            style = GalleryText.BodyXSmallRegular, // _8ssp if_inter_regular, includeFontPadding=false, natural line box
             color = colorResource(R.color.album_tab_story_label),
             textAlign = TextAlign.Center,
             maxLines = 1,

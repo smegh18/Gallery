@@ -140,19 +140,6 @@ fun ExploreTab(
                     ManageRow(row.icon, row.label, showDivider = index > 0) { open(item) }
                 }
             }
-
-            // Debug-only: 2.7.2 reaches these from notifications/search only (Phase 9), so testers need a way in
-            if (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0) {
-                Column(Modifier.padding(top = 10.sdp)) {
-                    listOf(
-                        "Other Albums" to com.quizango.gallery.ui.navigation.Screen.AllAlbums.route,
-                        "Animated" to com.quizango.gallery.ui.navigation.Screen.AnimatedMedia.route,
-                        "Burst" to com.quizango.gallery.ui.navigation.Screen.BurstPhotos.route
-                    ).forEach { (label, route) ->
-                        androidx.compose.material3.TextButton(onClick = { onNavigate(route) }) { androidx.compose.material3.Text("[debug] $label") }
-                    }
-                }
-            }
         }
     }
 }

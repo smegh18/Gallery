@@ -272,20 +272,29 @@ fun PhotosTab(
                     }
                 }
             }
-            FastScrollThumb(gridState, trackHeightPx = constraints.maxHeight)
+            FastScrollThumb(gridState, trackHeightPx = constraints.maxHeight, hiddenUntilScrolled = true)
         }
     }
 }
 
 /**
  * RecyclerViewFastScroller thumb on the end edge: follows the scroll, dragging jumps the grid.
- * Never auto-hides (handleVisibilityDuration -1) and shows no date bubble (2.7.2 never binds one).
- * The thumb ImageView has no background, so its 8.sdp elevation casts no shadow: none is drawn here.
+ * Never auto-hides once shown (handleVisibilityDuration -1) and shows no date bubble (2.7.2 never binds one).
+ * [hiddenUntilScrolled]: the Photos tab's handle only appears after the first scroll (seen on 2.7.2).
+ * [thumb]: ic_scroll has no background, so its 8.sdp elevation casts no shadow and none is drawn here.
  */
 @Composable
-internal fun BoxScope.FastScrollThumb(state: LazyGridState, trackHeightPx: Int) {
+internal fun BoxScope.FastScrollThumb(
+    state: LazyGridState,
+    trackHeightPx: Int,
+    hiddenUntilScrolled: Boolean = false,
+    @DrawableRes thumb: Int = R.drawable.ic_scroll
+) {
+    var scrolled by remember { mutableStateOf(!hiddenUntilScrolled) }
+    if (!scrolled && state.isScrollInProgress) scrolled = true
+    if (!scrolled) return
     if (!state.canScrollForward && !state.canScrollBackward) return
-    val painter = painterResource(R.drawable.ic_scroll)
+    val painter = painterResource(thumb)
     val range = (trackHeightPx - painter.intrinsicSize.height).coerceAtLeast(0f)
     val scrollFraction = {
         val info = state.layoutInfo

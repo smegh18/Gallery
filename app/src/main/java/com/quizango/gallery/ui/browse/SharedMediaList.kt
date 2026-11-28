@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -170,7 +171,8 @@ internal fun SharedMediaList(
     onAction: (MediaAction) -> Unit,
     @StringRes emptyTitle: Int = R.string.no_items,
     @StringRes emptyBody: Int = R.string.no_media_file,
-    showPinchTip: Boolean = false // pinchToZoomInStub: only activity_media_list has it
+    showPinchTip: Boolean = false, // pinchToZoomInStub: only activity_media_list has it
+    onPro: (() -> Unit)? = null // `proBtn`: only the favourites list shows it
 ) {
     val prefs = (LocalContext.current.applicationContext as GalleryApplication).preferences
     val scope = rememberCoroutineScope()
@@ -196,14 +198,16 @@ internal fun SharedMediaList(
                 allSelected = isAllSelected(selected, paths),
                 onBack = onBack,
                 onClose = { onSelectedChange(emptySet()) },
-                onToggleAll = { onSelectedChange(toggleAll(selected, paths)) }
+                onToggleAll = { onSelectedChange(toggleAll(selected, paths)) },
+                onPro = onPro
             )
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 when (listStateOf(items, savedCount)) {
                     ListState.LOADING -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(color = colorResource(R.color.colorPrimary))
                     }
-                    ListState.EMPTY -> PhotosEmptyState(emptyTitle, emptyBody)
+                    // emptyLayout is centerInParent of the RelativeLayout that also holds the 55dp toolbar: lift by half of it
+                    ListState.EMPTY -> Box(Modifier.offset(y = (-28).dp)) { PhotosEmptyState(emptyTitle, emptyBody) }
                     ListState.CONTENT -> SharedMediaGrid(
                         items = items.orEmpty(),
                         columnCount = savedCount ?: 3,
@@ -237,6 +241,7 @@ internal fun SharedMediaToolbar(
     onToggleAll: () -> Unit = {},
     onInfo: (() -> Unit)? = null,
     onSettings: (() -> Unit)? = null, // `settingBtn` (vault): shown at the end while not selecting
+    onPro: (() -> Unit)? = null, // `proBtn` (favourites): shown while not selecting
     showToggleAll: Boolean = selecting // the cleaner grids keep Back and always show Select all
 ) {
     Column(
@@ -275,6 +280,17 @@ internal fun SharedMediaToolbar(
                 style = GalleryText.BodyMediumMedium,
                 color = colorResource(R.color.colorPrimary),
                 modifier = Modifier.clickable(onClick = onToggleAll).padding(5.sdp)
+            )
+            if (!selecting && onPro != null) Image(
+                painter = painterResource(R.drawable.ic_pro_premium),
+                contentDescription = stringResource(R.string.go_ads_free),
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = false),
+                        onClick = onPro
+                    )
+                    .padding(5.sdp)
             )
             if (selecting && onInfo != null) Image(
                 painter = painterResource(R.drawable.ic_property),

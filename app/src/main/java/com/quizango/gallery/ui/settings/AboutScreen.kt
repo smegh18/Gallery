@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,6 +45,7 @@ import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.Inter
 import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
+import kotlin.math.roundToInt
 
 /**
  * The links AboutActivity opens: common_data.social_media_links of the bundled remote-config defaults
@@ -69,6 +71,9 @@ private fun openLink(context: Context, url: String) {
         .onFailure { Toast.makeText(context, R.string.browser_not_available, Toast.LENGTH_SHORT).show() }
 }
 
+/** Gravity.CENTER floors the leftover space; Compose's CenterHorizontally rounds it, putting odd gaps 1px right. */
+private val FloorCenter = Alignment.Horizontal { size, space, _ -> (space - size) / 2 }
+
 /** activity_about. */
 @Composable
 fun AboutScreen(
@@ -76,6 +81,14 @@ fun AboutScreen(
 ) {
     val context = LocalContext.current
     val white = colorResource(R.color.onlyWhite)
+    val detailStyle = GalleryText.BodySmallMedium.let { style ->
+        with(LocalDensity.current) {
+            // StaticLayout pitch: Inter hhea ascent/descent (2728/680 of 2816 upm) each rounded, + round(lineSpacingExtra 1sdp)
+            val font = style.fontSize.toPx()
+            val pitch = (font * 2728f / 2816f).roundToInt() + (font * 680f / 2816f).roundToInt() + 1.sdp.roundToPx()
+            style.copy(lineHeight = pitch.toSp())
+        }
+    }
 
     Column(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
         SharedMediaToolbar(title = stringResource(R.string.about_us), onBack = onNavigateBack)
@@ -86,7 +99,7 @@ fun AboutScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(top = 3.dp)
                 .navigationBarsPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = FloorCenter
         ) {
             Image(
                 painter = painterResource(R.drawable.about_gallery_logo),
@@ -107,7 +120,7 @@ fun AboutScreen(
             )
             Text(
                 text = stringResource(R.string.about_detail),
-                style = GalleryText.BodySmallMedium, // lineSpacingExtra 1sdp left out
+                style = detailStyle,
                 color = colorResource(R.color.about_text),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(start = 35.sdp, end = 35.sdp, top = 26.sdp)
@@ -128,12 +141,12 @@ fun AboutScreen(
                     .height(1.dp)
                     .background(colorResource(R.color.about_divider))
             )
-            Row(horizontalArrangement = Arrangement.Center) {
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 SocialLink(R.drawable.ic_about_insta, R.string.instagram, Modifier.padding(end = 10.sdp)) { openLink(context, AboutLinks.INSTAGRAM) }
                 SocialLink(R.drawable.ic_about_youttube, R.string.youtube, Modifier.padding(horizontal = 10.sdp)) { openLink(context, AboutLinks.YOUTUBE) }
                 SocialLink(R.drawable.ic_about_facebook, R.string.facebook, Modifier.padding(start = 10.sdp)) { openLink(context, AboutLinks.FACEBOOK) }
             }
-            Row(Modifier.padding(vertical = 10.sdp), horizontalArrangement = Arrangement.Center) {
+            Row(Modifier.padding(vertical = 10.sdp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 SocialLink(R.drawable.ic_about_pinterest, R.string.pinterest, Modifier.padding(end = 10.sdp)) { openLink(context, AboutLinks.PINTEREST) }
                 SocialLink(R.drawable.ic_about_tiktok, R.string.tiktok, Modifier.padding(start = 10.sdp)) { openLink(context, AboutLinks.TIKTOK) }
             }

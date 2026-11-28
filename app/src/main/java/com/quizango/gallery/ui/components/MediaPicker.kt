@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -193,29 +195,33 @@ private fun PickerFrame(
                         modifier = Modifier.size(35.sdp).clickable(onClick = onBack).padding(7.sdp)
                     )
                     Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = title,
-                            style = GalleryText.BodyLargeSemiBold.copy(fontSize = 14.ssp),
-                            color = colorResource(R.color.titleColor),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
+                        // toolbarTitle: the folder arrow is its drawableEnd (drawablePadding 10sdp); ivFolderNameArrow stays gone
+                        Row(
+                            Modifier
                                 .weight(1f, fill = false)
                                 .then(if (onTitleClick != null && !loading) Modifier.clickable(onClick = onTitleClick) else Modifier)
-                                .padding(start = 9.sdp, end = 10.sdp)
-                        )
+                                .padding(start = 9.sdp, end = 10.sdp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = title,
+                                style = GalleryText.BodyLargeSemiBold.copy(fontSize = 14.ssp),
+                                color = colorResource(R.color.titleColor),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f, fill = false)
+                            )
+                            if (!loading && folderArrow != null && onTitleClick != null) Image(
+                                painter = painterResource(if (folderArrow) R.drawable.ic_title_arrow_up else R.drawable.ic_title_arrow_down),
+                                contentDescription = stringResource(R.string.all_photos),
+                                colorFilter = ColorFilter.tint(colorResource(R.color.titleColor)),
+                                modifier = Modifier.padding(start = 10.sdp)
+                            )
+                        }
                         if (loading) CircularProgressIndicator(
                             color = colorResource(R.color.colorPrimary),
                             strokeWidth = 2.dp,
                             modifier = Modifier.size(20.sdp)
-                        ) else if (folderArrow != null && onTitleClick != null) Image(
-                            painter = painterResource(if (folderArrow) R.drawable.ic_title_arrow_down else R.drawable.ic_title_arrow_up),
-                            contentDescription = stringResource(R.string.all_photos),
-                            colorFilter = ColorFilter.tint(colorResource(R.color.titleColor)),
-                            modifier = Modifier
-                                .size(width = 40.sdp, height = 30.sdp)
-                                .clickable(onClick = onTitleClick)
-                                .padding(horizontal = 15.sdp)
                         )
                     }
                     if (showAdd) Text(
@@ -258,6 +264,8 @@ private fun PhotoGrid(items: List<MediaItem>, selecting: Boolean, isPicked: (Med
         items(items, key = { it.filePath }) { item ->
             Box(Modifier.clickable { onTap(item) }) {
                 SharedMediaCell(item = item, isSelected = isPicked(item), selecting = selecting, onClick = {}, onLongClick = {})
+                // item_image CornerLayout stroke: single-pick cells show a ~12% black frame over the photo (measured #E0E0E0 on white)
+                if (!selecting) Box(Modifier.matchParentSize().padding(0.5.dp).border(1.25.dp, Color(0x1F000000)))
             }
         }
     }

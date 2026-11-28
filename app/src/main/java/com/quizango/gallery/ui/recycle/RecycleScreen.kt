@@ -1,7 +1,10 @@
 package com.quizango.gallery.ui.recycle
 
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -16,16 +19,21 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.quizango.gallery.R
@@ -40,7 +48,9 @@ import com.quizango.gallery.ui.components.UsageAccessQueue
 import com.quizango.gallery.ui.home.formatDuration
 import com.quizango.gallery.ui.navigation.Screen
 import com.quizango.gallery.ui.theme.GalleryBlue
+import com.quizango.gallery.ui.theme.GalleryText
 import com.quizango.gallery.ui.theme.isDark
+import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
@@ -117,67 +127,70 @@ fun RecycleScreen(
 
     Scaffold(
         topBar = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = if (isSelectionMode) "${selectedPaths.size} Selected" else stringResource(R.string.recycle_bin),
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                leaveRecycle()
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = if (isSelectionMode) R.drawable.ic_close else R.drawable.ic_back),
-                                contentDescription = if (isSelectionMode) "Close" else "Back",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(24.dp)
+            // layout_toolbar: SharedMediaToolbar's layout plus the deleteBtn slot it lacks
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .zIndex(1f)
+                    .shadow(2.sdp)
+                    .background(colorResource(R.color.backgroundColor))
+                    .statusBarsPadding()
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(55.dp).padding(start = 4.sdp, end = 10.sdp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = if (isSelectionMode) R.drawable.ic_close else R.drawable.ic_back),
+                        contentDescription = if (isSelectionMode) "Close" else "Back",
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ripple(bounded = false),
+                                onClick = leaveRecycle
                             )
-                        }
-                    },
-                    actions = {
-                        if (isSelectionMode) {
-                            TextButton(
-                                onClick = {
+                            .padding(6.sdp)
+                    )
+                    Text(
+                        text = if (isSelectionMode) "${selectedPaths.size} Selected" else stringResource(R.string.recycle_bin),
+                        style = GalleryText.BodyLargeSemiBold,
+                        color = colorResource(R.color.titleColor),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f).padding(start = 4.sdp)
+                    )
+                    if (isSelectionMode) {
+                        Text(
+                            text = stringResource(if (selectedPaths.size == recycleItems.size) R.string.unselect_all else R.string.select_all),
+                            style = GalleryText.BodyMediumMedium,
+                            color = colorResource(R.color.colorPrimary),
+                            modifier = Modifier
+                                .clickable {
                                     selectedPaths = if (selectedPaths.size == recycleItems.size) {
                                         emptySet()
                                     } else {
                                         recycleItems.map { it.filePath }.toSet()
                                     }
                                 }
-                            ) {
-                                Text(
-                                    text = stringResource(if (selectedPaths.size == recycleItems.size) R.string.unselect_all else R.string.select_all),
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 14.sp,
-                                    color = GalleryBlue
-                                )
-                            }
-                        } else if (recycleItems.isNotEmpty()) {
-                            IconButton(onClick = {
-                                emptyBinPaths = recycleItems.map { it.filePath }
-                                showEmptyBinConfirmDialog = emptyBinPaths.isNotEmpty()
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_delete),
-                                    contentDescription = "Empty Recycle Bin",
-                                    tint = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    )
-                )
-                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+                                .padding(5.sdp)
+                        )
+                    } else if (recycleItems.isNotEmpty()) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_delete),
+                            contentDescription = "Empty Recycle Bin",
+                            modifier = Modifier
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = ripple(bounded = false)
+                                ) {
+                                    emptyBinPaths = recycleItems.map { it.filePath }
+                                    showEmptyBinConfirmDialog = emptyBinPaths.isNotEmpty()
+                                }
+                                .padding(2.sdp)
+                        )
+                    }
+                }
+                HorizontalDivider(thickness = 1.dp, color = colorResource(R.color.actionbarDividerColor))
             }
         },
         bottomBar = {
@@ -260,80 +273,41 @@ fun RecycleScreen(
                 .padding(paddingValues)
         ) {
             // Auto-delete Card matching activity_recycle.xml autoDeleteLayout
-            Box(
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(if (MaterialTheme.colorScheme.isDark) Color(0xFF1E1E1E) else Color(0xFFE8F2FF))
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .padding(horizontal = 10.sdp, vertical = 8.sdp)
+                    .clip(RoundedCornerShape(8.sdp))
+                    .background(colorResource(R.color.recycle_switch_background_color))
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(R.string.remove_items),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Switch(
-                        checked = autoDeleteEnabled,
-                        onCheckedChange = { isChecked ->
-                            autoDeleteEnabled = isChecked
-                            scope.launch {
-                                appPreferences?.setAutoDeleteTrash(isChecked)
+                Text(
+                    text = stringResource(R.string.remove_items),
+                    style = GalleryText.BodySmallRegular,
+                    color = colorResource(R.color.ic_lock_color),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 10.sdp, end = 4.sdp)
+                        .padding(vertical = 2.sdp)
+                )
+                // deleteAutoSwitch is a real SwitchCompat, so its AppCompat track/thumb come from the theme
+                AndroidView(
+                    factory = { ctx ->
+                        SwitchCompat(ctx).apply {
+                            setOnCheckedChangeListener { _, isChecked ->
+                                if (isChecked != autoDeleteEnabled) {
+                                    autoDeleteEnabled = isChecked
+                                    scope.launch { appPreferences?.setAutoDeleteTrash(isChecked) }
+                                }
                             }
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = GalleryBlue,
-                            uncheckedThumbColor = Color.White,
-                            uncheckedTrackColor = Color(0xFFBFD4E4)
-                        )
-                    )
-                }
+                        }
+                    },
+                    update = { if (it.isChecked != autoDeleteEnabled) it.isChecked = autoDeleteEnabled },
+                    modifier = Modifier.padding(end = 2.sdp).height(30.sdp)
+                )
             }
 
-            if (recycleItems.isEmpty()) {
-                // Empty Layout matching activity_recycle.xml emptyLayout
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(horizontal = 40.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_empty_img),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(110.dp)
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            text = stringResource(R.string.no_items),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = stringResource(R.string.deleting_files),
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 18.sp
-                        )
-                    }
-                }
-            } else {
+            if (recycleItems.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     contentPadding = PaddingValues(2.dp),
@@ -366,6 +340,38 @@ fun RecycleScreen(
                             }
                         )
                     }
+                }
+            }
+        }
+
+        if (recycleItems.isEmpty()) {
+            // emptyLayout is centerInParent of the whole area under the status bar, toolbar included
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .padding(bottom = paddingValues.calculateBottomPadding()),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_empty_img),
+                        contentDescription = null,
+                        tint = Color.Unspecified // wrap_content: the vector's own 111dp
+                    )
+                    Text(
+                        text = stringResource(R.string.no_items),
+                        style = GalleryText.BodyLargeSemiBold,
+                        color = colorResource(R.color.titleColor),
+                        modifier = Modifier.padding(top = 20.sdp, bottom = 10.sdp)
+                    )
+                    Text(
+                        text = stringResource(R.string.deleting_files),
+                        style = GalleryText.BodySmallRegular,
+                        color = colorResource(R.color.titleColor),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 50.sdp)
+                    )
                 }
             }
         }

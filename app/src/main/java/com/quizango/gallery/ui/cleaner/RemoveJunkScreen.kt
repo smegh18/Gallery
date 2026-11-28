@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.cleaner
 
+import android.app.Activity
 import android.os.Environment
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -22,11 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,6 +37,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -76,9 +84,6 @@ internal fun junkScanStatus(done: Boolean) = if (done) R.string.junk_scan_comple
 
 /** RJ.OoooooO: the cleaning size counts down over 800 ms; the cleaning state never closes sooner, even on fast IO. */
 internal const val JUNK_CLEAN_MIN_MS = 800L
-
-/** RJ.Oooooo: the button hint Lottie appears this long after the results bind. */
-private const val JUNK_HINT_DELAY_MS = 3000L
 
 /** android.view.animation.AccelerateDecelerateInterpolator, used by both RJ and dx/a counters. */
 private val AccelerateDecelerate = Easing { (cos((it + 1) * PI) / 2 + 0.5).toFloat() }
@@ -383,9 +388,20 @@ private fun JunkResultsState(
     val headerHeight = remember { Animatable(350f) }
     LaunchedEffect(Unit) { headerHeight.animateTo(300f, tween(500)) }
     val subText = with(LocalDensity.current) { 12.sdp.toSp() } // item_remove_junk_sub uses sdp for text
-    val hint by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.remove_junk_button_animation))
-    var hintReady by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { delay(JUNK_HINT_DELAY_MS); hintReady = true }
+    // RemoveJunkActivity: red header behind a transparent status bar, navigation bar hidden
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val window = (view.context as? Activity)?.window ?: return@DisposableEffect onDispose {}
+        val savedStatusColor = window.statusBarColor
+        val bars = WindowCompat.getInsetsController(window, view)
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+        bars.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        bars.hide(WindowInsetsCompat.Type.navigationBars())
+        onDispose {
+            window.statusBarColor = savedStatusColor
+            bars.show(WindowInsetsCompat.Type.navigationBars())
+        }
+    }
 
     Box(Modifier.fillMaxSize().background(colorResource(R.color.backgroundColor))) {
         LazyColumn(
@@ -403,7 +419,8 @@ private fun JunkResultsState(
                     // Expanded header draws no back arrow on device; system Back leaves the route
                     Text(
                         stringResource(R.string.storage_clean),
-                        style = GalleryText.BodyXXLargeSemiBold,
+                        // stock MaterialComponents Toolbar title (no titleTextAppearance): ?textAppearanceHeadline6, Inter medium 20sp, letterSpacing 0.0125
+                        style = GalleryText.BodyXXLargeMedium.copy(fontSize = 20.sp, letterSpacing = 0.0125.em),
                         color = white,
                         maxLines = 1,
                         modifier = Modifier.height(56.dp).wrapContentHeight().padding(start = 16.dp)
@@ -424,7 +441,8 @@ private fun JunkResultsState(
                         )
                         Text(
                             stringResource(R.string.junk_found),
-                            style = GalleryText.BodySmallBold,
+                            // 2.7.2 renders this at about 8ssp on device even though its layout says BodySmallBold
+                            style = GalleryText.BodyXSmallBold,
                             color = white,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
@@ -468,7 +486,8 @@ private fun JunkResultsState(
                                 painterResource(R.drawable.ic_expand_arrow),
                                 contentDescription = null,
                                 colorFilter = ColorFilter.tint(colorResource(R.color.black)),
-                                modifier = Modifier.padding(start = 2.sdp, top = 2.sdp)
+                                // RJ rotates the up-arrow 180 degrees while the row is collapsed
+                                modifier = Modifier.padding(start = 2.sdp, top = 2.sdp).rotate(if (isOpen) 0f else 180f)
                             )
                             Text(
                                 formatCleanerSize(junkBytes(paths, sizes)),
@@ -522,17 +541,6 @@ private fun JunkResultsState(
                 }
             }
         }
-        if (hintReady && selectedBytes > 0) LottieAnimation(
-            hint,
-            iterations = LottieConstants.IterateForever,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(bottom = 35.dp)
-                .fillMaxWidth()
-                .height(38.sdp)
-                .padding(4.sdp)
-        )
         JunkActionBar(selectedBytes, onClean, Modifier.align(Alignment.BottomCenter))
     }
 }
@@ -564,6 +572,7 @@ private fun JunkActionBar(selectedBytes: Long, onClean: () -> Unit, modifier: Mo
                 fontFamily = Inter,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.ssp,
+                letterSpacing = 0.sp,
                 color = colorResource(R.color.junkCleanerSubTitleColor)
             )
         }
@@ -577,7 +586,6 @@ private fun JunkActionBar(selectedBytes: Long, onClean: () -> Unit, modifier: Mo
                 .drawableBackground(R.drawable.bg_remove_junk_deep_clean)
                 .clickable(enabled = canClean, onClick = onClean)
                 .padding(horizontal = 12.sdp),
-            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -590,9 +598,12 @@ private fun JunkActionBar(selectedBytes: Long, onClean: () -> Unit, modifier: Mo
                 fontFamily = Inter,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.ssp,
+                letterSpacing = 0.sp,
                 color = colorResource(R.color.onlyWhite),
                 maxLines = 1,
-                modifier = Modifier.padding(start = 5.sdp)
+                textAlign = TextAlign.Center,
+                // TextView drawableStart + gravity=center: icon pinned at the start padding, text centred in the rest
+                modifier = Modifier.weight(1f).padding(start = 5.sdp)
             )
         }
     }

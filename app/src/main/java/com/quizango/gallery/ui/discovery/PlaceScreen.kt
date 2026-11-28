@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -178,7 +179,7 @@ fun PlaceScreen(
         }
     }
 
-    Column(Modifier.fillMaxSize().background(background)) {
+    Column(Modifier.fillMaxSize().background(background).navigationBarsPadding()) {
         SharedMediaToolbar(title = stringResource(R.string.geographic_photo), onBack = onNavigateBack)
         if (!locationOk) LocationStripe(onAllow = { launcher.launch(LOCATION_PERMISSIONS) })
         BottomSheetScaffold(
@@ -207,7 +208,7 @@ fun PlaceScreen(
 @Composable
 private fun LocationStripe(onAllow: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().background(colorResource(R.color.premium_explore_bg)).padding(vertical = 4.sdp),
+        Modifier.fillMaxWidth().background(colorResource(R.color.premium_explore_bg)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(painterResource(R.drawable.ic_location), contentDescription = null, modifier = Modifier.padding(3.sdp).size(18.sdp))

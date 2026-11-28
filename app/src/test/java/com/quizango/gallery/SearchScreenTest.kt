@@ -61,12 +61,12 @@ class SearchScreenTest {
     }
 
     @Test
-    fun previewIsCappedAtSixButTheSectionKeepsEveryMatch() {
+    fun previewIsCappedAtThreeButTheSectionKeepsEveryMatch() {
         val many = buildSearchIndex((1..10).map { album("/a/$it", "Album $it") }, emptyList(), emptyMap())
         val all = sectionCards(many, SearchSection.ALBUMS, "album")
-        assertEquals(6, SEARCH_PREVIEW_LIMIT)
+        assertEquals(3, SEARCH_PREVIEW_LIMIT)
         assertEquals(10, all.size)
-        assertEquals(all.take(6), searchPreview(all))
+        assertEquals(all.take(3), searchPreview(all))
         assertEquals(3, searchPreview(sectionCards(index, SearchSection.ALBUMS, "")).size)
     }
 
@@ -136,12 +136,12 @@ class SearchScreenTest {
     }
 
     @Test
-    fun viewAllListsTheCompleteFilteredSectionWhileSearchShowsSix() {
+    fun viewAllListsTheCompleteFilteredSectionWhileSearchShowsThree() {
         val many = buildSearchIndex(emptyList(), (1L..9L).map { photo(it, "Place $it") }, emptyMap())
         val (section, query) = viewAllArgs("2", "place")
         val full = sectionCards(many, section, query)
         assertEquals(9, full.size)
-        assertEquals(6, searchResults(many, "place").single().second.let(::searchPreview).size)
+        assertEquals(3, searchResults(many, "place").single().second.let(::searchPreview).size)
         assertEquals(listOf("Place 9"), sectionCards(many, section, "place 9").map { it.title })
     }
 

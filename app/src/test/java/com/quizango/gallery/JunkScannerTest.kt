@@ -94,6 +94,16 @@ class JunkScannerTest {
     }
 
     @Test
+    fun appCacheCountsOnlyNonEmptyTopLevelFiles() {
+        val (root, cache) = tree()
+        File(cache, "empty.bin").createNewFile()
+        File(cache, "image_cache").mkdirs()
+        File(cache, "image_cache/nested.bin").writeBytes(ByteArray(5))
+        val r = JunkScanner.scan(root, listOf(cache)).associateBy { it.id }
+        assertEquals(listOf("c.bin"), r[JunkScanner.APP_CACHE]!!.files.map { it.name })
+    }
+
+    @Test
     fun cleanReportsPerPathOutcomesAndSkipsFoldersThatFilledUp() {
         val (root, cache) = tree()
         val r = JunkScanner.scan(root, listOf(cache)).associateBy { it.id }

@@ -44,12 +44,12 @@ class AlbumsTabTest {
     }
 
     @Test
-    fun emptyVirtualAlbumsAreDroppedButFavoriteAndDeletedStay() {
+    fun emptyVirtualAlbumsAreDroppedButCameraFavoriteAndDeletedStay() {
         val albums = listOf(
             album("filter:all_photos"), album("filter:videos", 0), album("filter:camera", 0), album("filter:screenshots", 0), album("/a")
         )
         assertEquals(
-            listOf("filter:all_photos", ALBUM_FAVORITES, "/a", ALBUM_DELETED),
+            listOf("filter:all_photos", ALBUM_FAVORITES, "filter:camera", "/a", ALBUM_DELETED),
             albumGrid(albums, favorite, deleted).map { it.id }
         )
         assertEquals(0, favorite.itemCount)

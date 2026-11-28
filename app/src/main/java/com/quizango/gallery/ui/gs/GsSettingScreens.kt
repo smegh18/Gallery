@@ -1,5 +1,6 @@
 package com.quizango.gallery.ui.gs
 
+import android.app.Activity
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -12,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -22,6 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -90,6 +95,7 @@ private fun OnOffSettingPage(
 ) {
     val black = colorResource(R.color.black_color)
     val sub = colorResource(R.color.iu_setting_sub_text)
+    SettingThemeBars()
     Column(
         Modifier
             .fillMaxSize()
@@ -113,7 +119,8 @@ private fun OnOffSettingPage(
                     .padding(start = 10.sdp, top = 3.sdp, end = 3.sdp, bottom = 3.sdp)
             )
             Text(
-                stringResource(title), style = GalleryText.BodyLargeMedium, fontSize = titleSize, color = black,
+                stringResource(title), style = GalleryText.BodyLargeMedium, fontSize = titleSize,
+                color = black,
                 modifier = Modifier.weight(1f).padding(start = 5.sdp).padding(horizontal = 10.sdp)
             )
         }
@@ -124,39 +131,69 @@ private fun OnOffSettingPage(
             color = sub, textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().padding(horizontal = subtitlePadding.sdp)
         )
-        OnOffCard(R.string.always_on, onSubtitle, on, checkedTint, Modifier.padding(top = 20.sdp)) { onChange(true) }
-        OnOffCard(R.string.always_off, offSubtitle, !on, checkedTint, Modifier.padding(top = 10.sdp)) { onChange(false) }
+        OnOffCard(R.string.always_on, onSubtitle, on, checkedTint, Modifier.padding(top = 20.sdp), centerSubtitle = false) { onChange(true) }
+        OnOffCard(R.string.always_off, offSubtitle, !on, checkedTint, Modifier.padding(top = 10.sdp), centerSubtitle = true) { onChange(false) }
     }
 }
 
 @Composable
-private fun OnOffCard(@StringRes title: Int, @StringRes subtitle: Int, selected: Boolean, checkedTint: Int, modifier: Modifier, onClick: () -> Unit) {
+private fun OnOffCard(@StringRes title: Int, @StringRes subtitle: Int, selected: Boolean, checkedTint: Int, modifier: Modifier, centerSubtitle: Boolean, onClick: () -> Unit) {
     val shape = RoundedCornerShape(10.sdp)
+    // MaterialCardView reads strokeWidth with getDimensionPixelSize: _1sdp (2.4px) draws as a crisp 2px line
+    val stroke = with(LocalDensity.current) { 1.sdp.roundToPx().toDp() }
     Row(
         modifier
             .padding(horizontal = 10.sdp)
             .fillMaxWidth()
+            .height(IntrinsicSize.Min)
             .clip(shape)
-            .border(BorderStroke(1.sdp, colorResource(R.color.install_setting_card_stroke)), shape)
+            .background(colorResource(R.color.iu_bg), shape) // MaterialCardView default fill ?colorSurface: white / #121212
+            .border(BorderStroke(stroke, colorResource(R.color.install_setting_card_stroke)), shape)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .padding(start = 10.sdp, top = 12.sdp, bottom = 12.sdp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(Modifier.weight(1f).padding(end = 5.sdp)) {
+        Column(Modifier.weight(1f).fillMaxHeight().padding(end = 5.sdp)) {
             Text(stringResource(title), style = GalleryText.BodyLargeMedium, color = colorResource(R.color.black_color))
-            Text(
-                stringResource(subtitle), style = GalleryText.BodySmallMedium, color = colorResource(R.color.iu_setting_sub_text),
-                modifier = Modifier.padding(top = 3.sdp)
+            // Always OFF's description is constrained top and bottom in the layout, so it centres in the space left over
+            Box(
+                if (centerSubtitle) Modifier.weight(1f).padding(top = 3.sdp) else Modifier.padding(top = 3.sdp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(stringResource(subtitle), style = GalleryText.BodySmallMedium, color = colorResource(R.color.iu_setting_sub_text))
+            }
+        }
+        // MaterialRadioButton (paddingEnd 0): 48dp box that sets the card's min height, 32dp drawable at its start
+        Box(Modifier.size(48.dp), contentAlignment = Alignment.CenterStart) {
+            RadioButton(
+                selected = selected, onClick = null,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = colorResource(checkedTint),
+                    unselectedColor = colorResource(R.color.iu_setting_sub_text)
+                ),
+                modifier = Modifier.padding(start = 4.dp)
             )
         }
-        // MaterialRadioButton's own inset keeps the circle off the card edge (paddingEnd 0 in the layout)
-        RadioButton(
-            selected = selected, onClick = null,
-            colors = RadioButtonDefaults.colors(
-                selectedColor = colorResource(checkedTint),
-                unselectedColor = colorResource(R.color.iu_setting_sub_text)
-            ),
-            modifier = Modifier.padding(horizontal = 14.dp)
-        )
+    }
+}
+
+/**
+ * 2.7.2 SettingTheme: status and navigation bars painted callercad_screen_bg (white / black) instead of the app's
+ * #0C0C0C dark background. SideEffect so it lands after GalleryTheme's own bar SideEffect in the same frame.
+ */
+@Composable
+internal fun SettingThemeBars() {
+    val window = (LocalView.current.context as? Activity)?.window ?: return
+    val bars = colorResource(R.color.callercad_screen_bg).toArgb()
+    val restore = MaterialTheme.colorScheme.background.toArgb()
+    SideEffect {
+        window.statusBarColor = bars
+        window.navigationBarColor = bars
+    }
+    DisposableEffect(window) {
+        onDispose {
+            window.statusBarColor = restore
+            window.navigationBarColor = restore
+        }
     }
 }

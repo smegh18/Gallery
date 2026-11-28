@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.quizango.gallery.R
 import com.quizango.gallery.data.ads.AdManager
+import com.quizango.gallery.ui.gs.SettingThemeBars
 import com.quizango.gallery.ui.theme.GalleryText
-import com.quizango.gallery.ui.theme.cardBackground
 import com.quizango.gallery.ui.theme.sdp
 import com.quizango.gallery.ui.theme.ssp
 
@@ -66,6 +66,7 @@ fun FloatingSettingScreen(onNavigateBack: () -> Unit) {
     }
     val enable = rememberOverlayPermissionFlow(onGranted = { on = true }, onDenied = { on = FloatingButtons.isOn(context) })
     val titleColor = colorResource(R.color.titleColor)
+    SettingThemeBars()
     Column(
         Modifier
             .fillMaxSize()
@@ -114,7 +115,7 @@ private fun SettingCard(title: Int, description: Int, selected: Boolean, reward:
             .padding(start = 10.sdp, top = 10.sdp, end = 10.sdp)
             .fillMaxWidth()
             .clip(shape)
-            .background(MaterialTheme.colorScheme.cardBackground)
+            .background(colorResource(R.color.iu_bg)) // MaterialCardView default fill ?colorSurface: white / #121212
             .border(BorderStroke(1.sdp, colorResource(R.color.install_setting_card_stroke)), shape)
             .clickable(onClick = onClick)
             .padding(start = 10.sdp, top = 12.sdp, bottom = 12.sdp),
@@ -132,15 +133,18 @@ private fun SettingCard(title: Int, description: Int, selected: Boolean, reward:
                 modifier = Modifier.padding(top = 3.sdp)
             )
         }
-        // BlueRadioButton: colorPrimary when checked, colorOnSurface (@color/black) at 54 % otherwise; not clickable itself
-        RadioButton(
-            selected = selected,
-            onClick = null,
-            colors = RadioButtonDefaults.colors(
-                selectedColor = colorResource(R.color.colorPrimary),
-                unselectedColor = colorResource(R.color.black).copy(alpha = 0.54f)
-            ),
-            modifier = Modifier.size(48.dp)
-        )
+        // BlueRadioButton: colorPrimary when checked, colorOnSurface (@color/black) at 54 % otherwise; not clickable itself.
+        // MaterialRadioButton draws its 32dp drawable at the start of its 48dp box: circle centre 16dp in from the box start.
+        Box(Modifier.size(48.dp), contentAlignment = Alignment.CenterStart) {
+            RadioButton(
+                selected = selected,
+                onClick = null,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = colorResource(R.color.colorPrimary),
+                    unselectedColor = colorResource(R.color.black).copy(alpha = 0.54f)
+                ),
+                modifier = Modifier.padding(start = 4.dp)
+            )
+        }
     }
 }

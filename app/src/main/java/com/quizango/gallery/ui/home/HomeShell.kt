@@ -158,7 +158,10 @@ private fun SlotButton(@DrawableRes icon: Int, description: String?, onClick: ()
     }
 }
 
-/** home_shell_popup_menu: under the more button, end-aligned, shifted 8.sdp inward and 8.sdp down (HA.OoooooO). */
+/**
+ * home_shell_popup_menu: under the more button, 8.sdp down, end-aligned flush with the screen edge
+ * (HA.OoooooO; measured on 2.7.2, where PopupWindow clamps the card on screen).
+ */
 @Composable
 private fun MoreMenu(page: Int, onDismiss: () -> Unit, onRow: (MoreMenuRow) -> Unit) {
     val density = LocalDensity.current
@@ -171,13 +174,13 @@ private fun MoreMenu(page: Int, onDismiss: () -> Unit, onRow: (MoreMenuRow) -> U
                 anchorBounds: IntRect, windowSize: IntSize, layoutDirection: LayoutDirection, popupContentSize: IntSize
             ): IntOffset {
                 val contentWidth = popupContentSize.width - 2 * insetPx
-                val x = if (layoutDirection == LayoutDirection.Ltr) anchorBounds.right - contentWidth - offset
-                else anchorBounds.left + offset
+                val x = if (layoutDirection == LayoutDirection.Ltr) windowSize.width - contentWidth else 0
                 return IntOffset(x - insetPx, anchorBounds.bottom + offset)
             }
         }
     }
-    Popup(popupPositionProvider = position, onDismissRequest = onDismiss, properties = PopupProperties(focusable = true)) {
+    // clippingEnabled = false: the transparent shadow inset may run past the screen edge while the card stays on it
+    Popup(popupPositionProvider = position, onDismissRequest = onDismiss, properties = PopupProperties(focusable = true, clippingEnabled = false)) {
         Column(
             modifier = Modifier
                 .padding(start = inset, end = inset, bottom = inset)

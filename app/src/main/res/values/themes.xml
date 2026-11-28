@@ -5,6 +5,9 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:colorAccent">@color/colorAccent</item>
+        <!-- AppCompat attrs as in 2.7.2's Theme.NewGallery: SwitchCompat and other AppCompat widgets tint from these -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@drawable/splash_bg</item>
         <!-- We ship our own dark theme; stop the system (e.g. MIUI) from darkening Day mode -->
         <item name="android:forceDarkAllowed">false</item>

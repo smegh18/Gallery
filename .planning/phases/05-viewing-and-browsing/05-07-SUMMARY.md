@@ -32,7 +32,7 @@ key-files:
     - app/src/main/java/com/quizango/gallery/ui/navigation/GalleryNavHost.kt
     - app/src/main/res/values*/strings.xml (24 languages)
 key-decisions:
-  - "Search results are one pure SearchIndex (Albums / Places / Moments card lists) built off the main thread; preview = first 6, View All = the whole filtered list, both from the same function"
+  - "Search results are one pure SearchIndex (Albums / Places / Moments card lists) built off the main thread; preview = first 3 (side-by-side 2026-11-27; was 6), View All = the whole filtered list, both from the same function"
   - "View All carries only section type and query in the route and recomputes from current data; unknown or malformed section = empty state, never a crash"
   - "Search keeps its query in rememberSaveable so Back from View All returns to the unchanged query"
   - "adjustNothing is applied by switching the window soft-input mode while Search is shown and restoring it on leave, because the app is one activity with adjustResize"
@@ -48,7 +48,7 @@ actuals:
 
 # Phase 5 Plan 07: Search, View All and Media Color Summary
 
-Search now shows Colors followed by Albums, Places and Moments previews (six cards each, filtered as you type), opens a separate View All screen, and sends swatches or a Choose color dialog choice to Media Color, which is the shared media list with its four reference actions.
+Search now shows Colors followed by Albums, Places and Moments previews (three cards each, filtered as you type), opens a separate View All screen, and sends swatches or a Choose color dialog choice to Media Color, which is the shared media list with its four reference actions.
 
 ## Tasks
 
@@ -62,7 +62,7 @@ Task 1 also holds the `Screen.SearchViewAll` route constant and the Search NavHo
 
 ## What was built
 
-- **Search (`SearchScreen.kt`)**: toolbar per 11.1 (55.dp bar + 1.dp divider, `search_back` field, hint `search`, IME Search, clear / search icons), Colors header with the picker button and ten swatches, then Albums, Places, Moments sections each only when non-empty, six `item_search_sub` cards, "View All", 0.5.dp dividers. Albums are real device folders only (no `filter:*` virtual albums). Place cards use `groupPlaces` / `placeMediaRoute`, moment cards use `MomentScanner.group` / `momentRoute`, so they open the same media lists as Places and Moments. The moment scan is started from Search. Empty state is `ic_empty_img` + `oops` + `search_deleted`; a centred spinner covers the page until media and albums have emitted.
+- **Search (`SearchScreen.kt`)**: toolbar per 11.1 (55.dp bar + 1.dp divider, `search_back` field, hint `search`, IME Search, clear / search icons), Colors header with the picker button and ten swatches, then Albums, Places, Moments sections each only when non-empty, three `item_search_sub` cards, "View All", 0.5.dp dividers. Albums are real device folders only (no `filter:*` virtual albums). Place cards use `groupPlaces` / `placeMediaRoute`, moment cards use `MomentScanner.group` / `momentRoute`, so they open the same media lists as Places and Moments. The moment scan is started from Search. Empty state is `ic_empty_img` + `oops` + `search_deleted`; a centred spinner covers the page until media and albums have emitted.
 - **Choose color (`SearchColorPicker.kt`)**: Compose dialog with preview and hue / saturation / value sliders, starts at #007AFF, Cancel / Ok; Ok opens Media Color with `#RRGGBB`.
 - **View All (`SearchViewAllScreen.kt`, `Screen.SearchViewAll`)**: `SharedMediaToolbar` titled with the section name, 3-column grid (2.sdp / 4.sdp padding), spinner while loading, Oops + `search_deleted` when empty. No Collapse, no in-place expand, no Photos / Videos sections anywhere in Search.
 - **Media Color (`SearchColorScreen.kt`)**: `SharedMediaList` titled `media_color`; slots Share, Favorite / Unfavorite, Add to Private, Delete in that order using the shared real favourite / vault / delete behaviour; viewer taps use `filter:color:<hex>`, which `getMediaByFolderFlow` already resolves, so the pager stays within the colour result. The old PRO icon, `ic_more`, Material check, fixed 4 columns and English labels are gone.
@@ -97,7 +97,7 @@ Task 1 also holds the `Screen.SearchViewAll` route constant and the Search NavHo
 ## Pending device verification (Artemis MCP disconnected, `adb devices` shows no device)
 
 - Type a query matching one album, one place and one moment: each section filters; each card opens the right media list
-- A section with more than six matches shows six; View All opens a titled 3-column screen with every match; Back returns to Search with the same query
+- A section with more than three matches shows three; View All opens a titled 3-column screen with every match; Back returns to Search with the same query
 - Keyboard does not resize the page (adjustNothing override, restored when leaving Search)
 - Swatch taps and the custom Choose color Ok open Media Color; Cancel and outside-tap only close the dialog
 - Media Color: pinch columns, select items, only the four actions appear; a result opens a viewer pager limited to that colour

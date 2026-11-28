@@ -56,7 +56,8 @@ object JunkScanner {
     ): List<JunkScanResult> {
         val cache = appCacheDirs.flatMap { dir ->
             onPath(dir.path)
-            dir.walkTopDown().filter { it.isFile }.toList()
+            // RemoveJunkViewModel lists direct children only and skips empty files, so an empty cache reads "No Junk"
+            dir.listFiles()?.filter { it.isFile && it.length() >= 1L }.orEmpty()
         }.distinct()
         onProgress(PROGRESS_STEPS[0])
         val docCutoff = Calendar.getInstance().apply { timeInMillis = now; add(Calendar.YEAR, -1) }.timeInMillis

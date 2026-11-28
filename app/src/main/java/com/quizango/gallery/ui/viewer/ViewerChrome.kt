@@ -200,7 +200,6 @@ internal fun ViewerDock(
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(start = 14.dp, end = 14.dp, bottom = 14.dp)
-            .shadow(6.dp, RoundedCornerShape(26.dp))
             .drawableBackground(R.drawable.bg_media_full_pill_dock)
             .padding(vertical = 2.dp)
     ) {

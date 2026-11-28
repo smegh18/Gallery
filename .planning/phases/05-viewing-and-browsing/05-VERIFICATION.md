@@ -28,4 +28,4 @@ score: 5/5 success criteria
 - **Layout to Phase 13:** small layout differences (Subtitle dialog width, Place sheet height, player bottom-row spacing).
 - **Animated:** there is no scanning service for it (we only flag GIFs during sync).
 - **UI-SPEC §9 Burst:** the spec's mosaic description is wrong. The 2.7.2 code uses a single cover, and the port follows the code.
-- **Debug links:** the debug-only Explore links (fed36c2) stay until Phase 9 adds the real entry points.
+- **Debug links:** the debug-only Explore links (fed36c2) were removed on 2026-11-27 in the side-by-side pass; Phase 9's ExternalEntry routes reach these screens.

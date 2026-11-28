@@ -11,12 +11,14 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,10 +32,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -49,7 +50,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -58,14 +58,15 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
@@ -269,7 +270,7 @@ private fun GoProBanner(onClick: () -> Unit) {
             Text(stringResource(R.string.go_ads_free), style = GalleryText.BodyXLargeBold, color = line)
             Text(
                 text = stringResource(R.string.unlock_everything_amp_enjoy_the_ultimate_ad_free_experience),
-                style = GalleryText.BodyXSmallRegular.copy(fontSize = with(androidx.compose.ui.platform.LocalDensity.current) { 9.sdp.toSp() }),
+                style = GalleryText.BodyXSmallRegular.copy(fontSize = with(androidx.compose.ui.platform.LocalDensity.current) { 9.sdp.toSp() }, lineBreak = LineBreak.Paragraph, hyphens = Hyphens.None), // TextView on API 29+: high-quality breaks, no hyphenation
                 color = line,
                 modifier = Modifier.padding(top = 3.sdp, end = 10.sdp)
             )
@@ -326,12 +327,11 @@ private fun SettingDivider() {
 @Composable
 private fun SwitchRow(@DrawableRes icon: Int, @StringRes title: Int, checked: Boolean, tint: Boolean, onToggle: () -> Unit) {
     val label = stringResource(title)
-    val primary = colorResource(R.color.colorPrimary)
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 10.sdp, end = 10.sdp, bottom = 15.sdp)
-            .clickable(remember { MutableInteractionSource() }, indication = null, role = Role.Switch, onClick = onToggle)
+            .toggleable(value = checked, interactionSource = remember { MutableInteractionSource() }, indication = null, role = Role.Switch) { onToggle() }
             .padding(vertical = 5.sdp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -347,15 +347,17 @@ private fun SwitchRow(@DrawableRes icon: Int, @StringRes title: Int, checked: Bo
             color = colorResource(R.color.titleColor),
             modifier = Modifier.weight(1f).padding(start = 10.sdp)
         )
-        Switch(
-            checked = checked,
-            onCheckedChange = { onToggle() },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = primary,
-                checkedTrackColor = primary.copy(alpha = 0.3f),
-                checkedBorderColor = Color.Transparent
-            ),
-            modifier = Modifier.semantics { contentDescription = label }
+        // deleteAutoSwitch / usageDataSwitch are plain SwitchCompat (theme track/thumb); the row's toggleable is the only toggle path
+        AndroidView(
+            factory = { ctx ->
+                SwitchCompat(ctx).apply {
+                    isClickable = false
+                    isFocusable = false
+                    importantForAccessibility = android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                }
+            },
+            update = { if (it.isChecked != checked) it.isChecked = checked },
+            modifier = Modifier.heightIn(min = 48.dp) // the MaterialComponents switch style's 48dp minimum height
         )
     }
 }

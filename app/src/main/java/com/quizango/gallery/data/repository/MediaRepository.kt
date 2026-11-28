@@ -395,8 +395,8 @@ class MediaRepositoryImpl(
                         isVideoCover = firstItem.mediaType == 2
                     )
                 }
-                // Reference orders folders by their newest photo, not by size
-                .sortedByDescending { album -> list.firstOrNull { it.folderPath == album.path }?.let { e -> if (e.date > 0) e.date else e.lastDate } ?: 0L }
+                // 2.7.2 (s9/k.Ooooo0o, comparator s9/i case 0): folder directory lastModified, newest first
+                .sortedByDescending { File(it.path).lastModified() }
 
             result.addAll(folders)
             result

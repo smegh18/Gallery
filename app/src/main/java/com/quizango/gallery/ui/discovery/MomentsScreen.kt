@@ -26,6 +26,8 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -44,7 +46,9 @@ import com.quizango.gallery.ui.browse.AlbumSquareCard
 import com.quizango.gallery.ui.browse.SharedMediaToolbar
 import com.quizango.gallery.ui.home.PhotosEmptyState
 import com.quizango.gallery.ui.navigation.Screen
+import androidx.compose.material3.MaterialTheme
 import com.quizango.gallery.ui.theme.GalleryText
+import com.quizango.gallery.ui.theme.isDark
 import com.quizango.gallery.ui.theme.sdp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -136,12 +140,20 @@ private fun ScanningHeader(p: MomentScanner.Progress) {
     Column(Modifier.fillMaxWidth().padding(top = 10.sdp)) {
         Row(Modifier.fillMaxWidth().padding(top = 10.sdp, start = 10.sdp, end = 10.sdp)) {
             Text(stringResource(R.string.scanning_photos), style = GalleryText.BodySmallRegular, color = titleColor, modifier = Modifier.weight(1f))
-            Text("${p.done}/${p.total}", style = GalleryText.BodyLargeSemiBold, color = titleColor)
+            Text(
+                "${p.done}/${p.total}",
+                style = GalleryText.BodyLargeSemiBold,
+                color = titleColor,
+                // the bar is layout_below the title only, so the taller count adds no height
+                modifier = Modifier.layout { m, c -> val pl = m.measure(c); layout(pl.width, 0) { pl.place(0, 0) } }
+            )
         }
         LinearProgressIndicator(
             progress = { p.done.toFloat() / p.total },
             color = colorResource(R.color.colorPrimary),
-            trackColor = colorResource(R.color.seekbar_color_bg),
+            // framework disabledAlpha on the track layer: 0.26 light, 0.30 dark
+            trackColor = colorResource(R.color.seekbar_color_bg).copy(alpha = if (MaterialTheme.colorScheme.isDark) 0.3f else 0.26f),
+            strokeCap = StrokeCap.Butt,
             gapSize = 0.dp,
             drawStopIndicator = {},
             // progressBarStyleHorizontal: a 4.dp track centred in its 16.dp minimum height

@@ -16,6 +16,7 @@ import com.quizango.gallery.ui.browse.FAVORITES_ACTIONS
 import com.quizango.gallery.ui.browse.SharedMediaList
 import com.quizango.gallery.ui.browse.rememberMediaListActions
 import com.quizango.gallery.ui.home.ALBUM_FAVORITES
+import com.quizango.gallery.ui.navigation.Screen
 
 /** FavoriteActivity (§10): the shared list frame over the favourites; unfavourited items leave the list at once. */
 @Composable
@@ -40,6 +41,7 @@ fun FavoritesScreen(
         actions = FAVORITES_ACTIONS,
         onAction = onAction,
         emptyTitle = R.string.no_favorites,
-        emptyBody = R.string.no_favorites_empty
+        emptyBody = R.string.no_favorites_empty,
+        onPro = { onNavigate(Screen.Pro.route) }
     )
 }
