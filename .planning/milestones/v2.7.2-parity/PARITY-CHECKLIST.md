@@ -43,35 +43,35 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 ### A2. Home shell and tabs
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 6 | HomeActivity shell | activity_home CHANGED; home_shell_popup_menu NEW; layout_home_vault_hint NEW | home/HomeScreen.kt | [x] | [ ] |
-| 7 | Photos tab | fragment_all_media CHANGED; photos_tab_item_date/grid/ad NEW | home/PhotosTab.kt | [x] | [ ] |
-| 8 | Albums tab | fragment_album CHANGED; item_home_album_card NEW; item_stories, item_folder, item_grid_gallery CHANGED (album selection: layout_select_album_bottom, album info, rename, change cover ported) | home/AlbumsTab.kt | [x] | [ ] |
-| 9 | Explore tab | fragment_explore CHANGED; explore_tab_hero/item_feature/item_row/item_tile NEW | home/ExploreTab.kt | [x] | [ ] |
+| 6 | HomeActivity shell | activity_home CHANGED; home_shell_popup_menu NEW; layout_home_vault_hint NEW | home/HomeScreen.kt | [x] | [x] |
+| 7 | Photos tab | fragment_all_media CHANGED; photos_tab_item_date/grid/ad NEW | home/PhotosTab.kt | [x] | [x] |
+| 8 | Albums tab | fragment_album CHANGED; item_home_album_card NEW; item_stories, item_folder, item_grid_gallery CHANGED (album selection: layout_select_album_bottom, album info, rename, change cover ported) | home/AlbumsTab.kt | [x] | [x] |
+| 9 | Explore tab | fragment_explore CHANGED; explore_tab_hero/item_feature/item_row/item_tile NEW | home/ExploreTab.kt | [x] | [x] |
 | 10 | Exit popup | dialog_exit_popup CHANGED (note: Home exit uses dialog_exit through S272/jt/a; dialog_exit_popup is the collage screen's Back dialog (ported in Phase 8, CollagePanels.kt); the photo editor uses dialog_discard_changes; Phase 13 confirms popup versus direct exit) | HomeScreen BackHandler: direct exit like 2.7.2 (popup removed 2026-11-20) | [x] | [ ] |
 | 11 | Floating button and sidebar | layout_floating_button, layout_floating_popup_menu, dialog_floating_button_popup CHANGED; item_floating_sidebar_action, layout_floating_sidebar_intro NEW | none: **decision D2** | [x] | [ ] |
-| 12 | FloatingSettingActivity | (settings for 11) | none: **D2** | [x] | [ ] |
+| 12 | FloatingSettingActivity | (settings for 11) | none: **D2** | [x] | [x] |
 
 ### A3. Viewing
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 13 | MediaFullScreenActivity | activity_media_full_screen CHANGED; item_bottom_option_layout CHANGED | viewer/MediaViewerScreen.kt | [x] | [ ] |
+| 13 | MediaFullScreenActivity | activity_media_full_screen CHANGED; item_bottom_option_layout CHANGED | viewer/MediaViewerScreen.kt | [x] | [x] |
 | 14 | VideoPlayerActivity | same | viewer/MediaViewerScreen.kt | [x] | [ ] |
 | 15 | StoryViewPhotoActivity | activity_story_view_photo CHANGED; dialog_usage_access_story NEW (dialog_usage_access_story is a no-op hook until Phase 12) | discovery/StoryViewScreen.kt | [x] | [ ] |
 | 16 | MediaListActivity | same | album/AlbumDetailScreen.kt | [x] | [ ] |
 | 17 | AllAlbumActivity | same | home/AlbumsTab.kt / album | [x] | [ ] |
-| 18 | MomentsActivity | same; moment_lottie removed | discovery/MomentsScreen.kt | [x] | [ ] |
-| 19 | MapActivity (Place) | same | (Place list) | [x] | [ ] |
+| 18 | MomentsActivity | same; moment_lottie removed | discovery/MomentsScreen.kt | [x] | [x] |
+| 19 | MapActivity (Place) | same | (Place list) | [x] | [x] |
 | 20 | AnimatedMediaListActivity | same | discovery/AnimatedMediaScreen.kt | [x] | [ ] |
 | 21 | BurstPhotoActivity | same | discovery/BurstPhotoScreen.kt | [x] | [ ] |
-| 22 | FavoriteActivity | same | favorites/FavoritesScreen.kt | [x] | [ ] |
-| 23 | SearchActivity / SearchViewAllActivity | same | search/SearchScreen.kt | [x] | [ ] |
+| 22 | FavoriteActivity | same | favorites/FavoritesScreen.kt | [x] | [x] |
+| 23 | SearchActivity / SearchViewAllActivity | same | search/SearchScreen.kt | [x] | [x] |
 | 24 | SearchPhotoColorActivity | same | discovery/SearchColorScreen.kt | [x] | [ ] |
 
 ### A4. Manage and cleaner
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
 | 25 | SystemCleanerActivity | same | cleaner/CleanerScreen.kt | [x] | [ ] |
-| 26 | JunkScan / RemoveJunk / JunkCleared | same | cleaner/RemoveJunkScreen.kt | [x] | [ ] |
+| 26 | JunkScan / RemoveJunk / JunkCleared | same | cleaner/RemoveJunkScreen.kt | [x] | [x] |
 | 27 | LargeVideoActivity | same; dialog_usage_access_video NEW | cleaner/LargeVideoScreen.kt | [x] | [ ] |
 | 28 | ScreenShortActivity | same | cleaner/ScreenShortScreen.kt | [x] | [ ] |
 | 29 | DuplicateWaiting / ScanningComplete / Photo / DeleteProcess / DeleteComplete | same | cleaner/Duplicate*.kt | [x] | [ ] |
@@ -81,7 +81,7 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 ### A5. Vault
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 32 | VaultLockActivity | same | vault/VaultLockScreen.kt | [x] | [ ] |
+| 32 | VaultLockActivity | same | vault/VaultLockScreen.kt | [x] | [x] |
 | 33 | VaultMediaActivity | same | vault/VaultMediaScreen.kt | [x] | [ ] |
 | 34 | VaultSettingActivity | same | vault/VaultSettingScreen.kt | [x] | [ ] |
 | 35 | VaultRecoveryQuestionActivity | same | vault/VaultRecoveryQuestionScreen.kt | [x] | [ ] |
@@ -93,6 +93,11 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 **Phases 8-12 Ported without the device pass** (user decision 2026-11-25): rows 10-12 and 38-53 are ticked Ported on automated gates plus CodeRabbit and a multi-agent review; deviations are listed in each phase's NN-SUMMARY.md. Verified stays for Phase 13.
 
 **Phase 7 known deviations** (rows 32-37; boxes unchanged until the device pass, see `.planning/phases/07-private-vault/07-LIVE-COMPARISON.md`): D2 no Hidden Folder section; D3 Forgot Password answer match is trimmed, case-insensitive and hashed (2.7.2 matches exactly); PIN, pattern and answers stored hashed; no shake on wrong entry (D4); Home lock-icon shared-element transition (`vault_click`) not built; the secured toast is an in-app overlay; picker folder row is the toolbar and the grid has four columns (D1, `activity_select`).
+
+**Phase 13 side-by-side (2026-11-27/28):** both apps driven through 27 screens on the Redmi (M2006C3MII, Android 11, 720x1600) in light and dark, each pair compared and every difference re-checked before fixing; results in `.planning/phases/13-device-verification-and-quality-gates/13-DEVICE-PASS.md`.
+- **Verified** (rows 6-9, 12, 13, 18, 19, 22, 23, 26, 32, 46-49): every screen the row covers matched in both themes, apart from these recorded leftovers: 1px text offsets on the Theme, About and After Call titles; the story ring's anti-aliased edge (row 8); the Go Ads Free subtitle breaking one word later (row 46); the dark Quick Access "Always OFF" title 2px low (row 12); the Pro note's uneven word gaps from 2.7.2's JustifiedTextView (row 49); the saved first-launch album order (`myAlbums` pref) not ported (row 8).
+- **Compared in part, still unticked:** 29 (Duplicates results screen only, not scan or delete steps), 30 (Recycle Bin empty state only), 31 (Quick Organize intro overlay only), 50 and 51 (settings screens only; the after-call and install/uninstall screens need a real call and install).
+- **Not compared yet:** 1-5, 10, 11, 14-17, 20, 21, 24, 25, 27, 28, 33-45, 52, 53.
 
 ### A6. Create and edit
 | # | Reference | Layouts | Ours | Ported | Verified |
@@ -109,10 +114,10 @@ Columns: reference screen, its layout(s) with status, our file, Ported, Verified
 ### A7. Settings and system
 | # | Reference | Layouts | Ours | Ported | Verified |
 |---|---|---|---|---|---|
-| 46 | SettingActivity | activity_setting CHANGED; dialog_usage_access_settings NEW | settings/SettingsScreen.kt | [x] | [ ] |
-| 47 | ThemeActivity | same | settings/ThemeScreen.kt | [x] | [ ] |
-| 48 | AboutActivity | same | settings/AboutScreen.kt | [x] | [ ] |
-| 49 | PayWall / subscription | activity_subscription_purchase CHANGED | none (Pro button) | [x] | [ ] |
+| 46 | SettingActivity | activity_setting CHANGED; dialog_usage_access_settings NEW | settings/SettingsScreen.kt | [x] | [x] |
+| 47 | ThemeActivity | same | settings/ThemeScreen.kt | [x] | [x] |
+| 48 | AboutActivity | same | settings/AboutScreen.kt | [x] | [x] |
+| 49 | PayWall / subscription | activity_subscription_purchase CHANGED | none (Pro button) | [x] | [x] |
 | 50 | GsActivity, GsSettingActivity (+ fragment_gs_games/media/menu, dialog_gs_*) | NEW | none: **decision D3** | [x] | [ ] |
 | 51 | InstallUninstallActivity / IUSettingActivity | activity_install_uninstall CHANGED | none: **D3** | [x] | [ ] |
 | 52 | Notifications (NotificationIntent, ApiNotificationRedirect, NotificationClick) | notification_big/small_layout CHANGED | none | [x] | [ ] |

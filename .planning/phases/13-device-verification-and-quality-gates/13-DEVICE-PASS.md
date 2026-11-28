@@ -34,6 +34,6 @@ Both apps driven through the same 27 screens by script and captured at 720x1600;
 - **Reference install:** the Play-pulled `gallery-2.7.2.apk` is a base split only and crashes at the splash; it runs with the `split_config.xxhdpi.apk` from a full 2.7.2 install (kept in `reference/2.7.2-splits/`, git-ignored). Play auto-update must be off or it moves to 2.7.5.
 
 ## Still open for Phase 13
-- Tick Verified rows in PARITY-CHECKLIST from the side-by-side results above.
+- 16 rows ticked Verified in PARITY-CHECKLIST (2026-11-28). Still to compare side by side: the rest of rows 29-31 (Duplicates scan/delete, Recycle with items, Quick Organize past the intro), and rows not in the 27-screen run (onboarding 1-5, floating sidebar 11, video and story viewers 14-15, album and media lists 16-17, Animated/Burst 20-21, color search 24, other cleaners 25 and 27-28, vault 33-37, editor and creative tools 38-45, notifications 52-53).
 - Quick Info after a real call; install/uninstall screens after a real install.
 - The PENDING-DEVICE matrices in `06-LIVE-COMPARISON.md` and `07-LIVE-COMPARISON.md`.
